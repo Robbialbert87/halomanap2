@@ -12,7 +12,7 @@ class RoleMenuService
         if ($role === 'Super Admin' || $role === 'Admin Pengaduan') {
             return 'admin';
         }
-        if ($role === 'Kepala Unit' || $role === 'Kepala Ruangan' || str_contains($jabatan, 'kepala unit')) {
+        if ($role === 'Kepala Unit' || $role === 'Kepala Ruangan' || str_contains($jabatan, 'kepala unit') || str_contains($jabatan, 'kepala ruangan')) {
             return 'kepala_unit';
         }
         if (str_contains($jabatan, 'kasi') || str_contains($jabatan, 'kasubbag')) {

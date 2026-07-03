@@ -109,17 +109,30 @@
 
                 {{-- Attachment --}}
                 @if($ticket->attachment_path)
-                <div>
-                    <p class="text-xs text-gray-400 uppercase tracking-wider mb-2">Bukti / Lampiran</p>
-                    @php $ext = strtolower(pathinfo($ticket->attachment_path, PATHINFO_EXTENSION)); @endphp
-                    @if(in_array($ext, ['jpg', 'jpeg', 'png']))
-                        <a href="{{ asset('storage/' . $ticket->attachment_path) }}" target="_blank">
-                            <img src="{{ asset('storage/' . $ticket->attachment_path) }}" alt="Lampiran" class="max-h-64 rounded-lg border border-gray-200 shadow-sm hover:opacity-90 transition-opacity">
-                        </a>
+                @php $ext = strtolower(pathinfo($ticket->attachment_path, PATHINFO_EXTENSION)); $isImage = in_array($ext, ['jpg', 'jpeg', 'png']); @endphp
+                <div class="border-t border-gray-100 pt-4">
+                    <p class="text-xs text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                        <i class="fa-solid fa-paperclip text-blue-500"></i> Bukti / Lampiran
+                    </p>
+                    @if($isImage)
+                    <div class="relative group inline-block">
+                        <img src="{{ asset('storage/' . $ticket->attachment_path) }}" alt="Lampiran" class="max-h-52 rounded-lg border border-gray-200 shadow-sm cursor-pointer transition-all duration-200 group-hover:shadow-md group-hover:brightness-90" onclick="openPreview('{{ asset('storage/' . $ticket->attachment_path) }}')">
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                            <span class="bg-black/60 text-white text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5 pointer-events-none">
+                                <i class="fa-solid fa-expand"></i> Klik untuk preview
+                            </span>
+                        </div>
+                    </div>
                     @else
-                        <a href="{{ asset('storage/' . $ticket->attachment_path) }}" target="_blank" class="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors">
-                            <i class="fa-solid fa-file-pdf"></i> Lihat Lampiran
-                        </a>
+                    <a href="{{ asset('storage/' . $ticket->attachment_path) }}" target="_blank" class="inline-flex items-center gap-3 bg-blue-50 text-blue-700 px-4 py-3 rounded-xl text-sm font-medium hover:bg-blue-100 transition-colors border border-blue-200">
+                        <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
+                            <i class="fa-solid fa-file-pdf text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Dokumen Lampiran</p>
+                            <p class="text-[11px] text-blue-500">Klik untuk membuka</p>
+                        </div>
+                    </a>
                     @endif
                 </div>
                 @endif
@@ -588,5 +601,48 @@ function closeDispositionModal() {
 }
 </script>
 @endif
+
+{{-- Modal Preview Gambar --}}
+<div id="preview-modal" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4" onclick="closePreview()">
+    <div class="relative max-w-4xl w-full max-h-[90vh] flex items-center justify-center" onclick="event.stopPropagation()">
+        <button onclick="closePreview()" class="absolute -top-10 right-0 text-white/80 hover:text-white text-2xl transition-colors z-10">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <button onclick="downloadPreview()" class="absolute -top-10 right-10 text-white/80 hover:text-white text-lg transition-colors z-10">
+            <i class="fa-solid fa-download"></i>
+        </button>
+        <img id="preview-image" src="" alt="Preview" class="max-w-full max-h-[85vh] rounded-lg shadow-2xl object-contain">
+    </div>
+</div>
+
+<script>
+function openPreview(url) {
+    const modal = document.getElementById('preview-modal');
+    const img = document.getElementById('preview-image');
+    img.src = url;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+}
+
+function closePreview() {
+    const modal = document.getElementById('preview-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+}
+
+function downloadPreview() {
+    const img = document.getElementById('preview-image');
+    const link = document.createElement('a');
+    link.download = 'lampiran-pengaduan.png';
+    link.href = img.src;
+    link.click();
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closePreview();
+});
+</script>
 
 @endsection

@@ -96,6 +96,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('head-unit')->name('head-unit.')->group(function () {
         Route::get('dispositions', [App\Http\Controllers\HeadUnit\DispositionController::class, 'index'])->name('dispositions.index');
         Route::get('dispositions/{disposition}', [App\Http\Controllers\HeadUnit\DispositionController::class, 'show'])->name('dispositions.show');
+        Route::post('dispositions/{history}/selesai',  [App\Http\Controllers\HeadUnit\DispositionController::class, 'selesai'])->name('dispositions.selesai');
+        Route::post('dispositions/{history}/eskalasi', [App\Http\Controllers\HeadUnit\DispositionController::class, 'eskalasi'])->name('dispositions.eskalasi');
         Route::post('dispositions/{disposition}/accept', [App\Http\Controllers\HeadUnit\DispositionController::class, 'accept'])->name('dispositions.accept');
         Route::post('dispositions/{disposition}/handle-self', [App\Http\Controllers\HeadUnit\DispositionController::class, 'handleSelf'])->name('dispositions.handle-self');
         Route::post('dispositions/{disposition}/assign', [App\Http\Controllers\HeadUnit\DispositionController::class, 'assign'])->name('dispositions.assign');
@@ -106,6 +108,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard',               [App\Http\Controllers\KepalaUnit\DashboardController::class, 'index'])->name('dashboard');
         Route::get('/dispositions',             [App\Http\Controllers\KepalaUnit\DispositionController::class, 'index'])->name('dispositions.index');
         Route::get('/dispositions/{disposition}', [App\Http\Controllers\KepalaUnit\DispositionController::class, 'show'])->name('dispositions.show');
+        Route::post('dispositions/{history}/selesai',  [App\Http\Controllers\KepalaUnit\DispositionController::class, 'selesai'])->name('dispositions.selesai');
+        Route::post('dispositions/{history}/eskalasi', [App\Http\Controllers\KepalaUnit\DispositionController::class, 'eskalasi'])->name('dispositions.eskalasi');
         Route::get('/dalam-penanganan',         [App\Http\Controllers\KepalaUnit\DalamPenangananController::class, 'index'])->name('dalam-penanganan');
         Route::get('/riwayat',                  [App\Http\Controllers\KepalaUnit\RiwayatController::class, 'index'])->name('riwayat');
         Route::get('/laporan',                  [App\Http\Controllers\KepalaUnit\LaporanController::class, 'index'])->name('laporan');
@@ -117,6 +121,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard',               [App\Http\Controllers\Kasi\DashboardController::class, 'index'])->name('dashboard');
         Route::get('/dispositions',             [App\Http\Controllers\Kasi\DispositionController::class, 'index'])->name('dispositions.index');
         Route::get('/dispositions/{disposition}', [App\Http\Controllers\Kasi\DispositionController::class, 'show'])->name('dispositions.show');
+        Route::post('dispositions/{history}/selesai',  [App\Http\Controllers\Kasi\DispositionController::class, 'selesai'])->name('dispositions.selesai');
+        Route::post('dispositions/{history}/eskalasi', [App\Http\Controllers\Kasi\DispositionController::class, 'eskalasi'])->name('dispositions.eskalasi');
         Route::get('/dalam-penanganan',         [App\Http\Controllers\Kasi\DalamPenangananController::class, 'index'])->name('dalam-penanganan');
         Route::get('/riwayat',                  [App\Http\Controllers\Kasi\RiwayatController::class, 'index'])->name('riwayat');
         Route::get('/laporan',                  [App\Http\Controllers\Kasi\LaporanController::class, 'index'])->name('laporan');
@@ -128,6 +134,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard',               [App\Http\Controllers\Kabid\DashboardController::class, 'index'])->name('dashboard');
         Route::get('/dispositions',             [App\Http\Controllers\Kabid\DispositionController::class, 'index'])->name('dispositions.index');
         Route::get('/dispositions/{disposition}', [App\Http\Controllers\Kabid\DispositionController::class, 'show'])->name('dispositions.show');
+        Route::post('dispositions/{history}/selesai',  [App\Http\Controllers\Kabid\DispositionController::class, 'selesai'])->name('dispositions.selesai');
+        Route::post('dispositions/{history}/eskalasi', [App\Http\Controllers\Kabid\DispositionController::class, 'eskalasi'])->name('dispositions.eskalasi');
         Route::get('/monitoring',               [App\Http\Controllers\Kabid\MonitoringController::class, 'index'])->name('monitoring');
         Route::get('/laporan',                  [App\Http\Controllers\Kabid\LaporanController::class, 'index'])->name('laporan');
         Route::get('/profil',                   [App\Http\Controllers\Kabid\ProfilController::class, 'index'])->name('profil');

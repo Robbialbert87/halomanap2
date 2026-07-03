@@ -3,11 +3,16 @@
 namespace App\Http\Controllers\Kabid;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\WorkflowHistory;
+use App\Services\WorkflowService;
+use Illuminate\Http\Request;
 
 class DispositionController extends Controller
 {
+    public function __construct(
+        private readonly WorkflowService $workflowService,
+    ) {}
+
     public function index(Request $request)
     {
         $user = auth()->user();
@@ -37,5 +42,34 @@ class DispositionController extends Controller
         }
 
         return view('kabid.dispositions.show', compact('workflow', 'user'));
+    }
+
+    public function selesai(Request $request, WorkflowHistory $history)
+    {
+        if ($history->to_user_id !== auth()->id()) {
+            return back()->with('error', 'Anda bukan pemegang aktif pengaduan ini.');
+        }
+
+        $request->validate(['komentar' => 'nullable|string|max:1000']);
+        $this->workflowService->selesai($history, $request->komentar ?? '');
+
+        return back()->with('success', 'Pengaduan ditandai selesai dan menunggu verifikasi admin.');
+    }
+
+    public function eskalasi(Request $request, WorkflowHistory $history)
+    {
+        if ($history->to_user_id !== auth()->id()) {
+            return back()->with('error', 'Anda bukan pemegang aktif pengaduan ini.');
+        }
+
+        $request->validate(['komentar' => 'nullable|string|max:1000']);
+
+        try {
+            $this->workflowService->eskalasi($history, $request->komentar ?? '');
+        } catch (\RuntimeException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return back()->with('success', 'Pengaduan berhasil dieskalasi ke jabatan atasan.');
     }
 }

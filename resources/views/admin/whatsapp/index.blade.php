@@ -105,10 +105,80 @@
                 <br><br><strong>Mohon JANGAN MENUTUP KEDUA JENDELA TERSEBUT</strong> selama aplikasi diakses oleh pengguna.
             </p>
         </div>
+
+        <!-- Card Barcode Pengaduan -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 class="font-semibold text-gray-800 flex items-center gap-2 mb-4">
+                <i class="fa-solid fa-qrcode text-blue-500"></i> Barcode Pengaduan
+            </h2>
+            <div class="text-sm text-gray-600 space-y-3">
+                <p>Scan barcode berikut untuk mengakses halaman pengaduan:</p>
+                <div class="flex justify-center py-2">
+                    <div id="barcode-container" class="bg-white p-2 border border-gray-200 rounded-lg inline-block"></div>
+                </div>
+                <p class="text-xs text-center text-gray-400 break-all">http://halomanap.rsudkotajambi.id</p>
+                <div class="flex gap-2 justify-center pt-1">
+                    <button onclick="downloadBarcode()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-xs px-4 py-2 transition-colors">
+                        <i class="fa-solid fa-download mr-1"></i> Download
+                    </button>
+                    <button onclick="printBarcode()" class="bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg text-xs px-4 py-2 transition-colors">
+                        <i class="fa-solid fa-print mr-1"></i> Print
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 @push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+    let qrCodeInstance;
+
+    function generateBarcode() {
+        const container = document.getElementById('barcode-container');
+        container.innerHTML = '';
+        qrCodeInstance = new QRCode(container, {
+            text: 'http://halomanap.rsudkotajambi.id',
+            width: 180,
+            height: 180,
+            colorDark: '#1e293b',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    }
+
+    function downloadBarcode() {
+        const canvas = document.querySelector('#barcode-container canvas');
+        if (!canvas) return;
+        const link = document.createElement('a');
+        link.download = 'barcode-pengaduan.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    }
+
+    function printBarcode() {
+        const canvas = document.querySelector('#barcode-container canvas');
+        if (!canvas) return;
+        const win = window.open('', '_blank');
+        win.document.write(`
+            <html>
+            <head><title>Print Barcode Pengaduan</title></head>
+            <body style="text-align:center;padding:40px;font-family:sans-serif">
+                <h2 style="margin-bottom:20px">Scan untuk mengakses pengaduan</h2>
+                <img src="${canvas.toDataURL('image/png')}" style="width:300px;height:300px">
+                <p style="margin-top:20px;color:#666">http://halomanap.rsudkotajambi.id</p>
+                <script>
+                    window.onload = function() { window.print(); window.close(); }
+                <\/script>
+            </body>
+            </html>
+        `);
+        win.document.close();
+    }
+
+    generateBarcode();
+</script>
 <script>
     let pollInterval;
     const apiUrl = 'http://localhost:3000';

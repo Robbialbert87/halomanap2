@@ -8,6 +8,8 @@ use App\Models\Room;
 use App\Models\ReportCategory;
 use App\Models\Ticket;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PengaduanController extends Controller
 {
@@ -47,10 +49,14 @@ class PengaduanController extends Controller
         }
 
         $attachmentPath = null;
-        if ($request->hasFile('attachment') && $request->file('attachment')->isValid()) {
+        if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
-            if ($file->getRealPath() !== false && $file->getRealPath() !== '') {
-                $attachmentPath = $file->store('attachments', 'public');
+            if ($file->isValid()) {
+                $filename = Str::random(40) . '.' . $file->guessExtension();
+                Storage::disk('public')->put('attachments/' . $filename, $file->get());
+                $attachmentPath = 'attachments/' . $filename;
+            } else {
+                return back()->withErrors(['attachment' => 'File gagal diupload'])->withInput();
             }
         }
 
