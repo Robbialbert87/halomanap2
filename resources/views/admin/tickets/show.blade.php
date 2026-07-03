@@ -1,0 +1,592 @@
+@extends('layouts.admin')
+
+@section('title', 'Detail Pengaduan #' . $ticket->ticket_number . ' - Halo MANAP')
+
+@section('admin_content')
+
+@php
+    $statusMap = [
+        'NEW'                 => ['label' => 'Baru',     'class' => 'bg-yellow-100 text-yellow-700 border-yellow-300'],
+        'TERVERIFIKASI'       => ['label' => 'Terverifikasi', 'class' => 'bg-cyan-100 text-cyan-700 border-cyan-300'],
+        'IN_PROGRESS'         => ['label' => 'Diproses', 'class' => 'bg-blue-100 text-blue-700 border-blue-300'],
+        'DONE'                => ['label' => 'Selesai',  'class' => 'bg-green-100 text-green-700 border-green-300'],
+        'REJECTED'            => ['label' => 'Ditolak',  'class' => 'bg-red-100 text-red-700 border-red-300'],
+        'Diproses'            => ['label' => 'Diproses', 'class' => 'bg-blue-100 text-blue-700 border-blue-300'],
+        'Menunggu Verifikasi' => ['label' => 'Menunggu Verifikasi', 'class' => 'bg-purple-100 text-purple-700 border-purple-300'],
+        'Selesai'             => ['label' => 'Selesai',  'class' => 'bg-green-100 text-green-700 border-green-300'],
+    ];
+    $typeMap = [
+        'Pengaduan'  => ['class' => 'bg-red-100 text-red-700',    'icon' => 'fa-circle-exclamation'],
+        'Saran'      => ['class' => 'bg-green-100 text-green-700','icon' => 'fa-lightbulb'],
+        'Apresiasi'  => ['class' => 'bg-blue-100 text-blue-700',  'icon' => 'fa-thumbs-up'],
+        'Informasi'  => ['class' => 'bg-orange-100 text-orange-700','icon' => 'fa-circle-info'],
+    ];
+    $statusStyle = $statusMap[$ticket->status] ?? ['label' => $ticket->status, 'class' => 'bg-gray-100 text-gray-700 border-gray-300'];
+    $typeStyle   = $typeMap[$ticket->type]   ?? ['class' => 'bg-gray-100 text-gray-700', 'icon' => 'fa-file'];
+@endphp
+
+{{-- Page Header --}}
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-800">Detail Pengaduan</h1>
+        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
+            <span class="text-blue-600">Beranda</span>
+            <span class="text-gray-400">/</span>
+            <a href="{{ route('admin.tickets.index') }}" class="hover:text-blue-600">Pengaduan</a>
+            <span class="text-gray-400">/</span>
+            <span class="font-mono font-semibold text-blue-700">{{ $ticket->ticket_number }}</span>
+        </div>
+    </div>
+    <div class="flex gap-3">
+        <a href="{{ route('admin.tickets.index') }}" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+        </a>
+    </div>
+</div>
+
+@if(session('success'))
+<div class="bg-green-50 text-green-700 p-4 rounded-lg mb-6 border border-green-200">
+    <i class="fa-solid fa-circle-check mr-2"></i> {{ session('success') }}
+</div>
+@endif
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    {{-- LEFT COLUMN: Ticket Detail --}}
+    <div class="lg:col-span-2 space-y-6">
+
+        {{-- Ticket Info Card --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h2 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-regular fa-file-lines text-blue-600"></i>
+                    Informasi Pengaduan
+                </h2>
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full {{ $typeStyle['class'] }}">
+                        <i class="fa-solid {{ $typeStyle['icon'] }}"></i> {{ $ticket->type }}
+                    </span>
+                    <span class="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full border {{ $statusStyle['class'] }}">
+                        {{ $statusStyle['label'] }}
+                    </span>
+                </div>
+            </div>
+            <div class="p-6 space-y-5">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">No. Tiket</p>
+                        <p class="font-mono font-bold text-blue-700 text-lg">{{ $ticket->ticket_number }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Tanggal Masuk</p>
+                        <p class="font-medium text-gray-800">{{ $ticket->created_at->format('d M Y, H:i') }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Unit</p>
+                        <p class="font-medium text-gray-800">{{ $ticket->room->unit->nama ?? '-' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Ruangan</p>
+                        <p class="font-medium text-gray-800">{{ $ticket->room->name ?? '-' }}</p>
+                    </div>
+                    <div class="col-span-2">
+                        <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Kategori</p>
+                        <p class="font-medium text-gray-800">{{ $ticket->category->name ?? '-' }}</p>
+                    </div>
+                </div>
+
+                <hr class="border-gray-100">
+
+                <div>
+                    <p class="text-xs text-gray-400 uppercase tracking-wider mb-2">Judul</p>
+                    <p class="font-semibold text-gray-900 text-lg leading-snug">{{ $ticket->title }}</p>
+                </div>
+
+                <div>
+                    <p class="text-xs text-gray-400 uppercase tracking-wider mb-2">Isi / Deskripsi</p>
+                    <div class="bg-gray-50 rounded-lg p-4 text-gray-700 text-sm leading-relaxed whitespace-pre-line">{{ $ticket->description }}</div>
+                </div>
+
+                {{-- Attachment --}}
+                @if($ticket->attachment_path)
+                <div>
+                    <p class="text-xs text-gray-400 uppercase tracking-wider mb-2">Bukti / Lampiran</p>
+                    @php $ext = strtolower(pathinfo($ticket->attachment_path, PATHINFO_EXTENSION)); @endphp
+                    @if(in_array($ext, ['jpg', 'jpeg', 'png']))
+                        <a href="{{ asset('storage/' . $ticket->attachment_path) }}" target="_blank">
+                            <img src="{{ asset('storage/' . $ticket->attachment_path) }}" alt="Lampiran" class="max-h-64 rounded-lg border border-gray-200 shadow-sm hover:opacity-90 transition-opacity">
+                        </a>
+                    @else
+                        <a href="{{ asset('storage/' . $ticket->attachment_path) }}" target="_blank" class="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors">
+                            <i class="fa-solid fa-file-pdf"></i> Lihat Lampiran
+                        </a>
+                    @endif
+                </div>
+                @endif
+            </div>
+        </div>
+
+    </div>
+
+    {{-- RIGHT COLUMN: Reporter & Status Update --}}
+    <div class="space-y-6">
+
+        {{-- Reporter Info --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
+                <h2 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-address-card text-blue-600"></i> Data Pelapor
+                </h2>
+            </div>
+            <div class="p-6 space-y-4">
+                @if($ticket->is_anonymous)
+                    <div class="bg-slate-50 rounded-lg p-4 text-center">
+                        <i class="fa-solid fa-user-secret text-4xl text-slate-400 mb-2 block"></i>
+                        <p class="text-sm text-slate-500 font-medium">Pengaduan Anonim</p>
+                        <p class="text-xs text-slate-400">Identitas pelapor tidak disertakan.</p>
+                    </div>
+                @else
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Nama</p>
+                        <p class="font-semibold text-gray-800">{{ $ticket->reporter_name }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">No. HP / WA</p>
+                        <div class="flex items-center gap-2">
+                            <p class="font-medium text-gray-800">{{ $ticket->reporter_phone }}</p>
+                            @if($ticket->reporter_phone)
+                            <a href="https://wa.me/{{ preg_replace('/^0/', '62', $ticket->reporter_phone) }}" target="_blank"
+                                class="text-green-600 hover:text-green-800 text-lg">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </a>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+@php $isClosed = $ticket->status === 'Selesai'; $isWaitingVerification = optional($ticket->activeWorkflow)->status === 'menunggu_verifikasi'; @endphp
+
+        {{-- Verifikasi Pengaduan (hanya jika status NEW) --}}
+        @if($ticket->status === 'NEW')
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
+                <h2 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-check-double text-blue-600"></i> Verifikasi Pengaduan
+                </h2>
+            </div>
+            <div class="p-6">
+                <p class="text-sm text-gray-600 mb-4">Verifikasi pengaduan ini sebelum melanjutkan ke disposisi. Pastikan data lengkap dan sesuai.</p>
+                <form action="{{ route('admin.tickets.verify', $ticket->id) }}" method="POST" class="mb-3">
+                    @csrf
+                    <div class="mb-3">
+                        <textarea name="notes" rows="2" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Catatan verifikasi (opsional)..."></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-check"></i> Setujui & Lanjutkan
+                    </button>
+                </form>
+                <form action="{{ route('admin.tickets.reject', $ticket->id) }}" method="POST" onsubmit="return confirm('Tolak pengaduan ini? Tindakan ini tidak dapat dibatalkan.')">
+                    @csrf
+                    <div class="mb-3">
+                        <textarea name="notes" rows="2" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block p-2.5" placeholder="Alasan penolakan (opsional)..."></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-xmark"></i> Tolak Pengaduan
+                    </button>
+                </form>
+            </div>
+        </div>
+        @endif
+
+        {{-- Ubah Status: sembunyikan jika status NEW (digantikan verifikasi) --}}
+        @if(!$isClosed && !$isWaitingVerification && $ticket->status !== 'NEW')
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
+                <h2 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-blue-600"></i> Ubah Status
+                </h2>
+            </div>
+            <div class="p-6">
+                <form action="{{ route('admin.tickets.update', $ticket->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Status Saat Ini</label>
+                        <select name="status" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                            <option value="NEW"         {{ $ticket->status == 'NEW'         ? 'selected' : '' }}>Baru</option>
+                            <option value="TERVERIFIKASI" {{ $ticket->status == 'TERVERIFIKASI' ? 'selected' : '' }}>Terverifikasi</option>
+                            <option value="IN_PROGRESS" {{ $ticket->status == 'IN_PROGRESS' ? 'selected' : '' }}>Diproses</option>
+                            <option value="DONE"        {{ $ticket->status == 'DONE'        ? 'selected' : '' }}>Selesai</option>
+                            <option value="REJECTED"    {{ $ticket->status == 'REJECTED'    ? 'selected' : '' }}>Ditolak</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Catatan (Opsional)</label>
+                        <textarea name="notes" rows="3" placeholder="Masukkan catatan penanganan..." class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+                        <i class="fa-solid fa-save mr-1"></i> Simpan Status
+                    </button>
+                </form>
+            </div>
+        </div>
+        @endif
+
+        {{-- Banner Tiket Selesai --}}
+        @if($isClosed)
+        <div class="bg-green-50 border border-green-200 rounded-xl p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0 text-xl">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <p class="font-bold text-green-800">Pengaduan Telah Diselesaikan</p>
+                <p class="text-sm text-green-600 mt-0.5">Pengaduan ini sudah diverifikasi dan ditutup. Tidak ada tindakan lebih lanjut yang diperlukan.</p>
+            </div>
+        </div>
+        @endif
+
+        @if(!$isClosed && in_array($ticket->status, ['TERVERIFIKASI', 'IN_PROGRESS', 'DONE', 'Diproses', 'Menunggu Verifikasi']))
+        {{-- Disposisi / Workflow Aktif: hanya tampil jika belum selesai --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                <h2 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-share-nodes text-blue-600"></i> Disposisi
+                </h2>
+                @if(!$ticket->activeWorkflow)
+                    <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded font-semibold">Belum Ada</span>
+                @endif
+            </div>
+            <div class="p-6">
+                @if(!$ticket->activeWorkflow)
+                    <button onclick="openDispositionModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+                        <i class="fa-solid fa-plus mr-1"></i> Buat Disposisi
+                    </button>
+                @else
+                    @php $wf = $ticket->activeWorkflow; $badge = $wf->status_badge; @endphp
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-xs text-gray-500">Unit</span>
+                            <span class="text-sm font-semibold text-gray-800">{{ $wf->toUnit?->nama ?? '-' }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-xs text-gray-500">Penanggung Jawab</span>
+                            <div class="text-right">
+                                <span class="text-sm font-medium text-gray-800 block">{{ $wf->toUser?->nama ?? 'Belum ada' }}</span>
+                                <span class="text-[10px] text-gray-400">{{ $wf->toJabatan?->nama ?? '-' }}</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-xs text-gray-500">Aksi Terakhir</span>
+                            <span class="text-sm font-medium text-gray-800 capitalize">{{ $wf->action_label }}</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                            <span class="text-xs text-gray-500">Status</span>
+                            <span class="text-xs font-semibold px-2 py-1 rounded {{ $badge['class'] }}">{{ $badge['label'] }}</span>
+                        </div>
+                    </div>
+                    @if($wf->status === 'menunggu_verifikasi')
+                        <div class="mt-4 pt-4 border-t border-gray-100">
+                            <form action="{{ route('admin.workflow.tutup', $wf->id) }}" method="POST" onsubmit="return confirm('Verifikasi penanganan ini dan tutup tiket?')">
+                                @csrf
+                                <div class="mb-3">
+                                    <textarea name="komentar" rows="2" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="Catatan verifikasi... (Opsional)"></textarea>
+                                </div>
+                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-stamp"></i> Verifikasi & Tutup Workflow
+                                </button>
+                            </form>
+                        </div>
+                    @endif
+                @endif
+            </div>
+        </div>
+        @endif
+
+        @if($ticket->workflows->isNotEmpty())
+        {{-- Riwayat Workflow --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
+                <h2 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-code-branch text-blue-600"></i> Riwayat Workflow
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
+                    @foreach($ticket->workflows as $wfHist)
+                        @php
+                            $c = $wfHist->status_badge['class'];
+                            // Simple text coloring based on badge class string matching
+                            $textColor = 'text-gray-600';
+                            if (str_contains($c, 'blue')) $textColor = 'text-blue-600';
+                            if (str_contains($c, 'yellow')) $textColor = 'text-yellow-600';
+                            if (str_contains($c, 'green')) $textColor = 'text-green-600';
+                            if (str_contains($c, 'red')) $textColor = 'text-red-600';
+                            if (str_contains($c, 'purple')) $textColor = 'text-purple-600';
+                        @endphp
+                        <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                            <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-gray-50 text-gray-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                                <i class="fa-solid fa-arrow-right-arrow-left text-sm"></i>
+                            </div>
+                            <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white border border-gray-100 shadow-sm p-4 rounded-xl">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h3 class="font-bold {{ $textColor }} text-sm capitalize">
+                                        {{ str_replace('_', ' ', $wfHist->action) }}
+                                    </h3>
+                                    <time class="text-xs text-gray-400 font-medium">{{ $wfHist->created_at->format('d M, H:i') }}</time>
+                                </div>
+                                <div class="text-xs text-gray-600 mt-2 space-y-1">
+                                    <p>Dari: <span class="font-semibold text-gray-800">{{ $wfHist->fromUser?->nama ?? 'Sistem/Admin' }}</span></p>
+                                    <p>Ke: <span class="font-semibold text-gray-800">{{ $wfHist->toUser?->nama ?? 'Sistem/Admin' }}</span> <span class="text-gray-400">({{ $wfHist->toJabatan?->nama ?? '-' }})</span></p>
+                                </div>
+                                @if($wfHist->komentar)
+                                    <div class="mt-3 text-xs text-gray-700 bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+                                        <p class="font-semibold text-gray-800 mb-0.5">Catatan:</p>
+                                        <p class="whitespace-pre-line leading-relaxed">{{ $wfHist->komentar }}</p>
+                                    </div>
+                                @endif
+                                <div class="mt-2 text-right">
+                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold {{ $c }}">{{ $wfHist->status_badge['label'] }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- Riwayat Status --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
+                <h2 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-timeline text-blue-600"></i> Riwayat Status
+                </h2>
+            </div>
+            <div class="p-6">
+                @if($ticket->histories->isEmpty())
+                    <p class="text-sm text-gray-500 text-center py-4 italic">Belum ada riwayat perubahan status.</p>
+                @else
+                    <div class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
+                        @foreach($ticket->histories as $history)
+                            @php
+                                $histMap = [
+                                    'NEW'           => ['label' => 'Baru',         'color' => 'yellow', 'icon' => 'fa-star'],
+                                    'TERVERIFIKASI' => ['label' => 'Terverifikasi', 'color' => 'cyan',   'icon' => 'fa-check-double'],
+                                    'IN_PROGRESS'   => ['label' => 'Diproses',     'color' => 'blue',   'icon' => 'fa-spinner'],
+                                    'DONE'          => ['label' => 'Selesai',      'color' => 'green',  'icon' => 'fa-check'],
+                                    'REJECTED'      => ['label' => 'Ditolak',      'color' => 'red',    'icon' => 'fa-xmark'],
+                                ];
+                                $hStyle = $histMap[$history->new_status] ?? ['label' => $history->new_status, 'color' => 'gray', 'icon' => 'fa-circle'];
+                                $c = $hStyle['color'];
+                            @endphp
+                            <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                                <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-{{ $c }}-100 text-{{ $c }}-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                                    <i class="fa-solid {{ $hStyle['icon'] }} text-sm"></i>
+                                </div>
+                                <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white border border-gray-100 shadow-sm p-4 rounded-xl">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <h3 class="font-bold text-{{ $c }}-600 text-sm flex items-center gap-1.5">
+                                            <div class="w-2 h-2 rounded-full bg-{{ $c }}-500"></div>
+                                            {{ $hStyle['label'] }}
+                                        </h3>
+                                        <time class="text-xs text-gray-400 font-medium">{{ $history->created_at->format('d M, H:i') }}</time>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mb-2">Oleh: <span class="font-semibold text-gray-700">{{ $history->user->name ?? 'Admin Pengaduan' }}</span></p>
+                                    @if($history->notes)
+                                        <div class="mt-2 text-xs text-gray-600 bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+                                            <p class="font-medium text-gray-700 mb-0.5">Catatan:</p>
+                                            <p class="whitespace-pre-line leading-relaxed">{{ $history->notes }}</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+
+
+        {{-- Lampiran Penanganan: sembunyikan jika sudah selesai --}}
+        @if(!$isClosed)
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
+                <h2 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-paperclip text-blue-600"></i> Lampiran Penanganan
+                </h2>
+            </div>
+            <div class="p-6">
+                {{-- Form Upload Lampiran --}}
+                <div class="mb-6">
+                    <button onclick="toggleUploadForm()" type="button" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg text-sm px-4 py-2 transition-colors border border-gray-300 w-full flex justify-between items-center">
+                        <span><i class="fa-solid fa-upload mr-1"></i> Tambah Lampiran</span>
+                        <i id="upload-icon" class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    
+                    <form id="upload-form" action="{{ route('admin.tickets.attachments.store', $ticket->id) }}" method="POST" enctype="multipart/form-data" class="mt-4 p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-3 hidden">
+                        @csrf
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Jenis Lampiran</label>
+                            <select name="attachment_type" required class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
+                                <option value="Foto Sebelum">Foto Sebelum</option>
+                                <option value="Foto Sesudah">Foto Sesudah</option>
+                                <option value="Dokumen">Dokumen</option>
+                                <option value="Berita Acara">Berita Acara</option>
+                                <option value="Bukti Perbaikan">Bukti Perbaikan</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Keterangan (Opsional)</label>
+                            <textarea name="description" rows="2" class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Upload File (Max 10MB)</label>
+                            <input type="file" name="file" required accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none">
+                            <p class="text-[10px] text-gray-500 mt-1">Format: JPG, PNG, PDF, DOCX, XLSX</p>
+                        </div>
+                        <div class="pt-2">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-4 py-2 transition-colors w-full">
+                                Simpan Lampiran
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <script>
+                    function toggleUploadForm() {
+                        const form = document.getElementById('upload-form');
+                        const icon = document.getElementById('upload-icon');
+                        if (form.classList.contains('hidden')) {
+                            form.classList.remove('hidden');
+                            icon.classList.remove('fa-chevron-down');
+                            icon.classList.add('fa-chevron-up');
+                        } else {
+                            form.classList.add('hidden');
+                            icon.classList.remove('fa-chevron-up');
+                            icon.classList.add('fa-chevron-down');
+                        }
+                    }
+                </script>
+
+                {{-- List Lampiran --}}
+                @if($ticket->attachments->isEmpty())
+                    <p class="text-sm text-gray-500 text-center italic py-2 border-t border-gray-100 pt-4">Belum ada lampiran.</p>
+                @else
+                    <div class="space-y-3 border-t border-gray-100 pt-4">
+                        @foreach($ticket->attachments as $attachment)
+                            @php
+                                $isImage = str_starts_with($attachment->mime_type, 'image/');
+                                $icon = $isImage ? 'fa-image text-purple-500' : 'fa-file-pdf text-red-500';
+                            @endphp
+                            <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-white shadow-sm">
+                                <div class="flex items-center gap-3 overflow-hidden">
+                                    <div class="w-10 h-10 rounded bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">
+                                        <i class="fa-solid {{ $icon }} text-xl"></i>
+                                    </div>
+                                    <div class="overflow-hidden">
+                                        <p class="text-sm font-bold text-gray-800 truncate">{{ $attachment->attachment_type }}</p>
+                                        <p class="text-xs text-gray-500 truncate" title="{{ $attachment->file_name }}">{{ $attachment->file_name }}</p>
+                                        <p class="text-[10px] text-gray-400 mt-0.5">Oleh: {{ $attachment->user->name ?? 'Admin Pengaduan' }} • {{ $attachment->created_at->format('d M Y') }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1 ml-2 shrink-0">
+                                    @if($isImage || $attachment->mime_type == 'application/pdf')
+                                    <a href="{{ asset('storage/' . $attachment->file_path) }}" target="_blank" class="text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 px-2 py-1 rounded font-medium text-center transition-colors">
+                                        Lihat
+                                    </a>
+                                    @endif
+                                    <a href="{{ route('admin.tickets.attachments.download', [$ticket->id, $attachment->id]) }}" class="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 px-2 py-1 rounded font-medium text-center transition-colors">
+                                        Download
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+        @endif
+
+        {{-- Metadata --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-3">
+            <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Metadata</p>
+            <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Dibuat</span>
+                <span class="text-gray-800 font-medium">{{ $ticket->created_at->diffForHumans() }}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Diperbarui</span>
+                <span class="text-gray-800 font-medium">{{ $ticket->updated_at->diffForHumans() }}</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@if(in_array($ticket->status, ['TERVERIFIKASI', 'IN_PROGRESS', 'DONE']) && !$ticket->activeWorkflow)
+{{-- Modal Buat Disposisi --}}
+<div id="disposition-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-xl p-6 max-w-lg w-full mx-4 relative max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-5 border-b border-gray-100 pb-3">
+            <h3 class="font-bold text-gray-800 text-lg flex items-center gap-2">
+                <i class="fa-solid fa-share-nodes text-blue-600"></i> Buat Disposisi (Workflow)
+            </h3>
+            <button onclick="closeDispositionModal()" class="text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        
+        <form action="{{ route('admin.workflow.disposisi') }}" method="POST" class="space-y-4">
+            @csrf
+            <input type="hidden" name="ticket_id" value="{{ $ticket->id }}">
+            
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Unit Tujuan <span class="text-red-500">*</span></label>
+                <select name="unit_id" required class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                    <option value="">Pilih Unit</option>
+                    @foreach($units as $unit)
+                        <option value="{{ $unit->id }}">{{ $unit->nama }}</option>
+                    @endforeach
+                </select>
+                <p class="text-[10px] text-gray-500 mt-1">Sistem akan otomatis meneruskan pengaduan ini ke level awal (entry point) di unit yang dipilih.</p>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Deadline SLA (Opsional)</label>
+                <input type="datetime-local" name="due_at" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" min="{{ date('Y-m-d\TH:i') }}">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Komentar / Instruksi Awal (Opsional)</label>
+                <textarea name="komentar" rows="3" placeholder="Tuliskan pesan untuk penerima disposisi..." class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"></textarea>
+            </div>
+            
+            <div class="pt-4 border-t border-gray-100 flex gap-3 justify-end">
+                <button type="button" onclick="closeDispositionModal()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+                    Batal
+                </button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+                    <i class="fa-solid fa-paper-plane mr-1"></i> Kirim Disposisi
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+function openDispositionModal() {
+    const modal = document.getElementById('disposition-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+function closeDispositionModal() {
+    const modal = document.getElementById('disposition-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+</script>
+@endif
+
+@endsection

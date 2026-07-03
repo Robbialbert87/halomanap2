@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class RoomController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $rooms = \App\Models\Room::with('unit')->orderBy('name')->get();
+        return view('admin.rooms.index', compact('rooms'));
+    }
+
+    public function create()
+    {
+        $units = \App\Models\Unit::orderBy('nama')->get();
+        return view('admin.rooms.create', compact('units'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'unit_id' => 'required|exists:units,id',
+            'name' => 'required|string|max:255',
+        ]);
+        \App\Models\Room::create($request->all());
+        return redirect()->route('admin.rooms.index')->with('success', 'Ruangan berhasil ditambahkan.');
+    }
+
+    public function show(string $id)
+    {
+        //
+    }
+
+    public function edit(string $id)
+    {
+        $room = \App\Models\Room::findOrFail($id);
+        $units = \App\Models\Unit::orderBy('nama')->get();
+        return view('admin.rooms.edit', compact('room', 'units'));
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $request->validate([
+            'unit_id' => 'required|exists:units,id',
+            'name' => 'required|string|max:255',
+        ]);
+        $room = \App\Models\Room::findOrFail($id);
+        $room->update($request->all());
+        return redirect()->route('admin.rooms.index')->with('success', 'Ruangan berhasil diperbarui.');
+    }
+
+    public function destroy(string $id)
+    {
+        $room = \App\Models\Room::findOrFail($id);
+        $room->delete();
+        return redirect()->route('admin.rooms.index')->with('success', 'Ruangan berhasil dihapus.');
+    }
+}
