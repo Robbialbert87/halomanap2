@@ -301,7 +301,7 @@
                     </div>
                     @if($wf->status === 'menunggu_verifikasi')
                         <div class="mt-4 pt-4 border-t border-gray-100">
-                            <form action="{{ route('admin.workflow.tutup', $wf->id) }}" method="POST" onsubmit="return confirm('Verifikasi penanganan ini dan tutup tiket?')">
+                            <form action="{{ route('admin.workflow.tutup', $wf->id) }}" method="POST" onsubmit="var btn=this.querySelector('button[type=submit]'); if(confirm('Verifikasi penanganan ini dan tutup tiket?')){btn.disabled=true; return true;} return false;">
                                 @csrf
                                 <div class="mb-3">
                                     <textarea name="komentar" rows="2" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="Catatan verifikasi... (Opsional)"></textarea>
@@ -552,7 +552,7 @@
             </button>
         </div>
         
-        <form action="{{ route('admin.workflow.disposisi') }}" method="POST" class="space-y-4">
+        <form action="{{ route('admin.workflow.disposisi') }}" method="POST" class="space-y-4" onsubmit="document.getElementById('btn-kirim-disposisi').disabled = true;">
             @csrf
             <input type="hidden" name="ticket_id" value="{{ $ticket->id }}">
             
@@ -581,7 +581,7 @@
                 <button type="button" onclick="closeDispositionModal()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
                     Batal
                 </button>
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+                <button type="submit" id="btn-kirim-disposisi" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
                     <i class="fa-solid fa-paper-plane mr-1"></i> Kirim Disposisi
                 </button>
             </div>

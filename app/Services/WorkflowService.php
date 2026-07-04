@@ -47,6 +47,16 @@ class WorkflowService
             ->first();
 
         return DB::transaction(function () use ($ticket, $actor, $toUnitId, $entryJabatan, $toUser, $komentar, $dueAt) {
+            // Cegah duplikasi: kunci baris workflow aktif untuk ticket ini
+            $existing = WorkflowHistory::where('ticket_id', $ticket->id)
+                ->whereIn('status', ['menunggu_respon', 'dalam_penanganan'])
+                ->lockForUpdate()
+                ->first();
+
+            if ($existing) {
+                throw new \RuntimeException('Tiket ini masih memiliki disposisi yang aktif. Selesaikan disposisi yang ada terlebih dahulu.');
+            }
+
             // Tutup workflow aktif sebelumnya jika ada
             $this->deactivateActiveWorkflows($ticket->id);
 
@@ -151,6 +161,12 @@ class WorkflowService
         $workflowLevel = $parentJabatan->level;
 
         return DB::transaction(function () use ($currentHistory, $actor, $parentJabatan, $toUser, $workflowLevel, $komentar) {
+            // Cegah duplikasi: pastikan workflow masih aktif
+            $fresh = WorkflowHistory::lockForUpdate()->find($currentHistory->id);
+            if (!$fresh || !in_array($fresh->status, ['menunggu_respon', 'dalam_penanganan'])) {
+                throw new \RuntimeException('Workflow ini sudah tidak aktif atau telah diubah.');
+            }
+
             // Tandai history sebelumnya sebagai sudah dieskalasi
             $currentHistory->update(['status' => 'eskalasi', 'completed_at' => now()]);
 

@@ -98,7 +98,7 @@
                     <p class="text-xs font-semibold text-green-700 mb-2 flex items-center gap-1.5">
                         <i class="fa-solid fa-circle-check"></i> Selesaikan Pengaduan
                     </p>
-                    <form action="{{ route('kepala-unit.dispositions.selesai', $workflow->id) }}" method="POST" onsubmit="return confirm('Tandai pengaduan selesai ditangani?')">
+                    <form action="{{ route('kepala-unit.dispositions.selesai', $workflow->id) }}" method="POST" onsubmit="var btn=this.querySelector('button[type=submit]'); if(confirm('Tandai pengaduan selesai ditangani?')){btn.disabled=true; return true;} return false;">
                         @csrf
                         <div class="mb-3">
                             <textarea name="komentar" rows="3" required class="w-full px-3 py-2 text-sm border border-green-200 bg-white rounded-lg focus:ring-2 focus:ring-green-400 outline-none" placeholder="Tuliskan solusi / hasil penanganan... *Wajib"></textarea>
@@ -115,7 +115,7 @@
                     <p class="text-xs font-semibold text-red-600 mb-2 flex items-center gap-1.5">
                         <i class="fa-solid fa-arrow-up-right-dots"></i> Tidak Dapat Menangani? Eskalasi
                     </p>
-                    <form action="{{ route('kepala-unit.dispositions.eskalasi', $workflow->id) }}" method="POST" onsubmit="return confirm('Eskalasi pengaduan ke jabatan atasan?')">
+                    <form action="{{ route('kepala-unit.dispositions.eskalasi', $workflow->id) }}" method="POST" onsubmit="var btn=this.querySelector('button[type=submit]'); if(confirm('Eskalasi pengaduan ke jabatan atasan?')){btn.disabled=true; return true;} return false;">
                         @csrf
                         <div class="mb-3">
                             <textarea name="komentar" rows="2" class="w-full px-3 py-2 text-sm border border-red-200 bg-white rounded-lg focus:ring-2 focus:ring-red-400 outline-none" placeholder="Alasan eskalasi..."></textarea>
