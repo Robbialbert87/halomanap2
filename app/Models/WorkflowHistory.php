@@ -16,7 +16,6 @@ class WorkflowHistory extends Model
         'to_jabatan_id',
         'from_unit_id',
         'to_unit_id',
-        'workflow_level',
         'action',
         'komentar',
         'lampiran',
@@ -75,9 +74,6 @@ class WorkflowHistory extends Model
         return $this->belongsTo(Unit::class, 'to_unit_id');
     }
 
-    /**
-     * Badge status untuk tampilan
-     */
     public function getStatusBadgeAttribute(): array
     {
         return match ($this->status) {
@@ -93,9 +89,6 @@ class WorkflowHistory extends Model
         };
     }
 
-    /**
-     * Label action yang lebih ramah untuk ditampilkan
-     */
     public function getActionLabelAttribute(): string
     {
         return match ($this->action) {

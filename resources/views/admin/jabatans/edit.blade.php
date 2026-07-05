@@ -45,35 +45,14 @@
                         placeholder="Contoh: Kepala Instalasi Radiologi">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Level Jabatan <span class="text-red-500">*</span></label>
-                    <select name="level" id="levelSelect" required onchange="onLevelChange(this.value)"
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Kategori Jabatan <span class="text-red-500">*</span></label>
+                    <select name="kategori_jabatan" required
                         class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-white">
-                        <option value="">-- Pilih Level --</option>
-                        <option value="1" {{ old('level', $jabatan->level) == 1 ? 'selected' : '' }}>Level 1 – Direktur</option>
-                        <option value="2" {{ old('level', $jabatan->level) == 2 ? 'selected' : '' }}>Level 2 – Kabid / Kabag</option>
-                        <option value="3" {{ old('level', $jabatan->level) == 3 ? 'selected' : '' }}>Level 3 – Kasi / Kasubbag</option>
-                        <option value="4" {{ old('level', $jabatan->level) == 4 ? 'selected' : '' }}>Level 4 – Kepala Unit</option>
-                    </select>
-                </div>
-                <div id="parentWrapper">
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Atasan Langsung (Parent Jabatan) <span class="text-red-500 text-xs font-normal">*Wajib untuk Level 2 ke bawah</span></label>
-                    <select name="parent_id"
-                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-white">
-                        <option value="">-- Tidak Ada --</option>
-                        @foreach($parents as $parent)
-                            <option value="{{ $parent->id }}" {{ old('parent_id', $jabatan->parent_id) == $parent->id ? 'selected' : '' }}
-                                data-level="{{ $parent->level }}">
-                                [L{{ $parent->level }}] {{ $parent->nama }}
-                            </option>
+                        <option value="">-- Pilih Kategori --</option>
+                        @foreach($kategoriList as $k)
+                            <option value="{{ $k }}" {{ old('kategori_jabatan', $jabatan->kategori_jabatan) == $k ? 'selected' : '' }}>{{ $k }}</option>
                         @endforeach
                     </select>
-                    <p class="text-xs text-blue-600 mt-1.5 font-medium" id="parentHint">Pilih atasan langsung agar pengaduan bisa otomatis dieskalasi (naik tingkat).</p>
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Keterangan</label>
-                    <textarea name="keterangan" rows="2"
-                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        placeholder="Keterangan tambahan tentang jabatan ini">{{ old('keterangan', $jabatan->keterangan) }}</textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Status</label>
@@ -96,32 +75,4 @@
         </form>
     </div>
 </div>
-
-<script>
-function onLevelChange(level) {
-    const parentWrapper = document.getElementById('parentWrapper');
-    const parentHint    = document.getElementById('parentHint');
-    const parentSelect  = parentWrapper.querySelector('select');
-    const options       = parentSelect.querySelectorAll('option[data-level]');
-
-    if (level === '1') {
-        parentWrapper.classList.add('opacity-50', 'pointer-events-none');
-        parentSelect.value = '';
-        parentHint.textContent = 'Jabatan Level 1 (Direktur) adalah level tertinggi dan tidak memiliki atasan.';
-    } else {
-        parentWrapper.classList.remove('opacity-50', 'pointer-events-none');
-        parentHint.textContent = 'Pilih atasan langsung agar pengaduan bisa otomatis dieskalasi (naik tingkat).';
-    }
-
-    options.forEach(opt => {
-        const parentLevel = parseInt(opt.getAttribute('data-level'));
-        if (!level) opt.hidden = true;
-        else if (parentLevel === level - 1) opt.hidden = false;
-        else opt.hidden = true;
-    });
-}
-
-const initLevel = document.getElementById('levelSelect').value;
-if (initLevel) onLevelChange(initLevel);
-</script>
 @endsection

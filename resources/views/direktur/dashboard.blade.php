@@ -3,77 +3,120 @@
 @section('title', 'Dashboard Monitoring - Halo MANAP')
 
 @section('admin_content')
-<div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800">Dashboard Monitoring</h1>
-        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <span class="text-blue-600">Direktur</span>
-            <span class="text-gray-400">/</span>
-            <span>Dashboard</span>
-        </div>
+<div class="mb-6">
+    <div class="rounded-2xl bg-gradient-to-r from-blue-700 to-blue-900 px-8 py-6 text-white shadow-lg">
+        <p class="text-blue-200 text-sm font-medium mb-1">Selamat Datang,</p>
+        <h1 class="text-2xl font-bold">{{ $user->nama }}</h1>
+        <p class="text-blue-200 text-sm mt-1">RSUD H. Abdul Manap Kota Jambi &mdash; Dashboard Monitoring</p>
     </div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
     <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 border-l-4 border-l-blue-500">
-        <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xl">
-                <i class="fa-solid fa-file-lines"></i>
-            </div>
-            <div>
-                <p class="text-sm text-gray-500 font-medium">Total Pengaduan</p>
-                <h3 class="text-2xl font-bold text-gray-800">--</h3>
-            </div>
-        </div>
+        <p class="text-xs text-gray-500 font-medium">Total Pengaduan</p>
+        <p class="text-2xl font-bold text-gray-800">{{ $totalTickets }}</p>
     </div>
     <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 border-l-4 border-l-yellow-400">
-        <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-yellow-50 text-yellow-500 flex items-center justify-center text-xl">
-                <i class="fa-solid fa-spinner"></i>
-            </div>
-            <div>
-                <p class="text-sm text-gray-500 font-medium">Dalam Proses</p>
-                <h3 class="text-2xl font-bold text-gray-800">--</h3>
-            </div>
-        </div>
+        <p class="text-xs text-gray-500 font-medium">Dalam Proses</p>
+        <p class="text-2xl font-bold text-gray-800">{{ $diproses }}</p>
     </div>
     <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 border-l-4 border-l-green-500">
-        <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-green-50 text-green-500 flex items-center justify-center text-xl">
-                <i class="fa-solid fa-check"></i>
-            </div>
-            <div>
-                <p class="text-sm text-gray-500 font-medium">Selesai</p>
-                <h3 class="text-2xl font-bold text-gray-800">--</h3>
-            </div>
-        </div>
+        <p class="text-xs text-gray-500 font-medium">Selesai</p>
+        <p class="text-2xl font-bold text-gray-800">{{ $selesai }}</p>
     </div>
     <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 border-l-4 border-l-red-500">
-        <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-xl">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <div>
-                <p class="text-sm text-gray-500 font-medium">SLA Terlambat</p>
-                <h3 class="text-2xl font-bold text-gray-800">--</h3>
-            </div>
-        </div>
+        <p class="text-xs text-gray-500 font-medium">SLA Terlambat</p>
+        <p class="text-2xl font-bold {{ $slaBreach > 0 ? 'text-red-600' : 'text-gray-800' }}">{{ $slaBreach }}</p>
     </div>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 class="font-bold text-gray-800 mb-4">Grafik Pengaduan</h3>
-        <div class="text-center py-12 text-gray-400">
-            <i class="fa-solid fa-chart-line text-5xl mb-4"></i>
-            <p>Grafik akan ditampilkan di sini</p>
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+    <div class="xl:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <h2 class="font-semibold text-gray-800 flex items-center gap-2"><i class="fa-solid fa-diagram-project text-blue-500"></i> Workflow Aktif</h2>
+            <span class="text-xs text-gray-400">{{ $activeWorkflows->count() }} tiket</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-600">
+                <thead class="bg-gray-50 text-xs uppercase text-gray-500 font-semibold border-b">
+                    <tr>
+                        <th class="px-4 py-3">No. Pengaduan</th>
+                        <th class="px-4 py-3">Unit</th>
+                        <th class="px-4 py-3">Penanggung Jawab</th>
+                        <th class="px-4 py-3 text-center">Status</th>
+                        <th class="px-4 py-3 text-center">Tenggat</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @forelse($activeWorkflows as $wf)
+                    @php $badge = $wf->status_badge; @endphp
+                    <tr class="hover:bg-gray-50/50 transition-colors">
+                        <td class="px-4 py-3">
+                            <a href="{{ route('admin.monitoring.ticket.show', $wf->ticket_id) }}" class="font-mono text-blue-600 hover:underline text-xs">
+                                {{ $wf->ticket?->ticket_number ?? '-' }}
+                            </a>
+                            <div class="text-xs text-gray-400 mt-0.5 truncate max-w-[140px]">{{ $wf->ticket?->title ?? '-' }}</div>
+                        </td>
+                        <td class="px-4 py-3 text-xs">{{ $wf->toUnit?->nama ?? '-' }}</td>
+                        <td class="px-4 py-3">
+                            <div class="text-xs font-medium text-gray-900">{{ $wf->toUser?->nama ?? '-' }}</div>
+                            <div class="text-[10px] text-gray-400">{{ $wf->toJabatan?->nama ?? '' }}</div>
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold {{ $badge['class'] }}">{{ $badge['label'] }}</span>
+                        </td>
+                        <td class="px-4 py-3 text-center text-xs">
+                            @if($wf->due_at)
+                                <span class="{{ $wf->due_at->isPast() ? 'text-red-600 font-semibold' : 'text-gray-600' }}">{{ $wf->due_at->diffForHumans() }}</span>
+                            @else
+                                <span class="text-gray-300">—</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="5" class="px-4 py-10 text-center text-gray-400 text-sm">Tidak ada workflow aktif.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 class="font-bold text-gray-800 mb-4">Statistik Unit</h3>
-        <div class="text-center py-12 text-gray-400">
-            <i class="fa-solid fa-chart-bar text-5xl mb-4"></i>
-            <p>Statistik akan ditampilkan di sini</p>
+
+    <div class="flex flex-col gap-4">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-100">
+                <h2 class="font-semibold text-gray-800 flex items-center gap-2 text-sm"><i class="fa-solid fa-trophy text-amber-500"></i> Unit Tercepat</h2>
+            </div>
+            <ul class="divide-y divide-gray-100">
+                @forelse($topUnits as $i => $u)
+                <li class="px-5 py-3 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-amber-50 text-amber-600 text-xs font-bold flex items-center justify-center">{{ $i + 1 }}</span>
+                        <span class="text-sm text-gray-800">{{ $u['unit'] }}</span>
+                    </div>
+                    <span class="text-xs text-gray-500">{{ $u['avg_hours'] }} jam</span>
+                </li>
+                @empty
+                <li class="px-5 py-6 text-center text-gray-400 text-sm">Belum ada data.</li>
+                @endforelse
+            </ul>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-100">
+                <h2 class="font-semibold text-gray-800 flex items-center gap-2 text-sm"><i class="fa-solid fa-circle-exclamation text-red-500"></i> Unit Terlambat</h2>
+            </div>
+            <ul class="divide-y divide-gray-100">
+                @forelse($bottomUnits as $i => $u)
+                <li class="px-5 py-3 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-red-50 text-red-600 text-xs font-bold flex items-center justify-center">{{ $i + 1 }}</span>
+                        <span class="text-sm text-gray-800">{{ $u['unit'] }}</span>
+                    </div>
+                    <span class="text-xs text-red-500">{{ $u['avg_hours'] }} jam</span>
+                </li>
+                @empty
+                <li class="px-5 py-6 text-center text-gray-400 text-sm">Belum ada data.</li>
+                @endforelse
+            </ul>
         </div>
     </div>
 </div>

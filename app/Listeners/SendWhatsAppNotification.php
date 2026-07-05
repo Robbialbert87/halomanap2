@@ -4,10 +4,11 @@ namespace App\Listeners;
 
 use App\Events\WorkflowChanged;
 use App\Models\NotificationLog;
-use App\Models\OrganizationHierarchy;
+use App\Models\Jabatan;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class SendWhatsAppNotification implements ShouldQueue
@@ -44,20 +45,13 @@ class SendWhatsAppNotification implements ShouldQueue
         }
     }
 
-    /**
-     * Cari semua user yang memiliki jabatan "endpoint" (is_workflow_end=true)
-     * di seluruh unit yang ada. Direktur adalah observer global.
-     */
     private function getDirekturs(?int $unitId): \Illuminate\Support\Collection
     {
-        // Cari semua jabatan yang di-mark sebagai workflow_end
-        $endHierarchies = OrganizationHierarchy::where('is_workflow_end', true)
+        $jabatanDirektur = Jabatan::where('kategori_jabatan', 'Direktur')
             ->where('status', 'active')
-            ->get();
+            ->pluck('id');
 
-        $jabatanIds = $endHierarchies->pluck('jabatan_id')->unique();
-
-        return User::whereIn('jabatan_id', $jabatanIds)
+        return User::whereIn('jabatan_id', $jabatanDirektur)
             ->where('status', 'active')
             ->get();
     }
@@ -133,7 +127,6 @@ class SendWhatsAppNotification implements ShouldQueue
         $nomor     = $ticket->ticket_number     ?? '-';
         $judul     = $ticket->title             ?? '-';
         $status    = $history->status;
-        $level     = $history->workflow_level;
         $url       = config('app.url') . '/admin/monitoring';
 
         return implode("\n", [
@@ -145,7 +138,6 @@ class SendWhatsAppNotification implements ShouldQueue
             "📊 *Status:* " . strtoupper(str_replace('_', ' ', $status)),
             "👤 *Penanggung Jawab:* {$toUser}",
             "🏷️ *Jabatan:* {$toJabatan}",
-            "🔢 *Workflow Level:* {$level}",
             "",
             "Silakan buka Dashboard Monitoring untuk detail.",
             "🔗 {$url}",
@@ -164,32 +156,26 @@ class SendWhatsAppNotification implements ShouldQueue
         $error  = null;
 
         try {
-            // ─── Implementasi Gateway WhatsApp ──────────────────────────────
-            // Contoh dengan Fonnte (ganti sesuai provider):
-            //
-            // $response = Http::withToken(config('services.fonnte.token'))
-            //     ->post('https://api.fonnte.com/send', [
-            //         'target'  => $recipient->phone_number,
-            //         'message' => $message,
-            //     ]);
-            //
-            // if ($response->successful()) {
-            //     $status = 'sent';
-            // } else {
-            //     $error = $response->body();
-            // }
-            //
-            // ─── Untuk saat ini, log saja ke Laravel Log ─────────────────────
-            Log::channel('daily')->info('[WhatsApp Notification]', [
-                'to'      => $recipient->phone_number,
-                'jenis'   => $jenis,
+            $response = Http::timeout(15)->post('http://localhost:3000/send', [
+                'number'  => $recipient->phone_number,
                 'message' => $message,
             ]);
-            $status = 'sent'; // Set to sent since we're just logging for now
+
+            if ($response->successful()) {
+                $status = 'sent';
+            } else {
+                $error = $response->body();
+                Log::channel('daily')->warning('[WhatsApp API] Gagal', [
+                    'to'    => $recipient->phone_number,
+                    'error' => $error,
+                ]);
+            }
 
         } catch (\Throwable $e) {
             $error = $e->getMessage();
-            Log::error('[WhatsApp Error] ' . $e->getMessage());
+            Log::channel('daily')->error('[WhatsApp API] ' . $e->getMessage(), [
+                'to' => $recipient->phone_number,
+            ]);
         }
 
         NotificationLog::create([

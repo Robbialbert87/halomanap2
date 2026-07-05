@@ -44,18 +44,24 @@
                 <i class="fa-solid fa-clipboard-list w-5 text-center"></i> Pengaduan
             </a>
 
+            @can('manage-units')
             <div class="pt-3 pb-1 px-3">
                 <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Master Data</p>
             </div>
             <a href="{{ route('admin.units.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors text-sm">
                 <i class="fa-solid fa-building w-5 text-center"></i> Unit
             </a>
+            @endcan
+            @can('manage-rooms')
             <a href="{{ route('admin.rooms.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors text-sm">
                 <i class="fa-solid fa-door-open w-5 text-center"></i> Ruangan
             </a>
+            @endcan
+            @can('manage-categories')
             <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors text-sm">
                 <i class="fa-solid fa-tags w-5 text-center"></i> Kategori
             </a>
+            @endcan
 
             @elseif($mobileRoleGroup === 'kepala_unit')
             <a href="{{ route('kepala-unit.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors text-sm">
@@ -123,13 +129,17 @@
             </a>
             @endif
 
+            @can('manage-whatsapp')
             <a href="{{ route('admin.whatsapp.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors text-sm">
                 <i class="fa-brands fa-whatsapp w-5 text-center"></i> WhatsApp Gateway
             </a>
+            @endcan
 
+            @can('manage-settings')
             <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors text-sm">
                 <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
             </a>
+            @endcan
         </nav>
 
         <!-- Logout -->
@@ -196,10 +206,12 @@
                 </a>
                 <span class="text-[9px] font-medium text-gray-400 mt-7 text-center">Tiket</span>
             </div>
+            @can('manage-units')
             <a href="{{ route('admin.units.index') }}" class="flex flex-col items-center gap-0.5 w-14 {{ request()->is('admin/units*') || request()->is('admin/rooms*') || request()->is('admin/categories*') ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-500 transition-colors">
                 <i class="fa-solid fa-database text-xl"></i>
                 <span class="text-[9px] font-medium">Master</span>
             </a>
+            @endcan
             <button onclick="toggleMobileMenu()" class="flex flex-col items-center gap-0.5 w-14 text-gray-400 hover:text-blue-500 transition-colors">
                 <i class="fa-solid fa-bars text-xl"></i>
                 <span class="text-[9px] font-medium">Menu</span>

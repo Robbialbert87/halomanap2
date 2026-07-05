@@ -317,108 +317,55 @@
         </div>
         @endif
 
-        @if($ticket->workflows->isNotEmpty())
-        {{-- Riwayat Workflow --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
-                <h2 class="font-bold text-gray-800 flex items-center gap-2">
-                    <i class="fa-solid fa-code-branch text-blue-600"></i> Riwayat Workflow
-                </h2>
-            </div>
-            <div class="p-6">
-                <div class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
-                    @foreach($ticket->workflows as $wfHist)
-                        @php
-                            $c = $wfHist->status_badge['class'];
-                            // Simple text coloring based on badge class string matching
-                            $textColor = 'text-gray-600';
-                            if (str_contains($c, 'blue')) $textColor = 'text-blue-600';
-                            if (str_contains($c, 'yellow')) $textColor = 'text-yellow-600';
-                            if (str_contains($c, 'green')) $textColor = 'text-green-600';
-                            if (str_contains($c, 'red')) $textColor = 'text-red-600';
-                            if (str_contains($c, 'purple')) $textColor = 'text-purple-600';
-                        @endphp
-                        <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                            <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-gray-50 text-gray-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                                <i class="fa-solid fa-arrow-right-arrow-left text-sm"></i>
-                            </div>
-                            <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white border border-gray-100 shadow-sm p-4 rounded-xl">
-                                <div class="flex items-center justify-between mb-1">
-                                    <h3 class="font-bold {{ $textColor }} text-sm capitalize">
-                                        {{ str_replace('_', ' ', $wfHist->action) }}
-                                    </h3>
-                                    <time class="text-xs text-gray-400 font-medium">{{ $wfHist->created_at->format('d M, H:i') }}</time>
-                                </div>
-                                <div class="text-xs text-gray-600 mt-2 space-y-1">
-                                    <p>Dari: <span class="font-semibold text-gray-800">{{ $wfHist->fromUser?->nama ?? 'Sistem/Admin' }}</span></p>
-                                    <p>Ke: <span class="font-semibold text-gray-800">{{ $wfHist->toUser?->nama ?? 'Sistem/Admin' }}</span> <span class="text-gray-400">({{ $wfHist->toJabatan?->nama ?? '-' }})</span></p>
-                                </div>
-                                @if($wfHist->komentar)
-                                    <div class="mt-3 text-xs text-gray-700 bg-gray-50 p-2.5 rounded-lg border border-gray-100">
-                                        <p class="font-semibold text-gray-800 mb-0.5">Catatan:</p>
-                                        <p class="whitespace-pre-line leading-relaxed">{{ $wfHist->komentar }}</p>
-                                    </div>
+        {{-- Timeline Workflow --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 class="font-semibold text-gray-800 mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left text-indigo-500"></i> Timeline Workflow
+            </h2>
+            <ol class="relative border-l border-gray-200 ml-4">
+                @php $sorted = $ticket->workflows->sortBy('created_at'); @endphp
+                @forelse($sorted as $step)
+                @php
+                    $icon = match($step->action) {
+                        'disposisi'       => ['i' => 'fa-paper-plane',      'c' => 'bg-blue-500'],
+                        'eskalasi'        => ['i' => 'fa-arrow-up-right-dots','c' => 'bg-red-500'],
+                        'tangani_sendiri' => ['i' => 'fa-user-check',        'c' => 'bg-indigo-500'],
+                        'selesai'          => ['i' => 'fa-circle-check',      'c' => 'bg-green-500'],
+                        'verifikasi'      => ['i' => 'fa-stamp',              'c' => 'bg-purple-500'],
+                        'tutup'           => ['i' => 'fa-lock',               'c' => 'bg-gray-500'],
+                        default           => ['i' => 'fa-circle',             'c' => 'bg-gray-400'],
+                    };
+                    $badge = $step->status_badge;
+                @endphp
+                <li class="mb-8 ml-6">
+                    <span class="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full {{ $icon['c'] }} ring-4 ring-white shadow-sm">
+                        <i class="fa-solid {{ $icon['i'] }} text-white text-[10px]"></i>
+                    </span>
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900">{{ $step->action_label }}</p>
+                            <p class="text-xs text-gray-500 mt-0.5">
+                                {{ $step->fromUser?->nama ?? 'Sistem' }}
+                                @if($step->toUser)
+                                    <i class="fa-solid fa-arrow-right text-[9px] mx-1 text-gray-400"></i>
+                                    <span class="font-medium text-gray-700">{{ $step->toUser->nama }}</span>
+                                    <span class="text-gray-400">({{ $step->toJabatan?->nama ?? '-' }})</span>
                                 @endif
-                                <div class="mt-2 text-right">
-                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold {{ $c }}">{{ $wfHist->status_badge['label'] }}</span>
-                                </div>
-                            </div>
+                            </p>
+                            @if($step->komentar)
+                            <p class="mt-2 text-xs text-gray-600 italic bg-gray-50 rounded-lg px-3 py-2 border border-gray-100">"{{ $step->komentar }}"</p>
+                            @endif
                         </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-        @endif
-
-        {{-- Riwayat Status --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
-                <h2 class="font-bold text-gray-800 flex items-center gap-2">
-                    <i class="fa-solid fa-timeline text-blue-600"></i> Riwayat Status
-                </h2>
-            </div>
-            <div class="p-6">
-                @if($ticket->histories->isEmpty())
-                    <p class="text-sm text-gray-500 text-center py-4 italic">Belum ada riwayat perubahan status.</p>
-                @else
-                    <div class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
-                        @foreach($ticket->histories as $history)
-                            @php
-                                $histMap = [
-                                    'NEW'           => ['label' => 'Baru',         'color' => 'yellow', 'icon' => 'fa-star'],
-                                    'TERVERIFIKASI' => ['label' => 'Terverifikasi', 'color' => 'cyan',   'icon' => 'fa-check-double'],
-                                    'IN_PROGRESS'   => ['label' => 'Diproses',     'color' => 'blue',   'icon' => 'fa-spinner'],
-                                    'DONE'          => ['label' => 'Selesai',      'color' => 'green',  'icon' => 'fa-check'],
-                                    'REJECTED'      => ['label' => 'Ditolak',      'color' => 'red',    'icon' => 'fa-xmark'],
-                                ];
-                                $hStyle = $histMap[$history->new_status] ?? ['label' => $history->new_status, 'color' => 'gray', 'icon' => 'fa-circle'];
-                                $c = $hStyle['color'];
-                            @endphp
-                            <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                                <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-{{ $c }}-100 text-{{ $c }}-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                                    <i class="fa-solid {{ $hStyle['icon'] }} text-sm"></i>
-                                </div>
-                                <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white border border-gray-100 shadow-sm p-4 rounded-xl">
-                                    <div class="flex items-center justify-between mb-1">
-                                        <h3 class="font-bold text-{{ $c }}-600 text-sm flex items-center gap-1.5">
-                                            <div class="w-2 h-2 rounded-full bg-{{ $c }}-500"></div>
-                                            {{ $hStyle['label'] }}
-                                        </h3>
-                                        <time class="text-xs text-gray-400 font-medium">{{ $history->created_at->format('d M, H:i') }}</time>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mb-2">Oleh: <span class="font-semibold text-gray-700">{{ $history->user->name ?? 'Admin Pengaduan' }}</span></p>
-                                    @if($history->notes)
-                                        <div class="mt-2 text-xs text-gray-600 bg-gray-50 p-2.5 rounded-lg border border-gray-100">
-                                            <p class="font-medium text-gray-700 mb-0.5">Catatan:</p>
-                                            <p class="whitespace-pre-line leading-relaxed">{{ $history->notes }}</p>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        @endforeach
+                        <div class="text-right shrink-0">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold {{ $badge['class'] }}">{{ $badge['label'] }}</span>
+                            <p class="text-[10px] text-gray-400 mt-1">{{ $step->created_at->format('d/m H:i') }}</p>
+                        </div>
                     </div>
-                @endif
-            </div>
+                </li>
+                @empty
+                <li class="ml-6 text-gray-400 text-sm py-4">Belum ada riwayat workflow.</li>
+                @endforelse
+            </ol>
         </div>
 
 

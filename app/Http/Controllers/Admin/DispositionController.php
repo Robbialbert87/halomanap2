@@ -3,13 +3,36 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Ticket;
+use App\Models\Unit;
+use App\Models\WorkflowHistory;
 use App\Models\Disposition;
 use App\Models\DispositionActivity;
+use Illuminate\Http\Request;
 
 class DispositionController extends Controller
 {
+    public function index(Request $request)
+    {
+        $query = WorkflowHistory::with([
+            'ticket', 'toUser.jabatan', 'toUnit', 'fromUser'
+        ])->orderBy('created_at', 'desc');
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('unit_id')) {
+            $query->where('to_unit_id', $request->unit_id);
+        }
+
+        $workflows  = $query->paginate(15)->withQueryString();
+        $units      = Unit::orderBy('nama')->get();
+        $statuses   = ['menunggu_respon', 'dalam_penanganan', 'selesai', 'ditutup', 'menunggu_verifikasi'];
+
+        return view('admin.dispositions.index', compact('workflows', 'units', 'statuses'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([

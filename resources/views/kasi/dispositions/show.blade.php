@@ -83,50 +83,110 @@
     </div>
 
     <div class="xl:col-span-1">
-        {{-- ── Form Aksi ────────────────────────────────────────────────── --}}
+        {{-- Tindakan Anda --}}
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
             <h2 class="font-semibold text-gray-800 mb-4 flex items-center gap-2 border-b border-gray-100 pb-3">
                 <i class="fa-solid fa-bolt text-amber-500"></i> Tindakan Anda
             </h2>
-            
+
+            @if(in_array($workflow->status, ['menunggu_respon', 'dalam_penanganan']))
             <p class="text-sm text-gray-600 mb-4">Pilih tindakan untuk merespon pengaduan ini.</p>
-
             <div class="space-y-3">
-                {{-- Selesai Ditangani (langsung, tidak perlu tangani sendiri dulu) --}}
-                @if(in_array($workflow->status, ['menunggu_respon', 'dalam_penanganan']))
-                <div class="bg-green-50 border border-green-200 rounded-xl p-4">
-                    <p class="text-xs font-semibold text-green-700 mb-2 flex items-center gap-1.5">
-                        <i class="fa-solid fa-circle-check"></i> Selesaikan Pengaduan
-                    </p>
-                    <form action="{{ route('kasi.dispositions.selesai', $workflow->id) }}" method="POST" onsubmit="var btn=this.querySelector('button[type=submit]'); if(confirm('Tandai pengaduan selesai ditangani?')){btn.disabled=true; return true;} return false;">
-                        @csrf
-                        <div class="mb-3">
-                            <textarea name="komentar" rows="3" required class="w-full px-3 py-2 text-sm border border-green-200 bg-white rounded-lg focus:ring-2 focus:ring-green-400 outline-none" placeholder="Tuliskan solusi / hasil penanganan... *Wajib"></textarea>
-                        </div>
-                        <button type="submit" class="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                            <i class="fa-solid fa-circle-check"></i> Selesai Ditangani
-                        </button>
-                    </form>
-                </div>
-                @endif
+                <button type="button" onclick="openSelesaiModal()" class="w-full flex items-center gap-3 bg-green-50 hover:bg-green-100 border border-green-200 rounded-xl p-4 transition-colors text-left group">
+                    <div class="w-10 h-10 rounded-lg bg-green-100 group-hover:bg-green-200 flex items-center justify-center text-green-600 shrink-0 transition-colors">
+                        <i class="fa-solid fa-circle-check text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-green-800 text-sm">Selesaikan Pengaduan</p>
+                        <p class="text-xs text-green-600 mt-0.5">Tandai selesai & kirim ke verifikasi</p>
+                    </div>
+                </button>
+                <button type="button" onclick="openEskalasiModal()" class="w-full flex items-center gap-3 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl p-4 transition-colors text-left group">
+                    <div class="w-10 h-10 rounded-lg bg-red-100 group-hover:bg-red-200 flex items-center justify-center text-red-600 shrink-0 transition-colors">
+                        <i class="fa-solid fa-arrow-up-right-dots text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-red-800 text-sm">Eskalasi ke Atasan</p>
+                        <p class="text-xs text-red-600 mt-0.5">Teruskan ke level jabatan di atas</p>
+                    </div>
+                </button>
+            </div>
+            @else
+            <div class="bg-gray-50 rounded-xl p-5 text-center">
+                <i class="fa-solid fa-lock text-gray-300 text-2xl mb-2"></i>
+                <p class="text-sm text-gray-500">Tidak ada tindakan tersedia.</p>
+                <p class="text-xs text-gray-400 mt-1">Pengaduan sudah {{ $workflow->status_badge['label'] }}.</p>
+            </div>
+            @endif
+        </div>
+    </div>
+</div>
 
-                {{-- Eskalasi ke Atasan --}}
-                <div class="bg-red-50 border border-red-100 rounded-xl p-4">
-                    <p class="text-xs font-semibold text-red-600 mb-2 flex items-center gap-1.5">
-                        <i class="fa-solid fa-arrow-up-right-dots"></i> Tidak Dapat Menangani? Eskalasi
-                    </p>
-                    <form action="{{ route('kasi.dispositions.eskalasi', $workflow->id) }}" method="POST" onsubmit="var btn=this.querySelector('button[type=submit]'); if(confirm('Eskalasi pengaduan ke jabatan atasan?')){btn.disabled=true; return true;} return false;">
-                        @csrf
-                        <div class="mb-3">
-                            <textarea name="komentar" rows="2" class="w-full px-3 py-2 text-sm border border-red-200 bg-white rounded-lg focus:ring-2 focus:ring-red-400 outline-none" placeholder="Alasan eskalasi..."></textarea>
-                        </div>
-                        <button type="submit" class="w-full flex items-center justify-center gap-2 bg-white text-red-700 border border-red-300 hover:bg-red-100 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors">
-                            <i class="fa-solid fa-arrow-up-right-dots"></i> Eskalasi ke Atasan
-                        </button>
-                    </form>
+{{-- Modal Selesai --}}
+<div id="selesai-modal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-center justify-center p-4" onclick="if(event.target===this) closeSelesaiModal()">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <h3 class="font-semibold text-gray-800 flex items-center gap-2">
+                <i class="fa-solid fa-circle-check text-green-500"></i> Selesaikan Pengaduan
+            </h3>
+            <button onclick="closeSelesaiModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        <form id="form-selesai" action="{{ route('kasi.dispositions.selesai', $workflow->id) }}" method="POST">
+            @csrf
+            <div class="px-6 py-5 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Catatan / Solusi <span class="text-red-500">*</span></label>
+                    <textarea name="komentar" rows="4" required class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-400 outline-none" placeholder="Tuliskan solusi / hasil penanganan... (wajib diisi)"></textarea>
                 </div>
             </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-2xl">
+                <button type="button" onclick="closeSelesaiModal()" class="bg-white hover:bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-gray-200">Batal</button>
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check"></i> Selesaikan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- Modal Eskalasi --}}
+<div id="eskalasi-modal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-center justify-center p-4" onclick="if(event.target===this) closeEskalasiModal()">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <h3 class="font-semibold text-gray-800 flex items-center gap-2">
+                <i class="fa-solid fa-arrow-up-right-dots text-red-500"></i> Eskalasi Pengaduan
+            </h3>
+            <button onclick="closeEskalasiModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
         </div>
+        <form id="form-eskalasi" action="{{ route('kasi.dispositions.eskalasi', $workflow->id) }}" method="POST">
+            @csrf
+            <div class="px-6 py-5 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Tujuan <span class="text-red-500">*</span></label>
+                    <select name="target_user_id" required class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition bg-white">
+                        <option value="">-- Pilih Tujuan --</option>
+                        @foreach($eskalasiUsers as $eu)
+                            <option value="{{ $eu->id }}">{{ $eu->jabatan?->nama }} ({{ $eu->nama }})</option>
+                        @endforeach
+                    </select>
+                    <p class="text-xs text-gray-400 mt-1.5">User yang akan menerima eskalasi.</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Catatan / Alasan</label>
+                    <textarea name="komentar" rows="3" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-400 outline-none" placeholder="Alasan eskalasi..."></textarea>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-2xl">
+                <button type="button" onclick="closeEskalasiModal()" class="bg-white hover:bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-gray-200">Batal</button>
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-up-right-dots"></i> Eskalasi
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -144,22 +204,48 @@
 </div>
 
 <script>
-function openPreview(url) {
-    const modal = document.getElementById('preview-modal');
-    const img = document.getElementById('preview-image');
-    img.src = url;
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
+function disableBtn(formId) {
+    const f = document.getElementById(formId);
+    if (!f) return;
+    f.addEventListener('submit', function() {
+        const btn = this.querySelector('button[type=submit]');
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...'; }
+    });
+}
+disableBtn('form-selesai');
+disableBtn('form-eskalasi');
+
+function openSelesaiModal() {
+    document.getElementById('selesai-modal').classList.remove('hidden');
+    document.getElementById('selesai-modal').classList.add('flex');
     document.body.style.overflow = 'hidden';
 }
-
-function closePreview() {
-    const modal = document.getElementById('preview-modal');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
+function closeSelesaiModal() {
+    document.getElementById('selesai-modal').classList.add('hidden');
+    document.getElementById('selesai-modal').classList.remove('flex');
     document.body.style.overflow = '';
 }
-
+function openEskalasiModal() {
+    document.getElementById('eskalasi-modal').classList.remove('hidden');
+    document.getElementById('eskalasi-modal').classList.add('flex');
+    document.body.style.overflow = 'hidden';
+}
+function closeEskalasiModal() {
+    document.getElementById('eskalasi-modal').classList.add('hidden');
+    document.getElementById('eskalasi-modal').classList.remove('flex');
+    document.body.style.overflow = '';
+}
+function openPreview(url) {
+    document.getElementById('preview-modal').classList.remove('hidden');
+    document.getElementById('preview-modal').classList.add('flex');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('preview-image').src = url;
+}
+function closePreview() {
+    document.getElementById('preview-modal').classList.add('hidden');
+    document.getElementById('preview-modal').classList.remove('flex');
+    document.body.style.overflow = '';
+}
 function downloadPreview() {
     const img = document.getElementById('preview-image');
     const link = document.createElement('a');
@@ -167,9 +253,8 @@ function downloadPreview() {
     link.href = img.src;
     link.click();
 }
-
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closePreview();
+    if (e.key === 'Escape') { closePreview(); closeSelesaiModal(); closeEskalasiModal(); }
 });
 </script>
 

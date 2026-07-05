@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
         Route::get('tickets/{ticket}/attachments/{attachment}/download', [App\Http\Controllers\Admin\TicketAttachmentController::class, 'download'])->name('tickets.attachments.download');
 
         // Dispositions
+        Route::get('dispositions', [App\Http\Controllers\Admin\DispositionController::class, 'index'])->name('dispositions.index');
         Route::post('dispositions', [App\Http\Controllers\Admin\DispositionController::class, 'store'])->name('dispositions.store');
 
         Route::resource('units',      App\Http\Controllers\Admin\UnitController::class);
@@ -67,9 +68,6 @@ Route::middleware('auth')->group(function () {
         Route::resource('users',    App\Http\Controllers\Admin\UserController::class);
         Route::resource('roles',    App\Http\Controllers\Admin\RoleController::class);
         Route::resource('jabatans', App\Http\Controllers\Admin\JabatanController::class);
-
-        // Organization Hierarchies (Deprecated)
-        // Route::resource('organization-hierarchies', App\Http\Controllers\Admin\OrganizationHierarchyController::class);
 
         // WhatsApp Gateway
         Route::get('whatsapp', [App\Http\Controllers\Admin\WhatsappSettingsController::class, 'index'])->name('whatsapp.index');
@@ -101,6 +99,8 @@ Route::middleware('auth')->group(function () {
         Route::post('dispositions/{disposition}/accept', [App\Http\Controllers\HeadUnit\DispositionController::class, 'accept'])->name('dispositions.accept');
         Route::post('dispositions/{disposition}/handle-self', [App\Http\Controllers\HeadUnit\DispositionController::class, 'handleSelf'])->name('dispositions.handle-self');
         Route::post('dispositions/{disposition}/assign', [App\Http\Controllers\HeadUnit\DispositionController::class, 'assign'])->name('dispositions.assign');
+        Route::get('/dalam-penanganan',         [App\Http\Controllers\HeadUnit\DalamPenangananController::class, 'index'])->name('dalam-penanganan');
+        Route::get('/riwayat',                  [App\Http\Controllers\HeadUnit\RiwayatController::class, 'index'])->name('riwayat');
     });
 
     // ── KEPALA UNIT ───────────────────────────────────────────────────────────
@@ -136,6 +136,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/dispositions/{disposition}', [App\Http\Controllers\Kabid\DispositionController::class, 'show'])->name('dispositions.show');
         Route::post('dispositions/{history}/selesai',  [App\Http\Controllers\Kabid\DispositionController::class, 'selesai'])->name('dispositions.selesai');
         Route::post('dispositions/{history}/eskalasi', [App\Http\Controllers\Kabid\DispositionController::class, 'eskalasi'])->name('dispositions.eskalasi');
+        Route::get('/dalam-penanganan',         [App\Http\Controllers\Kabid\DalamPenangananController::class, 'index'])->name('dalam-penanganan');
+        Route::get('/riwayat',                  [App\Http\Controllers\Kabid\RiwayatController::class, 'index'])->name('riwayat');
         Route::get('/monitoring',               [App\Http\Controllers\Kabid\MonitoringController::class, 'index'])->name('monitoring');
         Route::get('/laporan',                  [App\Http\Controllers\Kabid\LaporanController::class, 'index'])->name('laporan');
         Route::get('/profil',                   [App\Http\Controllers\Kabid\ProfilController::class, 'index'])->name('profil');

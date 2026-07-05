@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
@@ -16,7 +17,8 @@ class RoleController extends Controller
 
     public function create()
     {
-        return view('admin.roles.create');
+        $permissions = Permission::orderBy('name')->get();
+        return view('admin.roles.create', compact('permissions'));
     }
 
     public function store(Request $request)
@@ -26,9 +28,11 @@ class RoleController extends Controller
             'name'        => 'required|string|max:125|unique:roles,name',
             'deskripsi'   => 'nullable|string',
             'status'      => 'nullable|in:active,inactive',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'exists:permissions,id',
         ]);
 
-        Role::create([
+        $role = Role::create([
             'kode'       => strtoupper(str_replace(' ', '_', $validated['kode'])),
             'name'       => $validated['name'],
             'deskripsi'  => $validated['deskripsi'] ?? null,
@@ -36,19 +40,25 @@ class RoleController extends Controller
             'guard_name' => 'web'
         ]);
 
+        if ($request->filled('permissions')) {
+            $role->syncPermissions(Permission::whereIn('id', $request->permissions)->get());
+        }
+
         return redirect()->route('admin.roles.index')
             ->with('success', 'Role berhasil ditambahkan.');
     }
 
     public function show(Role $role)
     {
-        $role->load('users');
+        $role->load('users', 'permissions');
         return view('admin.roles.show', compact('role'));
     }
 
     public function edit(Role $role)
     {
-        return view('admin.roles.edit', compact('role'));
+        $permissions = Permission::orderBy('name')->get();
+        $rolePermissions = $role->permissions->pluck('id')->toArray();
+        return view('admin.roles.edit', compact('role', 'permissions', 'rolePermissions'));
     }
 
     public function update(Request $request, Role $role)
@@ -58,6 +68,8 @@ class RoleController extends Controller
             'name'        => 'required|string|max:125|unique:roles,name,' . $role->id,
             'deskripsi'   => 'nullable|string',
             'status'      => 'nullable|in:active,inactive',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'exists:permissions,id',
         ]);
 
         $role->update([
@@ -66,6 +78,12 @@ class RoleController extends Controller
             'deskripsi' => $validated['deskripsi'] ?? null,
             'status'    => $validated['status'] ?? 'active',
         ]);
+
+        if ($request->has('permissions')) {
+            $role->syncPermissions(Permission::whereIn('id', $request->permissions)->get());
+        } else {
+            $role->syncPermissions([]);
+        }
 
         return redirect()->route('admin.roles.index')
             ->with('success', 'Role berhasil diperbarui.');

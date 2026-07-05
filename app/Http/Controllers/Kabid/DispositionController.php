@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Kabid;
 
 use App\Http\Controllers\Controller;
 use App\Models\WorkflowHistory;
+use App\Models\User;
 use App\Services\WorkflowService;
 use Illuminate\Http\Request;
 
@@ -41,7 +42,18 @@ class DispositionController extends Controller
             abort(403, 'Anda tidak memiliki akses ke pengaduan ini.');
         }
 
-        return view('kabid.dispositions.show', compact('workflow', 'user'));
+        $eskalasiUsers = User::with('jabatan', 'unit')
+            ->whereIn('jabatan_id', function ($q) {
+                $q->select('id')->from('jabatans')
+                    ->whereIn('kategori_jabatan', ['Direktur'])
+                    ->where('status', 'active');
+            })
+            ->where('status', 'active')
+            ->where('id', '!=', $user->id)
+            ->orderBy('jabatan_id')
+            ->get();
+
+        return view('kabid.dispositions.show', compact('workflow', 'user', 'eskalasiUsers'));
     }
 
     public function selesai(Request $request, WorkflowHistory $history)
@@ -62,14 +74,17 @@ class DispositionController extends Controller
             return back()->with('error', 'Anda bukan pemegang aktif pengaduan ini.');
         }
 
-        $request->validate(['komentar' => 'nullable|string|max:1000']);
+        $request->validate([
+            'komentar'       => 'nullable|string|max:1000',
+            'target_user_id' => 'required|exists:users,id',
+        ]);
 
         try {
-            $this->workflowService->eskalasi($history, $request->komentar ?? '');
+            $this->workflowService->eskalasi($history, $request->target_user_id, $request->komentar ?? '');
         } catch (\RuntimeException $e) {
             return back()->with('error', $e->getMessage());
         }
 
-        return back()->with('success', 'Pengaduan berhasil dieskalasi ke jabatan atasan.');
+        return back()->with('success', 'Pengaduan berhasil dieskalasi.');
     }
 }

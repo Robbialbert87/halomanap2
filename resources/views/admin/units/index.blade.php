@@ -64,7 +64,6 @@
                 <th class="px-6 py-4">Kode</th>
                 <th class="px-6 py-4">Nama Unit</th>
                 <th class="px-6 py-4 text-center">Jenis</th>
-                <th class="px-6 py-4">Parent Unit</th>
                 <th class="px-6 py-4 text-center">Status</th>
                 <th class="px-6 py-4 w-28 text-center">Aksi</th>
             </tr>
@@ -76,24 +75,11 @@
                 <td class="px-6 py-4 font-mono text-xs text-blue-600">{{ $unit->kode }}</td>
                 <td class="px-6 py-4">
                     <div class="font-medium text-gray-900">{{ $unit->nama }}</div>
-                    @if($unit->keterangan)
-                        <div class="text-xs text-gray-400 mt-0.5">{{ Str::limit($unit->keterangan, 50) }}</div>
-                    @endif
                 </td>
                 <td class="px-6 py-4 text-center">
                     <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100">
                         {{ $unit->jenis }}
                     </span>
-                </td>
-                <td class="px-6 py-4 text-sm text-gray-500">
-                    @if($unit->parent)
-                        <span class="flex items-center gap-1">
-                            <i class="fa-solid fa-arrow-turn-down-right text-[10px] text-gray-400"></i>
-                            {{ $unit->parent->nama }}
-                        </span>
-                    @else
-                        <span class="text-gray-300 text-xs">—</span>
-                    @endif
                 </td>
                 <td class="px-6 py-4 text-center">
                     @if($unit->status === 'active')
@@ -125,7 +111,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="7" class="px-6 py-12 text-center">
+                <td colspan="6" class="px-6 py-12 text-center">
                     <div class="flex flex-col items-center gap-2 text-gray-400">
                         <i class="fa-regular fa-building text-3xl"></i>
                         <p>Belum ada data unit atau pencarian tidak ditemukan.</p>

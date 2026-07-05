@@ -56,7 +56,6 @@
                         <th class="px-4 py-3">No. Pengaduan</th>
                         <th class="px-4 py-3">Unit</th>
                         <th class="px-4 py-3">Penanggung Jawab</th>
-                        <th class="px-4 py-3 text-center">Lvl</th>
                         <th class="px-4 py-3 text-center">Status</th>
                         <th class="px-4 py-3 text-center">SLA</th>
                     </tr>
@@ -77,9 +76,6 @@
                             <div class="text-[10px] text-gray-400">{{ $wf->toJabatan?->nama ?? '-' }}</div>
                         </td>
                         <td class="px-4 py-3 text-center">
-                            <span class="font-bold text-gray-600">{{ $wf->workflow_level }}</span>
-                        </td>
-                        <td class="px-4 py-3 text-center">
                             <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold {{ $badge['class'] }}">{{ $badge['label'] }}</span>
                         </td>
                         <td class="px-4 py-3 text-center text-xs">
@@ -94,7 +90,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="6" class="px-4 py-10 text-center text-gray-400 text-sm">Tidak ada workflow aktif saat ini.</td></tr>
+                    <tr><td colspan="5" class="px-4 py-10 text-center text-gray-400 text-sm">Tidak ada workflow aktif saat ini.</td></tr>
                     @endforelse
                 </tbody>
             </table>

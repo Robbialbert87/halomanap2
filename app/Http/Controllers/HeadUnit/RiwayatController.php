@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\KepalaUnit;
+namespace App\Http\Controllers\HeadUnit;
 
 use App\Http\Controllers\Controller;
 use App\Models\WorkflowHistory;
 use Illuminate\Http\Request;
 
-class DalamPenangananController extends Controller
+class RiwayatController extends Controller
 {
     public function index()
     {
         $user = auth()->user();
         $workflows = WorkflowHistory::with(['ticket.room.unit', 'ticket.category', 'fromUser', 'toJabatan'])
             ->where('to_user_id', $user->id)
-            ->where('status', 'dalam_penanganan')
+            ->whereIn('status', ['selesai', 'ditutup', 'eskalasi', 'menunggu_verifikasi'])
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
-        return view('kepala_unit.dalam_penanganan', compact('user', 'workflows'));
+        return view('head_unit.riwayat', compact('user', 'workflows'));
     }
 }

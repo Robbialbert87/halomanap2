@@ -88,11 +88,8 @@
                 @forelse($users as $user)
                 <tr class="hover:bg-gray-50/50 transition-colors">
                     <td class="px-6 py-4">
-                        <div class="font-medium text-gray-900">
-                            {{ $user->gelar_depan ? $user->gelar_depan . ' ' : '' }}{{ $user->nama }}{{ $user->gelar_belakang ? ', ' . $user->gelar_belakang : '' }}
-                        </div>
+                        <div class="font-medium text-gray-900">{{ $user->nama }}</div>
                         <div class="text-xs font-mono text-blue-600 mt-0.5">{{ $user->nip }}</div>
-                        <div class="text-xs text-gray-400 mt-0.5">{{ $user->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</div>
                     </td>
                     <td class="px-6 py-4">
                         <div class="text-gray-900 flex items-center gap-1.5"><i class="fa-brands fa-whatsapp text-green-500"></i> {{ $user->phone_number ?? '-' }}</div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\HeadUnit;
 
 use App\Http\Controllers\Controller;
 use App\Models\WorkflowHistory;
+use App\Models\User;
 use App\Services\WorkflowService;
 use Illuminate\Http\Request;
 
@@ -17,7 +18,6 @@ class DispositionController extends Controller
     {
         $user = auth()->user();
 
-        // Cari workflow aktif yang ditugaskan ke user ini
         $activeWorkflows = WorkflowHistory::with(['ticket.room.unit', 'ticket.category', 'fromUser'])
             ->where('to_user_id', $user->id)
             ->whereNotIn('status', ['eskalasi', 'selesai', 'ditutup', 'menunggu_verifikasi'])
@@ -42,7 +42,18 @@ class DispositionController extends Controller
             abort(403, 'Anda tidak memiliki akses ke pengaduan ini.');
         }
 
-        return view('head_unit.dispositions.show', compact('workflow', 'user'));
+        $eskalasiUsers = User::with('jabatan', 'unit')
+            ->whereIn('jabatan_id', function ($q) {
+                $q->select('id')->from('jabatans')
+                    ->whereIn('kategori_jabatan', ['Kasi', 'Kasubbag'])
+                    ->where('status', 'active');
+            })
+            ->where('status', 'active')
+            ->where('id', '!=', $user->id)
+            ->orderBy('jabatan_id')
+            ->get();
+
+        return view('head_unit.dispositions.show', compact('workflow', 'user', 'eskalasiUsers'));
     }
 
     public function selesai(Request $request, WorkflowHistory $history)
@@ -63,14 +74,17 @@ class DispositionController extends Controller
             return back()->with('error', 'Anda bukan pemegang aktif pengaduan ini.');
         }
 
-        $request->validate(['komentar' => 'nullable|string|max:1000']);
+        $request->validate([
+            'komentar'       => 'nullable|string|max:1000',
+            'target_user_id' => 'required|exists:users,id',
+        ]);
 
         try {
-            $this->workflowService->eskalasi($history, $request->komentar ?? '');
+            $this->workflowService->eskalasi($history, $request->target_user_id, $request->komentar ?? '');
         } catch (\RuntimeException $e) {
             return back()->with('error', $e->getMessage());
         }
 
-        return back()->with('success', 'Pengaduan berhasil dieskalasi ke jabatan atasan.');
+        return back()->with('success', 'Pengaduan berhasil dieskalasi.');
     }
 }

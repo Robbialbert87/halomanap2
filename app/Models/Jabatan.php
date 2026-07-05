@@ -15,9 +15,7 @@ class Jabatan extends Model
         'uuid',
         'kode',
         'nama',
-        'level',
-        'parent_id',
-        'keterangan',
+        'kategori_jabatan',
         'status',
     ];
 
@@ -30,15 +28,5 @@ class Jabatan extends Model
                 $model->uuid = (string) Str::uuid();
             }
         });
-    }
-
-    public function parent()
-    {
-        return $this->belongsTo(Jabatan::class, 'parent_id');
-    }
-
-    public function children()
-    {
-        return $this->hasMany(Jabatan::class, 'parent_id');
     }
 }

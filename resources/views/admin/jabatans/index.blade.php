@@ -28,31 +28,6 @@
 </div>
 @endif
 
-{{-- Level Guide --}}
-<div class="grid grid-cols-4 gap-3 mb-6">
-    @php
-        $levels = [
-            1 => ['label' => 'Level 1', 'title' => 'Direktur', 'color' => 'bg-purple-50 border-purple-200 text-purple-700', 'icon' => 'fa-crown'],
-            2 => ['label' => 'Level 2', 'title' => 'Kabid / Kabag', 'color' => 'bg-blue-50 border-blue-200 text-blue-700', 'icon' => 'fa-user-tie'],
-            3 => ['label' => 'Level 3', 'title' => 'Kasi / Kasubbag', 'color' => 'bg-amber-50 border-amber-200 text-amber-700', 'icon' => 'fa-user-gear'],
-            4 => ['label' => 'Level 4', 'title' => 'Kepala Unit', 'color' => 'bg-green-50 border-green-200 text-green-700', 'icon' => 'fa-user'],
-        ];
-        $levelCounts = $jabatans->groupBy('level');
-    @endphp
-    @foreach($levels as $lv => $info)
-    <div class="border rounded-xl p-4 {{ $info['color'] }} flex items-center gap-3">
-        <div class="w-9 h-9 rounded-lg bg-white/60 flex items-center justify-center flex-shrink-0">
-            <i class="fa-solid {{ $info['icon'] }} text-sm"></i>
-        </div>
-        <div>
-            <div class="text-xs font-medium opacity-75">{{ $info['label'] }}</div>
-            <div class="text-sm font-bold">{{ $info['title'] }}</div>
-            <div class="text-xs opacity-60">{{ $levelCounts->get($lv, collect())->count() }} jabatan</div>
-        </div>
-    </div>
-    @endforeach
-</div>
-
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <table class="w-full text-left text-sm text-gray-600">
         <thead class="bg-gray-50 text-gray-800 font-semibold border-b border-gray-100 uppercase text-xs">
@@ -60,8 +35,7 @@
                 <th class="px-6 py-4 w-12 text-center">No</th>
                 <th class="px-6 py-4">Kode</th>
                 <th class="px-6 py-4">Nama Jabatan</th>
-                <th class="px-6 py-4 text-center">Level</th>
-                <th class="px-6 py-4">Parent</th>
+                <th class="px-6 py-4 text-center">Kategori</th>
                 <th class="px-6 py-4 text-center">Status</th>
                 <th class="px-6 py-4 w-28 text-center">Aksi</th>
             </tr>
@@ -69,17 +43,14 @@
         <tbody class="divide-y divide-gray-100">
             @forelse($jabatans as $jabatan)
             @php
-                $levelColors = [
-                    1 => 'bg-purple-100 text-purple-700',
-                    2 => 'bg-blue-100 text-blue-700',
-                    3 => 'bg-amber-100 text-amber-700',
-                    4 => 'bg-green-100 text-green-700',
-                ];
-                $levelLabels = [
-                    1 => 'Direktur',
-                    2 => 'Kabid/Kabag',
-                    3 => 'Kasi/Kasubbag',
-                    4 => 'Kepala Unit',
+                $kategoriColors = [
+                    'Direktur' => 'bg-purple-100 text-purple-700',
+                    'Kabid' => 'bg-blue-100 text-blue-700',
+                    'Kabag' => 'bg-blue-100 text-blue-700',
+                    'Kasi' => 'bg-amber-100 text-amber-700',
+                    'Kasubbag' => 'bg-amber-100 text-amber-700',
+                    'Kepala Unit' => 'bg-green-100 text-green-700',
+                    'Petugas' => 'bg-gray-100 text-gray-700',
                 ];
             @endphp
             <tr class="hover:bg-gray-50/50 transition-colors">
@@ -87,24 +58,11 @@
                 <td class="px-6 py-4 font-mono text-xs text-blue-600">{{ $jabatan->kode }}</td>
                 <td class="px-6 py-4">
                     <div class="font-medium text-gray-900">{{ $jabatan->nama }}</div>
-                    @if($jabatan->keterangan)
-                        <div class="text-xs text-gray-400 mt-0.5">{{ Str::limit($jabatan->keterangan, 60) }}</div>
-                    @endif
                 </td>
                 <td class="px-6 py-4 text-center">
-                    <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $levelColors[$jabatan->level] ?? 'bg-gray-100 text-gray-700' }}">
-                        L{{ $jabatan->level }} – {{ $levelLabels[$jabatan->level] ?? '-' }}
+                    <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $kategoriColors[$jabatan->kategori_jabatan] ?? 'bg-gray-100 text-gray-700' }}">
+                        {{ $jabatan->kategori_jabatan }}
                     </span>
-                </td>
-                <td class="px-6 py-4 text-sm text-gray-500">
-                    @if($jabatan->parent)
-                        <span class="flex items-center gap-1">
-                            <i class="fa-solid fa-arrow-turn-down-right text-[10px] text-gray-400"></i>
-                            {{ $jabatan->parent->nama }}
-                        </span>
-                    @else
-                        <span class="text-gray-300 text-xs">—</span>
-                    @endif
                 </td>
                 <td class="px-6 py-4 text-center">
                     @if($jabatan->status === 'active')
@@ -136,7 +94,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="7" class="px-6 py-12 text-center">
+                <td colspan="6" class="px-6 py-12 text-center">
                     <div class="flex flex-col items-center gap-2 text-gray-400">
                         <i class="fa-solid fa-sitemap text-3xl"></i>
                         <p>Belum ada data jabatan.</p>

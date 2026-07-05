@@ -59,9 +59,7 @@ class MasterDataSeeder extends Seeder
                 'kode'        => $unit['kode'],
                 'nama'        => $unit['nama'],
                 'jenis'       => $unit['jenis'],
-                'is_public'   => true, // all these are public by default in seeder
                 'status'      => 'active',
-                'head_user_id'=> null,
                 'created_at'  => now(),
                 'updated_at'  => now(),
             ]);

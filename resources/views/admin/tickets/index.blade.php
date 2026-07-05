@@ -21,6 +21,9 @@
             <span>Pengaduan</span>
         </div>
     </div>
+    <a href="{{ route('admin.tickets.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm">
+        <i class="fa-solid fa-plus"></i> Tambah Pengaduan
+    </a>
 </div>
 
 {{-- Summary Cards --}}

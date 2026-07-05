@@ -7,21 +7,24 @@ class RoleMenuService
     public static function getRoleGroup($user): string
     {
         $role = $user->roles->first()?->name;
-        $jabatan = strtolower($user->jabatan?->nama ?? '');
+        $kategori = $user->jabatan?->kategori_jabatan;
 
         if ($role === 'Super Admin' || $role === 'Admin Pengaduan') {
             return 'admin';
         }
-        if ($role === 'Kepala Unit' || $role === 'Kepala Ruangan' || str_contains($jabatan, 'kepala unit') || str_contains($jabatan, 'kepala ruangan')) {
+        if ($kategori === 'Kepala Unit' || $role === 'Kepala Unit') {
             return 'kepala_unit';
         }
-        if (str_contains($jabatan, 'kasi') || str_contains($jabatan, 'kasubbag')) {
+        if ($role === 'Kepala Ruangan' || $kategori === 'Kepala Ruangan') {
+            return 'head_unit';
+        }
+        if (in_array($kategori, ['Kasi', 'Kasubbag'])) {
             return 'kasi';
         }
-        if (str_contains($jabatan, 'kabid') || str_contains($jabatan, 'kabag')) {
+        if (in_array($kategori, ['Kabid', 'Kabag'])) {
             return 'kabid';
         }
-        if ($role === 'Direktur' || str_contains($jabatan, 'direktur')) {
+        if ($kategori === 'Direktur' || $role === 'Direktur') {
             return 'direktur';
         }
 

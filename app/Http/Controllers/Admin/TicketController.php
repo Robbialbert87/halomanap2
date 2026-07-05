@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
+use App\Models\Room;
 use App\Models\ReportCategory;
 use App\Models\Unit;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class TicketController extends Controller
 {
@@ -143,8 +147,74 @@ class TicketController extends Controller
             ->with('success', 'Status pengaduan berhasil diperbarui.');
     }
 
-    public function create() {}
-    public function store(Request $request) {}
+    public function create()
+    {
+        $units      = Unit::where('status', 'active')->orderBy('nama')->get();
+        $rooms      = Room::orderBy('name')->get()->groupBy('unit_id');
+        $categories = ReportCategory::orderBy('name')->get();
+
+        return view('admin.tickets.create', compact('units', 'rooms', 'categories'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'type'           => 'required|in:Pengaduan,Saran,Apresiasi,Informasi',
+            'unit_id'        => 'required|exists:units,id',
+            'room_id'        => 'required|exists:rooms,id',
+            'category_id'    => 'required|exists:report_categories,id',
+            'reporter_name'  => 'required|string|max:255',
+            'reporter_phone' => 'required|string|max:20',
+            'title'          => 'required|string|max:255',
+            'description'    => 'required|string|min:10',
+            'attachment'     => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ]);
+
+        $attachmentPath = null;
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            if ($file->isValid()) {
+                $filename = Str::random(40) . '.' . $file->guessExtension();
+                Storage::disk('public')->put('attachments/' . $filename, $file->get());
+                $attachmentPath = 'attachments/' . $filename;
+            }
+        }
+
+        $datePrefix = Carbon::now()->format('ymd');
+        $lastTicket = Ticket::where('ticket_number', 'like', 'HM' . $datePrefix . '%')
+            ->orderBy('id', 'desc')->first();
+        $sequence = 1;
+        if ($lastTicket) {
+            $lastSequence = (int) substr($lastTicket->ticket_number, -4);
+            $sequence = $lastSequence + 1;
+        }
+        $ticketNumber = 'HM' . $datePrefix . str_pad($sequence, 4, '0', STR_PAD_LEFT);
+
+        $ticket = Ticket::create([
+            'ticket_number'  => $ticketNumber,
+            'type'           => $request->type,
+            'category_id'    => $request->category_id,
+            'room_id'        => $request->room_id,
+            'is_anonymous'   => false,
+            'reporter_name'  => $request->reporter_name,
+            'reporter_phone' => $request->reporter_phone,
+            'title'          => $request->title,
+            'description'    => $request->description,
+            'attachment_path'=> $attachmentPath,
+            'status'         => 'NEW',
+        ]);
+
+        $ticket->histories()->create([
+            'user_id'    => auth()->id(),
+            'old_status' => '-',
+            'new_status' => 'NEW',
+            'notes'      => 'Pengaduan dibuat oleh Admin (' . auth()->user()->nama . ') atas nama ' . $request->reporter_name,
+        ]);
+
+        return redirect()->route('admin.tickets.show', $ticket->id)
+            ->with('success', 'Pengaduan #' . $ticket->ticket_number . ' berhasil dibuat.');
+    }
+
     public function edit(string $id) {}
 
     public function destroy(string $id)

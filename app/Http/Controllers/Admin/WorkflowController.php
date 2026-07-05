@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
-use App\Models\Unit;
+use App\Models\User;
 use App\Models\WorkflowHistory;
 use App\Services\WorkflowService;
 use Illuminate\Http\Request;
@@ -15,16 +15,13 @@ class WorkflowController extends Controller
         private readonly WorkflowService $workflowService,
     ) {}
 
-    /**
-     * Admin mendisposisikan tiket ke unit tertentu.
-     */
     public function disposisi(Request $request)
     {
         $request->validate([
-            'ticket_id'  => 'required|exists:tickets,id',
-            'unit_id'    => 'required|exists:units,id',
-            'komentar'   => 'nullable|string|max:1000',
-            'due_at'     => 'nullable|date|after:now',
+            'ticket_id' => 'required|exists:tickets,id',
+            'unit_id'   => 'required|exists:units,id',
+            'komentar'  => 'nullable|string|max:1000',
+            'due_at'    => 'nullable|date|after:now',
         ]);
 
         $ticket = Ticket::findOrFail($request->ticket_id);
@@ -44,30 +41,30 @@ class WorkflowController extends Controller
             ->with('success', 'Pengaduan berhasil didisposisikan.');
     }
 
-    /**
-     * User mengeskalasi ke jabatan atasannya.
-     */
     public function eskalasi(Request $request, WorkflowHistory $history)
     {
-        $request->validate(['komentar' => 'nullable|string|max:1000']);
+        $request->validate([
+            'komentar'       => 'nullable|string|max:1000',
+            'target_user_id' => 'required|exists:users,id',
+        ]);
 
-        // Pastikan yang mengeskalasi adalah pemegang aktif saat ini
         if ($history->to_user_id !== auth()->id()) {
             return back()->with('error', 'Anda bukan pemegang aktif pengaduan ini.');
         }
 
         try {
-            $this->workflowService->eskalasi($history, $request->komentar ?? '');
+            $this->workflowService->eskalasi(
+                $history,
+                $request->target_user_id,
+                $request->komentar ?? ''
+            );
         } catch (\RuntimeException $e) {
             return back()->with('error', $e->getMessage());
         }
 
-        return back()->with('success', 'Pengaduan berhasil dieskalasi ke jabatan atasan.');
+        return back()->with('success', 'Pengaduan berhasil dieskalasi.');
     }
 
-    /**
-     * User memilih Tangani Sendiri.
-     */
     public function tanganiSendiri(Request $request, WorkflowHistory $history)
     {
         $request->validate(['komentar' => 'nullable|string|max:1000']);
@@ -81,9 +78,6 @@ class WorkflowController extends Controller
         return back()->with('success', 'Pengaduan sedang dalam penanganan Anda.');
     }
 
-    /**
-     * User menyelesaikan pengaduan (minta verifikasi admin).
-     */
     public function selesai(Request $request, WorkflowHistory $history)
     {
         $request->validate(['komentar' => 'nullable|string|max:1000']);
@@ -97,9 +91,6 @@ class WorkflowController extends Controller
         return back()->with('success', 'Pengaduan ditandai selesai dan menunggu verifikasi admin.');
     }
 
-    /**
-     * Admin menutup pengaduan setelah verifikasi.
-     */
     public function tutup(Request $request, WorkflowHistory $history)
     {
         $request->validate(['komentar' => 'nullable|string|max:1000']);

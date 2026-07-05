@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\KepalaUnit;
+namespace App\Http\Controllers\Kabid;
 
 use App\Http\Controllers\Controller;
 use App\Models\WorkflowHistory;
@@ -17,6 +17,6 @@ class DalamPenangananController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
-        return view('kepala_unit.dalam_penanganan', compact('user', 'workflows'));
+        return view('kabid.dalam_penanganan', compact('user', 'workflows'));
     }
 }

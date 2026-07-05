@@ -11,7 +11,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-#[Fillable(['uuid', 'nip', 'nama', 'gelar_depan', 'gelar_belakang', 'jenis_kelamin', 'email', 'phone_number', 'password', 'unit_id', 'jabatan_id', 'status', 'last_login_at', 'last_login_ip'])]
+#[Fillable(['uuid', 'nip', 'nama', 'email', 'phone_number', 'password', 'unit_id', 'jabatan_id', 'status', 'last_login_at', 'last_login_ip'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {

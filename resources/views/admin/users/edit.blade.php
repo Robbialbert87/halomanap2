@@ -40,31 +40,15 @@
             
             <div class="mb-8 pb-8 border-b border-gray-100">
                 <h3 class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wider">Identitas Diri</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Gelar Depan</label>
-                        <input type="text" name="gelar_depan" value="{{ old('gelar_depan', $user->gelar_depan) }}" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="Contoh: dr., Ns.">
-                    </div>
-                    <div class="lg:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
-                        <input type="text" name="nama" value="{{ old('nama', $user->nama) }}" required class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="Nama tanpa gelar">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Gelar Belakang</label>
-                        <input type="text" name="gelar_belakang" value="{{ old('gelar_belakang', $user->gelar_belakang) }}" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="Contoh: S.Kep, M.Kes">
+                        <input type="text" name="nama" value="{{ old('nama', $user->nama) }}" required class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="Nama lengkap">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">NIP / NIK <span class="text-red-500">*</span></label>
                         <input type="text" name="nip" value="{{ old('nip', $user->nip) }}" required class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition font-mono" placeholder="Nomor Induk Pegawai">
                         <p class="text-xs text-gray-400 mt-1.5">Digunakan sebagai Username login.</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Jenis Kelamin <span class="text-red-500">*</span></label>
-                        <select name="jenis_kelamin" required class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition bg-white">
-                            <option value="">-- Pilih --</option>
-                            <option value="L" {{ old('jenis_kelamin', $user->jenis_kelamin) == 'L' ? 'selected' : '' }}>Laki-laki</option>
-                            <option value="P" {{ old('jenis_kelamin', $user->jenis_kelamin) == 'P' ? 'selected' : '' }}>Perempuan</option>
-                        </select>
                     </div>
                 </div>
             </div>
@@ -112,7 +96,7 @@
                         <select name="jabatan_id" required class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition bg-white">
                             <option value="">-- Pilih Jabatan --</option>
                             @foreach($jabatans as $j)
-                                <option value="{{ $j->id }}" {{ old('jabatan_id', $user->jabatan_id) == $j->id ? 'selected' : '' }}>{{ $j->nama }}</option>
+                                <option value="{{ $j->id }}" {{ old('jabatan_id', $user->jabatan_id) == $j->id ? 'selected' : '' }}>{{ $j->nama }} ({{ $j->kategori_jabatan }})</option>
                             @endforeach
                         </select>
                     </div>

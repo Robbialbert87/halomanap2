@@ -15,7 +15,7 @@ class PengaduanController extends Controller
 {
     public function create(Request $request)
     {
-        $units      = Unit::where('is_public', true)->orderBy('nama')->get();
+        $units      = Unit::where('status', 'active')->orderBy('nama')->get();
         $rooms      = Room::orderBy('name')->get()->groupBy('unit_id');
         $categories = ReportCategory::orderBy('name')->get();
 

@@ -78,10 +78,6 @@
                     <p class="text-xs text-gray-400 uppercase font-semibold">Unit</p>
                     <p class="text-gray-700">{{ $activeWorkflow->toUnit?->nama ?? '-' }}</p>
                 </div>
-                <div>
-                    <p class="text-xs text-gray-400 uppercase font-semibold">Workflow Level</p>
-                    <p class="text-gray-700 font-bold">Level {{ $activeWorkflow->workflow_level }}</p>
-                </div>
                 @if($activeWorkflow->due_at)
                 <div>
                     <p class="text-xs text-gray-400 uppercase font-semibold">Deadline SLA</p>

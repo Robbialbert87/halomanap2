@@ -37,32 +37,59 @@
 
         <form action="{{ route('admin.roles.store') }}" method="POST">
             @csrf
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Kode Role <span class="text-red-500">*</span></label>
                     <input type="text" name="kode" value="{{ old('kode') }}" required
-                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition uppercase font-mono"
-                        placeholder="Contoh: SUPER_ADMIN">
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition uppercase font-mono"
+                        placeholder="Contoh: EDITOR">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Role <span class="text-red-500">*</span></label>
                     <input type="text" name="name" value="{{ old('name') }}" required
-                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        placeholder="Contoh: Super Admin">
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                        placeholder="Contoh: Editor">
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Deskripsi</label>
                     <textarea name="deskripsi" rows="2"
-                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                         placeholder="Keterangan mengenai hak akses role ini">{{ old('deskripsi') }}</textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Status Role</label>
                     <select name="status"
-                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition bg-white">
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition bg-white">
                         <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Aktif</option>
                         <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Nonaktif</option>
                     </select>
+                </div>
+            </div>
+
+            <div class="mb-6 pt-6 border-t border-gray-100">
+                <h3 class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wider">Assign Permissions</h3>
+                @php
+                    $groups = $permissions->groupBy(function($p) {
+                        $parts = explode('.', $p->name);
+                        return $parts[0] . '.' . ($parts[1] ?? '');
+                    });
+                @endphp
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @foreach($groups as $group => $perms)
+                    <div class="border border-gray-200 rounded-xl p-4">
+                        <p class="text-xs font-semibold text-gray-500 uppercase mb-3 pb-2 border-b border-gray-100">{{ $group }}</p>
+                        <div class="space-y-2">
+                            @foreach($perms as $perm)
+                            <label class="flex items-start gap-2.5 cursor-pointer group">
+                                <input type="checkbox" name="permissions[]" value="{{ $perm->id }}"
+                                    {{ in_array($perm->id, old('permissions', [])) ? 'checked' : '' }}
+                                    class="mt-0.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">{{ $perm->name }}</span>
+                            </label>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endforeach
                 </div>
             </div>
 

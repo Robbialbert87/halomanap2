@@ -48,25 +48,25 @@ class AuthService
     public function getRedirectRoute($user): string
     {
         $role = $user->roles->first()?->name;
-        $jabatan = strtolower($user->jabatan?->nama ?? '');
+        $kategori = $user->jabatan?->kategori_jabatan;
 
         if ($role === 'Super Admin' || $role === 'Admin Pengaduan') {
             return '/dashboard';
         }
 
-        if ($role === 'Kepala Unit') {
+        if ($kategori === 'Kepala Unit' || $role === 'Kepala Unit') {
             return '/kepala-unit/dashboard';
         }
 
-        if (str_contains($jabatan, 'kasi') || str_contains($jabatan, 'kasubbag')) {
+        if (in_array($kategori, ['Kasi', 'Kasubbag'])) {
             return '/kasi/dashboard';
         }
 
-        if (str_contains($jabatan, 'kabid') || str_contains($jabatan, 'kabag')) {
+        if (in_array($kategori, ['Kabid', 'Kabag'])) {
             return '/kabid/dashboard';
         }
 
-        if ($role === 'Direktur' || str_contains($jabatan, 'direktur')) {
+        if ($kategori === 'Direktur' || $role === 'Direktur') {
             return '/direktur/dashboard';
         }
 

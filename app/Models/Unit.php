@@ -16,12 +16,7 @@ class Unit extends Model
         'kode',
         'nama',
         'jenis',
-        'is_public',
-        'parent_id',
-        'entry_jabatan_id',
-        'keterangan',
         'status',
-        'head_user_id',
     ];
 
     protected static function boot()
@@ -43,23 +38,8 @@ class Unit extends Model
         return $this->nama;
     }
 
-    public function parent()
-    {
-        return $this->belongsTo(Unit::class, 'parent_id');
-    }
-
-    public function children()
-    {
-        return $this->hasMany(Unit::class, 'parent_id');
-    }
-
     public function users()
     {
         return $this->hasMany(User::class, 'unit_id');
-    }
-
-    public function entryJabatan()
-    {
-        return $this->belongsTo(Jabatan::class, 'entry_jabatan_id');
     }
 }

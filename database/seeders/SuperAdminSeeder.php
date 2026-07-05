@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class SuperAdminSeeder extends Seeder
 {
@@ -42,6 +43,9 @@ class SuperAdminSeeder extends Seeder
 
         // Assign role
         $user->syncRoles([$superAdminRole->name]);
+
+        // Give all permissions to Super Admin
+        $superAdminRole->syncPermissions(Permission::all());
 
         $this->command->info("Super Admin created: NIP $nip / Password $nip");
     }

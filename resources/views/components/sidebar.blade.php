@@ -30,82 +30,103 @@
                 <span class="text-sm font-medium">Dashboard</span>
             </a>
 
+            {{-- ======================== PELAYANAN ======================== --}}
+            <div class="pt-4 pb-1">
+                <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Pelayanan</p>
+            </div>
+
             <a href="{{ route('admin.tickets.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.tickets.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-clipboard-list w-5 text-center"></i>
                 <span class="text-sm font-medium">Pengaduan</span>
             </a>
 
+            <a href="{{ route('admin.dispositions.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.dispositions.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-arrow-right-arrow-left w-5 text-center"></i>
+                <span class="text-sm font-medium">Disposisi</span>
+            </a>
 
+            {{-- ======================== MASTER DATA ======================== --}}
+            <div class="pt-4 pb-1">
+                <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Master Data</p>
+            </div>
 
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
-                <i class="fa-solid fa-star-half-stroke w-5 text-center"></i>
-                <span class="text-sm font-medium">Survei Kepuasan</span>
+            @can('manage-roles')
+            <a href="{{ route('admin.roles.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.roles.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-shield-halved w-5 text-center"></i>
+                <span class="text-sm font-medium">Role</span>
+            </a>
+            @endcan
+
+            @can('manage-users')
+            <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.users.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-users w-5 text-center"></i>
+                <span class="text-sm font-medium">Pengguna</span>
+            </a>
+            @endcan
+
+            @can('manage-jabatans')
+            <a href="{{ route('admin.jabatans.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.jabatans.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-sitemap w-5 text-center"></i>
+                <span class="text-sm font-medium">Jabatan</span>
+            </a>
+            @endcan
+
+            @can('manage-units')
+            <a href="{{ route('admin.units.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.units.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-regular fa-building w-5 text-center"></i>
+                <span class="text-sm font-medium">Unit</span>
+            </a>
+            @endcan
+
+            @can('manage-categories')
+            <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.categories.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-tags w-5 text-center"></i>
+                <span class="text-sm font-medium">Kategori</span>
+            </a>
+            @endcan
+
+            {{-- ======================== MONITORING ======================== --}}
+            <div class="pt-4 pb-1">
+                <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Monitoring & Laporan</p>
+            </div>
+
+            @can('manage-reports')
+            <a href="{{ route('admin.monitoring.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.monitoring.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-chart-line w-5 text-center"></i>
+                <span class="text-sm font-medium">Monitoring</span>
             </a>
 
             <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
                 <i class="fa-solid fa-file-lines w-5 text-center"></i>
                 <span class="text-sm font-medium">Laporan</span>
-                <i class="fa-solid fa-chevron-right ml-auto text-xs"></i>
             </a>
+            @endcan
 
+            {{-- ======================== PENGATURAN ======================== --}}
             <div class="pt-4 pb-1">
-                <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Master Data</p>
+                <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Pengaturan</p>
             </div>
 
-            <a href="{{ route('admin.rooms.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
-                <i class="fa-solid fa-door-open w-5 text-center"></i>
-                <span class="text-sm font-medium">Ruangan</span>
+            @can('manage-audit-trail')
+            <a href="{{ route('direktur.audit-trail') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('direktur.audit-trail') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-magnifying-glass w-5 text-center"></i>
+                <span class="text-sm font-medium">Audit Trail</span>
             </a>
+            @endcan
 
-            <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
-                <i class="fa-solid fa-tags w-5 text-center"></i>
-                <span class="text-sm font-medium">Kategori</span>
-            </a>
-
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
-                <i class="fa-regular fa-clock w-5 text-center"></i>
-                <span class="text-sm font-medium">SLA</span>
-            </a>
-
-            <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
-                <i class="fa-solid fa-users w-5 text-center"></i>
-                <span class="text-sm font-medium">User</span>
-            </a>
-
-            <a href="{{ route('admin.roles.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
-                <i class="fa-solid fa-user-shield w-5 text-center"></i>
-                <span class="text-sm font-medium">Master Role</span>
-            </a>
-
-            <a href="{{ route('admin.jabatans.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
-                <i class="fa-solid fa-sitemap w-5 text-center"></i>
-                <span class="text-sm font-medium">Master Jabatan</span>
-            </a>
-
-            <a href="{{ route('admin.units.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
-                <i class="fa-regular fa-building w-5 text-center"></i>
-                <span class="text-sm font-medium">Master Unit</span>
-            </a>
-
-            @if($user?->hasRole(['SUPER_ADMIN', 'DIREKTUR']))
-            <div class="pt-4 pb-1">
-                <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Monitoring</p>
-            </div>
-            <a href="{{ route('admin.monitoring.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
-                <i class="fa-solid fa-chart-line w-5 text-center"></i>
-                <span class="text-sm font-medium">Dashboard Direktur</span>
-            </a>
-            @endif
-
+            @can('manage-whatsapp')
             <a href="{{ route('admin.whatsapp.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.whatsapp.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-brands fa-whatsapp w-5 text-center"></i>
                 <span class="text-sm font-medium">WhatsApp Gateway</span>
             </a>
+            @endcan
 
+            @can('manage-settings')
             <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
                 <i class="fa-solid fa-gear w-5 text-center"></i>
                 <span class="text-sm font-medium">Pengaturan</span>
             </a>
+            @endcan
 
         {{-- ============================================================ --}}
         {{--  KEPALA UNIT                                                  --}}
@@ -123,7 +144,6 @@
             <a href="{{ route('kepala-unit.dispositions.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kepala-unit.dispositions.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-inbox w-5 text-center"></i>
                 <span class="text-sm font-medium">Kotak Masuk Disposisi</span>
-                <span class="ml-auto bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">NEW</span>
             </a>
 
             <a href="{{ route('kepala-unit.dalam-penanganan') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kepala-unit.dalam-penanganan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
@@ -133,7 +153,7 @@
 
             <a href="{{ route('kepala-unit.riwayat') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kepala-unit.riwayat') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
-                <span class="text-sm font-medium">Riwayat Pengaduan Unit</span>
+                <span class="text-sm font-medium">Riwayat Pengaduan</span>
             </a>
 
             <a href="{{ route('kepala-unit.laporan') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kepala-unit.laporan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
@@ -175,7 +195,7 @@
 
             <a href="{{ route('kasi.riwayat') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kasi.riwayat') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
-                <span class="text-sm font-medium">Riwayat Pengaduan Bidang</span>
+                <span class="text-sm font-medium">Riwayat Bidang</span>
             </a>
 
             <a href="{{ route('kasi.laporan') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kasi.laporan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
@@ -210,6 +230,16 @@
                 <span class="text-sm font-medium">Kotak Masuk Disposisi</span>
             </a>
 
+            <a href="{{ route('kabid.dalam-penanganan') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kabid.dalam-penanganan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-spinner w-5 text-center"></i>
+                <span class="text-sm font-medium">Dalam Penanganan</span>
+            </a>
+
+            <a href="{{ route('kabid.riwayat') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kabid.riwayat') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
+                <span class="text-sm font-medium">Riwayat Pengaduan</span>
+            </a>
+
             <a href="{{ route('kabid.monitoring') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kabid.monitoring') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-chart-line w-5 text-center"></i>
                 <span class="text-sm font-medium">Monitoring Bidang</span>
@@ -225,6 +255,38 @@
             </div>
 
             <a href="{{ route('kabid.profil') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kabid.profil') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-user w-5 text-center"></i>
+                <span class="text-sm font-medium">Profil</span>
+            </a>
+
+        {{-- ============================================================ --}}
+        {{--  HEAD UNIT / KEPALA RUANGAN                                   --}}
+        {{-- ============================================================ --}}
+        @elseif($roleGroup === 'head_unit')
+            <div class="pb-1">
+                <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Menu Kepala Ruangan</p>
+            </div>
+
+            <a href="{{ route('head-unit.dispositions.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('head-unit.dispositions.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-inbox w-5 text-center"></i>
+                <span class="text-sm font-medium">Kotak Masuk</span>
+            </a>
+
+            <a href="{{ route('head-unit.dalam-penanganan') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('head-unit.dalam-penanganan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-spinner w-5 text-center"></i>
+                <span class="text-sm font-medium">Dalam Penanganan</span>
+            </a>
+
+            <a href="{{ route('head-unit.riwayat') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('head-unit.riwayat') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
+                <span class="text-sm font-medium">Riwayat Pengaduan</span>
+            </a>
+
+            <div class="pt-4 pb-1">
+                <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Akun</p>
+            </div>
+
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
                 <i class="fa-solid fa-user w-5 text-center"></i>
                 <span class="text-sm font-medium">Profil</span>
             </a>
@@ -249,7 +311,7 @@
 
             <a href="{{ route('direktur.statistik') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('direktur.statistik') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-chart-bar w-5 text-center"></i>
-                <span class="text-sm font-medium">Statistik Pengaduan</span>
+                <span class="text-sm font-medium">Statistik</span>
             </a>
 
             <a href="{{ route('direktur.laporan') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('direktur.laporan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
