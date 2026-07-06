@@ -76,14 +76,24 @@ class WhatsappSettingsController extends Controller
     public function checkStatus()
     {
         try {
-            $resp = Http::timeout(3)->get('http://localhost:3000/status');
+            $resp = Http::timeout(5)->get('http://localhost:3000/status');
             if ($resp->successful()) {
-                return response()->json(['running' => true, 'data' => $resp->json()]);
+                return response($resp->body())->header('Content-Type', 'application/json');
             }
         } catch (\Throwable $e) {
             //
         }
-        return response()->json(['running' => false]);
+        return response()->json(['success' => false, 'error' => 'Node.js offline'], 503);
+    }
+
+    public function proxyReset()
+    {
+        try {
+            $resp = Http::timeout(5)->post('http://localhost:3000/reset');
+            return response($resp->body())->header('Content-Type', 'application/json');
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 503);
+        }
     }
 
     private function findNodePath(): ?string

@@ -184,11 +184,6 @@
 </script>
 <script>
     let pollInterval;
-    const apiUrls = [
-        'http://localhost:3000',
-        `http://127.0.0.1:3000`,
-        `http://${window.location.hostname}:3000`,
-    ];
 
     function setUI(state, data = null) {
         const errorBox = document.getElementById('error-box');
@@ -218,13 +213,10 @@
         }
     }
 
-    let apiUrlIndex = 0;
-
     function checkStatus() {
-        const url = apiUrls[apiUrlIndex];
-        fetch(`${url}/status`)
+        fetch('{{ route('admin.whatsapp.status') }}')
             .then(res => {
-                if (!res.ok) throw new Error('API Offline');
+                if (!res.ok) throw new Error('Node.js offline');
                 return res.json();
             })
             .then(data => {
@@ -239,22 +231,19 @@
                 }
             })
             .catch(err => {
-                console.error(`[${url}] ${err.message}`);
-                apiUrlIndex = (apiUrlIndex + 1) % apiUrls.length;
-                if (apiUrlIndex === 0) {
-                    setUI('error');
-                    document.getElementById('error-box').querySelector('p').innerText = 'Node.js Gateway (port 3000) belum berjalan. Klik tombol atau double-click start-services.bat';
-                    document.getElementById('error-box').querySelector('form').classList.remove('hidden');
-                }
+                console.error(err);
+                setUI('error');
+                document.getElementById('error-box').querySelector('p').innerText = 'Node.js Gateway (port 3000) belum berjalan. Klik tombol atau double-click start-services.bat';
+                document.getElementById('error-box').querySelector('form').classList.remove('hidden');
             });
     }
 
     function resetWhatsApp() {
         if(!confirm('Apakah Anda yakin ingin memutuskan tautan nomor ini? Anda harus melakukan scan QR ulang!')) return;
         
-        fetch(`${apiUrls[0]}/reset`, {
+        fetch('{{ route('admin.whatsapp.reset') }}', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
         })
         .then(res => res.json())
         .then(data => {

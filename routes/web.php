@@ -73,6 +73,7 @@ Route::middleware('auth')->group(function () {
         Route::get('whatsapp', [App\Http\Controllers\Admin\WhatsappSettingsController::class, 'index'])->name('whatsapp.index');
         Route::post('whatsapp/start', [App\Http\Controllers\Admin\WhatsappSettingsController::class, 'startServer'])->name('whatsapp.start');
         Route::get('whatsapp/status', [App\Http\Controllers\Admin\WhatsappSettingsController::class, 'checkStatus'])->name('whatsapp.status');
+        Route::post('whatsapp/reset', [App\Http\Controllers\Admin\WhatsappSettingsController::class, 'proxyReset'])->name('whatsapp.reset');
 
         // Workflow Disposisi
         Route::post('workflow/disposisi',              [App\Http\Controllers\Admin\WorkflowController::class, 'disposisi'])->name('workflow.disposisi');
