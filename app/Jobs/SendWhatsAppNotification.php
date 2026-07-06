@@ -9,8 +9,6 @@ class SendWhatsAppNotification implements ShouldQueue
 {
     use Queueable;
 
-    public string $queue = 'notifications';
-
     protected $phoneNumber;
     protected $message;
 
@@ -19,6 +17,7 @@ class SendWhatsAppNotification implements ShouldQueue
      */
     public function __construct($phoneNumber, $message)
     {
+        $this->onQueue('notifications');
         $this->phoneNumber = $phoneNumber;
         $this->message = $message;
     }
