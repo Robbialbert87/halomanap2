@@ -34,7 +34,7 @@ class WhatsappSettingsController extends Controller
         sleep(1);
 
         // 2. Queue Worker
-        $queueCmd = sprintf('cd /d "%s" && "%s" artisan queue:work --tries=1', $basePath, $phpPath);
+        $queueCmd = sprintf('cd /d "%s" && "%s" artisan queue:work --queue=notifications --tries=1', $basePath, $phpPath);
         $queueFull = sprintf('%s > "%s\\wa-queue.log" 2>&1', $queueCmd, $logPath);
         $result = $this->runBackground($queueFull);
         if ($result !== true) $errors[] = 'Queue: ' . $result;

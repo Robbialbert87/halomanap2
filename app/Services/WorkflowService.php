@@ -87,18 +87,6 @@ class WorkflowService
 
             event(new WorkflowChanged($history, 'disposisi_baru'));
 
-            if ($toUser && $toUser->phone_number) {
-                $pesan = "Halo *{$toUser->nama}*,\n\n";
-                $pesan .= "Ada pengaduan baru yang didisposisikan ke unit Anda dengan nomor tiket: *{$ticket->ticket_number}*.\n\n";
-                if ($komentar) {
-                    $pesan .= "Catatan Admin: {$komentar}\n\n";
-                }
-                $pesan .= "Silakan klik link berikut untuk melihat detail dan menindaklanjuti:\n";
-                $pesan .= route('kepala-unit.dispositions.show', $history->id);
-
-                \App\Jobs\SendWhatsAppNotification::dispatch($toUser->phone_number, $pesan);
-            }
-
             return $history;
         });
     }
@@ -154,19 +142,6 @@ class WorkflowService
             ]);
 
             event(new WorkflowChanged($newHistory, 'eskalasi'));
-
-            if ($toUser && $toUser->phone_number) {
-                $ticket = Ticket::find($currentHistory->ticket_id);
-                $pesan = "Halo *{$toUser->nama}*,\n\n";
-                $pesan .= "Terdapat eskalasi pengaduan dengan nomor tiket: *{$ticket->ticket_number}*.\n\n";
-                if ($komentar) {
-                    $pesan .= "Catatan Eskalasi: {$komentar}\n\n";
-                }
-                $pesan .= "Silakan klik link berikut untuk melihat detail dan mengambil tindakan:\n";
-                $pesan .= url('/admin');
-
-                \App\Jobs\SendWhatsAppNotification::dispatch($toUser->phone_number, $pesan);
-            }
 
             return $newHistory;
         });

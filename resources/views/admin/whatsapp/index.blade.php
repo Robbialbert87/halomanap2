@@ -182,7 +182,7 @@
 </script>
 <script>
     let pollInterval;
-    const apiUrl = 'http://localhost:3000';
+    const apiUrl = `http://${window.location.hostname}:3000`;
 
     function setUI(state, data = null) {
         const errorBox = document.getElementById('error-box');
