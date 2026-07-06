@@ -39,12 +39,12 @@
                     <i class="fa-solid fa-server"></i>
                 </div>
                 <h3 class="text-lg font-bold text-gray-800 mb-2">Server Tidak Merespons</h3>
-                <p class="text-gray-500 text-sm mb-6 max-w-sm">Server WhatsApp Gateway (Node.js) belum berjalan atau terhenti. Silakan jalankan layanan terlebih dahulu.</p>
+                <p class="text-gray-500 text-sm mb-6 max-w-sm">Node.js Gateway (port 3000) belum berjalan atau terhenti. Klik tombol di bawah untuk menjalankan layanan.</p>
                 
                 <form action="{{ route('admin.whatsapp.start') }}" method="POST">
                     @csrf
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-6 py-2.5 transition-colors shadow-sm">
-                        <i class="fa-solid fa-play mr-2"></i> Jalankan Layanan Server (CMD)
+                        <i class="fa-solid fa-play mr-2"></i> Jalankan Layanan Server
                     </button>
                 </form>
             </div>
@@ -85,24 +85,25 @@
             </h2>
             <div class="text-sm text-gray-600 space-y-3">
                 <p>Halaman ini terhubung langsung ke <strong>Microservice Node.js</strong> lokal Anda (Port 3000).</p>
-                <p>Untuk menghemat resource PC server, ikuti langkah berikut:</p>
+                <p>Untuk menghemat resource server, ikuti langkah berikut:</p>
                 <ul class="list-disc pl-5 space-y-1 text-gray-500">
                     <li>Gunakan nomor WhatsApp yang khusus didedikasikan untuk instansi/sistem.</li>
                     <li>Pastikan handphone untuk nomor WhatsApp tersebut tetap terkoneksi dengan internet.</li>
-                    <li>Jangan menutup jendela hitam CMD yang muncul jika Anda menggunakan tombol "Jalankan Layanan".</li>
+                    <li>Layanan berjalan di background (tanpa jendela CMD). Log tersimpan di <code class="text-xs bg-gray-100 px-1 rounded">storage/logs/wa-*.log</code>.</li>
                 </ul>
             </div>
         </div>
 
         <div class="bg-yellow-50 rounded-xl shadow-sm border border-yellow-200 p-6">
             <h2 class="font-semibold text-yellow-800 flex items-center gap-2 mb-2">
-                <i class="fa-solid fa-triangle-exclamation"></i> Catatan Windows/Herd
+                <i class="fa-solid fa-triangle-exclamation"></i> Catatan
             </h2>
             <p class="text-sm text-yellow-700">
-                Tombol "Jalankan Layanan Server" akan memaksa Windows membuka dua jendela Command Prompt (CMD) baru:
-                <br>1. Menjalankan Node API
-                <br>2. Menjalankan Queue Worker
-                <br><br><strong>Mohon JANGAN MENUTUP KEDUA JENDELA TERSEBUT</strong> selama aplikasi diakses oleh pengguna.
+                Tombol "Jalankan Layanan Server" akan menjalankan dua proses <strong>background</strong> (tanpa jendela CMD):
+                <br>1. WhatsApp Node.js API (port 3000)
+                <br>2. Queue Worker notifikasi
+                <br><br>Log proses tersimpan di <code class="text-xs bg-yellow-100 px-1 rounded">storage/logs/wa-node.log</code> dan <code class="text-xs bg-yellow-100 px-1 rounded">wa-queue.log</code>.
+                <br><br>Untuk menghentikan layanan, buka Task Manager dan hentikan proses <strong>node.exe</strong> dan <strong>php.exe</strong> (atau restart server).
             </p>
         </div>
 

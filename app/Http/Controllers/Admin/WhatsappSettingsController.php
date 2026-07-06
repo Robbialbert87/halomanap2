@@ -14,40 +14,99 @@ class WhatsappSettingsController extends Controller
 
     public function startServer()
     {
-        $basePath = str_replace('/', '\\', base_path());
-        $logPath  = str_replace('/', '\\', storage_path('logs'));
+        $nodePath = $this->findNodePath();
+        $phpPath = $this->findPhpPath();
+        $basePath = base_path();
+        $logPath = storage_path('logs');
 
-        // Tulis file .bat untuk menjalankan Node.js API
-        $nodePath = 'C:\\Program Files\\nodejs\\node.exe';
-        $batNode = storage_path('app/start-wa-node.bat');
-        file_put_contents($batNode,
-            "@echo off\r\n" .
-            "cd /d \"{$basePath}\\whatsapp-api\"\r\n" .
-            "echo Starting WhatsApp API Gateway...\r\n" .
-            "\"{$nodePath}\" index.js\r\n" .
-            "pause\r\n"
+        if (!$nodePath) {
+            return redirect()->back()->with('error', 'Node.js tidak ditemukan. Pastikan Node.js terinstal dan terdaftar di PATH.');
+        }
+
+        $errors = [];
+
+        // 1. WhatsApp Node.js Gateway
+        $nodeCmd = sprintf(
+            'cd /d "%s\\whatsapp-api" && "%s" index.js',
+            $basePath,
+            $nodePath
         );
+        $nodeFull = sprintf('%s > "%s\\wa-node.log" 2>&1', $nodeCmd, $logPath);
+        $result = $this->runBackground($nodeFull);
+        if ($result !== true) $errors[] = 'Node.js: ' . $result;
 
-        // Tulis file .bat untuk menjalankan Queue Worker
-        $phpPath = 'C:\\Program Files\\PHP\\php.exe'; // path default, akan dicari dinamis
-        $batQueue = storage_path('app/start-wa-queue.bat');
-        file_put_contents($batQueue,
-            "@echo off\r\n" .
-            "cd /d \"{$basePath}\"\r\n" .
-            "echo Starting Laravel Queue Worker...\r\n" .
-            "php artisan queue:work\r\n" .
-            "pause\r\n"
+        sleep(1);
+
+        // 2. Queue Worker
+        $queueCmd = sprintf(
+            'cd /d "%s" && "%s" artisan queue:work --tries=1',
+            $basePath,
+            $phpPath
         );
+        $queueFull = sprintf('%s > "%s\\wa-queue.log" 2>&1', $queueCmd, $logPath);
+        $result = $this->runBackground($queueFull);
+        if ($result !== true) $errors[] = 'Queue: ' . $result;
 
-        // Jalankan kedua .bat secara background (muncul jendela CMD agar bisa dipantau)
-        $winBatNode  = str_replace('/', '\\', $batNode);
-        $winBatQueue = str_replace('/', '\\', $batQueue);
+        if (!empty($errors)) {
+            return redirect()->back()->with('error', 'Gagal menjalankan: ' . implode('; ', $errors));
+        }
 
-        pclose(popen("start \"WA Node API\" cmd /k \"{$winBatNode}\"", 'r'));
-        sleep(1); // Beri jeda sebelum menjalankan queue
-        pclose(popen("start \"WA Queue Worker\" cmd /k \"{$winBatQueue}\"", 'r'));
+        return redirect()->back()->with('success', 'Layanan berjalan di background. Tunggu 10-15 detik, QR Code akan muncul otomatis.');
+    }
 
-        return redirect()->back()->with('success', 'Server sedang dijalankan! Dua jendela CMD muncul dan perintah berjalan otomatis. Tunggu 10-15 detik lalu QR Code akan tampil di halaman ini.');
+    private function findNodePath(): ?string
+    {
+        $output = shell_exec('where node 2>NUL');
+        if ($output) {
+            $paths = explode("\n", trim($output));
+            if (!empty($paths[0])) return trim($paths[0]);
+        }
+
+        $common = [
+            'C:\\Program Files\\nodejs\\node.exe',
+            'C:\\Program Files (x86)\\nodejs\\node.exe',
+            getenv('LOCALAPPDATA') . '\\Programs\\Nodejs\\node.exe',
+        ];
+        foreach ($common as $p) {
+            if (file_exists($p)) return $p;
+        }
+
+        return null;
+    }
+
+    private function findPhpPath(): string
+    {
+        if (defined('PHP_BINARY') && PHP_BINARY) {
+            return PHP_BINARY;
+        }
+        $output = shell_exec('where php 2>NUL');
+        if ($output) {
+            $paths = explode("\n", trim($output));
+            if (!empty($paths[0])) return trim($paths[0]);
+        }
+        return 'php';
+    }
+
+    private function runBackground(string $command): true|string
+    {
+        // Metode 1: COM WScript.Shell — hidden window, paling reliable di Windows Server
+        if (class_exists('\\COM', false)) {
+            try {
+                $shell = new \COM('WScript.Shell');
+                $shell->Run($command, 0, false);
+                return true;
+            } catch (\Throwable $e) {
+                // fallthrough
+            }
+        }
+
+        // Metode 2: start /B via popen
+        $handle = popen('start /B "" cmd /c "' . $command . '"', 'r');
+        if ($handle !== false) {
+            pclose($handle);
+            return true;
+        }
+
+        return 'Tidak dapat membuat proses background. Cek disable_functions di php.ini.';
     }
 }
-
