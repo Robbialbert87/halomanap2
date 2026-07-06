@@ -9,9 +9,19 @@ use Illuminate\Support\Str;
 
 class JabatanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $jabatans = Jabatan::orderBy('kategori_jabatan')->orderBy('nama')->paginate(15);
+        $query = Jabatan::orderBy('kategori_jabatan')->orderBy('nama');
+
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('kode', 'like', "%{$search}%")
+                  ->orWhere('kategori_jabatan', 'like', "%{$search}%");
+            });
+        }
+
+        $jabatans = $query->paginate(7)->withQueryString()->onEachSide(2);
         return view('admin.jabatans.index', compact('jabatans'));
     }
 

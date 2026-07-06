@@ -21,7 +21,7 @@ class UnitController extends Controller
             $query->where('jenis', $request->jenis);
         }
 
-        $units = $query->paginate(15)->withQueryString();
+        $units = $query->paginate(7)->withQueryString()->onEachSide(2);
         
         $jenisList = ['Instalasi', 'Bidang', 'Bagian', 'Sub Bagian', 'Komite', 'Tim', 'Pelayanan', 'Penunjang', 'Lainnya'];
         

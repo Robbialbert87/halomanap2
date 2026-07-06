@@ -36,8 +36,14 @@
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i class="fa-solid fa-magnifying-glass text-gray-400 text-sm"></i>
                     </div>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari NIP, Nama, atau No WA..." 
-                        class="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari NIP, Nama, atau No WA..." autocomplete="off"
+                        class="w-full pl-9 pr-10 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                        oninput="clearTimeout(this.debounce); this.debounce = setTimeout(() => { this.form.submit(); }, 500);">
+                    @if(request('search'))
+                    <a href="{{ route('admin.users.index', request()->except(['search', 'page'])) }}" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
+                    @endif
                 </div>
             </div>
             <div>

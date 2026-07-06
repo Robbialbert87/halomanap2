@@ -29,15 +29,55 @@ Route::middleware('auth')->group(function () {
         $selesai = \App\Models\Ticket::where('status', 'Selesai')->count();
         $ditolak = \App\Models\Ticket::where('status', 'Ditolak')->count();
 
-        // Calculate percentages
         $pMenunggu = $total > 0 ? round(($menunggu / $total) * 100, 2) : 0;
         $pDiproses = $total > 0 ? round(($diproses / $total) * 100, 2) : 0;
         $pSelesai = $total > 0 ? round(($selesai / $total) * 100, 2) : 0;
         $pDitolak = $total > 0 ? round(($ditolak / $total) * 100, 2) : 0;
 
+        // Grafik Bulanan (6 bulan terakhir)
+        $months = collect();
+        for ($i = 5; $i >= 0; $i--) {
+            $months->push(now()->subMonths($i)->format('Y-m'));
+        }
+        $monthlyRaw = \App\Models\Ticket::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as bulan, COUNT(*) as total")
+            ->where('created_at', '>=', now()->subMonths(5)->startOfMonth())
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->pluck('total', 'bulan');
+        $monthlyLabels = $months->map(function ($m) {
+            return \Carbon\Carbon::createFromFormat('Y-m', $m)->isoFormat('MMM');
+        });
+        $monthlyData = $months->map(function ($m) use ($monthlyRaw) {
+            return $monthlyRaw->get($m, 0);
+        });
+
+        // Kategori
+        $categoryData = \App\Models\Ticket::selectRaw('category_id, COUNT(*) as total')
+            ->whereNotNull('category_id')
+            ->groupBy('category_id')
+            ->with('category')
+            ->get();
+        $categoryLabels = $categoryData->pluck('category.name');
+        $categoryCounts = $categoryData->pluck('total');
+        $categoryColors = ['#3b82f6', '#10b981', '#f59e0b', '#f97316', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'];
+
+        // Unit (via room)
+        $unitData = \App\Models\Ticket::selectRaw('room_id, COUNT(*) as total')
+            ->whereNotNull('room_id')
+            ->groupBy('room_id')
+            ->with('room.unit')
+            ->get()
+            ->groupBy(fn($item) => $item->room->unit->nama ?? 'Tanpa Unit')
+            ->map(fn($items) => $items->sum('total'))
+            ->sortDesc();
+        $unitMax = $unitData->max() ?: 1;
+
         return view('dashboard', compact(
             'total', 'menunggu', 'diproses', 'selesai', 'ditolak',
-            'pMenunggu', 'pDiproses', 'pSelesai', 'pDitolak'
+            'pMenunggu', 'pDiproses', 'pSelesai', 'pDitolak',
+            'monthlyLabels', 'monthlyData',
+            'categoryData', 'categoryLabels', 'categoryCounts', 'categoryColors',
+            'unitData', 'unitMax'
         ));
     })->name('dashboard');
 

@@ -45,21 +45,11 @@ class TicketController extends Controller
             });
         }
 
-        $tickets = $query->paginate(15)->withQueryString();
+        $tickets = $query->paginate(7)->withQueryString()->onEachSide(2);
         $units = Unit::orderBy('nama')->get();
         $categories = ReportCategory::orderBy('name')->get();
 
-        // Summary counts
-        $counts = [
-            'total'    => Ticket::count(),
-            'new'      => Ticket::where('status', 'NEW')->count(),
-            'verified' => Ticket::where('status', 'TERVERIFIKASI')->count(),
-            'process'  => Ticket::whereIn('status', ['Diproses', 'IN_PROGRESS', 'Menunggu Verifikasi'])->count(),
-            'done'     => Ticket::where('status', 'Selesai')->count(),
-            'rejected' => Ticket::where('status', 'REJECTED')->count(),
-        ];
-
-        return view('admin.tickets.index', compact('tickets', 'units', 'categories', 'counts'));
+        return view('admin.tickets.index', compact('tickets', 'units', 'categories'));
     }
 
     public function show(string $id)

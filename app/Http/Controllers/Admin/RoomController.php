@@ -10,9 +10,20 @@ class RoomController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $rooms = \App\Models\Room::with('unit')->orderBy('name')->get();
+        $query = \App\Models\Room::with('unit');
+
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhereHas('unit', function ($q) use ($search) {
+                      $q->where('nama', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $rooms = $query->orderBy('name')->paginate(7)->withQueryString()->onEachSide(2);
         return view('admin.rooms.index', compact('rooms'));
     }
 

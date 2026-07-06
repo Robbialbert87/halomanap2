@@ -23,6 +23,22 @@
 </div>
 @endif
 
+<div class="mb-4">
+    <form method="GET" action="{{ route('admin.rooms.index') }}" id="searchForm">
+        <div class="relative max-w-md">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari ruangan atau unit..." autocomplete="off"
+                class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg pl-10 pr-10 py-2.5 focus:ring-blue-500 focus:border-blue-500"
+                oninput="clearTimeout(this.debounce); this.debounce = setTimeout(() => { this.form.submit(); }, 500);">
+            @if(request('search'))
+            <a href="{{ route('admin.rooms.index') }}" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+            @endif
+        </div>
+    </form>
+</div>
+
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <table class="w-full text-left text-sm text-gray-600">
         <thead class="bg-gray-50 text-gray-800 font-semibold border-b border-gray-100 uppercase text-xs">
@@ -36,7 +52,7 @@
         <tbody class="divide-y divide-gray-100">
             @forelse($rooms as $index => $room)
             <tr class="hover:bg-gray-50/50 transition-colors">
-                <td class="px-6 py-4 text-center">{{ $index + 1 }}</td>
+                <td class="px-6 py-4 text-center">{{ $rooms->firstItem() + $index }}</td>
                 <td class="px-6 py-4 font-medium text-gray-900">{{ $room->name }}</td>
                 <td class="px-6 py-4">
                     <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-md bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-100">
@@ -63,5 +79,9 @@
             @endforelse
         </tbody>
     </table>
+</div>
+
+<div class="mt-6">
+    {{ $rooms->links() }}
 </div>
 @endsection

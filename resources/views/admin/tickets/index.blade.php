@@ -26,71 +26,20 @@
     </a>
 </div>
 
-{{-- Summary Cards --}}
-<div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
-    <a href="{{ route('admin.tickets.index') }}" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-purple-500 hover:shadow-md transition-shadow">
-        <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
-            <i class="fa-solid fa-layer-group"></i>
-        </div>
-        <div>
-            <p class="text-xs text-gray-500">Total</p>
-            <h3 class="text-xl font-bold text-gray-800">{{ $counts['total'] }}</h3>
-        </div>
-    </a>
-    <a href="{{ route('admin.tickets.index', ['status' => 'NEW']) }}" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-yellow-400 hover:shadow-md transition-shadow">
-        <div class="w-10 h-10 rounded-full bg-yellow-50 text-yellow-500 flex items-center justify-center">
-            <i class="fa-solid fa-hourglass-start"></i>
-        </div>
-        <div>
-            <p class="text-xs text-gray-500">Baru</p>
-            <h3 class="text-xl font-bold text-gray-800">{{ $counts['new'] }}</h3>
-        </div>
-    </a>
-    <a href="{{ route('admin.tickets.index', ['status' => 'TERVERIFIKASI']) }}" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-cyan-500 hover:shadow-md transition-shadow">
-        <div class="w-10 h-10 rounded-full bg-cyan-50 text-cyan-600 flex items-center justify-center">
-            <i class="fa-solid fa-check-double"></i>
-        </div>
-        <div>
-            <p class="text-xs text-gray-500">Terverifikasi</p>
-            <h3 class="text-xl font-bold text-gray-800">{{ $counts['verified'] }}</h3>
-        </div>
-    </a>
-    <a href="{{ route('admin.tickets.index', ['status' => 'IN_PROGRESS']) }}" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-blue-500 hover:shadow-md transition-shadow">
-        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
-            <i class="fa-solid fa-spinner"></i>
-        </div>
-        <div>
-            <p class="text-xs text-gray-500">Diproses</p>
-            <h3 class="text-xl font-bold text-gray-800">{{ $counts['process'] }}</h3>
-        </div>
-    </a>
-    <a href="{{ route('admin.tickets.index', ['status' => 'DONE']) }}" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-green-500 hover:shadow-md transition-shadow">
-        <div class="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center">
-            <i class="fa-solid fa-circle-check"></i>
-        </div>
-        <div>
-            <p class="text-xs text-gray-500">Selesai</p>
-            <h3 class="text-xl font-bold text-gray-800">{{ $counts['done'] }}</h3>
-        </div>
-    </a>
-    <a href="{{ route('admin.tickets.index', ['status' => 'REJECTED']) }}" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-red-500 hover:shadow-md transition-shadow">
-        <div class="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center">
-            <i class="fa-solid fa-circle-xmark"></i>
-        </div>
-        <div>
-            <p class="text-xs text-gray-500">Ditolak</p>
-            <h3 class="text-xl font-bold text-gray-800">{{ $counts['rejected'] }}</h3>
-        </div>
-    </a>
-</div>
-
 {{-- Filter & Search --}}
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
     <form action="{{ route('admin.tickets.index') }}" method="GET" class="flex flex-col md:flex-row gap-3">
-        <div class="flex-1">
+        <div class="flex-1 relative">
             <input type="text" name="search" value="{{ request('search') }}"
-                placeholder="Cari no. tiket, judul, atau nama pelapor..."
-                class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                placeholder="Cari no. tiket, judul, atau nama pelapor..." autocomplete="off"
+                class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 pl-9"
+                oninput="clearTimeout(this.debounce); this.debounce = setTimeout(() => { this.form.submit(); }, 500);">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            @if(request('search'))
+            <a href="{{ route('admin.tickets.index', request()->except(['search', 'page'])) }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+            @endif
         </div>
         <div>
             <select name="status" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">

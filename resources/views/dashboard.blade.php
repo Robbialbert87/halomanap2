@@ -94,40 +94,45 @@
                 <!-- Grafik Bulanan -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                     <h3 class="font-bold text-gray-800 mb-4">Grafik Pengaduan Bulanan</h3>
-                    <div class="h-64 w-full flex items-end gap-2 text-xs text-gray-400 relative">
-                        <!-- Placeholder for Chart -->
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <p class="text-gray-300 italic">Area Grafik Line Chart</p>
+                    @php $maxMonth = max($monthlyData->max(), 1); @endphp
+                    <div class="h-64 w-full flex items-end gap-2 text-xs text-gray-400">
+                        @foreach($monthlyData as $i => $val)
+                        <div class="flex-1 flex flex-col items-center justify-end h-full gap-1">
+                            <span class="font-bold text-gray-700 text-xs">{{ $val }}</span>
+                            <div class="w-full bg-blue-500 rounded-t" style="height: {{ ($val / $maxMonth) * 100 }}%; min-height: {{ $val > 0 ? '4px' : '0' }};"></div>
                         </div>
-                        <!-- Mock Axis -->
-                        <div class="flex flex-col justify-between h-full py-4 border-r border-gray-200 pr-2">
-                            <span>150</span><span>120</span><span>90</span><span>60</span><span>30</span><span>0</span>
-                        </div>
-                        <div class="flex-1 h-full relative border-b border-gray-200">
-                            <!-- Mock Data Points -->
-                        </div>
+                        @endforeach
                     </div>
-                    <div class="flex justify-between px-8 mt-2 text-xs text-gray-400">
-                        <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>Mei</span><span>Jun</span>
+                    <div class="flex justify-between mt-2 text-xs text-gray-400">
+                        @foreach($monthlyLabels as $label)
+                        <span>{{ $label }}</span>
+                        @endforeach
                     </div>
                 </div>
 
                 <!-- Pengaduan Kategori -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                     <h3 class="font-bold text-gray-800 mb-4">Pengaduan Berdasarkan Kategori</h3>
+                    @php $totalCat = $categoryCounts->sum() ?: 1; @endphp
                     <div class="flex items-center justify-center h-64">
-                         <!-- Placeholder Pie Chart Area -->
                          <div class="w-1/2 flex items-center justify-center relative">
-                             <div class="w-32 h-32 rounded-full border-[16px] border-blue-500 border-r-green-500 border-b-yellow-400 border-l-red-400 relative"></div>
+                             <div class="w-32 h-32 rounded-full border-[16px] relative"
+                                  style="border-color: {{ $categoryColors[0] ?? '#3b82f6' }};">
+                             </div>
                              <div class="w-20 h-20 bg-white rounded-full absolute"></div>
                          </div>
-                         <div class="w-1/2 flex flex-col gap-3 text-xs">
-                             <div class="flex justify-between items-center"><span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-blue-500"></span> Pelayanan Dokter</span> <span class="font-bold">126 (29.6%)</span></div>
-                             <div class="flex justify-between items-center"><span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-green-500"></span> Pelayanan Perawat</span> <span class="font-bold">98 (23.0%)</span></div>
-                             <div class="flex justify-between items-center"><span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-yellow-400"></span> Administrasi</span> <span class="font-bold">72 (16.9%)</span></div>
-                             <div class="flex justify-between items-center"><span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-orange-400"></span> Fasilitas</span> <span class="font-bold">61 (14.3%)</span></div>
-                             <div class="flex justify-between items-center"><span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-400"></span> Kebersihan</span> <span class="font-bold">34 (8.0%)</span></div>
-                             <div class="flex justify-between items-center"><span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-purple-400"></span> Lainnya</span> <span class="font-bold">35 (8.2%)</span></div>
+                         <div class="w-1/2 flex flex-col gap-2 text-xs max-h-64 overflow-y-auto">
+                             @forelse($categoryData as $i => $item)
+                             <div class="flex justify-between items-center">
+                                 <span class="flex items-center gap-2">
+                                     <span class="w-3 h-3 rounded-full shrink-0" style="background: {{ $categoryColors[$i % count($categoryColors)] }}"></span>
+                                     {{ $item->category->name ?? 'Tanpa Kategori' }}
+                                 </span>
+                                 <span class="font-bold">{{ $item->total }} ({{ round(($item->total / $totalCat) * 100) }}%)</span>
+                             </div>
+                             @empty
+                             <p class="text-gray-400 italic">Belum ada data kategori.</p>
+                             @endforelse
                          </div>
                     </div>
                 </div>
@@ -138,42 +143,18 @@
                  <!-- Pengaduan Unit -->
                  <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                     <h3 class="font-bold text-gray-800 mb-4">Pengaduan Berdasarkan Unit</h3>
-                    <div class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-4 max-h-64 overflow-y-auto">
+                        @forelse($unitData as $unitName => $count)
                         <div class="flex items-center gap-3">
-                            <div class="w-24 text-xs font-medium text-gray-600">IGD</div>
+                            <div class="w-28 text-xs font-medium text-gray-600 truncate" title="{{ $unitName }}">{{ $unitName }}</div>
                             <div class="flex-1 bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                                <div class="bg-blue-600 h-full rounded-full" style="width: 89%;"></div>
+                                <div class="h-full rounded-full {{ $loop->index % 2 == 0 ? 'bg-blue-600' : 'bg-teal-500' }}" style="width: {{ ($count / $unitMax) * 100 }}%;"></div>
                             </div>
-                            <div class="w-8 text-xs font-bold text-right">89</div>
+                            <div class="w-10 text-xs font-bold text-right">{{ $count }}</div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-24 text-xs font-medium text-gray-600">Rawat Jalan</div>
-                            <div class="flex-1 bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                                <div class="bg-teal-500 h-full rounded-full" style="width: 78%;"></div>
-                            </div>
-                            <div class="w-8 text-xs font-bold text-right">78</div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-24 text-xs font-medium text-gray-600">Radiologi</div>
-                            <div class="flex-1 bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                                <div class="bg-green-500 h-full rounded-full" style="width: 64%;"></div>
-                            </div>
-                            <div class="w-8 text-xs font-bold text-right">64</div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-24 text-xs font-medium text-gray-600">Rawat Inap</div>
-                            <div class="flex-1 bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                                <div class="bg-orange-500 h-full rounded-full" style="width: 58%;"></div>
-                            </div>
-                            <div class="w-8 text-xs font-bold text-right">58</div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-24 text-xs font-medium text-gray-600">Laboratorium</div>
-                            <div class="flex-1 bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                                <div class="bg-purple-500 h-full rounded-full" style="width: 45%;"></div>
-                            </div>
-                            <div class="w-8 text-xs font-bold text-right">45</div>
-                        </div>
+                        @empty
+                        <p class="text-gray-400 italic text-center">Belum ada data unit.</p>
+                        @endforelse
                     </div>
                 </div>
 

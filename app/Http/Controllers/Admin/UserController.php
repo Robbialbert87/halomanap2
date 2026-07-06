@@ -39,7 +39,7 @@ class UserController extends Controller
             });
         }
 
-        $users = $query->paginate(15)->withQueryString();
+        $users = $query->paginate(7)->withQueryString()->onEachSide(2);
         $units = Unit::orderBy('nama')->get();
         $jabatans = Jabatan::where('status', 'active')->orderBy('kategori_jabatan')->orderBy('nama')->get();
         $roles = Role::orderBy('name')->get();

@@ -28,6 +28,22 @@
 </div>
 @endif
 
+<div class="mb-4">
+    <form method="GET" action="{{ route('admin.jabatans.index') }}">
+        <div class="relative max-w-md">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari kode, nama, atau kategori..." autocomplete="off"
+                class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg pl-10 pr-10 py-2.5 focus:ring-blue-500 focus:border-blue-500"
+                oninput="clearTimeout(this.debounce); this.debounce = setTimeout(() => { this.form.submit(); }, 500);">
+            @if(request('search'))
+            <a href="{{ route('admin.jabatans.index') }}" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+            @endif
+        </div>
+    </form>
+</div>
+
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <table class="w-full text-left text-sm text-gray-600">
         <thead class="bg-gray-50 text-gray-800 font-semibold border-b border-gray-100 uppercase text-xs">
