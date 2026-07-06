@@ -8,12 +8,13 @@
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <i class="fa-solid fa-hospital text-blue-600 text-3xl"></i>
+                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-9 h-9 object-contain">
                 <div class="flex flex-col">
                     <span class="font-bold text-xl text-blue-800 leading-tight">Halo <span class="text-green-600">MANAP</span></span>
                 </div>
             </div>
-            <a href="/" class="text-sm font-medium text-gray-500 hover:text-blue-600">Kembali ke Beranda</a>
+            <a href="/" class="text-sm font-medium text-gray-500 hover:text-blue-600 flex items-center gap-1.5 transition-colors">
+                <i class="fa-solid fa-house"></i> Beranda</a>
         </div>
     </header>
 
@@ -76,23 +77,6 @@
                     <h3 class="font-bold text-slate-800 text-sm mb-1">Dukung Anonimitas</h3>
                     <p class="text-xs text-slate-600">Pengaduan dapat dikirim secara anonim tanpa identitas.</p>
                 </div>
-            </div>
-        </div>
-
-        <!-- SECTION SKM: SURVEI KEPUASAN MASYARAKAT -->
-        <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-8 lg:p-10 shadow-lg mb-8 text-white">
-            <div class="flex flex-col md:flex-row items-center gap-6">
-                <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-square-poll-vertical text-3xl"></i>
-                </div>
-                <div class="flex-1 text-center md:text-left">
-                    <h2 class="text-2xl font-bold mb-1">Survei Kepuasan Masyarakat</h2>
-                    <p class="text-white/80 text-sm">Bantu kami meningkatkan kualitas pelayanan dengan mengisi survei kepuasan masyarakat.</p>
-                </div>
-                <a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank" rel="noopener noreferrer"
-                    class="inline-flex items-center gap-2 bg-white text-green-600 font-bold px-6 py-3 rounded-xl hover:bg-green-50 transition-colors shadow-md shrink-0">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Isi Survei Sekarang
-                </a>
             </div>
         </div>
 

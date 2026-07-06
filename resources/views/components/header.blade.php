@@ -6,7 +6,7 @@
         </button>
         <!-- Center Logo (Visible only on desktop/tablet usually) -->
         <div class="hidden md:flex items-center gap-2">
-            <i class="fa-solid fa-hospital text-blue-600 text-2xl"></i>
+            <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
             <div class="flex flex-col">
                 <span class="font-bold text-lg text-blue-800 leading-tight">Halo MANAP</span>
                 <span class="text-[10px] text-gray-500 leading-tight">Pusat Pengaduan, Aspirasi dan Informasi Pelayanan<br>RSUD H. Abdul Manap Kota Jambi</span>

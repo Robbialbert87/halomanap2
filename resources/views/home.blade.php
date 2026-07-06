@@ -13,8 +13,8 @@
             <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 shadow-sm">
                 <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <div class="flex items-center gap-2.5">
-                        <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center">
-                            <i class="fa-solid fa-hospital text-white text-lg"></i>
+                        <div class="w-9 h-9 flex items-center justify-center">
+                            <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
                         </div>
                         <div>
                             <p class="font-bold text-lg text-blue-800 leading-tight">Halo <span
@@ -27,8 +27,9 @@
                             class="px-4 py-2 text-sm font-semibold text-blue-600 bg-blue-50 rounded-lg">Beranda</a>
                         <a href="/pengaduan/buat?type=Pengaduan"
                             class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Pengaduan</a>
-<a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank" rel="noopener noreferrer"
-    class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Survei</a>
+                        <a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank"
+                            rel="noopener noreferrer"
+                            class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Survei</a>
                         <a href="/pengaduan/buat?type=Apresiasi"
                             class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Apresiasi</a>
                         <a href="/pengaduan/buat?type=Informasi"
@@ -61,8 +62,7 @@
                         <p class="text-gray-500 text-lg leading-relaxed mb-3">
                             Pusat Pengaduan, Aspirasi dan Informasi Pelayanan RSUD H. Abdul Manap Kota Jambi.
                         </p>
-                        <p class="text-blue-600 font-semibold italic mb-8">"Salurkan Aspirasi Anda dengan Mudah &amp;
-                            Transparan"</p>
+                        <p class="text-blue-600 font-semibold italic mb-8">"Melayani Dengan Setulus Hati"</p>
                         <div class="flex items-center gap-4">
                             <a href="/pengaduan/buat"
                                 class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded-2xl transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 hover:-translate-y-0.5">
@@ -99,17 +99,18 @@
                                 <p class="text-xs text-gray-500">Sampaikan keluhan Anda</p>
                             </div>
                         </a>
-<a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank" rel="noopener noreferrer"
-    class="group bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center gap-3 hover:shadow-lg hover:-translate-y-1 transition-all">
-    <div
-        class="w-16 h-16 rounded-2xl bg-green-50 group-hover:bg-green-100 text-green-500 flex items-center justify-center text-3xl">
-        <i class="fa-solid fa-square-poll-vertical"></i>
-    </div>
-    <div>
-        <h3 class="font-bold text-gray-800 mb-1">Survei</h3>
-        <p class="text-xs text-gray-500">Isi Survei Kepuasan Masyarakat</p>
-    </div>
-</a>
+                        <a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank"
+                            rel="noopener noreferrer"
+                            class="group bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center gap-3 hover:shadow-lg hover:-translate-y-1 transition-all">
+                            <div
+                                class="w-16 h-16 rounded-2xl bg-green-50 group-hover:bg-green-100 text-green-500 flex items-center justify-center text-3xl">
+                                <i class="fa-solid fa-square-poll-vertical"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 mb-1">Survei</h3>
+                                <p class="text-xs text-gray-500">Isi Survei Kepuasan Masyarakat</p>
+                            </div>
+                        </a>
                         <a href="/pengaduan/buat?type=Apresiasi"
                             class="group bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center gap-3 hover:shadow-lg hover:-translate-y-1 transition-all">
                             <div
@@ -121,7 +122,7 @@
                                 <p class="text-xs text-gray-500">Sampaikan penghargaan</p>
                             </div>
                         </a>
-                        <a href="/pengaduan/buat?type=Informasi"
+                        <a href="https://simanap.rsudkotajambi.id/" target="_blank"
                             class="group bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center gap-3 hover:shadow-lg hover:-translate-y-1 transition-all">
                             <div
                                 class="w-16 h-16 rounded-2xl bg-orange-50 group-hover:bg-orange-100 text-orange-500 flex items-center justify-center text-3xl">
@@ -140,8 +141,8 @@
             <footer class="bg-gray-900 text-gray-400 py-10">
                 <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
                     <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white"><i
-                                class="fa-solid fa-hospital"></i></div>
+                        <div class="flex items-center justify-center"><img
+                                src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-7 h-7 object-contain"></div>
                         <div>
                             <p class="font-bold text-white text-sm">Halo MANAP</p>
                             <p class="text-xs">RSUD H. Abdul Manap Kota Jambi</p>
@@ -159,20 +160,15 @@
         <!-- ========================================================================= -->
         <div class="md:hidden flex flex-col min-h-screen">
             <!-- TOP NAVBAR MOBILE -->
-            <header class="bg-white sticky top-0 z-50 px-4 h-14 flex items-center justify-between border-b border-gray-100">
-                <button class="text-gray-600 text-lg"><i class="fa-solid fa-bars"></i></button>
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-hospital text-blue-600 text-xl"></i>
-                    <div class="flex flex-col text-center leading-tight">
-                        <span class="font-bold text-sm text-blue-800">Halo <span class="text-green-600">MANAP</span></span>
-                        <span class="text-[8px] text-gray-500">RSUD H. Abdul Manap Kota Jambi</span>
+            <header class="bg-white shadow-sm sticky top-0 z-50">
+                <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-9 h-9 object-contain">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-xl text-blue-800 leading-tight">Halo <span class="text-green-600">MANAP</span></span>
+                        </div>
                     </div>
                 </div>
-                <button class="relative text-gray-500">
-                    <i class="fa-regular fa-bell text-lg"></i>
-                    <span
-                        class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center border border-white">3</span>
-                </button>
             </header>
 
             <!-- MAIN CONTENT MOBILE -->
@@ -199,17 +195,18 @@
                         </div>
                     </a>
 
-<a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank" rel="noopener noreferrer"
-    class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-2">
-    <div
-        class="w-12 h-12 rounded-full bg-green-50 text-green-500 flex items-center justify-center text-xl">
-        <i class="fa-solid fa-square-poll-vertical"></i>
-    </div>
-    <div>
-        <h3 class="text-sm font-bold text-green-500">Survei</h3>
-        <p class="text-[10px] text-gray-500 mt-0.5">Isi Survei Kepuasan</p>
-    </div>
-</a>
+                    <a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank"
+                        rel="noopener noreferrer"
+                        class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-2">
+                        <div
+                            class="w-12 h-12 rounded-full bg-green-50 text-green-500 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-square-poll-vertical"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-green-500">Survei</h3>
+                            <p class="text-[10px] text-gray-500 mt-0.5">Isi Survei Kepuasan</p>
+                        </div>
+                    </a>
 
                     <a href="/pengaduan/buat?type=Apresiasi"
                         class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-2">
@@ -223,7 +220,7 @@
                         </div>
                     </a>
 
-                    <a href="/pengaduan/buat?type=Informasi"
+                    <a href="https://simanap.rsudkotajambi.id/" target="_blank"
                         class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-2">
                         <div
                             class="w-12 h-12 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center text-xl">
