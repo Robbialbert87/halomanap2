@@ -106,7 +106,7 @@
             <select name="type" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
                 <option value="">Semua Jenis</option>
                 <option value="Pengaduan" {{ request('type') == 'Pengaduan' ? 'selected' : '' }}>Pengaduan</option>
-                <option value="Saran" {{ request('type') == 'Saran' ? 'selected' : '' }}>Saran</option>
+                <option value="Survei" {{ request('type') == 'Survei' ? 'selected' : '' }}>Survei</option>
                 <option value="Apresiasi" {{ request('type') == 'Apresiasi' ? 'selected' : '' }}>Apresiasi</option>
                 <option value="Informasi" {{ request('type') == 'Informasi' ? 'selected' : '' }}>Informasi</option>
             </select>
@@ -162,10 +162,12 @@
                     ];
                     $typeMap = [
                         'Pengaduan'  => 'bg-red-50 text-red-700',
+                        'Survei'     => 'bg-green-50 text-green-700',
                         'Saran'      => 'bg-green-50 text-green-700',
                         'Apresiasi'  => 'bg-blue-50 text-blue-700',
                         'Informasi'  => 'bg-orange-50 text-orange-700',
                     ];
+                    $typeLabel = $ticket->type === 'Saran' ? 'Survei' : $ticket->type;
                     $statusStyle = $statusMap[$ticket->status] ?? ['label' => $ticket->status, 'class' => 'bg-gray-100 text-gray-700'];
                     $typeClass   = $typeMap[$ticket->type] ?? 'bg-gray-100 text-gray-700';
                 @endphp
@@ -192,7 +194,7 @@
                         <span class="text-xs text-gray-700">{{ $ticket->category->name ?? '-' }}</span>
                     </td>
                     <td class="px-4 py-3">
-                        <span class="inline-flex text-xs font-semibold px-2 py-0.5 rounded-full {{ $typeClass }}">{{ $ticket->type }}</span>
+                        <span class="inline-flex text-xs font-semibold px-2 py-0.5 rounded-full {{ $typeClass }}">{{ $typeLabel }}</span>
                     </td>
                     <td class="px-4 py-3">
                         <span class="inline-flex text-xs font-semibold px-2.5 py-1 rounded-full {{ $statusStyle['class'] }}">{{ $statusStyle['label'] }}</span>

@@ -32,7 +32,7 @@
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Jenis <span class="text-red-500">*</span></label>
                 <select name="type" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
                     <option value="Pengaduan" {{ old('type', 'Pengaduan') == 'Pengaduan' ? 'selected' : '' }}>Pengaduan</option>
-                    <option value="Saran" {{ old('type') == 'Saran' ? 'selected' : '' }}>Saran</option>
+                    <option value="Survei" {{ old('type') == 'Survei' ? 'selected' : '' }}>Survei</option>
                     <option value="Apresiasi" {{ old('type') == 'Apresiasi' ? 'selected' : '' }}>Apresiasi</option>
                     <option value="Informasi" {{ old('type') == 'Informasi' ? 'selected' : '' }}>Informasi</option>
                 </select>

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->string('ticket_number')->unique();
-            $table->enum('type', ['Pengaduan', 'Saran', 'Apresiasi', 'Informasi']);
+            $table->enum('type', ['Pengaduan', 'Survei', 'Apresiasi', 'Informasi']);
             $table->foreignId('category_id')->nullable()->constrained('report_categories');
             $table->foreignId('room_id')->nullable()->constrained('rooms');
             $table->boolean('is_anonymous')->default(false);

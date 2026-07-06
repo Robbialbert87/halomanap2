@@ -159,7 +159,7 @@ class TicketController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'type'           => 'required|in:Pengaduan,Saran,Apresiasi,Informasi',
+            'type'           => 'required|in:Pengaduan,Survei,Apresiasi,Informasi',
             'unit_id'        => 'required|exists:units,id',
             'room_id'        => 'required|exists:rooms,id',
             'category_id'    => 'required|exists:report_categories,id',

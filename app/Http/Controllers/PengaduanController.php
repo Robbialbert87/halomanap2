@@ -21,7 +21,7 @@ class PengaduanController extends Controller
         $rooms      = Room::orderBy('name')->get()->groupBy('unit_id');
         $categories = ReportCategory::orderBy('name')->get();
 
-        $type = in_array($request->query('type'), ['Pengaduan', 'Saran', 'Apresiasi', 'Informasi'])
+        $type = in_array($request->query('type'), ['Pengaduan', 'Survei', 'Apresiasi', 'Informasi'])
             ? $request->query('type')
             : 'Pengaduan';
 
@@ -97,7 +97,7 @@ class PengaduanController extends Controller
 
         $ticket = Ticket::create([
             'ticket_number' => $ticketNumber,
-            'type' => in_array($request->input('type'), ['Pengaduan', 'Saran', 'Apresiasi', 'Informasi']) ? $request->input('type') : 'Pengaduan',
+            'type' => in_array($request->input('type'), ['Pengaduan', 'Survei', 'Apresiasi', 'Informasi']) ? $request->input('type') : 'Pengaduan',
             'category_id' => $request->category_id,
             'room_id' => $request->room_id,
             'is_anonymous' => $isAnonymous,

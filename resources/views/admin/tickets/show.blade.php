@@ -17,12 +17,14 @@
     ];
     $typeMap = [
         'Pengaduan'  => ['class' => 'bg-red-100 text-red-700',    'icon' => 'fa-circle-exclamation'],
-        'Saran'      => ['class' => 'bg-green-100 text-green-700','icon' => 'fa-lightbulb'],
+        'Saran'      => ['class' => 'bg-green-100 text-green-700','icon' => 'fa-square-poll-vertical'],
+        'Survei'     => ['class' => 'bg-green-100 text-green-700','icon' => 'fa-square-poll-vertical'],
         'Apresiasi'  => ['class' => 'bg-blue-100 text-blue-700',  'icon' => 'fa-thumbs-up'],
         'Informasi'  => ['class' => 'bg-orange-100 text-orange-700','icon' => 'fa-circle-info'],
     ];
     $statusStyle = $statusMap[$ticket->status] ?? ['label' => $ticket->status, 'class' => 'bg-gray-100 text-gray-700 border-gray-300'];
     $typeStyle   = $typeMap[$ticket->type]   ?? ['class' => 'bg-gray-100 text-gray-700', 'icon' => 'fa-file'];
+    $typeLabel   = $ticket->type === 'Saran' ? 'Survei' : $ticket->type;
 @endphp
 
 {{-- Page Header --}}
@@ -64,7 +66,7 @@
                 </h2>
                 <div class="flex items-center gap-2">
                     <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full {{ $typeStyle['class'] }}">
-                        <i class="fa-solid {{ $typeStyle['icon'] }}"></i> {{ $ticket->type }}
+                        <i class="fa-solid {{ $typeStyle['icon'] }}"></i> {{ $typeLabel }}
                     </span>
                     <span class="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full border {{ $statusStyle['class'] }}">
                         {{ $statusStyle['label'] }}
