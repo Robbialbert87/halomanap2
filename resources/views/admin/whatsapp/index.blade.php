@@ -94,18 +94,18 @@
             </div>
         </div>
 
-        <div class="bg-yellow-50 rounded-xl shadow-sm border border-yellow-200 p-6">
-            <h2 class="font-semibold text-yellow-800 flex items-center gap-2 mb-2">
-                <i class="fa-solid fa-triangle-exclamation"></i> Catatan
+        <div class="bg-blue-50 rounded-xl shadow-sm border border-blue-200 p-6">
+            <h2 class="font-semibold text-blue-800 flex items-center gap-2 mb-2">
+                <i class="fa-solid fa-gear"></i> Cara Manual (Paling Stabil)
             </h2>
-            <p class="text-sm text-yellow-700">
-                Tombol "Jalankan Layanan Server" akan menjalankan dua proses <strong>background</strong> (tanpa jendela CMD):
-                <br>1. WhatsApp Node.js API (port 3000)
-                <br>2. Queue Worker notifikasi
-                <br><br>Log: <code class="text-xs bg-yellow-100 px-1 rounded">storage/logs/wa-node.log</code>, <code class="text-xs bg-yellow-100 px-1 rounded">wa-queue.log</code>, <code class="text-xs bg-yellow-100 px-1 rounded">wa-debug.log</code>
-                <br><br>Jika tombol tidak berhasil, jalankan <strong>PowerShell as Administrator</strong>:
-                <br><code class="text-xs bg-yellow-100 px-1 rounded">powershell -ExecutionPolicy Bypass -File "{{ storage_path('app/start-services.ps1') }}"</code>
-                <br><br>Untuk menghentikan: <code class="text-xs bg-yellow-100 px-1 rounded">taskkill /F /IM node.exe & taskkill /F /IM php.exe</code>
+            <p class="text-sm text-blue-700">
+                Jika tombol "Jalankan Layanan Server" tidak berhasil, jalankan secara manual:
+                <br><br><strong>1. Buka folder project, double-click file:</strong>
+                <br><code class="text-sm bg-blue-100 px-2 py-1 rounded block mt-1">start-services.bat</code>
+                <br><br><strong>2. Akan terbuka 2 jendela CMD</strong> (Node.js API + Queue Worker)
+                <br><strong>Jangan ditutup!</strong> Biarkan saja berjalan.
+                <br><br><strong>3. Refresh halaman ini</strong> — QR Code akan muncul otomatis.
+                <br><br>Log: <code class="text-xs bg-blue-100 px-1 rounded">storage/logs/wa-node.log</code> & <code class="text-xs bg-blue-100 px-1 rounded">wa-queue.log</code>
             </p>
         </div>
 
