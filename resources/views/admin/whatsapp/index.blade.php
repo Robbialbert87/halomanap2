@@ -102,8 +102,10 @@
                 Tombol "Jalankan Layanan Server" akan menjalankan dua proses <strong>background</strong> (tanpa jendela CMD):
                 <br>1. WhatsApp Node.js API (port 3000)
                 <br>2. Queue Worker notifikasi
-                <br><br>Log proses tersimpan di <code class="text-xs bg-yellow-100 px-1 rounded">storage/logs/wa-node.log</code> dan <code class="text-xs bg-yellow-100 px-1 rounded">wa-queue.log</code>.
-                <br><br>Untuk menghentikan layanan, buka Task Manager dan hentikan proses <strong>node.exe</strong> dan <strong>php.exe</strong> (atau restart server).
+                <br><br>Log: <code class="text-xs bg-yellow-100 px-1 rounded">storage/logs/wa-node.log</code>, <code class="text-xs bg-yellow-100 px-1 rounded">wa-queue.log</code>, <code class="text-xs bg-yellow-100 px-1 rounded">wa-debug.log</code>
+                <br><br>Jika tombol tidak berhasil, jalankan <strong>PowerShell as Administrator</strong>:
+                <br><code class="text-xs bg-yellow-100 px-1 rounded">powershell -ExecutionPolicy Bypass -File "{{ storage_path('app/start-services.ps1') }}"</code>
+                <br><br>Untuk menghentikan: <code class="text-xs bg-yellow-100 px-1 rounded">taskkill /F /IM node.exe & taskkill /F /IM php.exe</code>
             </p>
         </div>
 
