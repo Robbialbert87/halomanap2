@@ -20,17 +20,13 @@ class WhatsappSettingsController extends Controller
         $logPath = storage_path('logs');
 
         if (!$nodePath) {
-            return redirect()->back()->with('error', 'Node.js tidak ditemukan. Pastikan Node.js terinstal dan terdaftar di PATH.');
+            return redirect()->back()->with('error', 'Node.js tidak ditemukan. Pastikan Node.js terinstal dan terdaftar di PATH. Cek "where node" di CMD server.');
         }
 
         $errors = [];
 
         // 1. WhatsApp Node.js Gateway
-        $nodeCmd = sprintf(
-            'cd /d "%s\\whatsapp-api" && "%s" index.js',
-            $basePath,
-            $nodePath
-        );
+        $nodeCmd = sprintf('cd /d "%s\\whatsapp-api" && "%s" index.js', $basePath, $nodePath);
         $nodeFull = sprintf('%s > "%s\\wa-node.log" 2>&1', $nodeCmd, $logPath);
         $result = $this->runBackground($nodeFull);
         if ($result !== true) $errors[] = 'Node.js: ' . $result;
@@ -38,11 +34,7 @@ class WhatsappSettingsController extends Controller
         sleep(1);
 
         // 2. Queue Worker
-        $queueCmd = sprintf(
-            'cd /d "%s" && "%s" artisan queue:work --tries=1',
-            $basePath,
-            $phpPath
-        );
+        $queueCmd = sprintf('cd /d "%s" && "%s" artisan queue:work --tries=1', $basePath, $phpPath);
         $queueFull = sprintf('%s > "%s\\wa-queue.log" 2>&1', $queueCmd, $logPath);
         $result = $this->runBackground($queueFull);
         if ($result !== true) $errors[] = 'Queue: ' . $result;
@@ -89,24 +81,43 @@ class WhatsappSettingsController extends Controller
 
     private function runBackground(string $command): true|string
     {
-        // Metode 1: COM WScript.Shell — hidden window, paling reliable di Windows Server
-        if (class_exists('\\COM', false)) {
-            try {
-                $shell = new \COM('WScript.Shell');
-                $shell->Run($command, 0, false);
-                return true;
-            } catch (\Throwable $e) {
-                // fallthrough
-            }
+        $cmdLine = 'cmd /c ' . $command;
+
+        // Metode 1: VBScript via wscript.exe (COM via file, built-in Windows, no window)
+        $vbsPath = storage_path('app/run-bg.vbs');
+        $vbsContent = 'CreateObject("WScript.Shell").Run "' . str_replace('"', '""', $cmdLine) . '", 0, False';
+        file_put_contents($vbsPath, $vbsContent . "\r\n");
+
+        $proc = proc_open(
+            'wscript.exe //Nologo "' . $vbsPath . '"',
+            [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
+            $pipes
+        );
+
+        if (is_resource($proc)) {
+            fclose($pipes[0]);
+            $exitCode = proc_close($proc);
+            @unlink($vbsPath);
+            if ($exitCode === 0) return true;
         }
 
-        // Metode 2: start /B via popen
-        $handle = popen('start /B "" cmd /c "' . $command . '"', 'r');
-        if ($handle !== false) {
-            pclose($handle);
+        // Metode 2: PowerShell Start-Process (hidden window)
+        $psCmd = 'powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -WindowStyle Hidden -FilePath cmd.exe -ArgumentList \'/c ' . $command . '\'"';
+        exec($psCmd, $psOut, $psExit);
+        if ($psExit === 0) {
+            @unlink($vbsPath);
             return true;
         }
 
-        return 'Tidak dapat membuat proses background. Cek disable_functions di php.ini.';
+        // Metode 3: start /B via popen (last resort, mungkin flash window)
+        $handle = popen('start /B "" cmd /c "' . $command . '"', 'r');
+        if ($handle !== false) {
+            pclose($handle);
+            @unlink($vbsPath);
+            return true;
+        }
+
+        @unlink($vbsPath);
+        return 'Tidak dapat membuat proses background. Cek apakah proc_open/exec aktif di php.ini.';
     }
 }
