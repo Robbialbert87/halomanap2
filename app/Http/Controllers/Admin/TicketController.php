@@ -167,14 +167,22 @@ class TicketController extends Controller
             'reporter_phone' => 'required|string|max:20',
             'title'          => 'required|string|max:255',
             'description'    => 'required|string|min:10',
-            'attachment'     => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'attachment'     => 'nullable|file|mimes:jpg,jpeg,png,pdf,heic,heif,webp|max:20480',
         ]);
 
         $attachmentPath = null;
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
             if ($file->isValid()) {
-                $filename = Str::random(40) . '.' . $file->guessExtension();
+                $ext = $file->guessExtension();
+                if (!$ext) {
+                    $ext = $file->getClientOriginalExtension() ?? 'jpg';
+                }
+                $ext = strtolower($ext);
+                if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif', 'pdf'])) {
+                    $ext = 'jpg';
+                }
+                $filename = Str::random(40) . '.' . $ext;
                 Storage::disk('public')->put('attachments/' . $filename, $file->get());
                 $attachmentPath = 'attachments/' . $filename;
             }
