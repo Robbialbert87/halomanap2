@@ -9,6 +9,8 @@ class SendWhatsAppNotification implements ShouldQueue
 {
     use Queueable;
 
+    public string $queue = 'notifications';
+
     protected $phoneNumber;
     protected $message;
 
