@@ -7,6 +7,8 @@ use App\Models\Unit;
 use App\Models\Room;
 use App\Models\ReportCategory;
 use App\Models\Ticket;
+use App\Models\User;
+use App\Jobs\SendWhatsAppNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -88,6 +90,9 @@ class PengaduanController extends Controller
             'status' => 'NEW'
         ]);
 
+        // Kirim WA ke Admin Pengaduan
+        $this->notifyAdmins($ticket);
+
         return redirect()->route('pengaduan.success', ['ticket_number' => $ticket->ticket_number]);
     }
 
@@ -113,5 +118,32 @@ class PengaduanController extends Controller
         }
 
         return view('pengaduan.track', compact('ticket', 'notFound'));
+    }
+
+    private function notifyAdmins(Ticket $ticket): void
+    {
+        $admins = User::whereHas('roles', function ($q) {
+            $q->whereIn('name', ['Super Admin', 'Admin Pengaduan']);
+        })->where('status', 'active')->whereNotNull('phone_number')->get();
+
+        if ($admins->isEmpty()) return;
+
+        $nama = $ticket->is_anonymous ? 'Anonim' : ($ticket->reporter_name ?? '-');
+        $pesan = implode("\n", [
+            "*HALO MANAP - Pengaduan Baru*",
+            "─────────────────────",
+            "📋 *No:* {$ticket->ticket_number}",
+            "📝 *Judul:* {$ticket->title}",
+            "👤 *Pelapor:* {$nama}",
+            "",
+            "Silakan login untuk memverifikasi.",
+            "🔗 " . config('app.url') . '/admin/tickets',
+            "─────────────────────",
+            "_RSUD H. Abdul Manap Kota Jambi_",
+        ]);
+
+        foreach ($admins as $admin) {
+            SendWhatsAppNotification::dispatch($admin->phone_number, $pesan);
+        }
     }
 }
