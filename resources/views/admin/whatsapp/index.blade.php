@@ -184,7 +184,11 @@
 </script>
 <script>
     let pollInterval;
-    const apiUrl = `http://${window.location.hostname}:3000`;
+    const apiUrls = [
+        'http://localhost:3000',
+        `http://127.0.0.1:3000`,
+        `http://${window.location.hostname}:3000`,
+    ];
 
     function setUI(state, data = null) {
         const errorBox = document.getElementById('error-box');
@@ -214,8 +218,11 @@
         }
     }
 
+    let apiUrlIndex = 0;
+
     function checkStatus() {
-        fetch(`${apiUrl}/status`)
+        const url = apiUrls[apiUrlIndex];
+        fetch(`${url}/status`)
             .then(res => {
                 if (!res.ok) throw new Error('API Offline');
                 return res.json();
@@ -226,41 +233,40 @@
                 } else if (data.qr) {
                     setUI('qr', data);
                 } else {
-                    // Masih inisialisasi tapi belum dapat QR
                     setUI('error');
                     document.getElementById('error-box').querySelector('p').innerText = 'Sedang memuat Client... Mohon tunggu beberapa detik.';
                     document.getElementById('error-box').querySelector('form').classList.add('hidden');
                 }
             })
             .catch(err => {
-                console.error(err);
-                setUI('error');
-                document.getElementById('error-box').querySelector('p').innerText = 'Server WhatsApp Gateway (Node.js) belum berjalan atau terhenti. Silakan jalankan layanan terlebih dahulu.';
-                document.getElementById('error-box').querySelector('form').classList.remove('hidden');
+                console.error(`[${url}] ${err.message}`);
+                apiUrlIndex = (apiUrlIndex + 1) % apiUrls.length;
+                if (apiUrlIndex === 0) {
+                    setUI('error');
+                    document.getElementById('error-box').querySelector('p').innerText = 'Node.js Gateway (port 3000) belum berjalan. Klik tombol atau double-click start-services.bat';
+                    document.getElementById('error-box').querySelector('form').classList.remove('hidden');
+                }
             });
     }
 
     function resetWhatsApp() {
         if(!confirm('Apakah Anda yakin ingin memutuskan tautan nomor ini? Anda harus melakukan scan QR ulang!')) return;
         
-        fetch(`${apiUrl}/reset`, {
+        fetch(`${apiUrls[0]}/reset`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         })
         .then(res => res.json())
         .then(data => {
             alert('Perintah reset terkirim. Memuat QR Code baru...');
-            checkStatus(); // Force check immediately
+            checkStatus();
         })
         .catch(err => {
             alert('Gagal menghubungi server untuk reset.');
         });
     }
 
-    // Polling setiap 3 detik
     pollInterval = setInterval(checkStatus, 3000);
-    
-    // Initial check
     checkStatus();
 </script>
 @endpush
