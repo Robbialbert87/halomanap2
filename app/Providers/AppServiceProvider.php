@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Events\WorkflowChanged;
 use App\Listeners\SendWhatsAppNotification;
+use App\Models\Ticket;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,5 +31,26 @@ class AppServiceProvider extends ServiceProvider
 
         // Register Event Listener
         Event::listen(WorkflowChanged::class, SendWhatsAppNotification::class);
+
+        // Share notification data with header component
+        View::composer('components.header', function ($view) {
+            $unreadCount = Ticket::where('status', 'NEW')->count();
+            $notifications = Ticket::where('status', 'NEW')
+                ->with('category')
+                ->latest()
+                ->take(10)
+                ->get()
+                ->map(function ($ticket) {
+                    return [
+                        'id' => $ticket->id,
+                        'ticket_number' => $ticket->ticket_number,
+                        'title' => $ticket->title,
+                        'type' => $ticket->type,
+                        'category' => $ticket->category?->name,
+                        'time' => $ticket->created_at->diffForHumans(),
+                    ];
+                });
+            $view->with(compact('unreadCount', 'notifications'));
+        });
     }
 }
