@@ -3,8 +3,20 @@
 @section('title', 'Dashboard - Halo MANAP')
 
 @section('admin_content')
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeInUp {
+        animation: fadeInUp 0.45s ease-out both;
+    }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+
             <!-- Page Header & Filter -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 animate-fadeInUp" style="animation-delay:0s">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
                     <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
@@ -27,9 +39,9 @@
             </div>
 
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+            <div class="flex gap-3 overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-5 md:gap-4 mb-6 pb-2 md:pb-0 scrollbar-hide">
                 <!-- Card 1 -->
-                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-purple-500">
+                <div class="snap-start shrink-0 w-[80vw] md:w-auto bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-purple-500 active:scale-[0.98] transition-transform">
                     <div class="w-12 h-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xl">
                         <i class="fa-solid fa-file-lines"></i>
                     </div>
@@ -41,7 +53,7 @@
                 </div>
 
                 <!-- Card 2 -->
-                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-yellow-400">
+                <div class="snap-start shrink-0 w-[80vw] md:w-auto bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-yellow-400 active:scale-[0.98] transition-transform">
                     <div class="w-12 h-12 rounded-full bg-yellow-50 text-yellow-500 flex items-center justify-center text-xl">
                         <i class="fa-solid fa-clock"></i>
                     </div>
@@ -53,7 +65,7 @@
                 </div>
 
                 <!-- Card 3 -->
-                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-blue-500">
+                <div class="snap-start shrink-0 w-[80vw] md:w-auto bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-blue-500 active:scale-[0.98] transition-transform">
                     <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-xl">
                         <i class="fa-solid fa-spinner"></i>
                     </div>
@@ -65,7 +77,7 @@
                 </div>
 
                 <!-- Card 4 -->
-                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-green-500">
+                <div class="snap-start shrink-0 w-[80vw] md:w-auto bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-green-500 active:scale-[0.98] transition-transform">
                     <div class="w-12 h-12 rounded-full bg-green-50 text-green-500 flex items-center justify-center text-xl">
                         <i class="fa-solid fa-check"></i>
                     </div>
@@ -77,7 +89,7 @@
                 </div>
 
                 <!-- Card 5 -->
-                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-red-500">
+                <div class="snap-start shrink-0 w-[80vw] md:w-auto bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-red-500 active:scale-[0.98] transition-transform">
                     <div class="w-12 h-12 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-xl">
                         <i class="fa-solid fa-xmark"></i>
                     </div>
@@ -90,7 +102,7 @@
             </div>
 
             <!-- Charts & SLA Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 animate-fadeInUp" style="animation-delay:.15s">
                 <!-- Grafik Bulanan -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                     <h3 class="font-bold text-gray-800 mb-4">Grafik Pengaduan Bulanan</h3>
@@ -139,7 +151,7 @@
             </div>
 
             <!-- Bottom Section (SLA and Unit) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fadeInUp" style="animation-delay:.25s">
                  <!-- Pengaduan Unit -->
                  <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                     <h3 class="font-bold text-gray-800 mb-4">Pengaduan Berdasarkan Unit</h3>
@@ -161,8 +173,8 @@
                 <!-- SLA Section -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                     <h3 class="font-bold text-gray-800 mb-4">SLA (Service Level Agreement)</h3>
-                    <div class="grid grid-cols-3 gap-4 h-[200px]">
-                        <div class="border border-green-200 bg-green-50/30 rounded-lg p-4 flex flex-col justify-center items-center text-center">
+                    <div class="flex gap-3 overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 md:gap-4 h-[200px] pb-2 md:pb-0 scrollbar-hide">
+                        <div class="snap-start shrink-0 w-[200px] md:w-auto border border-green-200 bg-green-50/30 rounded-lg p-4 flex flex-col justify-center items-center text-center active:scale-[0.98] transition-transform">
                             <div class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center mb-3">
                                 <i class="fa-solid fa-check text-lg"></i>
                             </div>
@@ -171,7 +183,7 @@
                             <p class="text-xs text-green-600 font-bold mt-1">70.0%</p>
                         </div>
                         
-                        <div class="border border-yellow-200 bg-yellow-50/30 rounded-lg p-4 flex flex-col justify-center items-center text-center">
+                        <div class="snap-start shrink-0 w-[200px] md:w-auto border border-yellow-200 bg-yellow-50/30 rounded-lg p-4 flex flex-col justify-center items-center text-center active:scale-[0.98] transition-transform">
                             <div class="w-10 h-10 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center mb-3">
                                 <i class="fa-solid fa-clock text-lg"></i>
                             </div>
@@ -180,7 +192,7 @@
                             <p class="text-xs text-yellow-600 font-bold mt-1">17.4%</p>
                         </div>
 
-                        <div class="border border-red-200 bg-red-50/30 rounded-lg p-4 flex flex-col justify-center items-center text-center">
+                        <div class="snap-start shrink-0 w-[200px] md:w-auto border border-red-200 bg-red-50/30 rounded-lg p-4 flex flex-col justify-center items-center text-center active:scale-[0.98] transition-transform">
                             <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-3">
                                 <i class="fa-solid fa-triangle-exclamation text-lg"></i>
                             </div>
