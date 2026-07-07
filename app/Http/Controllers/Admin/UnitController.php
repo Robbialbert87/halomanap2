@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\UnitType;
 use Illuminate\Http\Request;
 use App\Models\Unit;
+use Illuminate\Support\Facades\Schema;
 
 class UnitController extends Controller
 {
@@ -24,20 +25,20 @@ class UnitController extends Controller
 
         $units = $query->paginate(7)->withQueryString()->onEachSide(2);
         
-        $jenisList = UnitType::where('is_active', true)->orderBy('name')->pluck('name');
+        $jenisList = $this->getJenisList();
         
         return view('admin.units.index', compact('units', 'jenisList'));
     }
 
     public function create()
     {
-        $jenisList = UnitType::where('is_active', true)->orderBy('name')->pluck('name');
+        $jenisList = $this->getJenisList();
         return view('admin.units.create', compact('jenisList'));
     }
 
     public function store(Request $request)
     {
-        $jenisList = UnitType::where('is_active', true)->pluck('name')->toArray();
+        $jenisList = $this->getJenisList()->toArray();
 
         $validated = $request->validate([
             'kode'   => 'required|string|max:125|unique:units,kode',
@@ -52,13 +53,13 @@ class UnitController extends Controller
 
     public function edit(Unit $unit)
     {
-        $jenisList = UnitType::where('is_active', true)->orderBy('name')->pluck('name');
+        $jenisList = $this->getJenisList();
         return view('admin.units.edit', compact('unit', 'jenisList'));
     }
 
     public function update(Request $request, Unit $unit)
     {
-        $jenisList = UnitType::where('is_active', true)->pluck('name')->toArray();
+        $jenisList = $this->getJenisList()->toArray();
 
         $validated = $request->validate([
             'kode'   => 'required|string|max:125|unique:units,kode,' . $unit->id,
@@ -75,5 +76,14 @@ class UnitController extends Controller
     {
         $unit->forceDelete();
         return redirect()->route('admin.units.index')->with('success', 'Master Unit berhasil dihapus.');
+    }
+
+    private function getJenisList()
+    {
+        if (Schema::hasTable('unit_types')) {
+            return UnitType::where('is_active', true)->orderBy('name')->pluck('name');
+        }
+
+        return collect(['RAWAT INAP', 'RAWAT JALAN', 'IGD', 'ICU', 'POLI', 'PENUNJANG', 'NON MEDIS']);
     }
 }
