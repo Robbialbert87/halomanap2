@@ -86,6 +86,11 @@
                 <i class="fa-solid fa-tags w-5 text-center"></i> Kategori
             </a>
             @endcan
+            @can('manage-units')
+            <a href="{{ route('admin.unit-types.index') }}" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors text-sm">
+                <i class="fa-solid fa-tag w-5 text-center"></i> Jenis Unit
+            </a>
+            @endcan
             @endif
 
             @can('manage-reports')

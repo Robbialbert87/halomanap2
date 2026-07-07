@@ -103,6 +103,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('units',      App\Http\Controllers\Admin\UnitController::class);
         Route::resource('rooms',      App\Http\Controllers\Admin\RoomController::class);
         Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
+        Route::resource('unit-types', App\Http\Controllers\Admin\UnitTypeController::class);
 
         // User & Role Management
         Route::resource('users',    App\Http\Controllers\Admin\UserController::class);

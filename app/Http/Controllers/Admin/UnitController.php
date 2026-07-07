@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\UnitType;
 use Illuminate\Http\Request;
 use App\Models\Unit;
 
@@ -23,23 +24,25 @@ class UnitController extends Controller
 
         $units = $query->paginate(7)->withQueryString()->onEachSide(2);
         
-        $jenisList = ['Instalasi', 'Bidang', 'Bagian', 'Sub Bagian', 'Komite', 'Tim', 'Pelayanan', 'Penunjang', 'Lainnya'];
+        $jenisList = UnitType::where('is_active', true)->orderBy('name')->pluck('name');
         
         return view('admin.units.index', compact('units', 'jenisList'));
     }
 
     public function create()
     {
-        $jenisList = ['Instalasi', 'Bidang', 'Bagian', 'Sub Bagian', 'Komite', 'Tim', 'Pelayanan', 'Penunjang', 'Lainnya'];
+        $jenisList = UnitType::where('is_active', true)->orderBy('name')->pluck('name');
         return view('admin.units.create', compact('jenisList'));
     }
 
     public function store(Request $request)
     {
+        $jenisList = UnitType::where('is_active', true)->pluck('name')->toArray();
+
         $validated = $request->validate([
             'kode'   => 'required|string|max:125|unique:units,kode',
             'nama'   => 'required|string|max:255',
-            'jenis'  => 'required|in:Instalasi,Bidang,Bagian,Sub Bagian,Komite,Tim,Pelayanan,Penunjang,Lainnya',
+            'jenis'  => 'required|in:' . implode(',', $jenisList),
             'status' => 'required|in:active,inactive',
         ]);
 
@@ -49,16 +52,18 @@ class UnitController extends Controller
 
     public function edit(Unit $unit)
     {
-        $jenisList = ['Instalasi', 'Bidang', 'Bagian', 'Sub Bagian', 'Komite', 'Tim', 'Pelayanan', 'Penunjang', 'Lainnya'];
+        $jenisList = UnitType::where('is_active', true)->orderBy('name')->pluck('name');
         return view('admin.units.edit', compact('unit', 'jenisList'));
     }
 
     public function update(Request $request, Unit $unit)
     {
+        $jenisList = UnitType::where('is_active', true)->pluck('name')->toArray();
+
         $validated = $request->validate([
             'kode'   => 'required|string|max:125|unique:units,kode,' . $unit->id,
             'nama'   => 'required|string|max:255',
-            'jenis'  => 'required|in:Instalasi,Bidang,Bagian,Sub Bagian,Komite,Tim,Pelayanan,Penunjang,Lainnya',
+            'jenis'  => 'required|in:' . implode(',', $jenisList),
             'status' => 'required|in:active,inactive',
         ]);
 
