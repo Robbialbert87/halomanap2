@@ -4,6 +4,26 @@
 
 @section('admin_content')
 
+@php
+$statusMap = [
+    'NEW'                 => ['label' => 'Baru',     'class' => 'bg-yellow-100 text-yellow-700'],
+    'TERVERIFIKASI'       => ['label' => 'Terverifikasi', 'class' => 'bg-cyan-100 text-cyan-700'],
+    'IN_PROGRESS'         => ['label' => 'Diproses', 'class' => 'bg-blue-100 text-blue-700'],
+    'DONE'                => ['label' => 'Selesai',  'class' => 'bg-green-100 text-green-700'],
+    'REJECTED'            => ['label' => 'Ditolak',  'class' => 'bg-red-100 text-red-700'],
+    'Diproses'            => ['label' => 'Diproses', 'class' => 'bg-blue-100 text-blue-700'],
+    'Menunggu Verifikasi' => ['label' => 'Menunggu Verifikasi', 'class' => 'bg-purple-100 text-purple-700'],
+    'Selesai'             => ['label' => 'Selesai',  'class' => 'bg-green-100 text-green-700'],
+];
+$typeMap = [
+    'Pengaduan'  => 'bg-red-50 text-red-700',
+    'Survei'     => 'bg-green-50 text-green-700',
+    'Saran'      => 'bg-green-50 text-green-700',
+    'Apresiasi'  => 'bg-blue-50 text-blue-700',
+    'Informasi'  => 'bg-orange-50 text-orange-700',
+];
+@endphp
+
 {{-- Flash Message --}}
 @if(session('success'))
 <div class="bg-green-50 text-green-700 p-3 rounded-lg mb-4 border border-green-200 flex items-center gap-2">
@@ -26,8 +46,17 @@
     </a>
 </div>
 
+{{-- Mobile Filter Toggle --}}
+<button id="mobile-filter-toggle" type="button" class="md:hidden w-full bg-white rounded-xl shadow-sm border border-gray-100 p-3 flex items-center justify-between text-sm text-gray-700 font-medium mb-3 active:scale-[0.99] transition-all">
+    <span class="flex items-center gap-2">
+        <i class="fa-solid fa-sliders text-blue-500"></i>
+        <span>Filter & Pencarian</span>
+    </span>
+    <i id="mobile-filter-icon" class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+</button>
+
 {{-- Filter & Search --}}
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+<div id="filter-container" class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
     <form action="{{ route('admin.tickets.index') }}" method="GET" class="flex flex-col md:flex-row gap-3">
         <div class="flex-1 relative">
             <input type="text" name="search" value="{{ request('search') }}"
@@ -79,8 +108,59 @@
     </form>
 </div>
 
-{{-- Table --}}
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+{{-- Mobile: Ticket Cards --}}
+<div class="block md:hidden space-y-3 mb-6" id="mobile-ticket-list">
+    @forelse($tickets as $ticket)
+    @php
+        $typeLabel = $ticket->type === 'Saran' ? 'Survei' : $ticket->type;
+        $statusStyle = $statusMap[$ticket->status] ?? ['label' => $ticket->status, 'class' => 'bg-gray-100 text-gray-700'];
+        $typeClass   = $typeMap[$ticket->type] ?? 'bg-gray-100 text-gray-700';
+    @endphp
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden active:bg-gray-50 transition-colors touch-manipulation" onclick="window.location='{{ route('admin.tickets.show', $ticket->id) }}'">
+        <div class="p-4">
+            <div class="flex items-start justify-between gap-2 mb-2">
+                <span class="font-mono font-semibold text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded">{{ $ticket->ticket_number }}</span>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <span class="inline-flex text-xs font-semibold px-2 py-0.5 rounded-full {{ $typeClass }}">{{ $typeLabel }}</span>
+                    <span class="inline-flex text-xs font-semibold px-2.5 py-1 rounded-full {{ $statusStyle['class'] }}">{{ $statusStyle['label'] }}</span>
+                </div>
+            </div>
+            <h3 class="font-medium text-gray-800 text-sm leading-snug mb-2 line-clamp-2">{{ $ticket->title }}</h3>
+            <div class="flex flex-col gap-1 text-xs text-gray-500">
+                @if($ticket->is_anonymous)
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-user-secret w-3.5 text-center text-gray-400"></i> Anonim</span>
+                @else
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-user w-3.5 text-center text-gray-400"></i> {{ $ticket->reporter_name }} - {{ $ticket->reporter_phone }}</span>
+                @endif
+                <span class="flex items-center gap-1"><i class="fa-solid fa-location-dot w-3.5 text-center text-gray-400"></i> {{ $ticket->room->unit->nama ?? '-' }} / {{ $ticket->room->name ?? '-' }}</span>
+                <span class="flex items-center gap-1"><i class="fa-solid fa-tag w-3.5 text-center text-gray-400"></i> {{ $ticket->category->name ?? '-' }}</span>
+            </div>
+        </div>
+        <div class="flex items-center justify-between px-4 py-2.5 bg-gray-50 border-t border-gray-100">
+            <span class="text-xs text-gray-400 flex items-center gap-1">
+                <i class="fa-regular fa-clock"></i> {{ $ticket->created_at->format('d M Y H:i') }}
+            </span>
+            <div class="flex gap-2">
+                <a href="{{ route('admin.tickets.show', $ticket->id) }}" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors inline-flex items-center gap-1">
+                    <i class="fa-solid fa-eye"></i> Detail
+                </a>
+                <button onclick="event.stopPropagation(); confirmDelete('{{ $ticket->id }}', '{{ $ticket->ticket_number }}')"
+                    class="bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    @empty
+    <div class="text-center py-12 text-gray-400">
+        <i class="fa-regular fa-folder-open text-4xl mb-3 block"></i>
+        Belum ada data pengaduan.
+    </div>
+    @endforelse
+</div>
+
+{{-- Table (Desktop) --}}
+<div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left text-sm text-gray-600">
             <thead class="bg-gray-50 text-gray-700 font-semibold border-b border-gray-100 uppercase text-xs">
@@ -99,23 +179,6 @@
             <tbody class="divide-y divide-gray-100">
                 @forelse($tickets as $ticket)
                 @php
-                    $statusMap = [
-                        'NEW'                 => ['label' => 'Baru',     'class' => 'bg-yellow-100 text-yellow-700'],
-                        'TERVERIFIKASI'       => ['label' => 'Terverifikasi', 'class' => 'bg-cyan-100 text-cyan-700'],
-                        'IN_PROGRESS'         => ['label' => 'Diproses', 'class' => 'bg-blue-100 text-blue-700'],
-                        'DONE'                => ['label' => 'Selesai',  'class' => 'bg-green-100 text-green-700'],
-                        'REJECTED'            => ['label' => 'Ditolak',  'class' => 'bg-red-100 text-red-700'],
-                        'Diproses'            => ['label' => 'Diproses', 'class' => 'bg-blue-100 text-blue-700'],
-                        'Menunggu Verifikasi' => ['label' => 'Menunggu Verifikasi', 'class' => 'bg-purple-100 text-purple-700'],
-                        'Selesai'             => ['label' => 'Selesai',  'class' => 'bg-green-100 text-green-700'],
-                    ];
-                    $typeMap = [
-                        'Pengaduan'  => 'bg-red-50 text-red-700',
-                        'Survei'     => 'bg-green-50 text-green-700',
-                        'Saran'      => 'bg-green-50 text-green-700',
-                        'Apresiasi'  => 'bg-blue-50 text-blue-700',
-                        'Informasi'  => 'bg-orange-50 text-orange-700',
-                    ];
                     $typeLabel = $ticket->type === 'Saran' ? 'Survei' : $ticket->type;
                     $statusStyle = $statusMap[$ticket->status] ?? ['label' => $ticket->status, 'class' => 'bg-gray-100 text-gray-700'];
                     $typeClass   = $typeMap[$ticket->type] ?? 'bg-gray-100 text-gray-700';
@@ -181,6 +244,13 @@
     @endif
 </div>
 
+{{-- Mobile Pagination --}}
+@if($tickets->hasPages())
+<div class="block md:hidden mt-4">
+    {{ $tickets->links() }}
+</div>
+@endif
+
 {{-- Modal Konfirmasi Hapus --}}
 <div id="delete-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
     <div class="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full mx-4">
@@ -228,6 +298,36 @@ function closeDeleteModal() {
 }
 document.getElementById('delete-modal').addEventListener('click', function(e) {
     if (e.target === this) closeDeleteModal();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    var toggleBtn = document.getElementById('mobile-filter-toggle');
+    var filterContainer = document.getElementById('filter-container');
+    var filterIcon = document.getElementById('mobile-filter-icon');
+
+    if (toggleBtn && filterContainer) {
+        if (window.innerWidth < 768) {
+            filterContainer.classList.add('hidden');
+        }
+        toggleBtn.addEventListener('click', function() {
+            var isHidden = filterContainer.classList.contains('hidden');
+            if (isHidden) {
+                filterContainer.classList.remove('hidden');
+                filterContainer.classList.add('block');
+                filterIcon.style.transform = 'rotate(180deg)';
+            } else {
+                filterContainer.classList.add('hidden');
+                filterContainer.classList.remove('block');
+                filterIcon.style.transform = 'rotate(0deg)';
+            }
+        });
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768) {
+                filterContainer.classList.remove('hidden');
+                filterContainer.classList.add('block');
+            }
+        });
+    }
 });
 </script>
 

@@ -28,7 +28,7 @@
 @endphp
 
 {{-- Page Header --}}
-<div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 animate-fadeInUp" style="animation-delay:0s">
     <div>
         <h1 class="text-2xl font-bold text-gray-800">Detail Pengaduan</h1>
         <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
@@ -40,7 +40,7 @@
         </div>
     </div>
     <div class="flex gap-3">
-        <a href="{{ route('admin.tickets.index') }}" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <a href="{{ route('admin.tickets.index') }}" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors active:scale-[0.97]">
             <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
         </a>
     </div>
@@ -52,13 +52,13 @@
 </div>
 @endif
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fadeInUp" style="animation-delay:.05s">
 
     {{-- LEFT COLUMN: Ticket Detail --}}
     <div class="lg:col-span-2 space-y-6">
 
         {{-- Ticket Info Card --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.1s">
             <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fa-regular fa-file-lines text-blue-600"></i>
@@ -146,14 +146,34 @@
     {{-- RIGHT COLUMN: Reporter & Status Update --}}
     <div class="space-y-6">
 
+        @php $isClosed = $ticket->status === 'DONE' || $ticket->status === 'Selesai'; $isWaitingVerification = optional($ticket->activeWorkflow)->status === 'menunggu_verifikasi'; @endphp
+
+        {{-- Mobile Action Strip --}}
+        <div class="md:hidden flex gap-2 sticky top-0 z-30 bg-[#F3F4F6] py-2 -mx-1 px-1 shadow-sm border-b border-gray-200 animate-fadeInUp" style="animation-delay:.15s">
+            @if($ticket->status === 'NEW')
+            <button onclick="event.preventDefault(); document.getElementById('verify-form').submit();" class="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-2.5 rounded-lg transition-all active:scale-[0.97] flex items-center justify-center gap-1.5 shadow-sm">
+                <i class="fa-solid fa-check"></i> Setujui
+            </button>
+            <button onclick="event.preventDefault(); document.getElementById('reject-form').submit();" class="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-2.5 rounded-lg transition-all active:scale-[0.97] flex items-center justify-center gap-1.5 shadow-sm">
+                <i class="fa-solid fa-xmark"></i> Tolak
+            </button>
+            @elseif(!$isClosed)
+            @else
+            <div class="flex-1 bg-green-50 text-green-700 text-xs font-semibold px-3 py-2.5 rounded-lg flex items-center justify-center gap-1.5 border border-green-200">
+                <i class="fa-solid fa-circle-check"></i> Selesai
+            </div>
+            @endif
+        </div>
+
         {{-- Reporter Info --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.2s">
+            <button type="button" onclick="toggleSection(this)" data-target="reporter-content" class="w-full bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between text-left group md:cursor-default">
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fa-solid fa-address-card text-blue-600"></i> Data Pelapor
                 </h2>
-            </div>
-            <div class="p-6 space-y-4">
+                <i class="fa-solid fa-chevron-up text-gray-400 transition-transform duration-300 md:hidden group-hover:text-gray-600"></i>
+            </button>
+            <div id="reporter-content" class="p-6 space-y-4">
                 @if($ticket->is_anonymous)
                     <div class="bg-slate-50 rounded-lg p-4 text-center">
                         <i class="fa-solid fa-user-secret text-4xl text-slate-400 mb-2 block"></i>
@@ -181,33 +201,29 @@
             </div>
         </div>
 
-@php $isClosed = $ticket->status === 'Selesai'; $isWaitingVerification = optional($ticket->activeWorkflow)->status === 'menunggu_verifikasi'; @endphp
-
-        {{-- Verifikasi Pengaduan (hanya jika status NEW) --}}
+{{-- Verifikasi Pengaduan (hanya jika status NEW) --}}
         @if($ticket->status === 'NEW')
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
-                <h2 class="font-bold text-gray-800 flex items-center gap-2">
-                    <i class="fa-solid fa-check-double text-blue-600"></i> Verifikasi Pengaduan
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.25s">
                 </h2>
-            </div>
-            <div class="p-6">
+                <i class="fa-solid fa-chevron-up text-gray-400 transition-transform duration-300 md:hidden group-hover:text-gray-600"></i>
+            </button>
+            <div id="verify-content" class="p-6">
                 <p class="text-sm text-gray-600 mb-4">Verifikasi pengaduan ini sebelum melanjutkan ke disposisi. Pastikan data lengkap dan sesuai.</p>
-                <form action="{{ route('admin.tickets.verify', $ticket->id) }}" method="POST" class="mb-3">
+                <form id="verify-form" action="{{ route('admin.tickets.verify', $ticket->id) }}" method="POST" class="mb-3">
                     @csrf
                     <div class="mb-3">
                         <textarea name="notes" rows="2" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Catatan verifikasi (opsional)..."></textarea>
                     </div>
-                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors flex items-center justify-center gap-2">
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-all active:scale-[0.97] flex items-center justify-center gap-2 shadow-sm">
                         <i class="fa-solid fa-check"></i> Setujui & Lanjutkan
                     </button>
                 </form>
-                <form action="{{ route('admin.tickets.reject', $ticket->id) }}" method="POST" onsubmit="return confirm('Tolak pengaduan ini? Tindakan ini tidak dapat dibatalkan.')">
+                <form id="reject-form" action="{{ route('admin.tickets.reject', $ticket->id) }}" method="POST" onsubmit="return confirm('Tolak pengaduan ini? Tindakan ini tidak dapat dibatalkan.')">
                     @csrf
                     <div class="mb-3">
                         <textarea name="notes" rows="2" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block p-2.5" placeholder="Alasan penolakan (opsional)..."></textarea>
                     </div>
-                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors flex items-center justify-center gap-2">
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-all active:scale-[0.97] flex items-center justify-center gap-2 shadow-sm">
                         <i class="fa-solid fa-xmark"></i> Tolak Pengaduan
                     </button>
                 </form>
@@ -217,13 +233,14 @@
 
         {{-- Ubah Status: sembunyikan jika status NEW (digantikan verifikasi) --}}
         @if(!$isClosed && !$isWaitingVerification && $ticket->status !== 'NEW')
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.3s">
+            <button type="button" onclick="toggleSection(this)" data-target="status-content" class="w-full bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between text-left group md:cursor-default">
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fa-solid fa-pen-to-square text-blue-600"></i> Ubah Status
                 </h2>
-            </div>
-            <div class="p-6">
+                <i class="fa-solid fa-chevron-up text-gray-400 transition-transform duration-300 md:hidden group-hover:text-gray-600"></i>
+            </button>
+            <div id="status-content" class="p-6">
                 <form action="{{ route('admin.tickets.update', $ticket->id) }}" method="POST">
                     @csrf
                     @method('PUT')
@@ -241,7 +258,7 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Catatan (Opsional)</label>
                         <textarea name="notes" rows="3" placeholder="Masukkan catatan penanganan..." class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"></textarea>
                     </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-all active:scale-[0.97] shadow-sm">
                         <i class="fa-solid fa-save mr-1"></i> Simpan Status
                     </button>
                 </form>
@@ -251,7 +268,7 @@
 
         {{-- Banner Tiket Selesai --}}
         @if($isClosed)
-        <div class="bg-green-50 border border-green-200 rounded-xl p-5 flex items-center gap-4">
+        <div class="bg-green-50 border border-green-200 rounded-xl p-5 flex items-center gap-4 animate-fadeInUp" style="animation-delay:.3s">
             <div class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0 text-xl">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
@@ -264,18 +281,21 @@
 
         @if(!$isClosed && in_array($ticket->status, ['TERVERIFIKASI', 'IN_PROGRESS', 'DONE', 'Diproses', 'Menunggu Verifikasi']))
         {{-- Disposisi / Workflow Aktif: hanya tampil jika belum selesai --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6 animate-fadeInUp" style="animation-delay:.35s">
+            <button type="button" onclick="toggleSection(this)" data-target="disposisi-content" class="w-full bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between text-left group md:cursor-default">
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fa-solid fa-share-nodes text-blue-600"></i> Disposisi
                 </h2>
+                <div class="flex items-center gap-2">
+                    @if(!$ticket->activeWorkflow)
+                        <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded font-semibold">Belum Ada</span>
+                    @endif
+                    <i class="fa-solid fa-chevron-up text-gray-400 transition-transform duration-300 md:hidden group-hover:text-gray-600"></i>
+                </div>
+            </button>
+            <div id="disposisi-content" class="p-6">
                 @if(!$ticket->activeWorkflow)
-                    <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded font-semibold">Belum Ada</span>
-                @endif
-            </div>
-            <div class="p-6">
-                @if(!$ticket->activeWorkflow)
-                    <button onclick="openDispositionModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+                    <button onclick="openDispositionModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-all active:scale-[0.97] shadow-sm">
                         <i class="fa-solid fa-plus mr-1"></i> Buat Disposisi
                     </button>
                 @else
@@ -308,7 +328,7 @@
                                 <div class="mb-3">
                                     <textarea name="komentar" rows="2" class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="Catatan verifikasi... (Opsional)"></textarea>
                                 </div>
-                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors flex items-center justify-center gap-2">
+                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-all active:scale-[0.97] flex items-center justify-center gap-2 shadow-sm">
                                     <i class="fa-solid fa-stamp"></i> Verifikasi & Tutup Workflow
                                 </button>
                             </form>
@@ -320,10 +340,14 @@
         @endif
 
         {{-- Timeline Workflow --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 class="font-semibold text-gray-800 mb-6 flex items-center gap-2">
-                <i class="fa-solid fa-clock-rotate-left text-indigo-500"></i> Timeline Workflow
-            </h2>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.4s">
+            <button type="button" onclick="toggleSection(this)" data-target="timeline-content" class="w-full bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between text-left group md:cursor-default">
+                <h2 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left text-indigo-500"></i> Timeline Workflow
+                </h2>
+                <i class="fa-solid fa-chevron-up text-gray-400 transition-transform duration-300 md:hidden group-hover:text-gray-600"></i>
+            </button>
+            <div id="timeline-content" class="p-6">
             <ol class="relative border-l border-gray-200 ml-4">
                 @php $sorted = $ticket->workflows->sortBy('created_at'); @endphp
                 @forelse($sorted as $step)
@@ -368,21 +392,22 @@
                 <li class="ml-6 text-gray-400 text-sm py-4">Belum ada riwayat workflow.</li>
                 @endforelse
             </ol>
+            </div>
         </div>
-
 
         {{-- Lampiran Penanganan: sembunyikan jika sudah selesai --}}
         @if(!$isClosed)
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.45s">
+            <button type="button" onclick="toggleSection(this)" data-target="lampiran-content" class="w-full bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between text-left group md:cursor-default">
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fa-solid fa-paperclip text-blue-600"></i> Lampiran Penanganan
                 </h2>
-            </div>
-            <div class="p-6">
+                <i class="fa-solid fa-chevron-up text-gray-400 transition-transform duration-300 md:hidden group-hover:text-gray-600"></i>
+            </button>
+            <div id="lampiran-content" class="p-6">
                 {{-- Form Upload Lampiran --}}
                 <div class="mb-6">
-                    <button onclick="toggleUploadForm()" type="button" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg text-sm px-4 py-2 transition-colors border border-gray-300 w-full flex justify-between items-center">
+                    <button onclick="toggleUploadForm()" type="button" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg text-sm px-4 py-2 transition-all active:scale-[0.97] border border-gray-300 w-full flex justify-between items-center">
                         <span><i class="fa-solid fa-upload mr-1"></i> Tambah Lampiran</span>
                         <i id="upload-icon" class="fa-solid fa-chevron-down"></i>
                     </button>
@@ -410,7 +435,7 @@
                             <p class="text-[10px] text-gray-500 mt-1">Format: JPG, PNG, PDF, DOCX, XLSX</p>
                         </div>
                         <div class="pt-2">
-                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-4 py-2 transition-colors w-full">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-4 py-2 transition-all active:scale-[0.97] shadow-sm w-full">
                                 Simpan Lampiran
                             </button>
                         </div>
@@ -473,7 +498,14 @@
         @endif
 
         {{-- Metadata --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-3">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.5s">
+            <button type="button" onclick="toggleSection(this)" data-target="metadata-content" class="w-full bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between text-left group md:cursor-default">
+                <h2 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-blue-600"></i> Metadata
+                </h2>
+                <i class="fa-solid fa-chevron-up text-gray-400 transition-transform duration-300 md:hidden group-hover:text-gray-600"></i>
+            </button>
+            <div id="metadata-content" class="p-6 space-y-3">
             <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Metadata</p>
             <div class="flex justify-between text-sm">
                 <span class="text-gray-500">Dibuat</span>
@@ -483,23 +515,29 @@
                 <span class="text-gray-500">Diperbarui</span>
                 <span class="text-gray-800 font-medium">{{ $ticket->updated_at->diffForHumans() }}</span>
             </div>
+            </div>
         </div>
-
     </div>
 </div>
 
 @if(in_array($ticket->status, ['TERVERIFIKASI', 'IN_PROGRESS', 'DONE']) && !$ticket->activeWorkflow)
 {{-- Modal Buat Disposisi --}}
 <div id="disposition-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
-    <div class="bg-white rounded-xl shadow-xl p-6 max-w-lg w-full mx-4 relative max-h-[90vh] overflow-y-auto">
-        <div class="flex items-center justify-between mb-5 border-b border-gray-100 pb-3">
-            <h3 class="font-bold text-gray-800 text-lg flex items-center gap-2">
-                <i class="fa-solid fa-share-nodes text-blue-600"></i> Buat Disposisi (Workflow)
-            </h3>
-            <button onclick="closeDispositionModal()" class="text-gray-400 hover:text-gray-600">
+    <div onclick="closeDispositionModal()" class="md:hidden fixed inset-0 z-40"></div>
+    <div class="bg-white shadow-xl w-full md:max-w-lg md:mx-4 md:rounded-xl md:max-h-[90vh] overflow-y-auto absolute bottom-0 md:relative rounded-t-2xl z-50 md:z-auto transition-transform duration-300" id="disposition-modal-content">
+        <div class="flex items-center justify-between px-5 pt-5 pb-3 border-b border-gray-100 sticky top-0 bg-white z-10">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center md:hidden">
+                    <i class="fa-solid fa-share-nodes text-sm"></i>
+                </div>
+                <h3 class="font-bold text-gray-800 text-lg">Buat Disposisi</h3>
+            </div>
+            <button onclick="closeDispositionModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
+        <div class="px-5 md:px-6 py-4">
+        <p class="text-xs text-gray-500 mb-4 md:hidden">Buat disposisi untuk meneruskan pengaduan ke unit terkait.</p>
         
         <form action="{{ route('admin.workflow.disposisi') }}" method="POST" class="space-y-4" onsubmit="document.getElementById('btn-kirim-disposisi').disabled = true;">
             @csrf
@@ -527,21 +565,35 @@
             </div>
             
             <div class="pt-4 border-t border-gray-100 flex gap-3 justify-end">
-                <button type="button" onclick="closeDispositionModal()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+                <button type="button" onclick="closeDispositionModal()" class="flex-1 md:flex-none bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg text-sm px-5 py-2.5 transition-all active:scale-[0.97]">
                     Batal
                 </button>
-                <button type="submit" id="btn-kirim-disposisi" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
+                <button type="submit" id="btn-kirim-disposisi" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-all active:scale-[0.97] shadow-sm">
                     <i class="fa-solid fa-paper-plane mr-1"></i> Kirim Disposisi
                 </button>
             </div>
         </form>
     </div>
 </div>
+</div>
+
 <script>
 function openDispositionModal() {
-    const modal = document.getElementById('disposition-modal');
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
+    var modal = document.getElementById('disposition-modal');
+    var content = document.getElementById('disposition-modal-content');
+    if (window.innerWidth < 768) {
+        content.style.transform = 'translateY(100%)';
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+                content.style.transform = 'translateY(0)';
+            });
+        });
+    } else {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
 }
 function closeDispositionModal() {
     const modal = document.getElementById('disposition-modal');
@@ -565,33 +617,88 @@ function closeDispositionModal() {
 </div>
 
 <script>
+function toggleSection(btn) {
+    if (window.innerWidth >= 768) return;
+    var targetId = btn.getAttribute('data-target');
+    if (!targetId) return;
+    var target = document.getElementById(targetId);
+    var icon = btn.querySelector('.fa-chevron-up');
+    if (!target) return;
+    if (target.classList.contains('hidden')) {
+        target.classList.remove('hidden');
+        if (icon) icon.style.transform = 'rotate(0deg)';
+    } else {
+        target.classList.add('hidden');
+        if (icon) icon.style.transform = 'rotate(180deg)';
+    }
+}
+
 function openPreview(url) {
-    const modal = document.getElementById('preview-modal');
-    const img = document.getElementById('preview-image');
+    var modal = document.getElementById('preview-modal');
+    var img = document.getElementById('preview-image');
     img.src = url;
     modal.classList.remove('hidden');
     modal.classList.add('flex');
     document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
 }
 
 function closePreview() {
-    const modal = document.getElementById('preview-modal');
+    var modal = document.getElementById('preview-modal');
     modal.classList.add('hidden');
     modal.classList.remove('flex');
     document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.width = '';
 }
 
 function downloadPreview() {
-    const img = document.getElementById('preview-image');
-    const link = document.createElement('a');
+    var img = document.getElementById('preview-image');
+    var link = document.createElement('a');
     link.download = 'lampiran-pengaduan.png';
     link.href = img.src;
     link.click();
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.innerWidth < 768) {
+        var sections = document.querySelectorAll('[data-target]');
+        sections.forEach(function(btn) {
+            var targetId = btn.getAttribute('data-target');
+            var target = document.getElementById(targetId);
+            var icon = btn.querySelector('.fa-chevron-up');
+            if (target) {
+                target.classList.add('hidden');
+                if (icon) icon.style.transform = 'rotate(180deg)';
+            }
+        });
+        var firstSection = document.querySelector('[data-target="reporter-content"]');
+        if (firstSection) toggleSection(firstSection);
+    }
+});
+
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closePreview();
+    if (e.key === 'Escape') {
+        closePreview();
+        var modal = document.getElementById('disposition-modal');
+        if (modal && !modal.classList.contains('hidden')) closeDispositionModal();
+    }
+});
+
+document.getElementById('preview-modal')?.addEventListener('touchstart', function(e) {
+    if (e.target === this) closePreview();
 });
 </script>
+
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeInUp {
+        animation: fadeInUp 0.45s ease-out both;
+    }
+</style>
 
 @endsection
