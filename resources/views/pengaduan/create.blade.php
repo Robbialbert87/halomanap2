@@ -114,7 +114,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">1. Unit Pelayanan <span class="text-red-500">*</span></label>
-                        <select name="unit_id" id="unit_id" class="w-full bg-white/70 border border-white/50 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
+                        <select name="unit_id" id="unit_id" class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
                             <option value="">-- Pilih Unit --</option>
                             @foreach($units as $unit)
                                 <option value="{{ $unit->id }}" {{ old('unit_id') == $unit->id ? 'selected' : '' }}>{{ $unit->nama }}</option>
@@ -123,13 +123,13 @@
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">2. Ruangan <span class="text-red-500">*</span></label>
-                        <select name="room_id" id="room_id" class="w-full bg-white/70 border border-white/50 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
+                        <select name="room_id" id="room_id" class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
                             <option value="">-- Pilih Unit dahulu --</option>
                         </select>
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">3. Kategori Pengaduan <span class="text-red-500">*</span></label>
-                        <select name="category_id" class="w-full bg-white/70 border border-white/50 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
+                        <select name="category_id" class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
                             <option value="">-- Pilih Kategori --</option>
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
@@ -138,16 +138,16 @@
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">4. Judul Pengaduan <span class="text-red-500">*</span></label>
-                        <input type="text" name="title" value="{{ old('title') }}" placeholder="Contoh: AC di Ruang Tunggu Poli Umum Mati" class="w-full bg-white/70 border border-white/50 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
+                        <input type="text" name="title" value="{{ old('title') }}" placeholder="Contoh: AC di Ruang Tunggu Poli Umum Mati" class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">5. Isi Pengaduan <span class="text-red-500">*</span></label>
-                        <textarea name="description" rows="6" style="min-height: 180px;" placeholder="Jelaskan kronologi pengaduan secara lengkap agar kami dapat menindaklanjuti dengan baik." class="w-full bg-white/70 border border-white/50 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>{{ old('description') }}</textarea>
+                        <textarea name="description" rows="6" style="min-height: 180px;" placeholder="Jelaskan kronologi pengaduan secara lengkap agar kami dapat menindaklanjuti dengan baik." class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>{{ old('description') }}</textarea>
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">6. Upload Bukti (Opsional)</label>
                         <div class="relative">
-                            <input type="file" name="attachment" id="attachment" accept="image/*,.pdf" capture="environment" class="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-gradient-to-br file:from-blue-400 file:to-blue-600 file:text-white hover:file:from-blue-500 hover:file:to-blue-700 bg-white/70 border border-white/50 rounded-xl cursor-pointer focus:outline-none p-2">
+                            <input type="file" name="attachment" id="attachment" accept="image/*,.pdf" capture="environment" class="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-gradient-to-br file:from-blue-400 file:to-blue-600 file:text-white hover:file:from-blue-500 hover:file:to-blue-700 bg-white/70 border border-gray-200 rounded-xl cursor-pointer focus:outline-none p-2">
                         </div>
                         <p class="mt-1.5 text-xs text-gray-400">Format: Gambar (JPG, PNG, HEIC, WebP) dan PDF. Maksimal 20 MB.</p>
                         <div id="image-preview-container" class="mt-4 hidden">
@@ -178,15 +178,15 @@
                     <div id="identity_fields" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="md:col-span-2">
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Lengkap <span class="text-red-500">*</span></label>
-                            <input type="text" name="reporter_name" id="reporter_name" value="{{ old('reporter_name') }}" class="w-full bg-white/70 border border-white/50 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                            <input type="text" name="reporter_name" id="reporter_name" value="{{ old('reporter_name') }}" class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Nomor HP (WhatsApp) <span class="text-red-500">*</span></label>
-                            <input type="text" name="reporter_phone" id="reporter_phone" value="{{ old('reporter_phone') }}" class="w-full bg-white/70 border border-white/50 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                            <input type="text" name="reporter_phone" id="reporter_phone" value="{{ old('reporter_phone') }}" class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Email (Opsional)</label>
-                            <input type="email" name="reporter_email" id="reporter_email" value="{{ old('reporter_email') }}" class="w-full bg-white/70 border border-white/50 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                            <input type="email" name="reporter_email" id="reporter_email" value="{{ old('reporter_email') }}" class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5">
                         </div>
                     </div>
                 </div>
@@ -206,7 +206,7 @@
                     <button type="submit" class="w-full md:w-auto bg-gradient-to-br from-emerald-500 to-emerald-700 text-white font-semibold rounded-xl px-8 py-3 text-sm text-center shadow-md shadow-emerald-200/50 hover:shadow-lg active:scale-[0.98] transition-all">
                         <i class="fa-solid fa-paper-plane mr-2"></i> Kirim Pengaduan
                     </button>
-                    <a href="/" class="w-full md:w-auto text-gray-600 bg-white/70 backdrop-blur-sm border border-white/50 hover:border-gray-300 font-medium rounded-xl text-sm px-8 py-3 text-center transition-all active:scale-[0.98]">
+                    <a href="/" class="w-full md:w-auto text-gray-600 bg-white/70 backdrop-blur-sm border border-gray-200 hover:border-gray-300 font-medium rounded-xl text-sm px-8 py-3 text-center transition-all active:scale-[0.98]">
                         <i class="fa-solid fa-arrow-left mr-1.5"></i> Kembali
                     </a>
                 </div>
