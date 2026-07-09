@@ -3,9 +3,24 @@
 @section('title', 'Manajemen Role - Halo MANAP')
 
 @section('admin_content')
-<div class="flex items-center justify-between mb-6">
+
+{{-- Mobile Page Header (PayApp style) --}}
+<div class="md:hidden mb-3">
+    <div class="flex items-center gap-2.5 p-1">
+        <span class="w-9 h-9 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-sm shadow-purple-200/50 flex-shrink-0">
+            <i class="fa-solid fa-user-shield text-white text-sm"></i>
+        </span>
+        <div>
+            <p class="text-[9px] text-purple-500 font-semibold tracking-wider uppercase font-heading">Master Data</p>
+            <h1 class="text-base font-bold text-gray-800 font-heading">Manajemen Role</h1>
+        </div>
+    </div>
+</div>
+
+{{-- Page Header (Desktop) --}}
+<div class="hidden md:flex items-center justify-between mb-6">
     <div>
-        <h1 class="text-2xl font-bold text-gray-800">Manajemen Role</h1>
+        <h1 class="text-2xl font-bold text-gray-800 font-heading">Manajemen Role</h1>
         <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
             <span class="text-blue-600">Master Data</span>
             <span class="text-gray-400">/</span>
@@ -17,19 +32,26 @@
     </a>
 </div>
 
+{{-- Flash Messages --}}
 @if(session('success'))
-<div class="bg-green-50 text-green-700 p-4 rounded-lg mb-6 border border-green-200 flex items-center gap-2">
+<div class="md:hidden bg-green-50 text-green-700 p-3 rounded-lg mb-4 border border-green-200 flex items-center gap-2 text-[13px]">
+    <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
+</div>
+<div class="hidden md:flex bg-green-50 text-green-700 p-4 rounded-lg mb-6 border border-green-200 items-center gap-2">
     <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
 </div>
 @endif
 @if(session('error'))
-<div class="bg-red-50 text-red-700 p-4 rounded-lg mb-6 border border-red-200 flex items-center gap-2">
+<div class="md:hidden bg-red-50 text-red-700 p-3 rounded-lg mb-4 border border-red-200 flex items-center gap-2 text-[13px]">
+    <i class="fa-solid fa-circle-exclamation"></i> {{ session('error') }}
+</div>
+<div class="hidden md:flex bg-red-50 text-red-700 p-4 rounded-lg mb-6 border border-red-200 items-center gap-2">
     <i class="fa-solid fa-circle-exclamation"></i> {{ session('error') }}
 </div>
 @endif
 
 {{-- Role cards --}}
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6">
     @foreach($roles as $role)
     @php
         $colors = [
@@ -40,9 +62,9 @@
         ];
         $c = $colors[$role->name] ?? ['bg' => 'bg-gray-50', 'border' => 'border-gray-200', 'icon' => 'bg-gray-500', 'badge' => 'bg-gray-100 text-gray-700'];
     @endphp
-    <div class="{{ $c['bg'] }} {{ $c['border'] }} border rounded-xl p-5 relative overflow-hidden">
-        <div class="flex items-start justify-between mb-4">
-            <div class="w-10 h-10 {{ $c['icon'] }} rounded-xl flex items-center justify-center text-white">
+    <div class="{{ $c['bg'] }} {{ $c['border'] }} border rounded-xl p-4 md:p-5 relative overflow-hidden" style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.5) 100%);">
+        <div class="flex items-start justify-between mb-3 md:mb-4">
+            <div class="w-9 h-9 md:w-10 md:h-10 {{ $c['icon'] }} rounded-xl flex items-center justify-center text-white shadow-sm">
                 @if($role->name === 'Super Admin')
                     <i class="fa-solid fa-user-shield text-sm"></i>
                 @elseif($role->name === 'Admin')
@@ -69,14 +91,14 @@
                 @endif
             </div>
         </div>
-        <h3 class="font-bold text-gray-800 text-base mb-1">{{ $role->name }}</h3>
+        <h3 class="font-bold text-gray-800 text-sm md:text-base mb-1 font-heading">{{ $role->name }}</h3>
         <div class="flex items-center gap-2">
-            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $c['badge'] }}">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 md:px-2.5 md:py-0.5 rounded-full text-[11px] md:text-xs font-semibold {{ $c['badge'] }}">
                 <i class="fa-solid fa-users text-[10px]"></i>
                 {{ $role->users_count }} user
             </span>
             @if($role->name === 'Super Admin')
-            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-200 text-purple-800">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 md:px-2.5 md:py-0.5 rounded-full text-[11px] md:text-xs font-semibold bg-purple-200 text-purple-800">
                 <i class="fa-solid fa-lock text-[10px]"></i> Dilindungi
             </span>
             @endif
@@ -85,8 +107,8 @@
     @endforeach
 </div>
 
-{{-- Roles Table --}}
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+{{-- Roles Table (Desktop only) --}}
+<div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-100">
         <h2 class="font-semibold text-gray-800 text-sm">Daftar Semua Role</h2>
     </div>
@@ -116,13 +138,9 @@
                 <td class="px-6 py-4 text-sm text-gray-500">{{ $role->deskripsi ?? '-' }}</td>
                 <td class="px-6 py-4 text-center">
                     @if($role->status === 'active')
-                        <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                            Aktif
-                        </span>
+                        <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>
                     @else
-                        <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                            Nonaktif
-                        </span>
+                        <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Nonaktif</span>
                     @endif
                 </td>
                 <td class="px-6 py-4 text-center text-gray-400 text-xs">

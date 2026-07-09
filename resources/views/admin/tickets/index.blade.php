@@ -78,7 +78,7 @@ $typeMap = [
             <input type="text" name="search" value="{{ request('search') }}"
                 placeholder="Cari no. tiket, judul, atau nama pelapor..." autocomplete="off"
                 class="w-full bg-white/70 md:bg-gray-50 border border-white/50 md:border-gray-300 text-gray-900 text-[13px] rounded-xl md:rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 md:p-2.5 pl-9"
-                oninput="clearTimeout(this.debounce); this.debounce = setTimeout(() => { this.form.submit(); }, 500);">
+                id="mobile-search-input">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
             @if(request('search'))
             <a href="{{ route('admin.tickets.index', request()->except(['search', 'page'])) }}" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -271,6 +271,8 @@ $typeMap = [
     @endif
 </div>
 
+
+
 {{-- Mobile Pagination --}}
 @if($tickets->hasPages())
 <div class="block md:hidden mt-4">
@@ -367,6 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
 });
 </script>
 

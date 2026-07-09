@@ -3,32 +3,107 @@
 @section('title', 'Jenis Unit - Halo MANAP')
 
 @section('admin_content')
-<div class="flex items-center justify-between mb-6">
+
+{{-- Mobile Page Header (PayApp style) --}}
+<div class="md:hidden mb-3">
+    <div class="flex items-center gap-2.5 p-1">
+        <span class="w-9 h-9 rounded-2xl bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shadow-sm shadow-cyan-200/50 flex-shrink-0">
+            <i class="fa-solid fa-tag text-white text-sm"></i>
+        </span>
+        <div>
+            <p class="text-[9px] text-cyan-500 font-semibold tracking-wider uppercase font-heading">Master Data</p>
+            <h1 class="text-base font-bold text-gray-800 font-heading">Jenis Unit</h1>
+        </div>
+    </div>
+</div>
+
+{{-- Page Header (Desktop) --}}
+<div class="hidden md:flex items-center justify-between mb-6">
     <div>
-        <h1 class="text-2xl font-bold text-gray-800">Jenis Unit</h1>
+        <h1 class="text-2xl font-bold text-gray-800 font-heading">Jenis Unit</h1>
         <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
             <span class="text-blue-600">Master Data</span>
             <span class="text-gray-400">/</span>
             <span>Jenis Unit</span>
         </div>
     </div>
-    <a href="{{ route('admin.unit-types.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-        <i class="fa-solid fa-plus mr-1"></i> Tambah Jenis Unit
+    <a href="{{ route('admin.unit-types.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+        <i class="fa-solid fa-plus"></i> Tambah Jenis Unit
     </a>
 </div>
 
+{{-- Flash Messages --}}
 @if(session('success'))
-<div class="bg-green-50 text-green-700 p-4 rounded-lg mb-6 border border-green-200 flex items-center gap-2">
+<div class="md:hidden bg-green-50 text-green-700 p-3 rounded-lg mb-4 border border-green-200 flex items-center gap-2 text-[13px]">
+    <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
+</div>
+<div class="hidden md:flex bg-green-50 text-green-700 p-4 rounded-lg mb-6 border border-green-200 items-center gap-2">
     <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
 </div>
 @endif
 @if(session('error'))
-<div class="bg-red-50 text-red-700 p-4 rounded-lg mb-6 border border-red-200 flex items-center gap-2">
+<div class="md:hidden bg-red-50 text-red-700 p-3 rounded-lg mb-4 border border-red-200 flex items-center gap-2 text-[13px]">
+    <i class="fa-solid fa-circle-exclamation"></i> {{ session('error') }}
+</div>
+<div class="hidden md:flex bg-red-50 text-red-700 p-4 rounded-lg mb-6 border border-red-200 items-center gap-2">
     <i class="fa-solid fa-circle-exclamation"></i> {{ session('error') }}
 </div>
 @endif
 
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+{{-- Mobile: Jenis Unit List --}}
+<div class="block md:hidden mb-4">
+    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-white/30 divide-y divide-gray-100" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+    @forelse($unitTypes as $unitType)
+    <div class="flex items-stretch active:bg-gray-50 transition-colors">
+        <div class="w-1 shrink-0 bg-cyan-500"></div>
+        <div class="flex-1 min-w-0 pl-2.5 pr-3 py-2.5">
+            <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0 flex-1">
+                    <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background: {{ $unitType->color ?? '#6b7280' }}"></span>
+                    <span class="text-[13px] font-semibold text-gray-900 truncate">{{ $unitType->name }}</span>
+                    @if($unitType->is_active)
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0"></span>
+                    @else
+                        <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0"></span>
+                    @endif
+                </div>
+                <div class="flex items-center gap-1 shrink-0">
+                    <a href="{{ route('admin.unit-types.edit', $unitType->id) }}"
+                       class="text-gray-300 hover:text-blue-500 transition-colors p-1" title="Edit">
+                        <i class="fa-regular fa-pen-to-square text-[10px]"></i>
+                    </a>
+                    <form action="{{ route('admin.unit-types.destroy', $unitType->id) }}" method="POST"
+                          onsubmit="return confirm('Yakin ingin menghapus jenis unit {{ $unitType->name }}?')" class="inline">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="text-gray-300 hover:text-red-500 transition-colors p-1" title="Hapus">
+                            <i class="fa-regular fa-trash-can text-[10px]"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 mt-1">
+                <span class="text-[11px] text-gray-500">{{ $unitType->units()->count() }} unit</span>
+                <span class="text-[10px] text-gray-300">·</span>
+                <code class="text-[10px] font-mono bg-gray-100 px-1.5 py-0.5 rounded">{{ $unitType->color ?? '-' }}</code>
+                @if($unitType->is_active)
+                    <span class="inline-block px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-green-50 text-green-700">Aktif</span>
+                @else
+                    <span class="inline-block px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-gray-100 text-gray-700">Nonaktif</span>
+                @endif
+            </div>
+        </div>
+    </div>
+    @empty
+    <div class="text-center py-10 text-gray-400">
+        <i class="fa-solid fa-tag text-3xl mb-2 block"></i>
+        <span class="text-sm">Belum ada data jenis unit.</span>
+    </div>
+    @endforelse
+    </div>
+</div>
+
+{{-- Table (Desktop) --}}
+<div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <table class="w-full text-left text-sm text-gray-600">
         <thead class="bg-gray-50 text-gray-800 font-semibold border-b border-gray-100 uppercase text-xs">
             <tr>
@@ -98,4 +173,11 @@
     </div>
     @endif
 </div>
+
+{{-- Mobile Pagination --}}
+@if($unitTypes->hasPages())
+<div class="block md:hidden mt-4">
+    {{ $unitTypes->links() }}
+</div>
+@endif
 @endsection

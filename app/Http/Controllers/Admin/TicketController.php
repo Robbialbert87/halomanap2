@@ -52,6 +52,37 @@ class TicketController extends Controller
         return view('admin.tickets.index', compact('tickets', 'units', 'categories'));
     }
 
+    public function mobileSearch(Request $request)
+    {
+        $query = Ticket::with(['room.unit', 'category'])->orderBy('created_at', 'desc');
+
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->where(function ($q) use ($s) {
+                $q->where('ticket_number', 'like', "%{$s}%")
+                  ->orWhere('title', 'like', "%{$s}%")
+                  ->orWhere('reporter_name', 'like', "%{$s}%");
+            });
+        }
+
+        $tickets = $query->paginate(7)->withQueryString()->onEachSide(2);
+
+        $statusMap = [
+            'NEW'                 => ['label' => 'Baru',     'class' => 'bg-yellow-100 text-yellow-700'],
+            'TERVERIFIKASI'       => ['label' => 'Terverifikasi', 'class' => 'bg-cyan-100 text-cyan-700'],
+            'IN_PROGRESS'         => ['label' => 'Diproses', 'class' => 'bg-blue-100 text-blue-700'],
+            'DONE'                => ['label' => 'Selesai',  'class' => 'bg-green-100 text-green-700'],
+            'REJECTED'            => ['label' => 'Ditolak',  'class' => 'bg-red-100 text-red-700'],
+            'Diproses'            => ['label' => 'Diproses', 'class' => 'bg-blue-100 text-blue-700'],
+            'Menunggu Verifikasi' => ['label' => 'Menunggu Verifikasi', 'class' => 'bg-purple-100 text-purple-700'],
+            'Selesai'             => ['label' => 'Selesai',  'class' => 'bg-green-100 text-green-700'],
+        ];
+
+        $html = view('admin.tickets._mobile_list', compact('tickets', 'statusMap'))->render();
+
+        return response()->json(['html' => $html]);
+    }
+
     public function show(string $id)
     {
         $ticket = Ticket::with([

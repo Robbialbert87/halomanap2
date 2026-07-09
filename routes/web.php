@@ -85,6 +85,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('tickets', App\Http\Controllers\Admin\TicketController::class);
 
+        // Live search mobile
+        Route::get('tickets/mobile-search', [App\Http\Controllers\Admin\TicketController::class, 'mobileSearch'])->name('tickets.mobile-search');
+
         // Verifikasi
         Route::post('tickets/{ticket}/verify', [App\Http\Controllers\Admin\TicketController::class, 'verify'])->name('tickets.verify');
         Route::post('tickets/{ticket}/reject', [App\Http\Controllers\Admin\TicketController::class, 'reject'])->name('tickets.reject');
