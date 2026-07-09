@@ -9,7 +9,7 @@ class Ticket extends Model
     protected $fillable = [
         'ticket_number', 'type', 'category_id', 'room_id', 'is_anonymous',
         'reporter_name', 'reporter_phone', 'title', 'description', 'attachment_path',
-        'status', 'sla_id', 'sla_breached', 'rating', 'review'
+        'status', 'sla_id', 'sla_breached', 'rating', 'review', 'notification_seen_at'
     ];
 
     public function room()

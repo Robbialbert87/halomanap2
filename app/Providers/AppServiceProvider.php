@@ -34,8 +34,10 @@ class AppServiceProvider extends ServiceProvider
 
         // Share notification data with header component
         View::composer(['components.header', 'layouts.admin'], function ($view) {
-            $unreadCount = Ticket::where('status', 'NEW')->count();
-            $notifications = Ticket::where('status', 'NEW')
+            $unread = Ticket::where('status', 'NEW')
+                ->whereNull('notification_seen_at');
+            $unreadCount = (clone $unread)->count();
+            $notifications = (clone $unread)
                 ->with('category')
                 ->latest()
                 ->take(10)

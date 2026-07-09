@@ -60,9 +60,13 @@ class TicketController extends Controller
             'workflows.fromUser', 'workflows.toUser', 'workflows.toUnit', 'workflows.toJabatan'
         ])->findOrFail($id);
         
-        // Load additional data for disposition modal
+        // Mark notification as seen when admin views a NEW ticket
+        if ($ticket->status === 'NEW' && !$ticket->notification_seen_at) {
+            $ticket->update(['notification_seen_at' => now()]);
+        }
+        
         $units = \App\Models\Unit::orderBy('nama')->get();
-        $headUsers = \App\Models\User::orderBy('nama')->get(); // Diupdate karena 'role' tidak ada lagi di users table, pakai Spatie nantinya
+        $headUsers = \App\Models\User::orderBy('nama')->get();
 
         return view('admin.tickets.show', compact('ticket', 'units', 'headUsers'));
     }
