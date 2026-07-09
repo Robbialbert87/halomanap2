@@ -10,10 +10,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="/pwa-icons/icon-192.png">
     
-    <!-- Fonts -->
+    <!-- Fonts (PayApp style: Source Sans Pro for headings, Roboto for body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,7 +25,8 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Roboto', 'sans-serif'],
+                        heading: ['Source Sans Pro', 'sans-serif'],
                     },
                     colors: {
                         primary: '#1E3A8A', // Blue dark
@@ -43,6 +44,10 @@
     <style>
         body {
             background-color: #F3F4F6;
+            font-family: 'Roboto', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6, .font-heading {
+            font-family: 'Source Sans Pro', sans-serif;
         }
         /* Hide scrollbar for clean PWA look */
         .no-scrollbar::-webkit-scrollbar {

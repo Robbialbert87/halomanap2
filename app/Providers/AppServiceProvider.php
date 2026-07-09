@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(WorkflowChanged::class, SendWhatsAppNotification::class);
 
         // Share notification data with header component
-        View::composer('components.header', function ($view) {
+        View::composer(['components.header', 'layouts.admin'], function ($view) {
             $unreadCount = Ticket::where('status', 'NEW')->count();
             $notifications = Ticket::where('status', 'NEW')
                 ->with('category')

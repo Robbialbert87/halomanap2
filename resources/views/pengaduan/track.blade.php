@@ -33,53 +33,56 @@
     $msg = isset($ticket) && $ticket ? ($statusMessages[$ticket->status] ?? ['title' => 'Status Pengaduan', 'body' => 'Pengaduan Anda sedang dalam proses penanganan.']) : null;
 @endphp
 
-<div class="bg-gray-50 min-h-screen" style="background: linear-gradient(135deg, #f0f4ff 0%, #fafafa 60%, #f0f9f4 100%);">
+<div class="bg-gray-50 min-h-screen">
 
-    {{-- HEADER --}}
-    <div class="bg-white border-b border-gray-100 shadow-sm">
-        <div class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-            <a href="/" class="flex items-center gap-2">
-                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo" class="h-8 w-auto">
-                <span class="font-bold text-lg text-gray-800">Halo<span class="text-blue-600">MANAP</span></span>
-            </a>
-            <a href="/" class="text-sm text-gray-500 hover:text-blue-600 flex items-center gap-1.5 transition-colors">
+    {{-- HEADER (Glossy) --}}
+    <header class="bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+        <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                <div>
+                    <span class="font-bold text-lg text-blue-800 leading-tight">Halo <span class="text-green-600">MANAP</span></span>
+                    <p class="text-[8px] text-gray-400 leading-none -mt-0.5">RSUD H. Abdul Manap</p>
+                </div>
+            </div>
+            <a href="/" class="text-sm font-medium text-gray-400 hover:text-blue-600 flex items-center gap-1.5 transition-colors">
                 <i class="fa-solid fa-house"></i> Beranda
             </a>
         </div>
-    </div>
+    </header>
 
-    <div class="max-w-2xl mx-auto px-4 py-10">
+    <div class="max-w-2xl mx-auto px-4 pt-5 pb-28">
 
         {{-- TITLE SECTION --}}
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600 shadow-lg shadow-blue-500/30 mb-4">
-                <i class="fa-solid fa-magnifying-glass text-white text-2xl"></i>
-            </div>
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Lacak Status Pengaduan</h1>
-            <p class="text-gray-500 text-sm leading-relaxed max-w-md mx-auto">
-                Masukkan nomor tiket yang Anda terima saat pertama kali mengajukan pengaduan untuk melihat status terkini.
+        <div class="text-center mb-5">
+            <span class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 shadow-md shadow-blue-200/50 mb-3">
+                <i class="fa-solid fa-magnifying-glass text-white text-xl"></i>
+            </span>
+            <h1 class="text-xl md:text-2xl font-bold text-gray-800 mb-1">Lacak Status Pengaduan</h1>
+            <p class="text-sm text-gray-400 leading-relaxed max-w-md mx-auto">
+                Masukkan nomor tiket yang Anda terima untuk melihat status terkini.
             </p>
         </div>
 
-        {{-- SEARCH FORM — hanya tampil jika belum ada tiket ditemukan --}}
+        {{-- SEARCH FORM --}}
         @if(!$ticket)
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-5">
             <form method="GET" action="{{ route('pengaduan.track') }}">
                 <label class="block text-sm font-semibold text-gray-700 mb-2">
                     <i class="fa-solid fa-ticket text-blue-500 mr-1"></i> Nomor Tiket Pengaduan
                 </label>
-                <div class="flex gap-3">
+                <div class="flex gap-2">
                     <input
                         type="text"
                         name="ticket_number"
                         value="{{ request('ticket_number') }}"
                         placeholder="Contoh: HM260702001"
                         autocomplete="off"
-                        class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm font-mono font-semibold text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition uppercase tracking-wider"
+                        class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm font-mono font-semibold text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition uppercase tracking-wider bg-gray-50/50"
                     >
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-sm shadow-blue-500/30 transition-colors flex items-center gap-2 whitespace-nowrap">
+                    <button type="submit" class="bg-gradient-to-br from-blue-500 to-blue-700 text-white px-5 py-3 rounded-xl text-sm font-semibold shadow-md shadow-blue-200/50 active:scale-95 transition-all flex items-center gap-2 whitespace-nowrap">
                         <i class="fa-solid fa-search"></i>
-                        <span class="hidden sm:inline">Cari Tiket</span>
+                        <span class="hidden sm:inline">Cari</span>
                     </button>
                 </div>
                 @if($notFound)
@@ -94,16 +97,16 @@
 
         {{-- NOT FOUND --}}
         @if($notFound)
-        <div class="bg-red-50 border border-red-100 rounded-2xl p-6 flex items-start gap-4">
-            <div class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-circle-exclamation text-red-500 text-xl"></i>
-            </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-red-100 p-5 flex items-start gap-4">
+            <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-md shadow-red-200/50 flex-shrink-0">
+                <i class="fa-solid fa-circle-exclamation text-white text-lg"></i>
+            </span>
             <div>
-                <h3 class="font-bold text-red-800 mb-1">Nomor Tiket Tidak Ditemukan</h3>
-                <p class="text-sm text-red-600 leading-relaxed">
-                    Nomor tiket <strong class="font-mono">{{ request('ticket_number') }}</strong> tidak terdaftar di sistem kami. Pastikan Anda memasukkan nomor tiket dengan benar sesuai yang tercantum di halaman konfirmasi pengaduan.
+                <h3 class="font-bold text-gray-800 text-sm mb-1">Nomor Tiket Tidak Ditemukan</h3>
+                <p class="text-xs text-gray-500 leading-relaxed">
+                    Nomor tiket <strong class="font-mono text-red-500">{{ request('ticket_number') }}</strong> tidak terdaftar. Pastikan Anda memasukkan nomor dengan benar.
                 </p>
-                <p class="text-xs text-red-400 mt-2">Butuh bantuan? Hubungi bagian informasi RSUD H. Abdul Manap.</p>
+                <p class="text-[11px] text-gray-400 mt-2">Butuh bantuan? Hubungi bagian informasi RSUD H. Abdul Manap.</p>
             </div>
         </div>
         @endif
@@ -112,41 +115,41 @@
         @if($ticket)
         @php
             $colorMap = [
-                'blue'   => ['bg' => 'bg-blue-50',   'border' => 'border-blue-200',   'icon_bg' => 'bg-blue-100',   'icon_text' => 'text-blue-600',   'badge' => 'bg-blue-100 text-blue-700',   'bar' => 'bg-blue-500'],
-                'indigo' => ['bg' => 'bg-indigo-50',  'border' => 'border-indigo-200',  'icon_bg' => 'bg-indigo-100',  'icon_text' => 'text-indigo-600',  'badge' => 'bg-indigo-100 text-indigo-700',  'bar' => 'bg-indigo-500'],
-                'yellow' => ['bg' => 'bg-yellow-50',  'border' => 'border-yellow-200',  'icon_bg' => 'bg-yellow-100',  'icon_text' => 'text-yellow-600',  'badge' => 'bg-yellow-100 text-yellow-700',  'bar' => 'bg-yellow-400'],
-                'orange' => ['bg' => 'bg-orange-50',  'border' => 'border-orange-200',  'icon_bg' => 'bg-orange-100',  'icon_text' => 'text-orange-600',  'badge' => 'bg-orange-100 text-orange-700',  'bar' => 'bg-orange-500'],
-                'green'  => ['bg' => 'bg-green-50',   'border' => 'border-green-200',   'icon_bg' => 'bg-green-100',   'icon_text' => 'text-green-600',   'badge' => 'bg-green-100 text-green-700',   'bar' => 'bg-green-500'],
-                'red'    => ['bg' => 'bg-red-50',     'border' => 'border-red-200',     'icon_bg' => 'bg-red-100',     'icon_text' => 'text-red-600',     'badge' => 'bg-red-100 text-red-700',     'bar' => 'bg-red-500'],
-                'gray'   => ['bg' => 'bg-gray-50',    'border' => 'border-gray-200',    'icon_bg' => 'bg-gray-100',    'icon_text' => 'text-gray-500',    'badge' => 'bg-gray-100 text-gray-600',    'bar' => 'bg-gray-400'],
+                'blue'   => ['gradient' => 'from-blue-400 to-blue-600',      'badge' => 'bg-blue-100 text-blue-700',   'bar' => 'bg-blue-500'],
+                'indigo' => ['gradient' => 'from-indigo-400 to-indigo-600',  'badge' => 'bg-indigo-100 text-indigo-700','bar' => 'bg-indigo-500'],
+                'yellow' => ['gradient' => 'from-yellow-400 to-yellow-500',  'badge' => 'bg-yellow-100 text-yellow-700','bar' => 'bg-yellow-400'],
+                'orange' => ['gradient' => 'from-orange-400 to-orange-600',  'badge' => 'bg-orange-100 text-orange-700','bar' => 'bg-orange-500'],
+                'green'  => ['gradient' => 'from-emerald-400 to-emerald-600','badge' => 'bg-emerald-100 text-emerald-700','bar' => 'bg-emerald-500'],
+                'red'    => ['gradient' => 'from-red-400 to-red-600',        'badge' => 'bg-red-100 text-red-700',     'bar' => 'bg-red-500'],
+                'gray'   => ['gradient' => 'from-gray-400 to-gray-500',      'badge' => 'bg-gray-100 text-gray-600',   'bar' => 'bg-gray-400'],
             ];
             $c = $colorMap[$cfg['color']];
             $step = $cfg['step'];
         @endphp
 
         {{-- Status Message Card --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-5">
-            {{-- Colored Header --}}
-            <div class="{{ $c['bg'] }} {{ $c['border'] }} border-b px-6 py-5 flex items-center gap-4">
-                <div class="w-14 h-14 rounded-2xl {{ $c['icon_bg'] }} flex items-center justify-center flex-shrink-0">
-                    <i class="fa-solid {{ $cfg['icon'] }} {{ $c['icon_text'] }} text-2xl"></i>
-                </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-4">
+            {{-- Header with gradient icon --}}
+            <div class="px-5 py-4 flex items-center gap-3 border-b border-gray-100">
+                <span class="w-12 h-12 rounded-2xl bg-gradient-to-br {{ $c['gradient'] }} flex items-center justify-center shadow-md flex-shrink-0">
+                    <i class="fa-solid {{ $cfg['icon'] }} text-white text-xl"></i>
+                </span>
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <span class="text-xs font-semibold font-mono tracking-wider text-gray-500">{{ $ticket->ticket_number }}</span>
-                        <span class="text-xs px-2.5 py-1 rounded-full font-semibold {{ $c['badge'] }}">{{ $cfg['label'] }}</span>
+                        <span class="text-[10px] font-semibold font-mono tracking-wider text-gray-400">{{ $ticket->ticket_number }}</span>
+                        <span class="text-[10px] px-2.5 py-0.5 rounded-full font-semibold {{ $c['badge'] }}">{{ $cfg['label'] }}</span>
                     </div>
-                    <h2 class="font-bold text-gray-800 mt-1 text-base leading-snug">{{ $msg['title'] }}</h2>
+                    <h2 class="font-bold text-gray-800 mt-0.5 text-sm leading-snug">{{ $msg['title'] }}</h2>
                 </div>
             </div>
 
             {{-- Message Body --}}
-            <div class="px-6 py-5">
-                <p class="text-gray-600 text-sm leading-relaxed mb-5">{{ $msg['body'] }}</p>
+            <div class="px-5 py-4">
+                <p class="text-gray-500 text-xs leading-relaxed mb-4">{{ $msg['body'] }}</p>
 
                 {{-- Progress Steps --}}
-                <div class="mb-5">
-                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Progres Penanganan</p>
+                <div class="mb-4">
+                    <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2.5">Progres Penanganan</p>
                     <div class="flex items-center gap-0">
                         @php
                             $steps = [
@@ -158,46 +161,46 @@
                         @endphp
                         @foreach($steps as $i => $s)
                             <div class="flex flex-col items-center flex-1">
-                                <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm border-2
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm border-2
                                     {{ ($step >= $i + 1) ? $c['bar'] . ' border-transparent text-white' : 'bg-white border-gray-200 text-gray-300' }}">
-                                    <i class="fa-solid {{ $s['icon'] }} text-xs"></i>
+                                    <i class="fa-solid {{ $s['icon'] }} text-[10px]"></i>
                                 </div>
-                                <span class="text-[10px] mt-1.5 text-center font-medium {{ ($step >= $i + 1) ? 'text-gray-700' : 'text-gray-300' }}">{{ $s['label'] }}</span>
+                                <span class="text-[9px] mt-1 text-center font-medium {{ ($step >= $i + 1) ? 'text-gray-600' : 'text-gray-300' }}">{{ $s['label'] }}</span>
                             </div>
                             @if(!$loop->last)
-                                <div class="flex-1 h-0.5 -mt-5 {{ ($step > $i + 1) ? $c['bar'] : 'bg-gray-200' }}"></div>
+                                <div class="flex-1 h-[3px] rounded-full -mt-[18px] mx-1 {{ ($step > $i + 1) ? $c['bar'] : 'bg-gray-100' }}"></div>
                             @endif
                         @endforeach
                     </div>
                 </div>
 
                 {{-- Ticket Details --}}
-                <div class="bg-gray-50 rounded-xl p-4 space-y-2.5">
-                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Detail Pengaduan</p>
-                    <div class="grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
+                <div class="bg-gray-50 rounded-xl p-3.5">
+                    <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2.5">Detail Pengaduan</p>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                            <p class="text-xs text-gray-400 font-medium">Judul</p>
-                            <p class="text-gray-700 font-semibold text-xs mt-0.5 leading-snug">{{ $ticket->title }}</p>
+                            <p class="text-[10px] text-gray-400">Judul</p>
+                            <p class="text-gray-700 font-semibold text-[11px] leading-snug mt-0.5">{{ $ticket->title }}</p>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-400 font-medium">Jenis</p>
-                            <p class="text-gray-700 font-semibold text-xs mt-0.5">{{ $ticket->type }}</p>
+                            <p class="text-[10px] text-gray-400">Jenis</p>
+                            <p class="text-gray-700 font-semibold text-[11px] mt-0.5">{{ $ticket->type }}</p>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-400 font-medium">Kategori</p>
-                            <p class="text-gray-700 font-semibold text-xs mt-0.5">{{ $ticket->category?->name ?? '-' }}</p>
+                            <p class="text-[10px] text-gray-400">Kategori</p>
+                            <p class="text-gray-700 font-semibold text-[11px] mt-0.5">{{ $ticket->category?->name ?? '-' }}</p>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-400 font-medium">Ruangan</p>
-                            <p class="text-gray-700 font-semibold text-xs mt-0.5">{{ $ticket->room?->name ?? '-' }}</p>
+                            <p class="text-[10px] text-gray-400">Ruangan</p>
+                            <p class="text-gray-700 font-semibold text-[11px] mt-0.5">{{ $ticket->room?->name ?? '-' }}</p>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-400 font-medium">Tanggal Lapor</p>
-                            <p class="text-gray-700 font-semibold text-xs mt-0.5">{{ $ticket->created_at?->translatedFormat('d M Y, H:i') }}</p>
+                            <p class="text-[10px] text-gray-400">Tgl Lapor</p>
+                            <p class="text-gray-700 font-semibold text-[11px] mt-0.5">{{ $ticket->created_at?->translatedFormat('d M Y, H:i') }}</p>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-400 font-medium">Pelapor</p>
-                            <p class="text-gray-700 font-semibold text-xs mt-0.5">
+                            <p class="text-[10px] text-gray-400">Pelapor</p>
+                            <p class="text-gray-700 font-semibold text-[11px] mt-0.5">
                                 @if($ticket->is_anonymous) <span class="italic text-gray-400">Anonim</span> @else {{ $ticket->reporter_name ?? '-' }} @endif
                             </p>
                         </div>
@@ -207,33 +210,32 @@
         </div>
 
         {{-- Encouragement Quote --}}
-        <div class="bg-white rounded-2xl border border-blue-100 px-6 py-5 flex items-start gap-3">
-            <div class="text-blue-400 text-xl mt-0.5 flex-shrink-0"><i class="fa-solid fa-quote-left"></i></div>
-            <p class="text-sm text-gray-500 italic leading-relaxed">
-                "Suara Anda adalah cermin pelayanan kami. Setiap pengaduan yang Anda sampaikan adalah hadiah berharga yang mendorong kami untuk terus tumbuh dan memberikan layanan kesehatan yang lebih baik bagi seluruh masyarakat."
+        <div class="bg-white rounded-2xl border border-blue-100/50 px-5 py-4 flex items-start gap-2.5">
+            <span class="text-blue-300 text-base mt-0.5 flex-shrink-0"><i class="fa-solid fa-quote-left"></i></span>
+            <p class="text-xs text-gray-400 italic leading-relaxed">
+                "Suara Anda adalah cermin pelayanan kami. Setiap pengaduan yang Anda sampaikan adalah hadiah berharga yang mendorong kami untuk terus tumbuh."
             </p>
         </div>
 
         {{-- Cari nomor lain --}}
-        <div class="text-center mt-5">
-            <a href="{{ route('pengaduan.track') }}" class="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors">
-                <i class="fa-solid fa-rotate-left text-xs"></i> Cari nomor tiket lain
+        <div class="text-center mt-4">
+            <a href="{{ route('pengaduan.track') }}" class="inline-flex items-center gap-1.5 text-xs text-blue-500 hover:text-blue-600 font-medium transition-colors">
+                <i class="fa-solid fa-rotate-left text-[10px]"></i> Cari nomor tiket lain
             </a>
         </div>
 
         @elseif(!$notFound && !request()->filled('ticket_number'))
-        {{-- Empty state / guide when no search yet --}}
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-8 text-center">
-            <div class="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto mb-4">
-                <i class="fa-solid fa-ticket text-blue-400 text-2xl"></i>
-            </div>
-            <h3 class="font-bold text-gray-700 mb-2">Di Mana Nomor Tiket Saya?</h3>
-            <p class="text-sm text-gray-500 leading-relaxed max-w-sm mx-auto">
-                Nomor tiket diberikan saat Anda berhasil mengirimkan pengaduan. Formatnya seperti <strong class="font-mono text-blue-600">HM260702001</strong>.
-                Cek halaman konfirmasi atau screenshot yang Anda simpan.
+        {{-- Empty state / guide --}}
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-7 text-center">
+            <span class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 shadow-md shadow-blue-200/50 mx-auto mb-3">
+                <i class="fa-solid fa-ticket text-white text-xl"></i>
+            </span>
+            <h3 class="font-bold text-gray-700 text-sm mb-1.5">Di Mana Nomor Tiket Saya?</h3>
+            <p class="text-xs text-gray-400 leading-relaxed max-w-sm mx-auto">
+                Nomor tiket diberikan saat Anda berhasil mengirimkan pengaduan. Formatnya seperti <strong class="font-mono text-blue-500">HM260702001</strong>.
             </p>
-            <div class="mt-6 pt-5 border-t border-gray-100">
-                <a href="{{ route('pengaduan.create') }}" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors shadow-sm">
+            <div class="mt-5 pt-4 border-t border-gray-100">
+                <a href="{{ route('pengaduan.create') }}" class="inline-flex items-center gap-2 bg-gradient-to-br from-blue-500 to-blue-700 text-white text-xs font-semibold px-5 py-2.5 rounded-xl shadow-md shadow-blue-200/50 active:scale-95 transition-all">
                     <i class="fa-solid fa-plus"></i> Buat Pengaduan Baru
                 </a>
             </div>
@@ -241,17 +243,17 @@
         @endif
 
         {{-- Footer Links --}}
-        <div class="text-center mt-8 text-xs text-gray-400 flex items-center justify-center gap-4">
+        <div class="text-center mt-6 text-[11px] text-gray-400 flex items-center justify-center gap-3">
             <a href="/" class="hover:text-blue-600 transition-colors flex items-center gap-1">
                 <i class="fa-solid fa-house"></i> Beranda
             </a>
-            <span>•</span>
+            <span class="text-gray-200">•</span>
             <a href="{{ route('pengaduan.create') }}" class="hover:text-blue-600 transition-colors flex items-center gap-1">
                 <i class="fa-solid fa-file-pen"></i> Buat Pengaduan
             </a>
-            <span>•</span>
+            <span class="text-gray-200">•</span>
             <a href="{{ route('pengaduan.track') }}" class="hover:text-blue-600 transition-colors flex items-center gap-1">
-                <i class="fa-solid fa-magnifying-glass"></i> Lacak Status
+                <i class="fa-solid fa-magnifying-glass"></i> Lacak
             </a>
         </div>
 

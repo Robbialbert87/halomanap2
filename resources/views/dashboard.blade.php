@@ -3,6 +3,9 @@
 @section('title', 'Dashboard - Halo MANAP')
 
 @section('admin_content')
+@php
+    $mobileRoleGroup = auth()->user() ? \App\Services\RoleMenuService::getRoleGroup(auth()->user()) : null;
+@endphp
 <style>
     @keyframes fadeInUp {
         from { opacity: 0; transform: translateY(24px); }
@@ -15,18 +18,23 @@
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 
-            <!-- Page Header & Filter -->
+            <!-- Page Header -->
             <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 animate-fadeInUp" style="animation-delay:0s">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
-                    <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-                        <span class="text-blue-600">Beranda</span> 
-                        <span class="text-gray-400">/</span> 
-                        <span>Dashboard</span>
+                    <div class="hidden md:block">
+                        <h1 class="text-2xl font-bold text-gray-800 font-heading">Dashboard</h1>
+                        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
+                            <span class="text-blue-600">Beranda</span>
+                            <span class="text-gray-400">/</span>
+                            <span>Dashboard</span>
+                        </div>
+                    </div>
+                    <div class="md:hidden">
+                        <p class="text-[10px] text-blue-500 font-semibold tracking-wider uppercase">Dashboard</p>
+                        <h1 class="text-lg font-bold text-gray-800 font-heading">Selamat Datang, {{ auth()->user()?->nama ?? 'Admin' }}</h1>
                     </div>
                 </div>
-                
-                <div class="flex items-center gap-3">
+                <div class="hidden md:flex items-center gap-3">
                     <span class="text-sm text-gray-500 font-medium">Filter Tanggal</span>
                     <div class="relative">
                         <select class="appearance-none bg-white border border-gray-200 text-gray-700 py-2 pl-4 pr-10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm cursor-pointer">
@@ -38,66 +46,89 @@
                 </div>
             </div>
 
-            <!-- Stats Cards -->
+            <!-- Stats Cards (gradient icons ala PayApp) -->
             <div class="flex gap-3 overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-5 md:gap-4 mb-6 pb-2 md:pb-0 scrollbar-hide">
-                <!-- Card 1 -->
-                <div class="snap-start shrink-0 w-[80vw] md:w-auto bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-purple-500 active:scale-[0.98] transition-transform">
-                    <div class="w-12 h-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-file-lines"></i>
-                    </div>
+                <div class="snap-start shrink-0 w-[72vw] md:w-auto bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 flex items-center gap-3 active:scale-[0.98] transition-transform">
+                    <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-md shadow-violet-200/50 flex-shrink-0">
+                        <i class="fa-solid fa-file-lines text-white text-lg"></i>
+                    </span>
                     <div>
-                        <p class="text-sm text-gray-500 font-medium mb-1">Total Pengaduan</p>
-                        <h3 class="text-2xl font-bold text-gray-800">{{ $total }}</h3>
-                        <p class="text-xs text-gray-400 mt-1">Semua waktu</p>
+                        <p class="text-[11px] text-gray-400 font-medium mb-0.5">Total Pengaduan</p>
+                        <h3 class="text-xl font-bold text-gray-800">{{ $total }}</h3>
+                        <p class="text-[10px] text-gray-400 mt-0.5">Semua waktu</p>
                     </div>
                 </div>
-
-                <!-- Card 2 -->
-                <div class="snap-start shrink-0 w-[80vw] md:w-auto bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-yellow-400 active:scale-[0.98] transition-transform">
-                    <div class="w-12 h-12 rounded-full bg-yellow-50 text-yellow-500 flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-clock"></i>
-                    </div>
+                <div class="snap-start shrink-0 w-[72vw] md:w-auto bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 flex items-center gap-3 active:scale-[0.98] transition-transform">
+                    <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-md shadow-yellow-200/50 flex-shrink-0">
+                        <i class="fa-solid fa-clock text-white text-lg"></i>
+                    </span>
                     <div>
-                        <p class="text-sm text-gray-500 font-medium mb-1">Menunggu</p>
-                        <h3 class="text-2xl font-bold text-gray-800">{{ $menunggu }}</h3>
-                        <p class="text-xs text-gray-400 mt-1">{{ $pMenunggu }}%</p>
+                        <p class="text-[11px] text-gray-400 font-medium mb-0.5">Menunggu</p>
+                        <h3 class="text-xl font-bold text-gray-800">{{ $menunggu }}</h3>
+                        <p class="text-[10px] text-gray-400 mt-0.5">{{ $pMenunggu }}%</p>
                     </div>
                 </div>
-
-                <!-- Card 3 -->
-                <div class="snap-start shrink-0 w-[80vw] md:w-auto bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-blue-500 active:scale-[0.98] transition-transform">
-                    <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-spinner"></i>
-                    </div>
+                <div class="snap-start shrink-0 w-[72vw] md:w-auto bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 flex items-center gap-3 active:scale-[0.98] transition-transform">
+                    <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md shadow-blue-200/50 flex-shrink-0">
+                        <i class="fa-solid fa-spinner text-white text-lg"></i>
+                    </span>
                     <div>
-                        <p class="text-sm text-gray-500 font-medium mb-1">Diproses</p>
-                        <h3 class="text-2xl font-bold text-gray-800">{{ $diproses }}</h3>
-                        <p class="text-xs text-gray-400 mt-1">{{ $pDiproses }}%</p>
+                        <p class="text-[11px] text-gray-400 font-medium mb-0.5">Diproses</p>
+                        <h3 class="text-xl font-bold text-gray-800">{{ $diproses }}</h3>
+                        <p class="text-[10px] text-gray-400 mt-0.5">{{ $pDiproses }}%</p>
                     </div>
                 </div>
-
-                <!-- Card 4 -->
-                <div class="snap-start shrink-0 w-[80vw] md:w-auto bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-green-500 active:scale-[0.98] transition-transform">
-                    <div class="w-12 h-12 rounded-full bg-green-50 text-green-500 flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-check"></i>
-                    </div>
+                <div class="snap-start shrink-0 w-[72vw] md:w-auto bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 flex items-center gap-3 active:scale-[0.98] transition-transform">
+                    <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md shadow-emerald-200/50 flex-shrink-0">
+                        <i class="fa-solid fa-check text-white text-lg"></i>
+                    </span>
                     <div>
-                        <p class="text-sm text-gray-500 font-medium mb-1">Selesai</p>
-                        <h3 class="text-2xl font-bold text-gray-800">{{ $selesai }}</h3>
-                        <p class="text-xs text-gray-400 mt-1">{{ $pSelesai }}%</p>
+                        <p class="text-[11px] text-gray-400 font-medium mb-0.5">Selesai</p>
+                        <h3 class="text-xl font-bold text-gray-800">{{ $selesai }}</h3>
+                        <p class="text-[10px] text-gray-400 mt-0.5">{{ $pSelesai }}%</p>
                     </div>
                 </div>
-
-                <!-- Card 5 -->
-                <div class="snap-start shrink-0 w-[80vw] md:w-auto bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-red-500 active:scale-[0.98] transition-transform">
-                    <div class="w-12 h-12 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-xmark"></i>
-                    </div>
+                <div class="snap-start shrink-0 w-[72vw] md:w-auto bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 flex items-center gap-3 active:scale-[0.98] transition-transform">
+                    <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-md shadow-red-200/50 flex-shrink-0">
+                        <i class="fa-solid fa-xmark text-white text-lg"></i>
+                    </span>
                     <div>
-                        <p class="text-sm text-gray-500 font-medium mb-1">Ditolak</p>
-                        <h3 class="text-2xl font-bold text-gray-800">{{ $ditolak }}</h3>
-                        <p class="text-xs text-gray-400 mt-1">{{ $pDitolak }}%</p>
+                        <p class="text-[11px] text-gray-400 font-medium mb-0.5">Ditolak</p>
+                        <h3 class="text-xl font-bold text-gray-800">{{ $ditolak }}</h3>
+                        <p class="text-[10px] text-gray-400 mt-0.5">{{ $pDitolak }}%</p>
                     </div>
+                </div>
+            </div>
+
+            {{-- Quick Actions (mobile only, ala PayApp waves) --}}
+            <div class="md:hidden mb-5">
+                <div class="flex text-center gap-0">
+                    <a href="{{ route('pengaduan.create') }}" class="flex-1 flex flex-col items-center gap-1.5">
+                        <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md shadow-blue-200/50">
+                            <i class="fa-solid fa-plus text-white text-xl"></i>
+                        </span>
+                        <span class="text-[10px] font-medium text-gray-500">Pengaduan<br>Baru</span>
+                    </a>
+                    <a href="{{ route('admin.tickets.index') }}" class="flex-1 flex flex-col items-center gap-1.5">
+                        <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md shadow-emerald-200/50">
+                            <i class="fa-solid fa-inbox text-white text-xl"></i>
+                        </span>
+                        <span class="text-[10px] font-medium text-gray-500">Semua<br>Pengaduan</span>
+                    </a>
+                    <a href="{{ route('pengaduan.track') }}" class="flex-1 flex flex-col items-center gap-1.5">
+                        <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-md shadow-orange-200/50">
+                            <i class="fa-solid fa-magnifying-glass text-white text-xl"></i>
+                        </span>
+                        <span class="text-[10px] font-medium text-gray-500">Cek<br>Status</span>
+                    </a>
+                    @if($mobileRoleGroup === 'admin' && auth()->user()?->can('manage-reports'))
+                    <a href="{{ route('admin.monitoring.index') }}" class="flex-1 flex flex-col items-center gap-1.5">
+                        <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-md shadow-violet-200/50">
+                            <i class="fa-solid fa-chart-line text-white text-xl"></i>
+                        </span>
+                        <span class="text-[10px] font-medium text-gray-500">Monitoring</span>
+                    </a>
+                    @endif
                 </div>
             </div>
 

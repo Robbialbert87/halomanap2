@@ -201,12 +201,14 @@
             </div>
         </div>
 
-{{-- Verifikasi Pengaduan (hanya jika status NEW) --}}
+        {{-- Verifikasi Pengaduan (hanya jika status NEW) --}}
         @if($ticket->status === 'NEW')
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.25s">
+        <div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.25s">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
+                <h2 class="font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-check text-blue-600"></i> Verifikasi Pengaduan
                 </h2>
-                <i class="fa-solid fa-chevron-up text-gray-400 transition-transform duration-300 md:hidden group-hover:text-gray-600"></i>
-            </button>
+            </div>
             <div id="verify-content" class="p-6">
                 <p class="text-sm text-gray-600 mb-4">Verifikasi pengaduan ini sebelum melanjutkan ke disposisi. Pastikan data lengkap dan sesuai.</p>
                 <form id="verify-form" action="{{ route('admin.tickets.verify', $ticket->id) }}" method="POST" class="mb-3">
