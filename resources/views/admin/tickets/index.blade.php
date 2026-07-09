@@ -77,7 +77,7 @@ $typeMap = [
         <div class="flex-1 relative">
             <input type="text" name="search" value="{{ request('search') }}"
                 placeholder="Cari no. tiket, judul, atau nama pelapor..." autocomplete="off"
-                class="w-full bg-white/70 md:bg-gray-50 border border-white/50 md:border-gray-300 text-gray-900 text-[13px] rounded-xl md:rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 md:p-2.5 pl-9"
+                class="w-full bg-white/70 md:bg-gray-50 border border-gray-200 md:border-gray-300 text-gray-900 text-[13px] rounded-xl md:rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 md:p-2.5 pl-9"
                 id="mobile-search-input">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
             @if(request('search'))
@@ -87,7 +87,7 @@ $typeMap = [
             @endif
         </div>
         <div class="md:min-w-[140px]">
-            <select name="status" class="w-full bg-white/70 md:bg-gray-50 border border-white/50 md:border-gray-300 text-gray-900 text-[13px] rounded-xl md:rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 md:p-2.5">
+            <select name="status" class="w-full bg-white/70 md:bg-gray-50 border border-gray-200 md:border-gray-300 text-gray-900 text-[13px] rounded-xl md:rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 md:p-2.5">
                 <option value="">Semua Status</option>
                 <option value="NEW" {{ request('status') == 'NEW' ? 'selected' : '' }}>Baru</option>
                 <option value="TERVERIFIKASI" {{ request('status') == 'TERVERIFIKASI' ? 'selected' : '' }}>Terverifikasi</option>
@@ -97,7 +97,7 @@ $typeMap = [
             </select>
         </div>
         <div class="md:min-w-[130px]">
-            <select name="type" class="w-full bg-white/70 md:bg-gray-50 border border-white/50 md:border-gray-300 text-gray-900 text-[13px] rounded-xl md:rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 md:p-2.5">
+            <select name="type" class="w-full bg-white/70 md:bg-gray-50 border border-gray-200 md:border-gray-300 text-gray-900 text-[13px] rounded-xl md:rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 md:p-2.5">
                 <option value="">Semua Jenis</option>
                 <option value="Pengaduan" {{ request('type') == 'Pengaduan' ? 'selected' : '' }}>Pengaduan</option>
                 <option value="Survei" {{ request('type') == 'Survei' ? 'selected' : '' }}>Survei</option>
@@ -106,7 +106,7 @@ $typeMap = [
             </select>
         </div>
         <div class="md:min-w-[180px]">
-            <select name="unit_id" class="w-full bg-white/70 md:bg-gray-50 border border-white/50 md:border-gray-300 text-gray-900 text-[13px] rounded-xl md:rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 md:p-2.5">
+            <select name="unit_id" class="w-full bg-white/70 md:bg-gray-50 border border-gray-200 md:border-gray-300 text-gray-900 text-[13px] rounded-xl md:rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 md:p-2.5">
                 <option value="">Semua Unit</option>
                 @foreach($units as $unit)
                     <option value="{{ $unit->id }}" {{ request('unit_id') == $unit->id ? 'selected' : '' }}>{{ $unit->nama }}</option>

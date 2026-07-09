@@ -67,7 +67,7 @@
         <div class="relative">
             <input type="text" name="search" value="{{ request('search') }}"
                 placeholder="Cari NIP, Nama, atau No WA..." autocomplete="off"
-                class="w-full bg-white/70 border border-white/50 text-gray-900 text-[13px] rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2.5 pl-9">
+                class="w-full bg-white/70 border border-gray-200 text-gray-900 text-[13px] rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2.5 pl-9">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
             @if(request('search'))
             <a href="{{ route('admin.users.index', request()->except(['search', 'page'])) }}" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -76,19 +76,19 @@
             @endif
         </div>
         <div class="grid grid-cols-2 gap-2">
-            <select name="unit_id" class="w-full bg-white/70 border border-white/50 text-gray-900 text-[13px] rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2.5">
+            <select name="unit_id" class="w-full bg-white/70 border border-gray-200 text-gray-900 text-[13px] rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2.5">
                 <option value="">Semua Unit</option>
                 @foreach($units as $u)
                     <option value="{{ $u->id }}" {{ request('unit_id') == $u->id ? 'selected' : '' }}>{{ $u->nama }}</option>
                 @endforeach
             </select>
-            <select name="jabatan_id" class="w-full bg-white/70 border border-white/50 text-gray-900 text-[13px] rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2.5">
+            <select name="jabatan_id" class="w-full bg-white/70 border border-gray-200 text-gray-900 text-[13px] rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2.5">
                 <option value="">Semua Jabatan</option>
                 @foreach($jabatans as $j)
                     <option value="{{ $j->id }}" {{ request('jabatan_id') == $j->id ? 'selected' : '' }}>{{ $j->nama }}</option>
                 @endforeach
             </select>
-            <select name="role" class="w-full bg-white/70 border border-white/50 text-gray-900 text-[13px] rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2.5">
+            <select name="role" class="w-full bg-white/70 border border-gray-200 text-gray-900 text-[13px] rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2.5">
                 <option value="">Semua Role</option>
                 @foreach($roles as $r)
                     <option value="{{ $r->name }}" {{ request('role') == $r->name ? 'selected' : '' }}>{{ $r->name }}</option>
