@@ -24,62 +24,71 @@ Route::get('/lacak', [PengaduanController::class, 'track'])->name('pengaduan.tra
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', function () {
-        $total = \App\Models\Ticket::count();
-        $menunggu = \App\Models\Ticket::whereIn('status', ['Baru', 'TERVERIFIKASI', 'Menunggu Verifikasi'])->count();
-        $diproses = \App\Models\Ticket::where('status', 'Diproses')->count();
-        $selesai = \App\Models\Ticket::where('status', 'Selesai')->count();
-        $ditolak = \App\Models\Ticket::where('status', 'Ditolak')->count();
+        $user = auth()->user();
+        $roleGroup = \App\Services\RoleMenuService::getRoleGroup($user);
 
-        $pMenunggu = $total > 0 ? round(($menunggu / $total) * 100, 2) : 0;
-        $pDiproses = $total > 0 ? round(($diproses / $total) * 100, 2) : 0;
-        $pSelesai = $total > 0 ? round(($selesai / $total) * 100, 2) : 0;
-        $pDitolak = $total > 0 ? round(($ditolak / $total) * 100, 2) : 0;
+        return match ($roleGroup) {
+            'kepala_unit' => redirect()->route('kepala-unit.dashboard'),
+            'kasi'        => redirect()->route('kasi.dashboard'),
+            'kabid'       => redirect()->route('kabid.dashboard'),
+            'head_unit'   => redirect()->route('head-unit.dispositions.index'),
+            'direktur'    => redirect()->route('direktur.dashboard'),
+            default       => (function () use ($user) {
+                $total = \App\Models\Ticket::count();
+                $menunggu = \App\Models\Ticket::whereIn('status', ['Baru', 'TERVERIFIKASI', 'Menunggu Verifikasi'])->count();
+                $diproses = \App\Models\Ticket::where('status', 'Diproses')->count();
+                $selesai = \App\Models\Ticket::where('status', 'Selesai')->count();
+                $ditolak = \App\Models\Ticket::where('status', 'Ditolak')->count();
 
-        // Grafik Bulanan (6 bulan terakhir)
-        $months = collect();
-        for ($i = 5; $i >= 0; $i--) {
-            $months->push(now()->subMonths($i)->format('Y-m'));
-        }
-        $monthlyRaw = \App\Models\Ticket::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as bulan, COUNT(*) as total")
-            ->where('created_at', '>=', now()->subMonths(5)->startOfMonth())
-            ->groupBy('bulan')
-            ->orderBy('bulan')
-            ->pluck('total', 'bulan');
-        $monthlyLabels = $months->map(function ($m) {
-            return \Carbon\Carbon::createFromFormat('Y-m', $m)->isoFormat('MMM');
-        });
-        $monthlyData = $months->map(function ($m) use ($monthlyRaw) {
-            return $monthlyRaw->get($m, 0);
-        });
+                $pMenunggu = $total > 0 ? round(($menunggu / $total) * 100, 2) : 0;
+                $pDiproses = $total > 0 ? round(($diproses / $total) * 100, 2) : 0;
+                $pSelesai = $total > 0 ? round(($selesai / $total) * 100, 2) : 0;
+                $pDitolak = $total > 0 ? round(($ditolak / $total) * 100, 2) : 0;
 
-        // Kategori
-        $categoryData = \App\Models\Ticket::selectRaw('category_id, COUNT(*) as total')
-            ->whereNotNull('category_id')
-            ->groupBy('category_id')
-            ->with('category')
-            ->get();
-        $categoryLabels = $categoryData->pluck('category.name');
-        $categoryCounts = $categoryData->pluck('total');
-        $categoryColors = ['#3b82f6', '#10b981', '#f59e0b', '#f97316', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'];
+                $months = collect();
+                for ($i = 5; $i >= 0; $i--) {
+                    $months->push(now()->subMonths($i)->format('Y-m'));
+                }
+                $monthlyRaw = \App\Models\Ticket::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as bulan, COUNT(*) as total")
+                    ->where('created_at', '>=', now()->subMonths(5)->startOfMonth())
+                    ->groupBy('bulan')
+                    ->orderBy('bulan')
+                    ->pluck('total', 'bulan');
+                $monthlyLabels = $months->map(function ($m) {
+                    return \Carbon\Carbon::createFromFormat('Y-m', $m)->isoFormat('MMM');
+                });
+                $monthlyData = $months->map(function ($m) use ($monthlyRaw) {
+                    return $monthlyRaw->get($m, 0);
+                });
 
-        // Unit (via room)
-        $unitData = \App\Models\Ticket::selectRaw('room_id, COUNT(*) as total')
-            ->whereNotNull('room_id')
-            ->groupBy('room_id')
-            ->with('room.unit')
-            ->get()
-            ->groupBy(fn($item) => $item->room->unit->nama ?? 'Tanpa Unit')
-            ->map(fn($items) => $items->sum('total'))
-            ->sortDesc();
-        $unitMax = $unitData->max() ?: 1;
+                $categoryData = \App\Models\Ticket::selectRaw('category_id, COUNT(*) as total')
+                    ->whereNotNull('category_id')
+                    ->groupBy('category_id')
+                    ->with('category')
+                    ->get();
+                $categoryLabels = $categoryData->pluck('category.name');
+                $categoryCounts = $categoryData->pluck('total');
+                $categoryColors = ['#3b82f6', '#10b981', '#f59e0b', '#f97316', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'];
 
-        return view('dashboard', compact(
-            'total', 'menunggu', 'diproses', 'selesai', 'ditolak',
-            'pMenunggu', 'pDiproses', 'pSelesai', 'pDitolak',
-            'monthlyLabels', 'monthlyData',
-            'categoryData', 'categoryLabels', 'categoryCounts', 'categoryColors',
-            'unitData', 'unitMax'
-        ));
+                $unitData = \App\Models\Ticket::selectRaw('room_id, COUNT(*) as total')
+                    ->whereNotNull('room_id')
+                    ->groupBy('room_id')
+                    ->with('room.unit')
+                    ->get()
+                    ->groupBy(fn($item) => $item->room->unit->nama ?? 'Tanpa Unit')
+                    ->map(fn($items) => $items->sum('total'))
+                    ->sortDesc();
+                $unitMax = $unitData->max() ?: 1;
+
+                return view('dashboard', compact(
+                    'total', 'menunggu', 'diproses', 'selesai', 'ditolak',
+                    'pMenunggu', 'pDiproses', 'pSelesai', 'pDitolak',
+                    'monthlyLabels', 'monthlyData',
+                    'categoryData', 'categoryLabels', 'categoryCounts', 'categoryColors',
+                    'unitData', 'unitMax'
+                ));
+            })(),
+        };
     })->name('dashboard');
 
     // ── ADMIN ─────────────────────────────────────────────────────────────────

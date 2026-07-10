@@ -37,6 +37,19 @@ class AppServiceProvider extends ServiceProvider
         View::composer(['components.header', 'layouts.admin'], function ($view) {
             $user = auth()->user();
 
+            // Determine role route prefix for notification links
+            $roleRoute = null;
+            if ($user) {
+                $roleGroup = \App\Services\RoleMenuService::getRoleGroup($user);
+                $roleRoute = match ($roleGroup) {
+                    'kepala_unit' => 'kepala-unit.dispositions.show',
+                    'kasi'        => 'kasi.dispositions.show',
+                    'kabid'       => 'kabid.dispositions.show',
+                    'head_unit'   => 'head-unit.dispositions.show',
+                    default       => null,
+                };
+            }
+
             // 1. Ticket-based notifications (NEW / DONE / Selesai)
             $unreadNew = Ticket::where('status', 'NEW')
                 ->whereNull('notification_seen_at');
@@ -59,7 +72,7 @@ class AppServiceProvider extends ServiceProvider
                     'category'      => $t->category?->name,
                     'time'          => $t->created_at->diffForHumans(),
                     'notif_type'    => 'new',
-                    'url'           => null,
+                    'url'           => route('admin.tickets.show', $t->id),
                 ]);
 
             $doneNotifs = (clone $unreadDone)
@@ -72,7 +85,7 @@ class AppServiceProvider extends ServiceProvider
                     'category'      => $t->category?->name,
                     'time'          => $t->updated_at->diffForHumans(),
                     'notif_type'    => 'selesai',
-                    'url'           => null,
+                    'url'           => route('admin.tickets.show', $t->id),
                 ]);
 
             // 2. Workflow-based notifications (disposisi, eskalasi, etc.)
@@ -84,16 +97,27 @@ class AppServiceProvider extends ServiceProvider
                     ->latest()
                     ->take(15)
                     ->get()
-                    ->map(fn($n) => [
-                        'id'            => $n->data['ticket_id'] ?? 0,
-                        'ticket_number' => $n->data['ticket_number'] ?? '-',
-                        'title'         => $n->title,
-                        'type'          => $n->type,
-                        'category'      => null,
-                        'time'          => $n->created_at->diffForHumans(),
-                        'notif_type'    => $n->type === 'pengaduan_selesai' ? 'selesai' : 'new',
-                        'url'           => $n->data['url'] ?? null,
-                    ]);
+                    ->map(function ($n) use ($roleRoute) {
+                        $ticketId = $n->data['ticket_id'] ?? 0;
+                        $workflowUuid = $n->data['workflow_uuid'] ?? null;
+
+                        if ($roleRoute && $workflowUuid) {
+                            $url = route($roleRoute, $workflowUuid);
+                        } else {
+                            $url = route('admin.tickets.show', $ticketId);
+                        }
+
+                        return [
+                            'id'            => $ticketId,
+                            'ticket_number' => $n->data['ticket_number'] ?? '-',
+                            'title'         => $n->title,
+                            'type'          => $n->type,
+                            'category'      => null,
+                            'time'          => $n->created_at->diffForHumans(),
+                            'notif_type'    => $n->type === 'pengaduan_selesai' ? 'selesai' : 'new',
+                            'url'           => $url,
+                        ];
+                    });
                 $appNotifCount = AppNotification::where('user_id', $user->id)
                     ->whereNull('read_at')
                     ->count();

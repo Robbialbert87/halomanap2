@@ -12,8 +12,13 @@ class RiwayatController extends Controller
     {
         $user = auth()->user();
         $workflows = WorkflowHistory::with(['ticket.room.unit', 'ticket.category', 'fromUser', 'toJabatan'])
-            ->where('to_user_id', $user->id)
-            ->whereIn('status', ['selesai', 'ditutup', 'eskalasi', 'menunggu_verifikasi'])
+            ->whereIn('id', function ($q) use ($user) {
+                $q->selectRaw('MAX(id)')
+                    ->from('workflow_histories')
+                    ->where('to_user_id', $user->id)
+                    ->whereIn('status', ['selesai', 'eskalasi', 'menunggu_verifikasi'])
+                    ->groupBy('ticket_id');
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 

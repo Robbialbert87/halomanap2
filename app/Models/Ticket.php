@@ -55,7 +55,7 @@ class Ticket extends Model
     public function activeWorkflow()
     {
         return $this->hasOne(WorkflowHistory::class)
-            ->whereNotIn('status', ['ditutup', 'didisposisikan', 'eskalasi'])
+            ->whereNotIn('status', ['ditutup', 'didisposisikan', 'eskalasi', 'selesai'])
             ->latestOfMany();
     }
 }

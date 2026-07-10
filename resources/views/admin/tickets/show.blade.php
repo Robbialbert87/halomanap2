@@ -764,6 +764,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         var firstSection = document.querySelector('[data-target="reporter-content"]');
         if (firstSection) toggleSection(firstSection);
+        var timelineBtn = document.querySelector('[data-target="timeline-content"]');
+        if (timelineBtn) toggleSection(timelineBtn);
         @if($ticket->activeWorkflow)
         var disposisiBtn = document.querySelector('[data-target="disposisi-content"]');
         if (disposisiBtn) toggleSection(disposisiBtn);

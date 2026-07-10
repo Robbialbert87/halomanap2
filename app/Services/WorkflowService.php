@@ -186,67 +186,97 @@ class WorkflowService
 
     public function selesai(WorkflowHistory $history, string $komentar = ''): WorkflowHistory
     {
-        $history->update([
-            'status'       => 'menunggu_verifikasi',
-            'action'       => 'selesai',
-            'komentar'     => $komentar,
-            'completed_at' => now(),
-        ]);
+        $ticket = $history->ticket;
 
-        $history->ticket->update(['status' => 'Menunggu Verifikasi']);
-
-        TicketHistory::create([
-            'ticket_id'  => $history->ticket_id,
-            'user_id'    => auth()->id(),
-            'old_status' => 'Diproses',
-            'new_status' => 'Menunggu Verifikasi',
-            'notes'      => 'Penanganan selesai oleh ' . (auth()->user()?->nama ?? 'Petugas') . ($komentar ? ': ' . $komentar : '.'),
-        ]);
-
-        AuditTrail::log('selesai', Ticket::class, $history->ticket_id);
-
-        $adminUsers = User::role(['Super Admin', 'Admin Pengaduan'])->get();
-        foreach ($adminUsers as $admin) {
-            AppNotification::create([
-                'user_id' => $admin->id,
-                'type'    => 'pengaduan_selesai',
-                'title'   => 'Pengaduan Selesai Diproses',
-                'message' => $komentar ?: 'Pengaduan telah selesai diproses dan menunggu verifikasi.',
-                'data'    => [
-                    'ticket_id'      => $history->ticket_id,
-                    'ticket_number'  => $history->ticket->ticket_number,
-                    'url'            => route('admin.tickets.show', $history->ticket_id),
-                ],
+        DB::transaction(function () use ($history, $ticket, $komentar) {
+            $history->update([
+                'status'       => 'selesai',
+                'completed_at' => now(),
             ]);
-        }
 
-        event(new WorkflowChanged($history, 'pengaduan_selesai'));
+            $actor = auth()->user();
+            $newHistory = WorkflowHistory::create([
+                'ticket_id'       => $history->ticket_id,
+                'from_user_id'    => $actor?->id,
+                'from_jabatan_id' => $actor?->jabatan_id,
+                'from_unit_id'    => $actor?->unit_id,
+                'action'          => 'selesai',
+                'komentar'        => $komentar,
+                'status'          => 'menunggu_verifikasi',
+                'completed_at'    => now(),
+                'due_at'          => $history->due_at,
+            ]);
 
-        return $history;
+            $ticket->update(['status' => 'Menunggu Verifikasi']);
+
+            TicketHistory::create([
+                'ticket_id'  => $ticket->id,
+                'user_id'    => auth()->id(),
+                'old_status' => 'Diproses',
+                'new_status' => 'Menunggu Verifikasi',
+                'notes'      => 'Penanganan selesai oleh ' . (auth()->user()?->nama ?? 'Petugas') . ($komentar ? ': ' . $komentar : '.'),
+            ]);
+
+            AuditTrail::log('selesai', Ticket::class, $ticket->id);
+
+            $adminUsers = User::role(['Super Admin', 'Admin Pengaduan'])->get();
+            foreach ($adminUsers as $admin) {
+                AppNotification::create([
+                    'user_id' => $admin->id,
+                    'type'    => 'pengaduan_selesai',
+                    'title'   => 'Pengaduan Selesai Diproses',
+                    'message' => $komentar ?: 'Pengaduan telah selesai diproses dan menunggu verifikasi.',
+                    'data'    => [
+                        'ticket_id'      => $ticket->id,
+                        'ticket_number'  => $ticket->ticket_number,
+                        'url'            => route('admin.tickets.show', $ticket->id),
+                    ],
+                ]);
+            }
+
+            event(new WorkflowChanged($newHistory, 'pengaduan_selesai'));
+        });
+
+        return $history->fresh();
     }
 
     public function tutup(WorkflowHistory $history, string $komentar = ''): WorkflowHistory
     {
-        $history->update([
-            'status'   => 'ditutup',
-            'action'   => 'tutup',
-            'komentar' => $komentar,
-        ]);
+        $ticket = $history->ticket;
 
-        $history->ticket->update(['status' => 'Selesai', 'notification_seen_at' => null]);
+        DB::transaction(function () use ($history, $ticket, $komentar) {
+            $history->update([
+                'status'       => 'ditutup',
+                'completed_at' => now(),
+            ]);
 
-        TicketHistory::create([
-            'ticket_id'  => $history->ticket_id,
-            'user_id'    => auth()->id(),
-            'old_status' => 'Menunggu Verifikasi',
-            'new_status' => 'Selesai',
-            'notes'      => 'Pengaduan diverifikasi dan ditutup oleh Admin.' . ($komentar ? ' Catatan: ' . $komentar : ''),
-        ]);
+            $actor = auth()->user();
+            $newHistory = WorkflowHistory::create([
+                'ticket_id'       => $history->ticket_id,
+                'from_user_id'    => $actor?->id,
+                'from_jabatan_id' => $actor?->jabatan_id,
+                'from_unit_id'    => $actor?->unit_id,
+                'action'          => 'tutup',
+                'komentar'        => $komentar,
+                'status'          => 'ditutup',
+                'completed_at'    => now(),
+            ]);
 
-        AuditTrail::log('tutup_pengaduan', Ticket::class, $history->ticket_id);
-        event(new WorkflowChanged($history, 'pengaduan_ditutup'));
+            $ticket->update(['status' => 'Selesai', 'notification_seen_at' => null]);
 
-        return $history;
+            TicketHistory::create([
+                'ticket_id'  => $ticket->id,
+                'user_id'    => auth()->id(),
+                'old_status' => 'Menunggu Verifikasi',
+                'new_status' => 'Selesai',
+                'notes'      => 'Pengaduan diverifikasi dan ditutup oleh Admin.' . ($komentar ? ' Catatan: ' . $komentar : ''),
+            ]);
+
+            AuditTrail::log('tutup_pengaduan', Ticket::class, $ticket->id);
+            event(new WorkflowChanged($newHistory, 'pengaduan_ditutup'));
+        });
+
+        return $history->fresh();
     }
 
     public function getActiveWorkflow(int $ticketId): ?WorkflowHistory

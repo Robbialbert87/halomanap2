@@ -22,7 +22,7 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500 font-medium">Disposisi Baru</p>
-                <h3 class="text-2xl font-bold text-gray-800">--</h3>
+                <h3 class="text-2xl font-bold text-gray-800">{{ $baru }}</h3>
             </div>
         </div>
     </div>
@@ -33,7 +33,7 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500 font-medium">Selesai</p>
-                <h3 class="text-2xl font-bold text-gray-800">--</h3>
+                <h3 class="text-2xl font-bold text-gray-800">{{ $selesai }}</h3>
             </div>
         </div>
     </div>
@@ -44,17 +44,47 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500 font-medium">Monitoring</p>
-                <h3 class="text-2xl font-bold text-gray-800">--</h3>
+                <h3 class="text-2xl font-bold text-gray-800">{{ $monitoring }}</h3>
             </div>
         </div>
     </div>
 </div>
 
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-    <h3 class="font-bold text-gray-800 mb-4">Ringkasan Bidang</h3>
-    <div class="text-center py-12 text-gray-400">
-        <i class="fa-solid fa-chart-simple text-5xl mb-4"></i>
-        <p>Data monitoring bidang akan ditampilkan di sini</p>
-    </div>
+    <h3 class="font-bold text-gray-800 mb-4">Disposisi Terbaru</h3>
+    @if($latestWorkflows->count() > 0)
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-left text-gray-500 border-b">
+                        <th class="pb-3 font-medium">Pengaduan</th>
+                        <th class="pb-3 font-medium">Dari</th>
+                        <th class="pb-3 font-medium">Status</th>
+                        <th class="pb-3 font-medium">Tanggal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($latestWorkflows as $wf)
+                        <tr class="border-b last:border-0">
+                            <td class="py-3">
+                                <a href="{{ route('kabid.dispositions.show', $wf->uuid) }}" class="text-blue-600 hover:underline">
+                                    {{ $wf->ticket->judul ?? 'Tanpa Judul' }}
+                                </a>
+                                <div class="text-xs text-gray-400">{{ $wf->ticket->room->unit->nama ?? '-' }}</div>
+                            </td>
+                            <td class="py-3">{{ $wf->fromUser->nama ?? '-' }}</td>
+                            <td class="py-3">{!! $wf->status_badge['label'] ?? $wf->status !!}</td>
+                            <td class="py-3 text-gray-500">{{ $wf->created_at->format('d/m/Y H:i') }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @else
+        <div class="text-center py-12 text-gray-400">
+            <i class="fa-solid fa-inbox text-5xl mb-4"></i>
+            <p>Belum ada disposisi masuk</p>
+        </div>
+    @endif
 </div>
 @endsection

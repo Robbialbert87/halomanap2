@@ -135,7 +135,10 @@ class PengaduanController extends Controller
         $notFound = false;
 
         if ($request->filled('ticket_number')) {
-            $ticket = Ticket::with(['room', 'category'])
+            $ticket = Ticket::with([
+                'room', 'category',
+                'workflows' => fn($q) => $q->with('fromUser')->orderBy('created_at', 'desc'),
+            ])
                 ->where('ticket_number', strtoupper(trim($request->ticket_number)))
                 ->first();
 

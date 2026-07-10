@@ -24,8 +24,8 @@
         'TERVERIFIKASI'         => ['title' => 'Pengaduan Anda Telah Terverifikasi ✓', 'body' => 'Kabar baik! Pengaduan Anda sudah diverifikasi dan akan segera diserahkan kepada unit terkait untuk ditindaklanjuti. Kami berkomitmen memberikan penanganan terbaik.'],
         'Diproses'              => ['title' => 'Pengaduan Anda Sedang Ditangani', 'body' => 'Tim terkait saat ini sedang aktif menangani pengaduan Anda. Kami bekerja keras untuk memberikan solusi terbaik. Mohon bersabar dan terus pantau perkembangan ini.'],
         'eskalasi'              => ['title' => 'Pengaduan Diteruskan ke Tingkat Lebih Tinggi', 'body' => 'Pengaduan Anda sedang ditangani lebih lanjut oleh pimpinan terkait agar mendapatkan penanganan yang paling tepat dan komprehensif. Ini menunjukkan kami menanggapi pengaduan Anda dengan serius.'],
-        'Selesai'               => ['title' => 'Pengaduan Anda Telah Selesai Ditangani 🎉', 'body' => 'Alhamdulillah, pengaduan Anda telah berhasil kami tangani. Terima kasih atas masukan berharga Anda yang sangat membantu kami dalam meningkatkan kualitas pelayanan kepada seluruh pasien.'],
-        'Ditutup'               => ['title' => 'Pengaduan Anda Telah Selesai Ditangani 🎉', 'body' => 'Pengaduan Anda telah selesai dan resmi ditutup. Kami sangat menghargai kepedulian Anda. Masukan Anda menjadi bagian penting dalam perjalanan kami menuju pelayanan yang lebih baik.'],
+        'Selesai'               => ['title' => 'Pengaduan Anda Telah Selesai Ditangani', 'body' => 'Pengaduan Anda telah berhasil kami tangani. Terima kasih atas masukan berharga Anda yang sangat membantu kami dalam meningkatkan kualitas pelayanan kepada seluruh pasien.'],
+        'Ditutup'               => ['title' => 'Pengaduan Anda Telah Selesai Ditangani', 'body' => 'Pengaduan Anda telah selesai dan resmi ditutup. Kami sangat menghargai kepedulian Anda. Masukan Anda menjadi bagian penting dalam perjalanan kami menuju pelayanan yang lebih baik.'],
         'Ditolak'               => ['title' => 'Mohon Maaf, Pengaduan Tidak Dapat Diproses', 'body' => 'Setelah melalui proses verifikasi, pengaduan Anda tidak dapat kami proses lebih lanjut. Untuk informasi lebih detail, silakan hubungi tim kami di bagian informasi rumah sakit. Kami mohon maaf atas ketidaknyamanan ini.'],
     ];
 
@@ -209,6 +209,31 @@
             </div>
         </div>
 
+        {{-- Admin Verification Comment --}}
+        @php
+            $tutupWorkflow = $ticket->workflows->firstWhere('action', 'tutup');
+        @endphp
+        @if($tutupWorkflow && $tutupWorkflow->komentar)
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-4">
+            <div class="px-5 py-4">
+                <div class="flex items-start gap-3">
+                    <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm flex-shrink-0 mt-0.5">
+                        <i class="fa-solid fa-stamp text-white text-xs"></i>
+                    </span>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Verifikasi Admin</p>
+                        <p class="text-xs text-gray-700 leading-relaxed bg-gray-50 rounded-xl px-3.5 py-2.5 border border-gray-100 italic">
+                            "{{ $tutupWorkflow->komentar }}"
+                        </p>
+                        <p class="text-[10px] text-gray-400 mt-1.5">
+                            Admin Pengaduan • {{ $tutupWorkflow->created_at->format('d M Y, H:i') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
         {{-- Download Ticket Button --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4 flex items-center justify-between">
             <div>
@@ -221,11 +246,12 @@
             </a>
         </div>
 
-        {{-- Encouragement Quote --}}
-        <div class="bg-white rounded-2xl border border-blue-100/50 px-5 py-4 flex items-start gap-2.5">
-            <span class="text-blue-300 text-base mt-0.5 flex-shrink-0"><i class="fa-solid fa-quote-left"></i></span>
-            <p class="text-xs text-gray-400 italic leading-relaxed">
-                "Suara Anda adalah cermin pelayanan kami. Setiap pengaduan yang Anda sampaikan adalah hadiah berharga yang mendorong kami untuk terus tumbuh."
+        {{-- Motto --}}
+        <div class="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl border border-blue-200/50 px-5 py-4 text-center">
+            <p class="text-xs font-semibold text-blue-700 leading-relaxed">
+                <i class="fa-solid fa-quote-left text-blue-300 mr-1 text-[9px]"></i>
+                RSUD H. Abdul Manap — Melayani dengan Setulus Hati
+                <i class="fa-solid fa-quote-right text-blue-300 ml-1 text-[9px]"></i>
             </p>
         </div>
 
