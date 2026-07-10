@@ -146,7 +146,7 @@
     {{-- RIGHT COLUMN: Reporter & Status Update --}}
     <div class="space-y-6">
 
-        @php $isClosed = $ticket->status === 'DONE' || $ticket->status === 'Selesai'; $isWaitingVerification = optional($ticket->activeWorkflow)->status === 'menunggu_verifikasi'; @endphp
+        @php $isClosed = $ticket->status === 'DONE' || $ticket->status === 'Selesai' || $ticket->status === 'REJECTED'; $isWaitingVerification = optional($ticket->activeWorkflow)->status === 'menunggu_verifikasi'; @endphp
 
         {{-- Mobile Action Strip --}}
         <div class="md:hidden flex gap-2 sticky top-0 z-30 bg-[#F3F4F6] py-2 -mx-1 px-1 shadow-sm border-b border-gray-200 animate-fadeInUp" style="animation-delay:.15s">
@@ -159,9 +159,15 @@
             </button>
             @elseif(!$isClosed)
             @else
+            @if($ticket->status === 'REJECTED')
+            <div class="flex-1 bg-red-50 text-red-700 text-xs font-semibold px-3 py-2.5 rounded-lg flex items-center justify-center gap-1.5 border border-red-200">
+                <i class="fa-solid fa-ban"></i> Ditolak
+            </div>
+            @else
             <div class="flex-1 bg-green-50 text-green-700 text-xs font-semibold px-3 py-2.5 rounded-lg flex items-center justify-center gap-1.5 border border-green-200">
                 <i class="fa-solid fa-circle-check"></i> Selesai
             </div>
+            @endif
             @endif
         </div>
 
@@ -268,8 +274,18 @@
         </div>
         @endif
 
-        {{-- Banner Tiket Selesai --}}
-        @if($isClosed)
+        {{-- Banner Tiket Selesai / Ditolak --}}
+        @if($ticket->status === 'REJECTED')
+        <div class="bg-red-50 border border-red-200 rounded-xl p-5 flex items-center gap-4 animate-fadeInUp" style="animation-delay:.3s">
+            <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0 text-xl">
+                <i class="fa-solid fa-ban"></i>
+            </div>
+            <div>
+                <p class="font-bold text-red-800">Pengaduan Ditolak</p>
+                <p class="text-sm text-red-600 mt-0.5">Pengaduan ini telah ditolak. Tidak ada tindakan lebih lanjut yang diperlukan.</p>
+            </div>
+        </div>
+        @elseif($isClosed)
         <div class="bg-green-50 border border-green-200 rounded-xl p-5 flex items-center gap-4 animate-fadeInUp" style="animation-delay:.3s">
             <div class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0 text-xl">
                 <i class="fa-solid fa-circle-check"></i>
