@@ -377,6 +377,7 @@
                         'selesai'          => ['i' => 'fa-circle-check',      'c' => 'bg-green-500'],
                         'verifikasi'      => ['i' => 'fa-stamp',              'c' => 'bg-purple-500'],
                         'tutup'           => ['i' => 'fa-lock',               'c' => 'bg-gray-500'],
+                        'ditolak'         => ['i' => 'fa-ban',                'c' => 'bg-red-500'],
                         default           => ['i' => 'fa-circle',             'c' => 'bg-gray-400'],
                     };
                     $badge = $step->status_badge;

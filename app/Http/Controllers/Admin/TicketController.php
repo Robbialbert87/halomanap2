@@ -143,6 +143,13 @@ class TicketController extends Controller
             'notes'      => 'Pengaduan ditolak oleh Admin.' . ($request->notes ? ' Alasan: ' . $request->notes : ''),
         ]);
 
+        $ticket->workflows()->create([
+            'from_user_id' => auth()->id(),
+            'action'       => 'ditolak',
+            'komentar'     => $request->notes,
+            'status'       => 'ditutup',
+        ]);
+
         return redirect()->route('admin.tickets.show', $ticket->id)
             ->with('success', 'Pengaduan #' . $ticket->ticket_number . ' ditolak.');
     }
