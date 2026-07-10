@@ -151,10 +151,10 @@
         {{-- Mobile Action Strip --}}
         <div class="md:hidden flex gap-2 sticky top-0 z-30 bg-[#F3F4F6] py-2 -mx-1 px-1 shadow-sm border-b border-gray-200 animate-fadeInUp" style="animation-delay:.15s">
             @if($ticket->status === 'NEW')
-            <button onclick="event.preventDefault(); document.getElementById('verify-form').submit();" class="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-2.5 rounded-lg transition-all active:scale-[0.97] flex items-center justify-center gap-1.5 shadow-sm">
+            <button onclick="openSetujuiModal()" class="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-2.5 rounded-lg transition-all active:scale-[0.97] flex items-center justify-center gap-1.5 shadow-sm">
                 <i class="fa-solid fa-check"></i> Setujui
             </button>
-            <button onclick="event.preventDefault(); document.getElementById('reject-form').submit();" class="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-2.5 rounded-lg transition-all active:scale-[0.97] flex items-center justify-center gap-1.5 shadow-sm">
+            <button onclick="openTolakModal()" class="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-2.5 rounded-lg transition-all active:scale-[0.97] flex items-center justify-center gap-1.5 shadow-sm">
                 <i class="fa-solid fa-xmark"></i> Tolak
             </button>
             @elseif(!$isClosed)
@@ -203,32 +203,32 @@
 
         {{-- Verifikasi Pengaduan (hanya jika status NEW) --}}
         @if($ticket->status === 'NEW')
-        <div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.25s">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.25s">
             <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fa-solid fa-clipboard-check text-blue-600"></i> Verifikasi Pengaduan
                 </h2>
             </div>
-            <div id="verify-content" class="p-6">
-                <p class="text-sm text-gray-600 mb-4">Verifikasi pengaduan ini sebelum melanjutkan ke disposisi. Pastikan data lengkap dan sesuai.</p>
-                <form id="verify-form" action="{{ route('admin.tickets.verify', $ticket->id) }}" method="POST" class="mb-3">
-                    @csrf
-                    <div class="mb-3">
-                        <textarea name="notes" rows="2" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Catatan verifikasi (opsional)..."></textarea>
+            <div class="p-6 space-y-3">
+                <p class="text-sm text-gray-600">Verifikasi pengaduan ini sebelum melanjutkan ke disposisi. Pastikan data lengkap dan sesuai.</p>
+                <button type="button" onclick="openSetujuiModal()" class="w-full flex items-center gap-3 bg-green-50 hover:bg-green-100 border border-green-200 rounded-xl p-4 transition-colors text-left group">
+                    <div class="w-10 h-10 rounded-lg bg-green-100 group-hover:bg-green-200 flex items-center justify-center text-green-600 shrink-0 transition-colors">
+                        <i class="fa-solid fa-check text-lg"></i>
                     </div>
-                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-all active:scale-[0.97] flex items-center justify-center gap-2 shadow-sm">
-                        <i class="fa-solid fa-check"></i> Setujui & Lanjutkan
-                    </button>
-                </form>
-                <form id="reject-form" action="{{ route('admin.tickets.reject', $ticket->id) }}" method="POST" onsubmit="return confirm('Tolak pengaduan ini? Tindakan ini tidak dapat dibatalkan.')">
-                    @csrf
-                    <div class="mb-3">
-                        <textarea name="notes" rows="2" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block p-2.5" placeholder="Alasan penolakan (opsional)..."></textarea>
+                    <div>
+                        <p class="font-semibold text-green-800 text-sm">Setujui & Lanjutkan</p>
+                        <p class="text-xs text-green-600 mt-0.5">Verifikasi dan lanjutkan ke disposisi</p>
                     </div>
-                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-all active:scale-[0.97] flex items-center justify-center gap-2 shadow-sm">
-                        <i class="fa-solid fa-xmark"></i> Tolak Pengaduan
-                    </button>
-                </form>
+                </button>
+                <button type="button" onclick="openTolakModal()" class="w-full flex items-center gap-3 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl p-4 transition-colors text-left group">
+                    <div class="w-10 h-10 rounded-lg bg-red-100 group-hover:bg-red-200 flex items-center justify-center text-red-600 shrink-0 transition-colors">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-red-800 text-sm">Tolak Pengaduan</p>
+                        <p class="text-xs text-red-600 mt-0.5">Tolak dan kembalikan ke pelapor</p>
+                    </div>
+                </button>
             </div>
         </div>
         @endif
@@ -605,6 +605,66 @@ function closeDispositionModal() {
 </script>
 @endif
 
+{{-- Modal Setujui Pengaduan --}}
+<div id="setujui-modal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-center justify-center p-4" onclick="if(event.target===this) closeSetujuiModal()">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <h3 class="font-semibold text-gray-800 flex items-center gap-2">
+                <i class="fa-solid fa-check-circle text-green-500"></i> Setujui Pengaduan
+            </h3>
+            <button onclick="closeSetujuiModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        <form id="form-setujui" action="{{ route('admin.tickets.verify', $ticket->id) }}" method="POST">
+            @csrf
+            <div class="px-6 py-5 space-y-4">
+                <div>
+                    <p class="text-sm text-gray-600 mb-3">Verifikasi pengaduan ini akan melanjutkannya ke proses disposisi. Pastikan data sudah lengkap dan sesuai.</p>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Catatan Verifikasi</label>
+                    <textarea name="notes" rows="3" class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-400 outline-none" placeholder="Catatan verifikasi (opsional)..."></textarea>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-2xl">
+                <button type="button" onclick="closeSetujuiModal()" class="bg-white hover:bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-gray-200">Batal</button>
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-check"></i> Setujui & Lanjutkan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- Modal Tolak Pengaduan --}}
+<div id="tolak-modal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-center justify-center p-4" onclick="if(event.target===this) closeTolakModal()">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <h3 class="font-semibold text-gray-800 flex items-center gap-2">
+                <i class="fa-solid fa-ban text-red-500"></i> Tolak Pengaduan
+            </h3>
+            <button onclick="closeTolakModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        <form id="form-tolak" action="{{ route('admin.tickets.reject', $ticket->id) }}" method="POST">
+            @csrf
+            <div class="px-6 py-5 space-y-4">
+                <div>
+                    <p class="text-sm text-gray-600 mb-3">Yakin ingin menolak pengaduan ini? Tindakan ini tidak dapat dibatalkan.</p>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Alasan Penolakan</label>
+                    <textarea name="notes" rows="3" class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-400 outline-none" placeholder="Alasan penolakan (opsional)..."></textarea>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-2xl">
+                <button type="button" onclick="closeTolakModal()" class="bg-white hover:bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-gray-200">Batal</button>
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-xmark"></i> Tolak Pengaduan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 {{-- Modal Preview Gambar --}}
 <div id="preview-modal" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4" onclick="closePreview()">
     <div class="relative max-w-4xl w-full max-h-[90vh] flex items-center justify-center" onclick="event.stopPropagation()">
@@ -663,6 +723,37 @@ function downloadPreview() {
     link.click();
 }
 
+function openSetujuiModal() {
+    document.getElementById('setujui-modal').classList.remove('hidden');
+    document.getElementById('setujui-modal').classList.add('flex');
+    document.body.style.overflow = 'hidden';
+}
+function closeSetujuiModal() {
+    document.getElementById('setujui-modal').classList.add('hidden');
+    document.getElementById('setujui-modal').classList.remove('flex');
+    document.body.style.overflow = '';
+}
+function openTolakModal() {
+    document.getElementById('tolak-modal').classList.remove('hidden');
+    document.getElementById('tolak-modal').classList.add('flex');
+    document.body.style.overflow = 'hidden';
+}
+function closeTolakModal() {
+    document.getElementById('tolak-modal').classList.add('hidden');
+    document.getElementById('tolak-modal').classList.remove('flex');
+    document.body.style.overflow = '';
+}
+function disableBtn(formId) {
+    var f = document.getElementById(formId);
+    if (!f) return;
+    f.addEventListener('submit', function() {
+        var btn = this.querySelector('button[type=submit]');
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class=\"fa-solid fa-spinner fa-spin\"></i> Memproses...'; }
+    });
+}
+disableBtn('form-setujui');
+disableBtn('form-tolak');
+
 document.addEventListener('DOMContentLoaded', function() {
     if (window.innerWidth < 768) {
         var sections = document.querySelectorAll('[data-target]');
@@ -683,8 +774,12 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closePreview();
-        var modal = document.getElementById('disposition-modal');
-        if (modal && !modal.classList.contains('hidden')) closeDispositionModal();
+        var dmodal = document.getElementById('disposition-modal');
+        if (dmodal && !dmodal.classList.contains('hidden')) closeDispositionModal();
+        var smodal = document.getElementById('setujui-modal');
+        if (smodal && !smodal.classList.contains('hidden')) closeSetujuiModal();
+        var tmodal = document.getElementById('tolak-modal');
+        if (tmodal && !tmodal.classList.contains('hidden')) closeTolakModal();
     }
 });
 
