@@ -34,8 +34,16 @@ class AppServiceProvider extends ServiceProvider
 
         // Share notification data with header component
         View::composer(['components.header', 'layouts.admin'], function ($view) {
+            $user = auth()->user();
             $unread = Ticket::where('status', 'NEW')
                 ->whereNull('notification_seen_at');
+
+            if ($user && !$user->hasRole(['Super Admin', 'Admin Pengaduan'])) {
+                $unread->whereHas('room', function ($q) use ($user) {
+                    $q->where('unit_id', $user->unit_id);
+                });
+            }
+
             $unreadCount = (clone $unread)->count();
             $notifications = (clone $unread)
                 ->with('category')
