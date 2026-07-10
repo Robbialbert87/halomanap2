@@ -11,15 +11,6 @@
             'Informasi' => 'bg-orange-500',
             default => 'bg-gray-400',
         };
-        $statusDot = match($ticket->status) {
-            'NEW' => 'bg-yellow-500',
-            'TERVERIFIKASI' => 'bg-cyan-500',
-            'IN_PROGRESS', 'Diproses' => 'bg-blue-500',
-            'DONE', 'Selesai' => 'bg-emerald-500',
-            'REJECTED' => 'bg-red-500',
-            'Menunggu Verifikasi' => 'bg-purple-500',
-            default => 'bg-gray-400',
-        };
     @endphp
     <div class="flex items-stretch cursor-pointer active:bg-gray-50 transition-colors" onclick="window.location='{{ route('admin.tickets.show', $ticket->id) }}'">
         <div class="w-1 shrink-0 {{ $typeBar }}"></div>
@@ -27,7 +18,7 @@
             <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-1.5 min-w-0 flex-1">
                     <span class="text-[10px] font-mono font-bold text-gray-500 truncate">{{ $ticket->ticket_number }}</span>
-                    <span class="w-1.5 h-1.5 rounded-full {{ $statusDot }} shrink-0"></span>
+                    <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full leading-tight {{ $statusStyle['class'] }}">{{ $statusStyle['label'] }}</span>
                 </div>
                 <span class="text-[10px] text-gray-400 whitespace-nowrap shrink-0">{{ $ticket->created_at->format('d M Y') }}</span>
             </div>

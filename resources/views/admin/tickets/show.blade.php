@@ -239,8 +239,8 @@
         </div>
         @endif
 
-        {{-- Ubah Status: sembunyikan jika status NEW (digantikan verifikasi) --}}
-        @if(!$isClosed && !$isWaitingVerification && $ticket->status !== 'NEW')
+        {{-- Ubah Status: sembunyikan jika status NEW, sudah selesai, atau sudah di-disposisi --}}
+        @if(!$isClosed && !$ticket->activeWorkflow && $ticket->status !== 'NEW')
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.3s">
             <button type="button" onclick="toggleSection(this)" data-target="status-content" class="w-full bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between text-left group md:cursor-default">
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
@@ -785,6 +785,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         var firstSection = document.querySelector('[data-target="reporter-content"]');
         if (firstSection) toggleSection(firstSection);
+        @if($ticket->activeWorkflow)
+        var disposisiBtn = document.querySelector('[data-target="disposisi-content"]');
+        if (disposisiBtn) toggleSection(disposisiBtn);
+        @endif
     }
 });
 

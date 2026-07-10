@@ -21,7 +21,7 @@ class DashboardController extends Controller
         $slaBreach      = Ticket::where('sla_breached', true)->count();
 
         $activeWorkflows = WorkflowHistory::with(['ticket', 'toUser', 'toJabatan', 'toUnit'])
-            ->whereNotIn('status', ['eskalasi', 'ditutup', 'selesai'])
+            ->whereNotIn('status', ['didisposisikan', 'eskalasi', 'ditutup', 'selesai'])
             ->latest()
             ->take(10)
             ->get();

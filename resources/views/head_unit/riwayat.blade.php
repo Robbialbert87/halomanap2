@@ -35,7 +35,7 @@
                     <td class="px-4 py-3"><span class="inline-block px-2 py-1 text-xs font-semibold rounded {{ $wf->status_badge['class'] }}">{{ $wf->status_badge['label'] }}</span></td>
                     <td class="px-4 py-3 whitespace-nowrap">{{ $wf->created_at->format('d/m/Y H:i') }}</td>
                     <td class="px-4 py-3">
-                        <a href="{{ route('head-unit.dispositions.show', $wf->id) }}" class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
+                        <a href="{{ route('head-unit.dispositions.show', $wf->uuid) }}" class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
                             <i class="fa-solid fa-eye"></i> Detail
                         </a>
                     </td>
@@ -52,7 +52,7 @@
 {{-- Cards (mobile) --}}
 <div class="space-y-3 md:hidden">
     @forelse($workflows as $wf)
-    <a href="{{ route('head-unit.dispositions.show', $wf->id) }}" class="block bg-white rounded-xl shadow-sm border border-gray-100 p-4 active:scale-[0.98] transition-transform">
+    <a href="{{ route('head-unit.dispositions.show', $wf->uuid) }}" class="block bg-white rounded-xl shadow-sm border border-gray-100 p-4 active:scale-[0.98] transition-transform">
         <div class="flex items-start justify-between mb-2">
             <div class="font-mono text-sm font-bold text-blue-600">{{ $wf->ticket->ticket_number }}</div>
             <span class="shrink-0 inline-block px-2 py-0.5 text-[10px] font-semibold rounded {{ $wf->status_badge['class'] }}">{{ $wf->status_badge['label'] }}</span>

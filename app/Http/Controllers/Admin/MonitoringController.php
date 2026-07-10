@@ -27,7 +27,7 @@ class MonitoringController extends Controller
         $activeWorkflows = WorkflowHistory::with([
                 'ticket', 'toUser', 'toJabatan', 'toUnit'
             ])
-            ->whereNotIn('status', ['eskalasi', 'ditutup', 'selesai'])
+            ->whereNotIn('status', ['didisposisikan', 'eskalasi', 'ditutup', 'selesai'])
             ->latest()
             ->take(20)
             ->get();
@@ -80,7 +80,7 @@ class MonitoringController extends Controller
             ->orderBy('created_at')
             ->get();
 
-        $activeWorkflow = $timeline->whereNotIn('status', ['eskalasi', 'ditutup', 'selesai'])->last();
+        $activeWorkflow = $timeline->whereNotIn('status', ['didisposisikan', 'eskalasi', 'ditutup', 'selesai'])->last();
 
         return view('admin.monitoring.show', compact('ticket', 'timeline', 'activeWorkflow'));
     }

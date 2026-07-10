@@ -43,6 +43,17 @@ class SendWhatsAppNotification implements ShouldQueue
                 }
             }
         }
+
+        // ─── 3. Notifikasi Admin Pengaduan saat pengaduan menunggu verifikasi ─
+        // Ketika Kepala Unit/Kasi/Kabid klik Selesai, admin perlu diingatkan
+        // untuk memverifikasi dan menutup pengaduan.
+        if ($jenis === 'pengaduan_selesai') {
+            $admins = User::role('Admin Pengaduan')->whereNotNull('phone_number')->get();
+            $adminMessage = $this->buildAdminVerificationMessage($history, $ticket);
+            foreach ($admins as $admin) {
+                $this->send($admin, $adminMessage, 'admin_verifikasi', $history);
+            }
+        }
     }
 
     private function getDirekturs(?int $unitId): \Illuminate\Support\Collection
@@ -140,6 +151,37 @@ class SendWhatsAppNotification implements ShouldQueue
             "🏷️ *Jabatan:* {$toJabatan}",
             "",
             "Silakan buka Dashboard Monitoring untuk detail.",
+            "🔗 {$url}",
+            "─────────────────────",
+            "_RSUD H. Abdul Manap Kota Jambi_",
+        ]);
+    }
+
+    /**
+     * Bangun pesan verifikasi untuk Admin Pengaduan.
+     */
+    private function buildAdminVerificationMessage($history, $ticket): string
+    {
+        $nomor     = $ticket->ticket_number ?? '-';
+        $judul     = $ticket->title         ?? '-';
+        $pelapor   = $ticket->is_anonymous ? 'Anonim' : ($ticket->reporter_name ?? '-');
+        $unit      = $history->toUnit?->nama ?? '-';
+        $pj        = $history->toUser?->nama ?? '-';
+        $url       = config('app.url') . '/admin/tickets/' . $ticket->id;
+
+        return implode("\n", [
+            "*HALO MANAP - Verifikasi Diperlukan*",
+            "─────────────────────",
+            "📋 *No:* {$nomor}",
+            "📝 *Judul:* {$judul}",
+            "👤 *Pelapor:* {$pelapor}",
+            "🏥 *Unit:* {$unit}",
+            "✅ *Diselesaikan oleh:* {$pj}",
+            "",
+            "Pengaduan ini sudah selesai ditangani dan menunggu",
+            "verifikasi Admin untuk ditutup.",
+            "",
+            "Silakan login untuk verifikasi:",
             "🔗 {$url}",
             "─────────────────────",
             "_RSUD H. Abdul Manap Kota Jambi_",
