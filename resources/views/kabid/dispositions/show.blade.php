@@ -81,6 +81,83 @@
 
             </div>
         </div>
+
+        {{-- Data Pelapor --}}
+        @unless($workflow->ticket->is_anonymous)
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 class="font-semibold text-gray-800 mb-4 flex items-center gap-2 border-b border-gray-100 pb-3">
+                <i class="fa-solid fa-address-card text-blue-500"></i> Data Pelapor
+            </h2>
+            <div class="space-y-3 text-sm">
+                <div>
+                    <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Nama</p>
+                    <p class="font-semibold text-gray-800">{{ $workflow->ticket->reporter_name ?? '-' }}</p>
+                </div>
+                @if($workflow->ticket->reporter_phone)
+                <div>
+                    <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">No. HP / WA</p>
+                    <div class="flex items-center gap-2">
+                        <p class="font-medium text-gray-800">{{ $workflow->ticket->reporter_phone }}</p>
+                        <a href="https://wa.me/{{ preg_replace('/^0/', '62', $workflow->ticket->reporter_phone) }}" target="_blank" class="text-green-600 hover:text-green-800 text-lg">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+                @endif
+            </div>
+        </div>
+        @endunless
+
+        {{-- Timeline Riwayat Disposisi --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 class="font-semibold text-gray-800 mb-4 flex items-center gap-2 border-b border-gray-100 pb-3">
+                <i class="fa-solid fa-clock-rotate-left text-indigo-500"></i> Riwayat Disposisi
+            </h2>
+            <ol class="relative border-l border-gray-200 ml-4">
+                @php $workflows = $workflow->ticket->workflows->sortBy('created_at'); @endphp
+                @forelse($workflows as $step)
+                @php
+                    $icon = match($step->action) {
+                        'disposisi'       => ['i' => 'fa-paper-plane',        'c' => 'bg-blue-500'],
+                        'eskalasi'        => ['i' => 'fa-arrow-up-right-dots','c' => 'bg-red-500'],
+                        'tangani_sendiri' => ['i' => 'fa-user-check',          'c' => 'bg-indigo-500'],
+                        'selesai'         => ['i' => 'fa-circle-check',        'c' => 'bg-green-500'],
+                        'verifikasi'      => ['i' => 'fa-stamp',               'c' => 'bg-purple-500'],
+                        'tutup'           => ['i' => 'fa-lock',                'c' => 'bg-gray-500'],
+                        default           => ['i' => 'fa-circle',              'c' => 'bg-gray-400'],
+                    };
+                    $badge = $step->status_badge;
+                @endphp
+                <li class="mb-8 ml-6">
+                    <span class="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full {{ $icon['c'] }} ring-4 ring-white shadow-sm">
+                        <i class="fa-solid {{ $icon['i'] }} text-white text-[10px]"></i>
+                    </span>
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900">{{ $step->action_label }}</p>
+                            <p class="text-xs text-gray-500 mt-0.5">
+                                {{ $step->fromUser?->nama ?? 'Sistem' }}
+                                @if($step->toUser)
+                                    <i class="fa-solid fa-arrow-right text-[9px] mx-1 text-gray-400"></i>
+                                    <span class="font-medium text-gray-700">{{ $step->toUser->nama }}</span>
+                                    <span class="text-gray-400">({{ $step->toJabatan?->nama ?? '-' }})</span>
+                                @endif
+                            </p>
+                            @if($step->komentar)
+                            <p class="mt-2 text-xs text-gray-600 italic bg-gray-50 rounded-lg px-3 py-2 border border-gray-100">"{{ $step->komentar }}"</p>
+                            @endif
+                        </div>
+                        <div class="text-right shrink-0">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold {{ $badge['class'] }}">{{ $badge['label'] }}</span>
+                            <p class="text-[10px] text-gray-400 mt-1">{{ $step->created_at->format('d/m H:i') }}</p>
+                        </div>
+                    </div>
+                </li>
+                @empty
+                <li class="ml-6 text-gray-400 text-sm py-4">Belum ada riwayat disposisi.</li>
+                @endforelse
+            </ol>
+        </div>
     </div>
 
     <div class="xl:col-span-1">

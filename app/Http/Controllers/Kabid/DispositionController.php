@@ -35,6 +35,10 @@ class DispositionController extends Controller
             'ticket.histories.user',
             'ticket.comments.user',
             'ticket.attachments.user',
+            'ticket.workflows.fromUser',
+            'ticket.workflows.toUser',
+            'ticket.workflows.toJabatan',
+            'ticket.workflows.fromJabatan',
             'fromUser'
         ])->where('uuid', $id)->firstOrFail();
 

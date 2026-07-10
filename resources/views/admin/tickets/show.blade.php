@@ -148,28 +148,7 @@
 
         @php $isClosed = $ticket->status === 'DONE' || $ticket->status === 'Selesai' || $ticket->status === 'REJECTED'; $isWaitingVerification = optional($ticket->activeWorkflow)->status === 'menunggu_verifikasi'; @endphp
 
-        {{-- Mobile Action Strip --}}
-        <div class="md:hidden flex gap-2 sticky top-0 z-30 bg-[#F3F4F6] py-2 -mx-1 px-1 shadow-sm border-b border-gray-200 animate-fadeInUp" style="animation-delay:.15s">
-            @if($ticket->status === 'NEW')
-            <button onclick="openSetujuiModal()" class="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-2.5 rounded-lg transition-all active:scale-[0.97] flex items-center justify-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-check"></i> Setujui
-            </button>
-            <button onclick="openTolakModal()" class="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-2.5 rounded-lg transition-all active:scale-[0.97] flex items-center justify-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-xmark"></i> Tolak
-            </button>
-            @elseif(!$isClosed)
-            @else
-            @if($ticket->status === 'REJECTED')
-            <div class="flex-1 bg-red-50 text-red-700 text-xs font-semibold px-3 py-2.5 rounded-lg flex items-center justify-center gap-1.5 border border-red-200">
-                <i class="fa-solid fa-ban"></i> Ditolak
-            </div>
-            @else
-            <div class="flex-1 bg-green-50 text-green-700 text-xs font-semibold px-3 py-2.5 rounded-lg flex items-center justify-center gap-1.5 border border-green-200">
-                <i class="fa-solid fa-circle-check"></i> Selesai
-            </div>
-            @endif
-            @endif
-        </div>
+
 
         {{-- Reporter Info --}}
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.2s">
@@ -177,9 +156,9 @@
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fa-solid fa-address-card text-blue-600"></i> Data Pelapor
                 </h2>
-                <i class="fa-solid fa-chevron-up text-gray-400 transition-transform duration-300 md:hidden group-hover:text-gray-600"></i>
+                <i class="fa-solid fa-chevron-up text-gray-400 transition-transform duration-300 md:hidden group-hover:text-gray-600" style="{{ $ticket->is_anonymous ? 'transform: rotate(180deg)' : '' }}"></i>
             </button>
-            <div id="reporter-content" class="p-6 space-y-4">
+            <div id="reporter-content" class="p-6 space-y-4 {{ $ticket->is_anonymous ? 'hidden md:block' : '' }}">
                 @if($ticket->is_anonymous)
                     <div class="bg-slate-50 rounded-lg p-4 text-center">
                         <i class="fa-solid fa-user-secret text-4xl text-slate-400 mb-2 block"></i>

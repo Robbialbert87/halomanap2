@@ -32,9 +32,13 @@ class DispositionController extends Controller
         $user = auth()->user();
         
         $workflow = WorkflowHistory::with([
-            'ticket.histories.user', 
-            'ticket.comments.user', 
-            'ticket.attachments.user', 
+            'ticket.histories.user',
+            'ticket.comments.user',
+            'ticket.attachments.user',
+            'ticket.workflows.fromUser',
+            'ticket.workflows.toUser',
+            'ticket.workflows.toJabatan',
+            'ticket.workflows.fromJabatan',
             'fromUser'
         ])->where('uuid', $id)->firstOrFail();
 
