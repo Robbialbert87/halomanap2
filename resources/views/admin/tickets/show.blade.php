@@ -546,14 +546,14 @@
             <input type="hidden" name="ticket_id" value="{{ $ticket->id }}">
             
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Unit Tujuan <span class="text-red-500">*</span></label>
-                <select name="unit_id" required class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-                    <option value="">Pilih Unit</option>
-                    @foreach($units as $unit)
-                        <option value="{{ $unit->id }}">{{ $unit->nama }}</option>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Jabatan Tujuan <span class="text-red-500">*</span></label>
+                <select name="jabatan_id" required class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                    <option value="">Pilih Jabatan</option>
+                    @foreach($jabatans as $jabatan)
+                        <option value="{{ $jabatan->id }}">{{ $jabatan->nama }}</option>
                     @endforeach
                 </select>
-                <p class="text-[10px] text-gray-500 mt-1">Sistem akan otomatis meneruskan pengaduan ini ke level awal (entry point) di unit yang dipilih.</p>
+                <p class="text-[10px] text-gray-500 mt-1">Sistem akan otomatis meneruskan pengaduan ke pengguna dengan jabatan yang dipilih.</p>
             </div>
             
             <div>

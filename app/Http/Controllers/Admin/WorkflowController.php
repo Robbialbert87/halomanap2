@@ -18,10 +18,10 @@ class WorkflowController extends Controller
     public function disposisi(Request $request)
     {
         $request->validate([
-            'ticket_id' => 'required|exists:tickets,id',
-            'unit_id'   => 'required|exists:units,id',
-            'komentar'  => 'nullable|string|max:1000',
-            'due_at'    => 'nullable|date|after:now',
+            'ticket_id'  => 'required|exists:tickets,id',
+            'jabatan_id' => 'required|exists:jabatans,id',
+            'komentar'   => 'nullable|string|max:1000',
+            'due_at'     => 'nullable|date|after:now',
         ]);
 
         $ticket = Ticket::findOrFail($request->ticket_id);
@@ -29,7 +29,7 @@ class WorkflowController extends Controller
         try {
             $this->workflowService->disposisi(
                 ticket: $ticket,
-                toUnitId: $request->unit_id,
+                toJabatanId: $request->jabatan_id,
                 komentar: $request->komentar ?? '',
                 dueAt: $request->due_at ? now()->parse($request->due_at) : null,
             );

@@ -98,8 +98,9 @@ class TicketController extends Controller
         
         $units = \App\Models\Unit::orderBy('nama')->get();
         $headUsers = \App\Models\User::orderBy('nama')->get();
+        $jabatans = \App\Models\Jabatan::where('status', 'active')->orderBy('nama')->get();
 
-        return view('admin.tickets.show', compact('ticket', 'units', 'headUsers'));
+        return view('admin.tickets.show', compact('ticket', 'units', 'headUsers', 'jabatans'));
     }
 
     public function verify(Request $request, string $id)

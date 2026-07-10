@@ -15,35 +15,32 @@ use Illuminate\Support\Facades\DB;
 class WorkflowService
 {
     /**
-     * Admin mendisposisikan tiket ke Unit Tujuan.
-     * Sistem otomatis mencari User aktif dengan Unit yang dipilih
-     * dan Kategori Jabatan = 'Kepala Unit'.
+     * Admin mendisposisikan tiket ke Jabatan Tujuan.
+     * Sistem otomatis mencari User aktif dengan jabatan yang dipilih.
      */
-    public function disposisi(Ticket $ticket, int $toUnitId, string $komentar = '', $dueAt = null): WorkflowHistory
+    public function disposisi(Ticket $ticket, int $toJabatanId, string $komentar = '', $dueAt = null): WorkflowHistory
     {
         $actor = auth()->user();
 
-        $unit = Unit::find($toUnitId);
-        if (!$unit) {
-            throw new \RuntimeException("Unit ID {$toUnitId} tidak ditemukan.");
+        $jabatan = Jabatan::find($toJabatanId);
+        if (!$jabatan) {
+            throw new \RuntimeException("Jabatan ID {$toJabatanId} tidak ditemukan.");
         }
 
-        // Cari Kepala Unit di unit tujuan
-        $kepalaUnitJabatan = Jabatan::where('kategori_jabatan', 'Kepala Unit')->first();
-        if (!$kepalaUnitJabatan) {
-            throw new \RuntimeException("Master Jabatan dengan kategori 'Kepala Unit' belum tersedia. Harap buat jabatan dengan kategori Kepala Unit terlebih dahulu.");
-        }
-
-        $toUser = User::where('unit_id', $toUnitId)
-            ->where('jabatan_id', $kepalaUnitJabatan->id)
+        $toUser = User::where('jabatan_id', $toJabatanId)
             ->where('status', 'active')
             ->first();
 
         if (!$toUser) {
-            throw new \RuntimeException("Tidak ditemukan user dengan jabatan {$kepalaUnitJabatan->nama} di unit {$unit->nama}. Harap daftarkan user terlebih dahulu.");
+            throw new \RuntimeException("Tidak ditemukan pengguna aktif dengan jabatan {$jabatan->nama}. Harap daftarkan user terlebih dahulu.");
         }
 
-        return DB::transaction(function () use ($ticket, $actor, $toUnitId, $kepalaUnitJabatan, $toUser, $komentar, $dueAt) {
+        $toUnit = $toUser->unit;
+        if (!$toUnit) {
+            throw new \RuntimeException("Pengguna {$toUser->nama} dengan jabatan {$jabatan->nama} belum memiliki unit. Harap atur unit pengguna terlebih dahulu.");
+        }
+
+        return DB::transaction(function () use ($ticket, $actor, $jabatan, $toUser, $toUnit, $komentar, $dueAt) {
             $existing = WorkflowHistory::where('ticket_id', $ticket->id)
                 ->whereIn('status', ['menunggu_respon', 'dalam_penanganan'])
                 ->lockForUpdate()
@@ -60,9 +57,9 @@ class WorkflowService
                 'from_user_id'    => $actor?->id,
                 'to_user_id'      => $toUser?->id,
                 'from_jabatan_id' => $actor?->jabatan_id,
-                'to_jabatan_id'   => $kepalaUnitJabatan->id,
+                'to_jabatan_id'   => $jabatan->id,
                 'from_unit_id'    => $actor?->unit_id,
-                'to_unit_id'      => $toUnitId,
+                'to_unit_id'      => $toUnit->id,
                 'action'          => 'disposisi',
                 'komentar'        => $komentar,
                 'status'          => 'menunggu_respon',
@@ -76,13 +73,13 @@ class WorkflowService
                 'user_id'    => $actor?->id,
                 'old_status' => 'TERVERIFIKASI',
                 'new_status' => 'Diproses',
-                'notes'      => 'Pengaduan didisposisikan ke unit: ' . ($unit->nama ?? '-') . ($komentar ? ' — ' . $komentar : ''),
+                'notes'      => 'Pengaduan didisposisikan ke jabatan: ' . ($jabatan->nama ?? '-') . ' (' . ($toUnit->nama ?? '-') . ')' . ($komentar ? ' — ' . $komentar : ''),
             ]);
 
             AuditTrail::log('disposisi', Ticket::class, $ticket->id, [
-                'to_unit'    => $toUnitId,
+                'to_jabatan' => $jabatan->id,
                 'to_user'    => $toUser?->id,
-                'to_jabatan' => $kepalaUnitJabatan->id,
+                'to_unit'    => $toUnit->id,
             ]);
 
             event(new WorkflowChanged($history, 'disposisi_baru'));
