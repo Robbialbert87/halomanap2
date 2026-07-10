@@ -167,13 +167,29 @@ class TicketController extends Controller
 
         if ($oldStatus !== $newStatus) {
             $ticket->update(['status' => $newStatus]);
-            
+
             $ticket->histories()->create([
-                'user_id' => auth()->id(), // Akan null jika belum ada sistem login, tidak masalah.
+                'user_id'    => auth()->id(),
                 'old_status' => $oldStatus,
                 'new_status' => $newStatus,
-                'notes' => $request->notes,
+                'notes'      => $request->notes,
             ]);
+
+            if ($newStatus === 'DONE') {
+                $ticket->workflows()->create([
+                    'from_user_id' => auth()->id(),
+                    'action'       => 'selesai',
+                    'komentar'     => $request->notes,
+                    'status'       => 'selesai',
+                ]);
+            } elseif ($newStatus === 'REJECTED') {
+                $ticket->workflows()->create([
+                    'from_user_id' => auth()->id(),
+                    'action'       => 'ditolak',
+                    'komentar'     => $request->notes,
+                    'status'       => 'ditutup',
+                ]);
+            }
         }
 
         return redirect()->route('admin.tickets.show', $ticket->id)
