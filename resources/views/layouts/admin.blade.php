@@ -415,7 +415,7 @@
             </div>
             <div class="overflow-y-auto" style="max-height: 300px;">
                 @forelse($notifications as $notif)
-                <a href="{{ route('admin.tickets.show', $notif['id']) }}"
+                <a href="{{ $notif['url'] ?? route('admin.tickets.show', $notif['id']) }}"
                     class="block border-l-4 {{ $notif['notif_type'] === 'selesai' ? 'border-green-500 bg-green-50/30 hover:bg-green-100/50' : 'border-blue-500 bg-blue-50/30 hover:bg-blue-100/50' }} transition-colors border-b border-gray-50 last:border-0 active:bg-blue-100">
                     <div class="flex items-center gap-3 px-4 py-3.5">
                         @if($notif['notif_type'] === 'selesai')
@@ -508,12 +508,7 @@
                 <i class="fa-solid fa-chart-line text-lg"></i>
                 <span class="text-[8px] font-medium">Monitoring</span>
             </a>
-            @if(auth()->user()->can('manage-units'))
-            <a href="{{ route('admin.units.index') }}" class="flex flex-col items-center gap-0.5 w-12 {{ request()->is('admin/units*') || request()->is('admin/rooms*') || request()->is('admin/categories*') ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-500 transition-colors">
-                <i class="fa-solid fa-database text-lg"></i>
-                <span class="text-[8px] font-medium">Master</span>
-            </a>
-            @endif
+
             @elseif(in_array($mobileRoleGroup, ['kepala_unit', 'kasi']))
             <a href="{{ route(str_replace('_', '-', $mobileRoleGroup) . '.laporan') }}" class="flex flex-col items-center gap-0.5 w-12 {{ request()->routeIs(str_replace('_', '-', $mobileRoleGroup) . '.laporan') ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-500 transition-colors">
                 <i class="fa-solid fa-file-lines text-lg"></i>

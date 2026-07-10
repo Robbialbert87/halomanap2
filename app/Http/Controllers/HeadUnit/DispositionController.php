@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\HeadUnit;
 
 use App\Http\Controllers\Controller;
+use App\Models\AppNotification;
 use App\Models\WorkflowHistory;
 use App\Models\User;
 use App\Services\WorkflowService;
@@ -45,6 +46,12 @@ class DispositionController extends Controller
         if ($workflow->to_user_id !== $user->id) {
             abort(403, 'Anda tidak memiliki akses ke pengaduan ini.');
         }
+
+        // Mark AppNotifications as read for this user & ticket
+        AppNotification::where('user_id', $user->id)
+            ->where('data->ticket_id', $workflow->ticket_id)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
 
         $eskalasiUsers = User::with('jabatan', 'unit')
             ->whereIn('jabatan_id', function ($q) {

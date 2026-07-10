@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AppNotification;
 use App\Models\Ticket;
 use App\Models\Room;
 use App\Models\ReportCategory;
@@ -95,6 +96,12 @@ class TicketController extends Controller
         if (in_array($ticket->status, ['NEW', 'DONE', 'Selesai']) && !$ticket->notification_seen_at) {
             $ticket->update(['notification_seen_at' => now()]);
         }
+
+        // Mark AppNotifications as read for this user & ticket
+        AppNotification::where('user_id', auth()->id())
+            ->where('data->ticket_id', $ticket->id)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
         
         $units = \App\Models\Unit::orderBy('nama')->get();
         $headUsers = \App\Models\User::orderBy('nama')->get();

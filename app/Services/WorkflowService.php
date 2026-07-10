@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Events\WorkflowChanged;
+use App\Models\AppNotification;
 use App\Models\AuditTrail;
 use App\Models\Jabatan;
 use App\Models\Ticket;
@@ -82,6 +83,19 @@ class WorkflowService
                 'to_unit'    => $toUnit->id,
             ]);
 
+            AppNotification::create([
+                'user_id' => $toUser->id,
+                'type'    => 'disposisi_baru',
+                'title'   => 'Disposisi Pengaduan Baru',
+                'message' => $komentar ?: 'Anda menerima disposisi pengaduan baru.',
+                'data'    => [
+                    'ticket_id'      => $ticket->id,
+                    'ticket_number'  => $ticket->ticket_number,
+                    'workflow_uuid'  => $history->uuid,
+                    'url'            => route('admin.tickets.show', $ticket->id),
+                ],
+            ]);
+
             event(new WorkflowChanged($history, 'disposisi_baru'));
 
             return $history;
@@ -138,6 +152,19 @@ class WorkflowService
                 'to_user'      => $toUser?->id,
             ]);
 
+            AppNotification::create([
+                'user_id' => $toUser->id,
+                'type'    => 'eskalasi',
+                'title'   => 'Eskalasi Pengaduan',
+                'message' => $komentar ?: 'Ada pengaduan dieskalasi kepada Anda.',
+                'data'    => [
+                    'ticket_id'      => $currentHistory->ticket_id,
+                    'ticket_number'  => $currentHistory->ticket->ticket_number,
+                    'workflow_uuid'  => $newHistory->uuid,
+                    'url'            => route('admin.tickets.show', $currentHistory->ticket_id),
+                ],
+            ]);
+
             event(new WorkflowChanged($newHistory, 'eskalasi'));
 
             return $newHistory;
@@ -177,6 +204,22 @@ class WorkflowService
         ]);
 
         AuditTrail::log('selesai', Ticket::class, $history->ticket_id);
+
+        $adminUsers = User::role(['Super Admin', 'Admin Pengaduan'])->get();
+        foreach ($adminUsers as $admin) {
+            AppNotification::create([
+                'user_id' => $admin->id,
+                'type'    => 'pengaduan_selesai',
+                'title'   => 'Pengaduan Selesai Diproses',
+                'message' => $komentar ?: 'Pengaduan telah selesai diproses dan menunggu verifikasi.',
+                'data'    => [
+                    'ticket_id'      => $history->ticket_id,
+                    'ticket_number'  => $history->ticket->ticket_number,
+                    'url'            => route('admin.tickets.show', $history->ticket_id),
+                ],
+            ]);
+        }
+
         event(new WorkflowChanged($history, 'pengaduan_selesai'));
 
         return $history;

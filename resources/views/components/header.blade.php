@@ -35,7 +35,7 @@
                 </div>
                 <div class="max-h-72 overflow-y-auto">
                     @forelse($notifications as $notif)
-                    <a href="{{ route('admin.tickets.show', $notif['id']) }}"
+                    <a href="{{ $notif['url'] ?? route('admin.tickets.show', $notif['id']) }}"
                         class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0">
                         @if($notif['notif_type'] === 'selesai')
                         <div class="w-5 h-5 mt-0.5 rounded-full bg-green-100 flex items-center justify-center shrink-0">
