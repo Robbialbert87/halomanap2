@@ -9,6 +9,7 @@ use App\Models\ReportCategory;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Jobs\SendWhatsAppNotification;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -119,6 +120,13 @@ class PengaduanController extends Controller
     {
         $ticket = Ticket::where('ticket_number', $ticket_number)->firstOrFail();
         return view('pengaduan.success', compact('ticket'));
+    }
+
+    public function downloadTicket($ticket_number)
+    {
+        $ticket = Ticket::where('ticket_number', $ticket_number)->firstOrFail();
+        $pdf = Pdf::loadView('pengaduan.ticket-pdf', compact('ticket'));
+        return $pdf->download('tiket-' . $ticket->ticket_number . '.pdf');
     }
 
     public function track(Request $request)

@@ -209,6 +209,18 @@
             </div>
         </div>
 
+        {{-- Download Ticket Button --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4 flex items-center justify-between">
+            <div>
+                <p class="text-xs font-semibold text-gray-700">{{ $ticket->ticket_number }}</p>
+                <p class="text-[10px] text-gray-400">Download tiket untuk disimpan</p>
+            </div>
+            <a href="{{ route('pengaduan.ticket-download', ['ticket_number' => $ticket->ticket_number]) }}"
+                class="bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-semibold rounded-xl px-4 py-2.5 text-xs transition-all shadow-sm shadow-blue-200/50 flex items-center gap-1.5 active:scale-[0.98]">
+                <i class="fa-solid fa-download"></i> Download Tiket
+            </a>
+        </div>
+
         {{-- Encouragement Quote --}}
         <div class="bg-white rounded-2xl border border-blue-100/50 px-5 py-4 flex items-start gap-2.5">
             <span class="text-blue-300 text-base mt-0.5 flex-shrink-0"><i class="fa-solid fa-quote-left"></i></span>

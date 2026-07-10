@@ -17,6 +17,7 @@ Route::get('/', function () {
 Route::get('/pengaduan/buat', [PengaduanController::class, 'create'])->name('pengaduan.create');
 Route::post('/pengaduan/buat', [PengaduanController::class, 'store'])->name('pengaduan.store');
 Route::get('/pengaduan/sukses/{ticket_number}', [PengaduanController::class, 'success'])->name('pengaduan.success');
+Route::get('/pengaduan/tiket/{ticket_number}/download', [PengaduanController::class, 'downloadTicket'])->name('pengaduan.ticket-download');
 Route::get('/lacak', [PengaduanController::class, 'track'])->name('pengaduan.track');
 
 // ── PROTECTED (auth required) ─────────────────────────────────────────────────
