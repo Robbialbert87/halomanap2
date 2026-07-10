@@ -37,12 +37,21 @@
                     @forelse($notifications as $notif)
                     <a href="{{ route('admin.tickets.show', $notif['id']) }}"
                         class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0">
+                        @if($notif['notif_type'] === 'selesai')
+                        <div class="w-5 h-5 mt-0.5 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-check text-[10px] text-green-600"></i>
+                        </div>
+                        @else
                         <div class="w-2 h-2 mt-1.5 rounded-full bg-blue-500 shrink-0"></div>
+                        @endif
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-medium text-gray-800 truncate">{{ $notif['title'] }}</p>
                             <p class="text-xs text-gray-400 mt-0.5">
                                 <span class="font-medium text-blue-600">{{ $notif['ticket_number'] }}</span>
                                 @if($notif['category']) · {{ $notif['category'] }} @endif
+                                @if($notif['notif_type'] === 'selesai')
+                                <span class="text-green-600 font-medium"> · Selesai</span>
+                                @endif
                             </p>
                             <p class="text-[10px] text-gray-400 mt-0.5">{{ $notif['time'] }}</p>
                         </div>

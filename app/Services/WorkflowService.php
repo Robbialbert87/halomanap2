@@ -190,7 +190,7 @@ class WorkflowService
             'komentar' => $komentar,
         ]);
 
-        $history->ticket->update(['status' => 'Selesai']);
+        $history->ticket->update(['status' => 'Selesai', 'notification_seen_at' => null]);
 
         TicketHistory::create([
             'ticket_id'  => $history->ticket_id,

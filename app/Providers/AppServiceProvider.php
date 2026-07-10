@@ -35,32 +35,51 @@ class AppServiceProvider extends ServiceProvider
         // Share notification data with header component
         View::composer(['components.header', 'layouts.admin'], function ($view) {
             $user = auth()->user();
-            $unread = Ticket::where('status', 'NEW')
+
+            // NEW tickets not yet seen
+            $unreadNew = Ticket::where('status', 'NEW')
+                ->whereNull('notification_seen_at');
+
+            // DONE / Selesai tickets not yet seen
+            $unreadDone = Ticket::whereIn('status', ['DONE', 'Selesai'])
                 ->whereNull('notification_seen_at');
 
             if ($user && !$user->hasRole(['Super Admin', 'Admin Pengaduan'])) {
-                $unread->whereHas('room', function ($q) use ($user) {
-                    $q->where('unit_id', $user->unit_id);
-                });
+                $unreadNew->whereHas('room', fn($q) => $q->where('unit_id', $user->unit_id));
+                $unreadDone->whereHas('room', fn($q) => $q->where('unit_id', $user->unit_id));
             }
 
-            $unreadCount = (clone $unread)->count();
-            $notifications = (clone $unread)
-                ->with('category')
-                ->latest()
-                ->take(10)
-                ->get()
-                ->map(function ($ticket) {
-                    return [
-                        'id' => $ticket->id,
-                        'ticket_number' => $ticket->ticket_number,
-                        'title' => $ticket->title,
-                        'type' => $ticket->type,
-                        'category' => $ticket->category?->name,
-                        'time' => $ticket->created_at->diffForHumans(),
-                    ];
-                });
-            $view->with(compact('unreadCount', 'notifications'));
+            $newCount = (clone $unreadNew)->count();
+            $doneCount = (clone $unreadDone)->count();
+            $unreadCount = $newCount + $doneCount;
+
+            $newNotifs = (clone $unreadNew)
+                ->with('category')->latest()->take(10)->get()
+                ->map(fn($t) => [
+                    'id' => $t->id,
+                    'ticket_number' => $t->ticket_number,
+                    'title' => $t->title,
+                    'type' => $t->type,
+                    'category' => $t->category?->name,
+                    'time' => $t->created_at->diffForHumans(),
+                    'notif_type' => 'new',
+                ]);
+
+            $doneNotifs = (clone $unreadDone)
+                ->with('category')->latest()->take(5)->get()
+                ->map(fn($t) => [
+                    'id' => $t->id,
+                    'ticket_number' => $t->ticket_number,
+                    'title' => $t->title,
+                    'type' => $t->type,
+                    'category' => $t->category?->name,
+                    'time' => $t->updated_at->diffForHumans(),
+                    'notif_type' => 'selesai',
+                ]);
+
+            $notifications = $newNotifs->concat($doneNotifs)->sortByDesc('time')->values();
+
+            $view->with(compact('unreadCount', 'notifications', 'newCount'));
         });
     }
 }

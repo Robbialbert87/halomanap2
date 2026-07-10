@@ -16,7 +16,7 @@ class CheckDirektur
             return redirect()->route('login');
         }
 
-        if ($user->hasRole(['Super Admin', 'Direktur'])) {
+        if ($user->hasRole(['Super Admin', 'Admin Pengaduan', 'Direktur'])) {
             return $next($request);
         }
 

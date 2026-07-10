@@ -119,7 +119,8 @@
             @endcan
             @endif
 
-            @can('manage-reports')
+            @php $canMonitoring = auth()->user()->can('manage-reports') || auth()->user()->hasRole('Admin Pengaduan'); @endphp
+            @if($canMonitoring)
             <div class="pt-3 pb-0.5 px-2.5">
                 <p class="text-[9px] font-bold text-gray-400 uppercase tracking-[0.15em]">Monitoring & Laporan</p>
             </div>
@@ -129,13 +130,7 @@
                 </span>
                 Monitoring
             </a>
-            <a href="#" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
-                <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-sm shadow-amber-200/50 flex-shrink-0">
-                    <i class="fa-solid fa-file-lines text-white text-xs"></i>
-                </span>
-                Laporan
-            </a>
-            @endcan
+            @endif
 
             @php $hasSettings = auth()->user()->can('manage-audit-trail') || auth()->user()->can('manage-whatsapp') || auth()->user()->can('manage-settings'); @endphp
             @if($hasSettings)
@@ -421,11 +416,17 @@
             <div class="overflow-y-auto" style="max-height: 300px;">
                 @forelse($notifications as $notif)
                 <a href="{{ route('admin.tickets.show', $notif['id']) }}"
-                    class="block border-l-4 border-blue-500 bg-blue-50/30 hover:bg-blue-100/50 transition-colors border-b border-gray-50 last:border-0 active:bg-blue-100">
+                    class="block border-l-4 {{ $notif['notif_type'] === 'selesai' ? 'border-green-500 bg-green-50/30 hover:bg-green-100/50' : 'border-blue-500 bg-blue-50/30 hover:bg-blue-100/50' }} transition-colors border-b border-gray-50 last:border-0 active:bg-blue-100">
                     <div class="flex items-center gap-3 px-4 py-3.5">
+                        @if($notif['notif_type'] === 'selesai')
+                        <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-sm shadow-green-200/50 flex-shrink-0">
+                            <i class="fa-solid fa-check text-white text-sm"></i>
+                        </span>
+                        @else
                         <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
                             <i class="fa-solid fa-file-lines text-white text-sm"></i>
                         </span>
+                        @endif
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-semibold text-gray-900 truncate">{{ $notif['title'] }}</p>
                             <p class="flex items-center gap-1.5 mt-0.5">
@@ -434,10 +435,17 @@
                                 <span class="text-[10px] text-gray-400">·</span>
                                 <span class="text-[10px] font-medium text-gray-500">{{ $notif['category'] }}</span>
                                 @endif
+                                @if($notif['notif_type'] === 'selesai')
+                                <span class="text-[10px] text-green-600 font-medium">· Selesai</span>
+                                @endif
                             </p>
                             <p class="text-[10px] text-gray-400 mt-0.5">{{ $notif['time'] }}</p>
                         </div>
+                        @if($notif['notif_type'] === 'selesai')
+                        <span class="w-2 h-2 rounded-full bg-green-500 shrink-0"></span>
+                        @else
                         <span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                        @endif
                     </div>
                 </a>
                 @empty
@@ -495,11 +503,17 @@
             </div>
 
             {{-- Secondary feature by role --}}
-            @if($mobileRoleGroup === 'admin' && auth()->user()->can('manage-units'))
+            @if($mobileRoleGroup === 'admin')
+            <a href="{{ route('admin.monitoring.index') }}" class="flex flex-col items-center gap-0.5 w-12 {{ request()->routeIs('admin.monitoring.*') ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-500 transition-colors">
+                <i class="fa-solid fa-chart-line text-lg"></i>
+                <span class="text-[8px] font-medium">Monitoring</span>
+            </a>
+            @if(auth()->user()->can('manage-units'))
             <a href="{{ route('admin.units.index') }}" class="flex flex-col items-center gap-0.5 w-12 {{ request()->is('admin/units*') || request()->is('admin/rooms*') || request()->is('admin/categories*') ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-500 transition-colors">
                 <i class="fa-solid fa-database text-lg"></i>
                 <span class="text-[8px] font-medium">Master</span>
             </a>
+            @endif
             @elseif(in_array($mobileRoleGroup, ['kepala_unit', 'kasi']))
             <a href="{{ route(str_replace('_', '-', $mobileRoleGroup) . '.laporan') }}" class="flex flex-col items-center gap-0.5 w-12 {{ request()->routeIs(str_replace('_', '-', $mobileRoleGroup) . '.laporan') ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-500 transition-colors">
                 <i class="fa-solid fa-file-lines text-lg"></i>

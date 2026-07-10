@@ -91,8 +91,8 @@ class TicketController extends Controller
             'workflows.fromUser', 'workflows.toUser', 'workflows.toUnit', 'workflows.toJabatan'
         ])->findOrFail($id);
         
-        // Mark notification as seen when admin views a NEW ticket
-        if ($ticket->status === 'NEW' && !$ticket->notification_seen_at) {
+        // Mark notification as seen when admin views the ticket
+        if (in_array($ticket->status, ['NEW', 'DONE', 'Selesai']) && !$ticket->notification_seen_at) {
             $ticket->update(['notification_seen_at' => now()]);
         }
         
@@ -176,6 +176,7 @@ class TicketController extends Controller
             ]);
 
             if ($newStatus === 'DONE') {
+                $ticket->update(['notification_seen_at' => null]);
                 $ticket->workflows()->create([
                     'from_user_id' => auth()->id(),
                     'action'       => 'selesai',

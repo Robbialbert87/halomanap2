@@ -121,7 +121,7 @@
                         </span>
                         <span class="text-[10px] font-medium text-gray-500">Cek<br>Status</span>
                     </a>
-                    @if($mobileRoleGroup === 'admin' && auth()->user()?->can('manage-reports'))
+                    @if($mobileRoleGroup === 'admin' && (auth()->user()?->can('manage-reports') || auth()->user()?->hasRole('Admin Pengaduan')))
                     <a href="{{ route('admin.monitoring.index') }}" class="flex-1 flex flex-col items-center gap-1.5">
                         <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-md shadow-violet-200/50">
                             <i class="fa-solid fa-chart-line text-white text-xl"></i>

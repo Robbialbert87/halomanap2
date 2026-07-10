@@ -106,16 +106,23 @@
             <div class="pt-4 pb-1">
                 <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Monitoring & Laporan</p>
             </div>
+            @endcan
 
+            @can('manage-reports')
             <a href="{{ route('admin.monitoring.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.monitoring.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-chart-line w-5 text-center"></i>
                 <span class="text-sm font-medium">Monitoring</span>
             </a>
-
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
-                <i class="fa-solid fa-file-lines w-5 text-center"></i>
-                <span class="text-sm font-medium">Laporan</span>
+            @else
+            @if(auth()->user()->hasRole('Admin Pengaduan'))
+            <div class="pt-4 pb-1">
+                <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Monitoring & Laporan</p>
+            </div>
+            <a href="{{ route('admin.monitoring.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.monitoring.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-chart-line w-5 text-center"></i>
+                <span class="text-sm font-medium">Monitoring</span>
             </a>
+            @endif
             @endcan
 
             {{-- ======================== PENGATURAN ======================== --}}
