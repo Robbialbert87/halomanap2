@@ -4,81 +4,23 @@
     <meta charset="utf-8">
     <title>Tiket Pengaduan - {{ $ticket->ticket_number }}</title>
     <style>
-        @page { margin: 0; }
+        @page { 
+            margin: 0;
+            size: 380px 640px;
+        }
         body {
             margin: 0;
             padding: 0;
             font-family: 'Helvetica', 'Arial', sans-serif;
-            background: #f0f4f8;
+            background: #ffffff;
             color: #1e293b;
         }
         .ticket {
-            width: 380px;
-            margin: 30px auto;
+            width: 100%;
             background: #ffffff;
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-        }
-        .ticket-header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            padding: 28px 24px 20px;
-            text-align: center;
-            color: white;
-            position: relative;
-        }
-        .ticket-header::after {
-            content: '';
-            position: absolute;
-            bottom: -14px;
-            left: 0;
-            right: 0;
-            height: 28px;
-            background: radial-gradient(circle at 14px 0, transparent 14px, #ffffff 14px);
-            background-size: 28px 28px;
-            background-repeat: repeat-x;
-            background-position: 0 0;
-        }
-        .ticket-header .logo {
-            width: 56px;
-            height: 56px;
-            margin: 0 auto 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .ticket-header .logo img {
-            width: 56px;
-            height: 56px;
-            object-fit: contain;
-            filter: brightness(0) invert(1);
-        }
-        .ticket-header h1 {
-            font-size: 14px;
-            font-weight: 700;
-            margin: 0 0 2px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        .ticket-header .sub {
-            font-size: 9px;
-            opacity: 0.8;
-            margin: 0;
-        }
-        .ticket-header .type-badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 20px;
-            padding: 3px 14px;
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-top: 8px;
         }
         .ticket-body {
-            padding: 28px 24px 20px;
+            padding: 20px 24px 20px;
         }
         .ticket-number-box {
             background: #eff6ff;
@@ -168,18 +110,6 @@
             border-top: 2px dashed #cbd5e1;
             position: relative;
         }
-        .stub::before,
-        .stub::after {
-            content: '';
-            position: absolute;
-            top: -13px;
-            width: 26px;
-            height: 26px;
-            background: #f0f4f8;
-            border-radius: 50%;
-        }
-        .stub::before { left: -13px; }
-        .stub::after { right: -13px; }
         .stub p {
             margin: 0;
             font-size: 8px;
@@ -209,14 +139,6 @@
 </head>
 <body>
     <div class="ticket">
-        <div class="ticket-header">
-            <div class="logo">
-                <img src="{{ public_path('assets/images/halomanaplogo.png') }}" alt="Halo MANAP">
-            </div>
-            <h1>Halo MANAP</h1>
-            <p class="sub">RSUD H. Abdul Manap Kota Jambi</p>
-            <span class="type-badge">{{ $ticket->type }}</span>
-        </div>
 
         <div class="ticket-body">
             <div class="ticket-number-box">
