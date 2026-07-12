@@ -145,27 +145,11 @@
                 <!-- Pengaduan Kategori -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                     <h3 class="font-bold text-gray-800 mb-4">Pengaduan Berdasarkan Kategori</h3>
-                    @php $totalCat = $categoryCounts->sum() ?: 1; @endphp
                     <div class="flex items-center justify-center h-64">
-                         <div class="w-1/2 flex items-center justify-center relative">
-                             <div class="w-32 h-32 rounded-full border-[16px] relative"
-                                  style="border-color: {{ $categoryColors[0] ?? '#3b82f6' }};">
-                             </div>
-                             <div class="w-20 h-20 bg-white rounded-full absolute"></div>
-                         </div>
-                         <div class="w-1/2 flex flex-col gap-2 text-xs max-h-64 overflow-y-auto">
-                             @forelse($categoryData as $i => $item)
-                             <div class="flex justify-between items-center">
-                                 <span class="flex items-center gap-2">
-                                     <span class="w-3 h-3 rounded-full shrink-0" style="background: {{ $categoryColors[$i % count($categoryColors)] }}"></span>
-                                     {{ $item->category->name ?? 'Tanpa Kategori' }}
-                                 </span>
-                                 <span class="font-bold">{{ $item->total }} ({{ round(($item->total / $totalCat) * 100) }}%)</span>
-                             </div>
-                             @empty
-                             <p class="text-gray-400 italic">Belum ada data kategori.</p>
-                             @endforelse
-                         </div>
+                        <div class="w-1/2 flex items-center justify-center relative">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                        <div class="w-1/2 flex flex-col gap-2 text-xs max-h-64 overflow-y-auto" id="categoryLegend"></div>
                     </div>
                 </div>
             </div>
@@ -175,18 +159,8 @@
                  <!-- Pengaduan Unit -->
                  <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                     <h3 class="font-bold text-gray-800 mb-4">Pengaduan Berdasarkan Unit</h3>
-                    <div class="flex flex-col gap-4 max-h-64 overflow-y-auto">
-                        @forelse($unitData as $unitName => $count)
-                        <div class="flex items-center gap-3">
-                            <div class="w-28 text-xs font-medium text-gray-600 truncate" title="{{ $unitName }}">{{ $unitName }}</div>
-                            <div class="flex-1 bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                                <div class="h-full rounded-full {{ $loop->index % 2 == 0 ? 'bg-blue-600' : 'bg-teal-500' }}" style="width: {{ ($count / $unitMax) * 100 }}%;"></div>
-                            </div>
-                            <div class="w-10 text-xs font-bold text-right">{{ $count }}</div>
-                        </div>
-                        @empty
-                        <p class="text-gray-400 italic text-center">Belum ada data unit.</p>
-                        @endforelse
+                    <div class="relative h-64">
+                        <canvas id="unitChart"></canvas>
                     </div>
                 </div>
 
@@ -227,45 +201,115 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('monthlyChart').getContext('2d');
-    const labels = @json($monthlyLabels);
-    const data = @json($monthlyData);
+    const colors = @json($categoryColors);
+    const catData  = @json($categoryData);
+    const catLabels = catData.map(d => d.category?.name ?? 'Tanpa Kategori');
+    const catCounts = catData.map(d => d.total);
 
-    const gradient = ctx.createLinearGradient(0, 0, 0, 250);
-    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.85)');
-    gradient.addColorStop(1, 'rgba(59, 130, 246, 0.25)');
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Pengaduan',
-                data: data,
-                backgroundColor: gradient,
-                borderColor: 'rgba(59, 130, 246, 1)',
-                borderWidth: 1.5,
-                borderRadius: 6,
-                borderSkipped: false,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1, color: '#9ca3af' },
-                    grid: { color: 'rgba(0,0,0,0.04)' }
-                },
-                x: {
-                    ticks: { color: '#9ca3af' },
-                    grid: { display: false }
+    // ── Monthly Bar Chart ──
+    const mCtx = document.getElementById('monthlyChart')?.getContext('2d');
+    if (mCtx) {
+        const gradient = mCtx.createLinearGradient(0, 0, 0, 250);
+        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.85)');
+        gradient.addColorStop(1, 'rgba(59, 130, 246, 0.25)');
+        new Chart(mCtx, {
+            type: 'bar',
+            data: {
+                labels: @json($monthlyLabels),
+                datasets: [{
+                    data: @json($monthlyData),
+                    backgroundColor: gradient,
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 1.5,
+                    borderRadius: 6,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1, color: '#9ca3af' }, grid: { color: 'rgba(0,0,0,0.04)' } },
+                    x: { ticks: { color: '#9ca3af' }, grid: { display: false } }
                 }
             }
+        });
+    }
+
+    // ── Category Donut Chart ──
+    const cCtx = document.getElementById('categoryChart')?.getContext('2d');
+    if (cCtx) {
+        new Chart(cCtx, {
+            type: 'doughnut',
+            data: {
+                labels: catLabels,
+                datasets: [{
+                    data: catCounts,
+                    backgroundColor: colors.slice(0, catLabels.length),
+                    borderWidth: 3,
+                    borderColor: '#fff',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        const legendEl = document.getElementById('categoryLegend');
+        if (legendEl) {
+            const total = catCounts.reduce((a, b) => a + b, 0) || 1;
+            catLabels.forEach((label, i) => {
+                const pct = ((catCounts[i] / total) * 100).toFixed(0);
+                legendEl.innerHTML += '<div class="flex justify-between items-center py-0.5">' +
+                    '<span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:' + colors[i % colors.length] + '"></span>' + label + '</span>' +
+                    '<span class="font-bold text-gray-700 text-xs">' + catCounts[i] + ' (' + pct + '%)</span></div>';
+            });
         }
-    });
+    }
+
+    // ── Unit Polar Area Chart ──
+    const uCtx = document.getElementById('unitChart')?.getContext('2d');
+    if (uCtx) {
+        const unitData = @json($unitData);
+        const unitLabels = Object.keys(unitData);
+        const unitCounts = Object.values(unitData);
+
+        new Chart(uCtx, {
+            type: 'polarArea',
+            data: {
+                labels: unitLabels,
+                datasets: [{
+                    data: unitCounts,
+                    backgroundColor: colors.slice(0, unitLabels.length).map(c => c.replace(')', ', 0.7)').replace('rgb', 'rgba')),
+                    borderColor: colors.slice(0, unitLabels.length),
+                    borderWidth: 1.5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { font: { size: 10 }, color: '#6b7280', boxWidth: 12, padding: 8 }
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        ticks: { display: false },
+                        grid: { color: 'rgba(0,0,0,0.04)' }
+                    }
+                }
+            }
+        });
+    }
 });
 </script>
 @endpush
