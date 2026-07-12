@@ -36,7 +36,8 @@
                 <div class="max-h-72 overflow-y-auto">
                     @forelse($notifications as $notif)
                     <a href="{{ $notif['url'] ?? route('admin.tickets.show', $notif['id']) }}"
-                        class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0">
+                        data-ticket-id="{{ $notif['id'] }}"
+                        class="notif-link flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0">
                         @if($notif['notif_type'] === 'selesai')
                         <div class="w-5 h-5 mt-0.5 rounded-full bg-green-100 flex items-center justify-center shrink-0">
                             <i class="fa-solid fa-check text-[10px] text-green-600"></i>
@@ -136,6 +137,25 @@
         const menu = document.getElementById('notifMenu');
         menu.classList.toggle('hidden');
     }
+
+    // Mark notification as read via AJAX before navigating
+    document.addEventListener('click', function (e) {
+        const link = e.target.closest('.notif-link');
+        if (!link) return;
+        const ticketId = link.getAttribute('data-ticket-id');
+        if (!ticketId) return;
+        e.preventDefault();
+        fetch('{{ route('notifications.mark-read') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+            },
+            body: JSON.stringify({ ticket_id: ticketId })
+        }).catch(function() {}).finally(function() {
+            window.location.href = link.href;
+        });
+    });
 
     // Close dropdowns when clicking outside
     document.addEventListener('click', function (e) {

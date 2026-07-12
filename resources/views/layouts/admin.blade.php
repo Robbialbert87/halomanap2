@@ -416,7 +416,8 @@
             <div class="overflow-y-auto" style="max-height: 300px;">
                 @forelse($notifications as $notif)
                 <a href="{{ $notif['url'] ?? route('admin.tickets.show', $notif['id']) }}"
-                    class="block border-l-4 {{ $notif['notif_type'] === 'selesai' ? 'border-green-500 bg-green-50/30 hover:bg-green-100/50' : 'border-blue-500 bg-blue-50/30 hover:bg-blue-100/50' }} transition-colors border-b border-gray-50 last:border-0 active:bg-blue-100">
+                    data-ticket-id="{{ $notif['id'] }}"
+                    class="notif-link block border-l-4 {{ $notif['notif_type'] === 'selesai' ? 'border-green-500 bg-green-50/30 hover:bg-green-100/50' : 'border-blue-500 bg-blue-50/30 hover:bg-blue-100/50' }} transition-colors border-b border-gray-50 last:border-0 active:bg-blue-100">
                     <div class="flex items-center gap-3 px-4 py-3.5">
                         @if($notif['notif_type'] === 'selesai')
                         <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-sm shadow-green-200/50 flex-shrink-0">

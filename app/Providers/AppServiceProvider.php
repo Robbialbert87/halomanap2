@@ -92,12 +92,18 @@ class AppServiceProvider extends ServiceProvider
             $appNotifs = collect();
             $appNotifCount = 0;
             if ($user) {
-                $appNotifs = AppNotification::where('user_id', $user->id)
+                $allAppNotifs = AppNotification::where('user_id', $user->id)
                     ->whereNull('read_at')
                     ->latest()
-                    ->take(15)
                     ->get()
-                    ->map(function ($n) use ($roleRoute) {
+                    ->filter(function ($n) {
+                        if (!($n->data['ticket_id'] ?? null)) return false;
+                        return Ticket::where('id', $n->data['ticket_id'])->exists();
+                    });
+
+                $appNotifCount = $allAppNotifs->count();
+
+                $appNotifs = $allAppNotifs->take(15)->map(function ($n) use ($roleRoute) {
                         $ticketId = $n->data['ticket_id'] ?? 0;
                         $workflowUuid = $n->data['workflow_uuid'] ?? null;
 
@@ -118,9 +124,6 @@ class AppServiceProvider extends ServiceProvider
                             'url'           => $url,
                         ];
                     });
-                $appNotifCount = AppNotification::where('user_id', $user->id)
-                    ->whereNull('read_at')
-                    ->count();
             }
 
             $notifications = $newNotifs->concat($doneNotifs)->concat($appNotifs)->sortByDesc('time')->take(15)->values();

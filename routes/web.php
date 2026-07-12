@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\AppNotification;
+use App\Models\Ticket;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\Auth\LoginController;
@@ -90,6 +93,25 @@ Route::middleware('auth')->group(function () {
             })(),
         };
     })->name('dashboard');
+
+    // ── NOTIFICATIONS (AJAX mark-as-read) ──────────────────────────────────────
+    Route::post('/notifications/mark-read', function (Request $request) {
+        $ticketId = $request->input('ticket_id');
+        $user = auth()->user();
+
+        if ($ticketId && $user) {
+            Ticket::where('id', $ticketId)
+                ->whereNull('notification_seen_at')
+                ->update(['notification_seen_at' => now()]);
+
+            AppNotification::where('user_id', $user->id)
+                ->where('data->ticket_id', $ticketId)
+                ->whereNull('read_at')
+                ->update(['read_at' => now()]);
+        }
+
+        return response()->json(['success' => true]);
+    })->name('notifications.mark-read');
 
     // ── ADMIN ─────────────────────────────────────────────────────────────────
     Route::prefix('admin')->name('admin.')->group(function () {

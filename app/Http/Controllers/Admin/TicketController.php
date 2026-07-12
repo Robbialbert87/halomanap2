@@ -285,6 +285,9 @@ class TicketController extends Controller
     public function destroy(string $id)
     {
         $ticket = Ticket::findOrFail($id);
+
+        AppNotification::where('data->ticket_id', $ticket->id)->delete();
+
         $ticket->delete();
 
         return redirect()->route('admin.tickets.index')
