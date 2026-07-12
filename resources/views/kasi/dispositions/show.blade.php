@@ -126,7 +126,7 @@
                         'tutup'           => ['i' => 'fa-lock',                'c' => 'bg-gray-500'],
                         default           => ['i' => 'fa-circle',              'c' => 'bg-gray-400'],
                     };
-                    $badge = $step->status_badge;
+                    $badge = $step->action_badge;
                 @endphp
                 <li class="mb-8 ml-6">
                     <span class="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full {{ $icon['c'] }} ring-4 ring-white shadow-sm">
