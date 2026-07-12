@@ -14,7 +14,8 @@
         'eskalasi'              => ['label' => 'Diteruskan ke Atasan','color' => 'orange','icon' => 'fa-share',               'step' => 3],
         'Selesai'               => ['label' => 'Selesai',           'color' => 'green',  'icon' => 'fa-circle-check',         'step' => 4],
         'Ditutup'               => ['label' => 'Ditutup',           'color' => 'green',  'icon' => 'fa-lock',                 'step' => 4],
-        'Ditolak'               => ['label' => 'Tidak Dapat Diproses','color' => 'red',  'icon' => 'fa-circle-xmark',         'step' => 4],
+        'Ditolak'               => ['label' => 'Tidak Dapat Diproses','color' => 'red',  'icon' => 'fa-circle-xmark',         'step' => 'rejected'],
+        'REJECTED'              => ['label' => 'Tidak Dapat Diproses','color' => 'red',  'icon' => 'fa-circle-xmark',         'step' => 'rejected'],
     ];
 
     $statusMessages = [
@@ -27,6 +28,7 @@
         'Selesai'               => ['title' => 'Pengaduan Anda Telah Selesai Ditangani', 'body' => 'Pengaduan Anda telah berhasil kami tangani. Terima kasih atas masukan berharga Anda yang sangat membantu kami dalam meningkatkan kualitas pelayanan kepada seluruh pasien.'],
         'Ditutup'               => ['title' => 'Pengaduan Anda Telah Selesai Ditangani', 'body' => 'Pengaduan Anda telah selesai dan resmi ditutup. Kami sangat menghargai kepedulian Anda. Masukan Anda menjadi bagian penting dalam perjalanan kami menuju pelayanan yang lebih baik.'],
         'Ditolak'               => ['title' => 'Mohon Maaf, Pengaduan Tidak Dapat Diproses', 'body' => 'Setelah melalui proses verifikasi, pengaduan Anda tidak dapat kami proses lebih lanjut. Untuk informasi lebih detail, silakan hubungi tim kami di bagian informasi rumah sakit. Kami mohon maaf atas ketidaknyamanan ini.'],
+        'REJECTED'              => ['title' => 'Mohon Maaf, Pengaduan Tidak Dapat Diproses', 'body' => 'Setelah melalui proses verifikasi, pengaduan Anda tidak dapat kami proses lebih lanjut. Untuk informasi lebih detail, silakan hubungi tim kami di bagian informasi rumah sakit. Kami mohon maaf atas ketidaknyamanan ini.'],
     ];
 
     $cfg = isset($ticket) && $ticket ? ($statusConfig[$ticket->status] ?? ['label' => $ticket->status, 'color' => 'gray', 'icon' => 'fa-question', 'step' => 1]) : null;
@@ -150,6 +152,33 @@
                 {{-- Progress Steps --}}
                 <div class="mb-4">
                     <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2.5">Progres Penanganan</p>
+                    @if($step === 'rejected')
+                    <div class="flex items-center gap-0">
+                        @php
+                            $steps = [
+                                ['label' => 'Diterima',    'icon' => 'fa-paper-plane'],
+                                ['label' => 'Diverifikasi','icon' => 'fa-shield-check'],
+                            ];
+                        @endphp
+                        @foreach($steps as $i => $s)
+                            <div class="flex flex-col items-center flex-1">
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm border-2 bg-red-500 border-transparent text-white">
+                                    <i class="fa-solid {{ $s['icon'] }} text-[10px]"></i>
+                                </div>
+                                <span class="text-[9px] mt-1 text-center font-medium text-gray-600">{{ $s['label'] }}</span>
+                            </div>
+                            @if(!$loop->last)
+                                <div class="flex-1 h-[3px] rounded-full -mt-[18px] mx-1 bg-red-500"></div>
+                            @endif
+                        @endforeach
+                        <div class="flex flex-col items-center flex-1">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm border-2 bg-red-500 border-transparent text-white">
+                                <i class="fa-solid fa-circle-xmark text-[10px]"></i>
+                            </div>
+                            <span class="text-[9px] mt-1 text-center font-medium text-red-600">Ditolak</span>
+                        </div>
+                    </div>
+                    @else
                     <div class="flex items-center gap-0">
                         @php
                             $steps = [
@@ -172,6 +201,7 @@
                             @endif
                         @endforeach
                     </div>
+                    @endif
                 </div>
 
                 {{-- Ticket Details --}}
@@ -209,11 +239,13 @@
             </div>
         </div>
 
-        {{-- Admin Verification Comment --}}
+        {{-- Admin Verification / Rejection Comment --}}
         @php
-            $tutupWorkflow = $ticket->workflows->firstWhere('action', 'tutup');
+            $adminWorkflow = $ticket->workflows->firstWhere(function ($w) {
+                return in_array($w->action, ['tutup', 'ditolak']);
+            });
         @endphp
-        @if($tutupWorkflow && $tutupWorkflow->komentar)
+        @if($adminWorkflow && $adminWorkflow->komentar)
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-4">
             <div class="px-5 py-4">
                 <div class="flex items-start gap-3">
@@ -221,12 +253,14 @@
                         <i class="fa-solid fa-stamp text-white text-xs"></i>
                     </span>
                     <div class="flex-1 min-w-0">
-                        <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Verifikasi Admin</p>
+                        <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                            {{ $adminWorkflow->action === 'ditolak' ? 'Alasan Penolakan' : 'Catatan Verifikasi Admin' }}
+                        </p>
                         <p class="text-xs text-gray-700 leading-relaxed bg-gray-50 rounded-xl px-3.5 py-2.5 border border-gray-100 italic">
-                            "{{ $tutupWorkflow->komentar }}"
+                            "{{ $adminWorkflow->komentar }}"
                         </p>
                         <p class="text-[10px] text-gray-400 mt-1.5">
-                            Admin Pengaduan • {{ $tutupWorkflow->created_at->format('d M Y, H:i') }}
+                            Admin Pengaduan • {{ $adminWorkflow->created_at->format('d M Y, H:i') }}
                         </p>
                     </div>
                 </div>
