@@ -54,31 +54,28 @@ class PengaduanController extends Controller
         $attachmentPath = null;
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
-            if ($file->isValid()) {
-                $ext = $file->guessExtension();
-                if (!$ext) {
-                    $ext = $file->getClientOriginalExtension() ?? 'jpg';
+            try {
+                if (!$file->isValid()) {
+                    $errorCode = $file->getError();
+                    throw new \RuntimeException(match ($errorCode) {
+                        UPLOAD_ERR_INI_SIZE     => 'Ukuran file melebihi batas maksimum server',
+                        UPLOAD_ERR_FORM_SIZE    => 'Ukuran file melebihi batas maksimum form',
+                        UPLOAD_ERR_PARTIAL      => 'File hanya terupload sebagian',
+                        UPLOAD_ERR_NO_FILE      => 'Tidak ada file yang dipilih',
+                        UPLOAD_ERR_NO_TMP_DIR   => 'Folder temporary tidak ditemukan',
+                        UPLOAD_ERR_CANT_WRITE   => 'Gagal menulis file ke disk',
+                        UPLOAD_ERR_EXTENSION    => 'Upload file dihentikan oleh ekstensi',
+                        default                 => 'File gagal diupload (kode: ' . $errorCode . ')',
+                    });
                 }
-                $ext = strtolower($ext);
+                $ext = strtolower($file->getClientOriginalExtension() ?: 'jpg');
                 if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif', 'pdf'])) {
                     $ext = 'jpg';
                 }
                 $filename = Str::random(40) . '.' . $ext;
-                Storage::disk('public')->put('attachments/' . $filename, $file->get());
-                $attachmentPath = 'attachments/' . $filename;
-            } else {
-                $errorCode = $file->getError();
-                $errorMsg = match ($errorCode) {
-                    UPLOAD_ERR_INI_SIZE     => 'Ukuran file melebihi batas maksimum server',
-                    UPLOAD_ERR_FORM_SIZE    => 'Ukuran file melebihi batas maksimum form',
-                    UPLOAD_ERR_PARTIAL      => 'File hanya terupload sebagian',
-                    UPLOAD_ERR_NO_FILE      => 'Tidak ada file yang dipilih',
-                    UPLOAD_ERR_NO_TMP_DIR   => 'Folder temporary tidak ditemukan',
-                    UPLOAD_ERR_CANT_WRITE   => 'Gagal menulis file ke disk',
-                    UPLOAD_ERR_EXTENSION    => 'Upload file dihentikan oleh ekstensi',
-                    default                 => 'File gagal diupload (kode: ' . $errorCode . ')',
-                };
-                return back()->withErrors(['attachment' => $errorMsg])->withInput();
+                $attachmentPath = $file->storeAs('attachments', $filename, 'public');
+            } catch (\Throwable $e) {
+                return back()->withErrors(['attachment' => 'Gagal mengupload file: ' . $e->getMessage()])->withInput();
             }
         }
 
