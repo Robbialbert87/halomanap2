@@ -25,7 +25,7 @@
                         <a href="/" class="px-4 py-2 text-sm font-semibold text-blue-600 bg-blue-50 rounded-lg">Beranda</a>
                         <a href="/pengaduan/buat?type=Pengaduan" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Pengaduan</a>
                         <a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank" rel="noopener noreferrer" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Survei</a>
-                        <a href="/pengaduan/buat?type=Apresiasi" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Apresiasi</a>
+                        <a href="{{ route('apresiasi.create') }}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Apresiasi</a>
                         <a href="/pengaduan/buat?type=Informasi" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Informasi</a>
                     </nav>
                     <div class="flex items-center gap-3">
@@ -92,7 +92,7 @@
                                 <p class="text-xs text-gray-500">Isi Survei Kepuasan Masyarakat</p>
                             </div>
                         </a>
-                        <a href="/pengaduan/buat?type=Apresiasi"
+                        <a href="{{ route('apresiasi.create') }}"
                             class="group bg-white/80 backdrop-blur-xl p-8 rounded-2xl shadow-sm border border-white/30 flex flex-col items-center text-center gap-3 hover:shadow-lg hover:-translate-y-1 transition-all active:scale-[0.98]" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
                             <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center text-3xl shadow-md shadow-blue-200/50">
                                 <i class="fa-solid fa-thumbs-up"></i>
@@ -187,7 +187,7 @@
                         <p class="text-[11px] text-gray-400 mt-auto">Isi Survei Kepuasan</p>
                     </a>
 
-                    <a href="/pengaduan/buat?type=Apresiasi"
+                    <a href="{{ route('apresiasi.create') }}"
                         class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 flex flex-col items-center p-4 active:scale-[0.97] transition-transform"
                         style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%); height:175px">
                         <div class="flex flex-col items-center justify-center flex-1">

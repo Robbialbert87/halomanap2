@@ -23,6 +23,11 @@ Route::get('/pengaduan/sukses/{ticket_number}', [PengaduanController::class, 'su
 Route::get('/pengaduan/tiket/{ticket_number}/download', [PengaduanController::class, 'downloadTicket'])->name('pengaduan.ticket-download');
 Route::get('/lacak', [PengaduanController::class, 'track'])->name('pengaduan.track');
 
+// ── APRESIASI (public) ────────────────────────────────────────────────────────
+Route::get('/apresiasi', [App\Http\Controllers\ApresiasiController::class, 'create'])->name('apresiasi.create');
+Route::post('/apresiasi', [App\Http\Controllers\ApresiasiController::class, 'store'])->name('apresiasi.store');
+Route::get('/apresiasi/sukses', [App\Http\Controllers\ApresiasiController::class, 'success'])->name('apresiasi.sukses');
+
 // ── PROTECTED (auth required) ─────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
 
@@ -139,6 +144,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('rooms',      App\Http\Controllers\Admin\RoomController::class);
         Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
         Route::resource('unit-types', App\Http\Controllers\Admin\UnitTypeController::class);
+
+        // Apresiasi
+        Route::get('apresiasi', [App\Http\Controllers\Admin\ApresiasiController::class, 'index'])->name('apresiasi.index');
 
         // User & Role Management
         Route::resource('users',    App\Http\Controllers\Admin\UserController::class);

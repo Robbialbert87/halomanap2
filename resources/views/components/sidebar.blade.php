@@ -45,6 +45,11 @@
                 <span class="text-sm font-medium">Disposisi</span>
             </a>
 
+            <a href="{{ route('admin.apresiasi.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.apresiasi.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-thumbs-up w-5 text-center"></i>
+                <span class="text-sm font-medium">Apresiasi</span>
+            </a>
+
             {{-- ======================== MASTER DATA ======================== --}}
             @php $hasMaster = auth()->user()->can('manage-roles') || auth()->user()->can('manage-users') || auth()->user()->can('manage-jabatans') || auth()->user()->can('manage-units') || auth()->user()->can('manage-rooms') || auth()->user()->can('manage-categories'); @endphp
             @if($hasMaster)
