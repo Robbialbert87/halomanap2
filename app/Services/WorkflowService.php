@@ -96,7 +96,7 @@ class WorkflowService
                 ],
             ]);
 
-            event(new WorkflowChanged($history, 'disposisi_baru'));
+            DB::afterCommit(fn() => event(new WorkflowChanged($history, 'disposisi_baru')));
 
             return $history;
         });
@@ -165,7 +165,7 @@ class WorkflowService
                 ],
             ]);
 
-            event(new WorkflowChanged($newHistory, 'eskalasi'));
+            DB::afterCommit(fn() => event(new WorkflowChanged($newHistory, 'eskalasi')));
 
             return $newHistory;
         });
@@ -234,7 +234,7 @@ class WorkflowService
                 ]);
             }
 
-            event(new WorkflowChanged($newHistory, 'pengaduan_selesai'));
+            DB::afterCommit(fn() => event(new WorkflowChanged($newHistory, 'pengaduan_selesai')));
         });
 
         return $history->fresh();
@@ -273,7 +273,7 @@ class WorkflowService
             ]);
 
             AuditTrail::log('tutup_pengaduan', Ticket::class, $ticket->id);
-            event(new WorkflowChanged($newHistory, 'pengaduan_ditutup'));
+            DB::afterCommit(fn() => event(new WorkflowChanged($newHistory, 'pengaduan_ditutup')));
         });
 
         return $history->fresh();
