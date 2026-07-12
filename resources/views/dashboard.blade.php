@@ -137,19 +137,8 @@
                 <!-- Grafik Bulanan -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                     <h3 class="font-bold text-gray-800 mb-4">Grafik Pengaduan Bulanan</h3>
-                    @php $maxMonth = max($monthlyData->max(), 1); @endphp
-                    <div class="h-64 w-full flex items-end gap-2 text-xs text-gray-400">
-                        @foreach($monthlyData as $i => $val)
-                        <div class="flex-1 flex flex-col items-center justify-end h-full gap-1">
-                            <span class="font-bold text-gray-700 text-xs">{{ $val }}</span>
-                            <div class="w-full bg-blue-500 rounded-t" style="height: {{ ($val / $maxMonth) * 100 }}%; min-height: {{ $val > 0 ? '4px' : '0' }};"></div>
-                        </div>
-                        @endforeach
-                    </div>
-                    <div class="flex justify-between mt-2 text-xs text-gray-400">
-                        @foreach($monthlyLabels as $label)
-                        <span>{{ $label }}</span>
-                        @endforeach
+                    <div class="relative h-64">
+                        <canvas id="monthlyChart"></canvas>
                     </div>
                 </div>
 
@@ -234,4 +223,50 @@
                     </div>
                 </div>
             </div>
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('monthlyChart').getContext('2d');
+    const labels = @json($monthlyLabels);
+    const data = @json($monthlyData);
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.85)');
+    gradient.addColorStop(1, 'rgba(59, 130, 246, 0.25)');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Pengaduan',
+                data: data,
+                backgroundColor: gradient,
+                borderColor: 'rgba(59, 130, 246, 1)',
+                borderWidth: 1.5,
+                borderRadius: 6,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1, color: '#9ca3af' },
+                    grid: { color: 'rgba(0,0,0,0.04)' }
+                },
+                x: {
+                    ticks: { color: '#9ca3af' },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+});
+</script>
+@endpush
 @endsection
