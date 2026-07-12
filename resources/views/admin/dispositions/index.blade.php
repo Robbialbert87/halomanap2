@@ -145,7 +145,7 @@
                 <span class="text-[11px] text-gray-500 truncate">
                     {{ $wf->toUnit?->nama ?? '-' }} · {{ $wf->toUser?->nama ?? '-' }}
                 </span>
-                <span class="inline-block px-1.5 py-0.5 text-[10px] font-semibold rounded {{ $wf->status_badge['class'] }}">{{ $wf->status_badge['label'] }}</span>
+                <span class="inline-block px-1.5 py-0.5 text-[10px] font-semibold rounded {{ $wf->action_badge['class'] }}">{{ $wf->action_badge['label'] }}</span>
             </div>
         </div>
     </div>
@@ -187,7 +187,7 @@
                         {{ $wf->toUser?->nama ?? '-' }}
                         <span class="text-xs text-gray-400 block">{{ $wf->toJabatan?->nama ?? '' }}</span>
                     </td>
-                    <td class="px-4 py-3"><span class="inline-block px-2 py-1 text-xs font-semibold rounded {{ $wf->status_badge['class'] }}">{{ $wf->status_badge['label'] }}</span></td>
+                    <td class="px-4 py-3"><span class="inline-block px-2 py-1 text-xs font-semibold rounded {{ $wf->action_badge['class'] }}">{{ $wf->action_badge['label'] }}</span></td>
                     <td class="px-4 py-3 whitespace-nowrap {{ $isOverdue ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
                         @if($wf->due_at)
                             {{ $wf->due_at->format('d/m/Y') }}

@@ -16,7 +16,8 @@ class DispositionController extends Controller
     {
         $query = WorkflowHistory::with([
             'ticket', 'toUser.jabatan', 'toUnit', 'fromUser'
-        ])->orderBy('created_at', 'desc');
+        ])->where('from_user_id', auth()->id())
+          ->orderBy('created_at', 'desc');
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
