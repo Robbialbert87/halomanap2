@@ -113,6 +113,22 @@ class PengaduanController extends Controller
         // Kirim WA ke Admin Pengaduan
         $this->notifyAdmins($ticket);
 
+        // Kirim WA ke Pelapor
+        if ($ticket->reporter_phone) {
+            $pesanPelapor = implode("\n", [
+                "*HALO MANAP - Pengaduan Terdaftar*",
+                "─────────────────────",
+                "📋 *No Tiket:* {$ticket->ticket_number}",
+                "📝 *Judul:* {$ticket->title}",
+                "",
+                "Simpan nomor tiket untuk melacak status.",
+                "🔗 " . route('lacak') . '?ticket_number=' . $ticket->ticket_number,
+                "─────────────────────",
+                "_RSUD H. Abdul Manap Kota Jambi_",
+            ]);
+            SendWhatsAppNotification::dispatch($ticket->reporter_phone, $pesanPelapor);
+        }
+
         return redirect()->route('pengaduan.success', ['ticket_number' => $ticket->ticket_number]);
     }
 

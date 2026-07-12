@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Tiket Pengaduan - {{ $ticket->ticket_number }}</title>
     <style>
-        @page { 
+@page { 
             margin: 0;
             size: 380px 640px;
         }
