@@ -89,6 +89,20 @@ class WorkflowHistory extends Model
         };
     }
 
+    public function getActionBadgeAttribute(): array
+    {
+        return match ($this->action) {
+            'disposisi'       => ['label' => 'Disposisi',          'class' => 'bg-purple-100 text-purple-800'],
+            'eskalasi'        => ['label' => 'Eskalasi',           'class' => 'bg-red-100 text-red-800'],
+            'tangani_sendiri' => ['label' => 'Tangani Sendiri',    'class' => 'bg-indigo-100 text-indigo-800'],
+            'selesai'         => ['label' => 'Selesaikan',         'class' => 'bg-green-100 text-green-800'],
+            'verifikasi'      => ['label' => 'Verifikasi',         'class' => 'bg-purple-100 text-purple-800'],
+            'tutup'           => ['label' => 'Ditutup',            'class' => 'bg-gray-100 text-gray-800'],
+            'ditolak'         => ['label' => 'Ditolak',            'class' => 'bg-red-100 text-red-800'],
+            default           => ['label' => $this->action_label,  'class' => 'bg-gray-100 text-gray-800'],
+        };
+    }
+
     public function getActionLabelAttribute(): string
     {
         return match ($this->action) {
