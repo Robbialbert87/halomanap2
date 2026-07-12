@@ -6,6 +6,7 @@ use App\Events\WorkflowChanged;
 use App\Models\NotificationLog;
 use App\Models\Jabatan;
 use App\Models\User;
+use App\Services\RoleMenuService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Http;
@@ -76,7 +77,7 @@ class SendWhatsAppNotification implements ShouldQueue
         $toUnit    = $history->toUnit?->nama    ?? '-';
         $nomor     = $ticket->ticket_number     ?? '-';
         $judul     = $ticket->title             ?? '-';
-        $url       = config('app.url') . '/admin/tickets';
+        $url       = $this->getInboxUrl($history->toUser);
 
         return match ($jenis) {
             'disposisi_baru' => implode("\n", [
@@ -138,7 +139,7 @@ class SendWhatsAppNotification implements ShouldQueue
         $nomor     = $ticket->ticket_number     ?? '-';
         $judul     = $ticket->title             ?? '-';
         $status    = $history->status;
-        $url       = config('app.url') . '/admin/monitoring';
+        $url       = route('direktur.dashboard');
 
         return implode("\n", [
             "*MONITORING HALO MANAP*",
@@ -167,7 +168,7 @@ class SendWhatsAppNotification implements ShouldQueue
         $pelapor   = $ticket->is_anonymous ? 'Anonim' : ($ticket->reporter_name ?? '-');
         $unit      = $history->toUnit?->nama ?? '-';
         $pj        = $history->toUser?->nama ?? '-';
-        $url       = config('app.url') . '/admin/tickets/' . $ticket->id;
+        $url       = route('admin.tickets.show', $ticket->id);
 
         return implode("\n", [
             "*HALO MANAP - Verifikasi Diperlukan*",
@@ -192,6 +193,22 @@ class SendWhatsAppNotification implements ShouldQueue
      * Kirim pesan WA dan simpan log.
      * TODO: Ganti implementasi ini dengan gateway WA yang sesuai (Fonnte, WA Cloud API, dll).
      */
+    private function getInboxUrl(?User $user): string
+    {
+        if (!$user) return route('admin.tickets.index');
+
+        $roleGroup = RoleMenuService::getRoleGroup($user);
+
+        return match ($roleGroup) {
+            'kepala_unit' => route('kepala-unit.dispositions.index'),
+            'kasi'        => route('kasi.dispositions.index'),
+            'kabid'       => route('kabid.dispositions.index'),
+            'head_unit'   => route('head-unit.dispositions.index'),
+            'direktur'    => route('direktur.dashboard'),
+            default       => route('admin.tickets.index'),
+        };
+    }
+
     private function send(User $recipient, string $message, string $jenis, $history): void
     {
         $status = 'failed';

@@ -183,7 +183,7 @@ class PengaduanController extends Controller
             "👤 *Pelapor:* {$nama}",
             "",
             "Silakan login untuk memverifikasi.",
-            "🔗 " . config('app.url') . '/admin/tickets',
+            "🔗 " . route('admin.tickets.index'),
             "─────────────────────",
             "_RSUD H. Abdul Manap Kota Jambi_",
         ]);
