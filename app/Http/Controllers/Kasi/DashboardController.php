@@ -11,7 +11,8 @@ class DashboardController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $query = WorkflowHistory::where('to_user_id', $user->id);
+        $query = WorkflowHistory::where('from_user_id', $user->id)
+            ->whereIn('action', ['disposisi', 'eskalasi']);
 
         $baru = (clone $query)->where('status', 'menunggu_respon')->count();
         $dalamProses = (clone $query)->where('status', 'dalam_penanganan')->count();
@@ -28,11 +29,12 @@ class DashboardController extends Controller
             $count = 0;
             foreach ($completedTicketIds as $ticketId) {
                 $first = WorkflowHistory::where('ticket_id', $ticketId)
-                    ->where('to_user_id', $user->id)
+                    ->where('from_user_id', $user->id)
+                    ->whereIn('action', ['disposisi', 'eskalasi'])
                     ->orderBy('created_at')
                     ->value('created_at');
                 $last = WorkflowHistory::where('ticket_id', $ticketId)
-                    ->whereIn('action', ['selesai', 'tutup'])
+                    ->whereIn('status', ['selesai', 'ditutup'])
                     ->orderBy('created_at')
                     ->value('created_at');
                 if ($first && $last) {
@@ -46,7 +48,7 @@ class DashboardController extends Controller
         }
 
         $latestWorkflows = (clone $query)
-            ->with(['ticket.room.unit', 'ticket.category', 'fromUser'])
+            ->with(['ticket.room.unit', 'ticket.category', 'toUser', 'toJabatan'])
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();

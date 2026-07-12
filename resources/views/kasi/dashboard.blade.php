@@ -21,7 +21,7 @@
                 <i class="fa-solid fa-inbox"></i>
             </div>
             <div>
-                <p class="text-sm text-gray-500 font-medium">Disposisi Baru</p>
+                <p class="text-sm text-gray-500 font-medium">Terkirim</p>
                 <h3 class="text-2xl font-bold text-gray-800">{{ $baru }}</h3>
             </div>
         </div>
@@ -69,7 +69,7 @@
                 <thead>
                     <tr class="text-left text-gray-500 border-b">
                         <th class="pb-3 font-medium">Pengaduan</th>
-                        <th class="pb-3 font-medium">Dari</th>
+                        <th class="pb-3 font-medium">Tujuan</th>
                         <th class="pb-3 font-medium">Status</th>
                         <th class="pb-3 font-medium">Tanggal</th>
                     </tr>
@@ -83,8 +83,8 @@
                                 </a>
                                 <div class="text-xs text-gray-400">{{ $wf->ticket->room->unit->nama ?? '-' }}</div>
                             </td>
-                            <td class="py-3">{{ $wf->fromUser->nama ?? '-' }}</td>
-                            <td class="py-3">{!! $wf->status_badge['label'] ?? $wf->status !!}</td>
+                            <td class="py-3">{{ $wf->toUser->nama ?? '-' }}<br><span class="text-[10px] text-gray-400">{{ $wf->toJabatan->nama ?? '' }}</span></td>
+                            <td class="py-3"><span class="inline-block px-2 py-0.5 text-xs font-semibold rounded {{ $wf->action_badge['class'] }}">{{ $wf->action_badge['label'] }}</span></td>
                             <td class="py-3 text-gray-500">{{ $wf->created_at->format('d/m/Y H:i') }}</td>
                         </tr>
                     @endforeach
@@ -93,8 +93,8 @@
         </div>
     @else
         <div class="text-center py-12 text-gray-400">
-            <i class="fa-solid fa-inbox text-5xl mb-4"></i>
-            <p>Belum ada disposisi masuk</p>
+            <i class="fa-solid fa-paper-plane text-5xl mb-4"></i>
+            <p>Belum ada disposisi dikirim</p>
         </div>
     @endif
 </div>
