@@ -11,9 +11,9 @@ class DalamPenangananController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $workflows = WorkflowHistory::with(['ticket.room.unit', 'ticket.category', 'fromUser', 'toJabatan'])
-            ->where('to_user_id', $user->id)
-            ->where('status', 'dalam_penanganan')
+        $workflows = WorkflowHistory::with(['ticket.room.unit', 'ticket.category', 'fromUser', 'toJabatan', 'toUser'])
+            ->where('from_user_id', $user->id)
+            ->whereIn('status', ['menunggu_respon', 'dalam_penanganan'])
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
