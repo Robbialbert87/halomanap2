@@ -167,6 +167,15 @@
             @endcan
             @endif
 
+            <div class="pt-4 pb-1">
+                <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Akun</p>
+            </div>
+
+            <a href="{{ route('admin.profil') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.profil') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+                <i class="fa-solid fa-user w-5 text-center"></i>
+                <span class="text-sm font-medium">Profil</span>
+            </a>
+
         {{-- ============================================================ --}}
         {{--  KEPALA UNIT                                                  --}}
         {{-- ============================================================ --}}

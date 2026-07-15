@@ -91,7 +91,7 @@
                     <p class="text-sm font-semibold text-gray-800">{{ auth()->user()?->nama }}</p>
                     <p class="text-xs text-gray-400 truncate">{{ auth()->user()?->phone_number ?? auth()->user()?->email ?? '-' }}</p>
                 </div>
-                <a href="{{ route('admin.users.index') }}"
+                <a href="{{ route('admin.profil') }}"
                     class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
                     <i class="fa-solid fa-user-gear w-4 text-center text-gray-400"></i> Profil & Pengaturan
                 </a>

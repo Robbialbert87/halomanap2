@@ -384,7 +384,7 @@
                                 <p class="text-sm font-bold text-gray-800 font-heading truncate">{{ auth()->user()?->nama ?? 'User' }}</p>
                                 <p class="text-[11px] text-blue-500 font-medium truncate mt-0.5">{{ auth()->user()?->roles->first()?->name ?? 'Pegawai' }}</p>
                             </div>
-                            <a href="{{ route('admin.users.index') }}"
+                            <a href="{{ route('admin.profil') }}"
                                 class="flex items-center gap-3 px-4 py-3 text-sm text-gray-600 hover:bg-blue-50 transition-colors active:bg-blue-100 border-b border-gray-50">
                                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
                                     <i class="fa-solid fa-user-gear text-white text-xs"></i>

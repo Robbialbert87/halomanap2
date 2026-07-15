@@ -152,6 +152,10 @@ Route::middleware('auth')->group(function () {
         Route::get('laporan', [App\Http\Controllers\Admin\LaporanController::class, 'index'])->name('laporan');
         Route::get('laporan/export-pdf', [App\Http\Controllers\Admin\LaporanController::class, 'exportPdf'])->name('laporan.export-pdf');
 
+        // Profil
+        Route::get('profil', [App\Http\Controllers\Admin\ProfilController::class, 'index'])->name('profil');
+        Route::post('profil/password', [App\Http\Controllers\Admin\ProfilController::class, 'updatePassword'])->name('profil.password');
+
         // User & Role Management
         Route::resource('users',    App\Http\Controllers\Admin\UserController::class);
         Route::resource('roles',    App\Http\Controllers\Admin\RoleController::class);
