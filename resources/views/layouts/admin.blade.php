@@ -136,6 +136,12 @@
                 </span>
                 Monitoring
             </a>
+            <a href="{{ route('admin.laporan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+                <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
+                    <i class="fa-solid fa-file-lines text-white text-xs"></i>
+                </span>
+                Laporan
+            </a>
             @endif
 
             @php $hasSettings = auth()->user()->can('manage-audit-trail') || auth()->user()->can('manage-whatsapp') || auth()->user()->can('manage-settings'); @endphp

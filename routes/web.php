@@ -148,6 +148,10 @@ Route::middleware('auth')->group(function () {
         // Apresiasi
         Route::get('apresiasi', [App\Http\Controllers\Admin\ApresiasiController::class, 'index'])->name('apresiasi.index');
 
+        // Laporan
+        Route::get('laporan', [App\Http\Controllers\Admin\LaporanController::class, 'index'])->name('laporan');
+        Route::get('laporan/export-pdf', [App\Http\Controllers\Admin\LaporanController::class, 'exportPdf'])->name('laporan.export-pdf');
+
         // User & Role Management
         Route::resource('users',    App\Http\Controllers\Admin\UserController::class);
         Route::resource('roles',    App\Http\Controllers\Admin\RoleController::class);
