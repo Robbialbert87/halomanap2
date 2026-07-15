@@ -68,19 +68,23 @@
                 @endforeach
             </select>
         </div>
-        <div class="sm:col-span-2 lg:col-span-5 flex gap-2 mt-1">
-            <button type="submit"
-                class="bg-gradient-to-br from-blue-500 to-blue-700 text-white font-semibold rounded-xl px-6 py-2.5 text-sm shadow-md shadow-blue-200/50 hover:shadow-lg active:scale-[0.98] transition-all">
-                <i class="fa-solid fa-filter mr-1.5"></i> Filter
-            </button>
-            <a href="{{ route('admin.laporan') }}"
-                class="bg-white/70 border border-gray-200 text-gray-600 font-medium rounded-xl px-6 py-2.5 text-sm hover:bg-gray-50 active:scale-[0.98] transition-all">
-                <i class="fa-solid fa-rotate-right mr-1.5"></i> Reset
-            </a>
-            <a href="{{ route('admin.laporan.export-pdf', request()->query()) }}"
-                class="bg-gradient-to-br from-red-500 to-red-700 text-white font-semibold rounded-xl px-6 py-2.5 text-sm shadow-md shadow-red-200/50 hover:shadow-lg active:scale-[0.98] transition-all ml-auto">
-                <i class="fa-solid fa-file-pdf mr-1.5"></i> Export PDF
-            </a>
+        <div class="sm:col-span-2 lg:col-span-5 mt-1">
+            <div class="flex flex-col md:flex-row gap-2">
+                <div class="flex gap-2 w-full md:w-auto">
+                    <button type="submit"
+                        class="flex-1 md:flex-none bg-gradient-to-br from-blue-500 to-blue-700 text-white font-semibold rounded-xl px-5 py-2.5 text-sm shadow-md shadow-blue-200/50 hover:shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-filter"></i> Filter
+                    </button>
+                    <a href="{{ route('admin.laporan') }}"
+                        class="flex-1 md:flex-none bg-white/70 border border-gray-200 text-gray-600 font-medium rounded-xl px-5 py-2.5 text-sm hover:bg-gray-50 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-rotate-right"></i> Reset
+                    </a>
+                </div>
+                <a href="{{ route('admin.laporan.export-pdf', request()->query()) }}"
+                    class="w-full md:w-auto bg-gradient-to-br from-red-500 to-red-700 text-white font-semibold rounded-xl px-5 py-2.5 text-sm shadow-md shadow-red-200/50 hover:shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 md:ml-auto">
+                    <i class="fa-solid fa-file-pdf"></i> Export PDF
+                </a>
+            </div>
         </div>
     </form>
 </div>
