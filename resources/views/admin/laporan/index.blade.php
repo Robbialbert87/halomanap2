@@ -154,18 +154,24 @@
                     <th class="text-left px-4 md:px-6 py-3 hidden lg:table-cell">Unit</th>
                     <th class="text-left px-4 md:px-6 py-3 hidden lg:table-cell">Kategori</th>
                     <th class="text-left px-4 md:px-6 py-3">Status</th>
-                    <th class="text-left px-4 md:px-6 py-3 hidden md:table-cell">Tanggal</th>
+                    <th class="text-left px-4 md:px-6 py-3 hidden md:table-cell">Keluhan</th>
+                    <th class="text-left px-4 md:px-6 py-3 hidden xl:table-cell">Penyelesaian</th>
+                    <th class="text-left px-4 md:px-6 py-3 hidden xl:table-cell">Tgl. Penyelesaian</th>
+                    <th class="text-left px-4 md:px-6 py-3 hidden md:table-cell">Tgl. Masuk</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @foreach($tickets as $ticket)
+                @php
+                $penyelesaianWorkflow = $ticket->workflows->first();
+                @endphp
                 <tr class="hover:bg-gray-50/50 transition-colors">
                     <td class="px-4 md:px-6 py-3">
                         <a href="{{ route('admin.tickets.show', $ticket->id) }}" class="text-blue-600 font-medium hover:underline">
                             {{ $ticket->ticket_number }}
                         </a>
                     </td>
-                    <td class="px-4 md:px-6 py-3 text-gray-800 max-w-[200px] truncate">{{ $ticket->title }}</td>
+                    <td class="px-4 md:px-6 py-3 text-gray-800 max-w-[200px] truncate" title="{{ $ticket->title }}">{{ $ticket->title }}</td>
                     <td class="px-4 md:px-6 py-3 text-gray-500 hidden md:table-cell">{{ $ticket->is_anonymous ? 'Anonim' : ($ticket->reporter_name ?? '-') }}</td>
                     <td class="px-4 md:px-6 py-3 text-gray-500 hidden lg:table-cell">{{ $ticket->room?->unit?->nama ?? '-' }}</td>
                     <td class="px-4 md:px-6 py-3 text-gray-500 hidden lg:table-cell">{{ $ticket->category?->name ?? '-' }}</td>
@@ -182,6 +188,9 @@
                         @endphp
                         <span class="inline-block px-2.5 py-1 rounded-full text-[10px] md:text-xs font-semibold {{ $badge }}">{{ $ticket->status }}</span>
                     </td>
+                    <td class="px-4 md:px-6 py-3 text-gray-600 text-xs max-w-[250px] truncate hidden md:table-cell" title="{{ strip_tags($ticket->description) }}">{{ Str::limit(strip_tags($ticket->description), 100) }}</td>
+                    <td class="px-4 md:px-6 py-3 text-gray-600 text-xs max-w-[200px] truncate hidden xl:table-cell" title="{{ $penyelesaianWorkflow?->komentar ?? '' }}">{{ $penyelesaianWorkflow?->komentar ? Str::limit($penyelesaianWorkflow->komentar, 80) : '-' }}</td>
+                    <td class="px-4 md:px-6 py-3 text-gray-400 text-xs hidden xl:table-cell">{{ $penyelesaianWorkflow?->completed_at ? \Carbon\Carbon::parse($penyelesaianWorkflow->completed_at)->format('d/m/Y H:i') : '-' }}</td>
                     <td class="px-4 md:px-6 py-3 text-gray-400 text-xs hidden md:table-cell">{{ $ticket->created_at->format('d/m/Y H:i') }}</td>
                 </tr>
                 @endforeach

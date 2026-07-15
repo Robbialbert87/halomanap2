@@ -8,8 +8,10 @@
         h1 { text-align: center; font-size: 18px; margin-bottom: 4px; }
         h2 { text-align: center; font-size: 12px; font-weight: normal; color: #666; margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { background: #2563eb; color: white; padding: 8px 6px; text-align: left; font-size: 10px; text-transform: uppercase; }
-        td { padding: 6px; border-bottom: 1px solid #e5e7eb; font-size: 10px; }
+        th { background: #2563eb; color: white; padding: 8px 4px; text-align: left; font-size: 9px; text-transform: uppercase; }
+        td { padding: 5px 4px; border-bottom: 1px solid #e5e7eb; font-size: 9px; }
+        .keluhan { max-width: 120px; word-wrap: break-word; }
+        .penyelesaian { max-width: 100px; word-wrap: break-word; }
         tr:nth-child(even) { background: #f9fafb; }
         .stats { display: flex; justify-content: space-between; margin-bottom: 15px; }
         .stat { text-align: center; flex: 1; padding: 8px; border: 1px solid #e5e7eb; border-radius: 4px; margin: 0 4px; }
@@ -75,11 +77,15 @@
                 <th>Judul</th>
                 <th>Pelapor</th>
                 <th>Status</th>
-                <th>Tanggal</th>
+                <th>Keluhan</th>
+                <th>Penyelesaian</th>
+                <th>Tgl. Selesai</th>
+                <th>Tgl. Masuk</th>
             </tr>
         </thead>
         <tbody>
             @forelse($tickets as $ticket)
+            @php $pw = $ticket->workflows->first(); @endphp
             <tr>
                 <td>{{ $ticket->ticket_number }}</td>
                 <td>{{ $ticket->title }}</td>
@@ -89,11 +95,14 @@
                         {{ $ticket->status }}
                     </span>
                 </td>
+                <td class="keluhan">{{ strip_tags($ticket->description) }}</td>
+                <td class="penyelesaian">{{ $pw?->komentar ?? '-' }}</td>
+                <td>{{ $pw?->completed_at ? \Carbon\Carbon::parse($pw->completed_at)->format('d/m/Y') : '-' }}</td>
                 <td>{{ $ticket->created_at->format('d/m/Y') }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="5" style="text-align: center; color: #999; padding: 20px;">Tidak ada data</td>
+                <td colspan="8" style="text-align: center; color: #999; padding: 20px;">Tidak ada data</td>
             </tr>
             @endforelse
         </tbody>

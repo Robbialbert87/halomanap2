@@ -14,7 +14,7 @@ class LaporanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Ticket::with(['room.unit', 'category']);
+        $query = Ticket::with(['room.unit', 'category', 'workflows' => fn($q) => $q->whereIn('action', ['selesai', 'tutup'])->latest()]);
 
         if ($request->filled('start_date')) {
             $query->whereDate('created_at', '>=', $request->start_date);
@@ -54,7 +54,7 @@ class LaporanController extends Controller
 
     public function exportPdf(Request $request)
     {
-        $query = Ticket::with(['room.unit', 'category']);
+        $query = Ticket::with(['room.unit', 'category', 'workflows' => fn($q) => $q->whereIn('action', ['selesai', 'tutup'])->latest()]);
 
         if ($request->filled('start_date')) {
             $query->whereDate('created_at', '>=', $request->start_date);
