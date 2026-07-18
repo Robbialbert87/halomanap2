@@ -11,7 +11,7 @@
         <div class="hidden md:block">
             <!-- TOP NAVBAR (PayApp glossy) -->
             <header class="bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30 shadow-sm" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
-                <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                <div class="max-w-7xl mx-auto px-6 h-16 grid grid-cols-[auto_1fr_auto] items-center">
                     <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
                         <div class="w-9 h-9 flex items-center justify-center">
                             <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
@@ -21,7 +21,7 @@
                             <p class="text-[9px] text-gray-500 leading-none">RSUD H. Abdul Manap Kota Jambi</p>
                         </div>
                     </a>
-                    <nav class="flex items-center gap-1">
+                    <nav class="flex items-center justify-center gap-1">
                         <a href="/" class="px-4 py-2 text-sm font-semibold text-blue-600 bg-blue-50 rounded-lg">Beranda</a>
                         <a href="/pengaduan/buat?type=Pengaduan" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Pengaduan</a>
                         <a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank" rel="noopener noreferrer" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Survei</a>
