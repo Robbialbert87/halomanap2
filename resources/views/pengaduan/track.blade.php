@@ -473,7 +473,7 @@
         @endif
 
         {{-- Footer Links --}}
-        <div class="text-center mt-6 text-[11px] text-gray-400 flex items-center justify-center gap-3">
+        <div class="hidden md:flex text-center mt-6 text-[11px] text-gray-400 items-center justify-center gap-3">
             <a href="/" class="hover:text-blue-600 transition-colors flex items-center gap-1">
                 <i class="fa-solid fa-house"></i> Beranda
             </a>
