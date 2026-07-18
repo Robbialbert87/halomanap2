@@ -2,6 +2,21 @@
 
 @section('title', 'Halo MANAP - Pusat Pengaduan, Aspirasi dan Informasi Pelayanan')
 
+@push('styles')
+<style>
+    @keyframes fadeSlideUp {
+        0%   { opacity: 0; transform: translateY(24px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideUp {
+        0%   { opacity: 0; transform: translateY(100%); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    .anim-fade { animation: fadeSlideUp 0.45s ease-out both; }
+    .anim-slide { animation: slideUp 0.4s ease-out both; }
+</style>
+@endpush
+
 @section('content')
     <div class="bg-[#F3F4F6] min-h-screen">
 
@@ -189,14 +204,14 @@
             <main class="flex-1 px-4 pt-4 pb-24 overflow-y-auto no-scrollbar">
 
                 <!-- Banner Mobile -->
-                <div class="rounded-2xl overflow-hidden shadow-sm border border-white/30 mb-5" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+                <div class="anim-fade rounded-2xl overflow-hidden shadow-sm border border-white/30 mb-5" style="animation-delay:0s;background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
                     <img src="{{ asset('assets/images/banner-halo-manap.jpg') }}" alt="Banner"
                         class="w-full h-auto object-cover"
                         onerror="this.src='https://placehold.co/600x300/eff6ff/1d4ed8?text=Halo+MANAP'">
                 </div>
 
                 <!-- Menu Grid 2x2 ala PayApp -->
-                <div class="grid grid-cols-2 gap-3 mb-5">
+                <div class="anim-fade grid grid-cols-2 gap-3 mb-5" style="animation-delay:0.1s">
 
                     <a href="/pengaduan/buat?type=Pengaduan"
                         class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 flex flex-col items-center p-4 active:scale-[0.97] transition-transform"
@@ -248,7 +263,7 @@
                 </div>
 
                 <!-- Cek Status Card ala PayApp Search -->
-                <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 p-5 mb-5" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+                <div class="anim-fade bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 p-5 mb-5" style="animation-delay:0.2s;background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
                     <div class="flex items-center mb-4">
                         <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-md shadow-teal-200/50 flex-shrink-0">
                             <i class="fa-solid fa-magnifying-glass text-white text-lg"></i>
@@ -272,7 +287,7 @@
                 </div>
 
                 {{-- Mobile Footer --}}
-                <div class="bg-gray-900 rounded-2xl px-5 py-5 mb-4">
+                <div class="anim-fade bg-gray-900 rounded-2xl px-5 py-5 mb-4" style="animation-delay:0.3s">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2.5">
                             <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-7 h-7 object-contain">
@@ -295,7 +310,7 @@
             </main>
 
             <!-- BOTTOM NAV ala PayApp (detached rounded) -->
-            <nav class="fixed bottom-3 left-3 right-3 bg-white/70 backdrop-blur-xl border border-white/30 rounded-2xl flex justify-around items-center px-2 pt-1.5 pb-5 z-50 shadow-[0_-4px_30px_rgba(0,0,0,0.08)]" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+            <nav class="anim-slide fixed bottom-3 left-3 right-3 bg-white/70 backdrop-blur-xl border border-white/30 rounded-2xl flex justify-around items-center px-2 pt-1.5 pb-5 z-50 shadow-[0_-4px_30px_rgba(0,0,0,0.08)]" style="animation-delay:0.35s;background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
                 <a href="/" class="flex flex-col items-center gap-0.5 w-14 py-1 text-blue-600">
                     <i class="fa-solid fa-house text-xl"></i>
                     <span class="text-[9px] font-semibold">Beranda</span>
