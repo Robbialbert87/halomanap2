@@ -166,7 +166,7 @@
                                 </li>
                                 <li class="flex items-center gap-2.5">
                                     <i class="fa-solid fa-globe text-blue-400 w-3.5 text-center"></i>
-                                    <a href="https://rsudkotajambi.id" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">rsudkotajambi.id</a>
+                                    <a href="https://simanap.rsudkotajambi.id/" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">simanap.rsudkotajambi.id</a>
                                 </li>
                             </ul>
                         </div>
@@ -302,7 +302,7 @@
                         <div class="flex items-center gap-3 pt-1">
                             <a href="https://www.instagram.com/rsudkotajambi?igsh=MWJoOTlxaGdwdm4zbA==" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-400 transition-colors"><i class="fa-brands fa-instagram text-sm"></i></a>
                             <a href="https://www.youtube.com/@rsudh.abdulmanapkotaJambi" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-400 transition-colors"><i class="fa-brands fa-youtube text-sm"></i></a>
-                            <a href="https://rsudkotajambi.id" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-400 transition-colors"><i class="fa-solid fa-globe text-sm"></i></a>
+                            <a href="https://simanap.rsudkotajambi.id/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-400 transition-colors"><i class="fa-solid fa-globe text-sm"></i></a>
                         </div>
                     </div>
                     <p class="text-[8px] text-gray-600 mt-3 text-center">&copy; {{ date('Y') }} Halo MANAP — RSUD H. Abdul Manap</p>
