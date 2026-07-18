@@ -199,7 +199,7 @@ class PengaduanController extends Controller
                     'time' => $verifiedHistory->created_at,
                     'icon' => 'fa-shield-check',
                     'user' => $verifiedHistory->user,
-                    'jabatan' => null,
+                    'jabatan_label' => 'Admin Pengaduan',
                     'fromUser' => null,
                     'komentar' => null,
                     'status' => null,
