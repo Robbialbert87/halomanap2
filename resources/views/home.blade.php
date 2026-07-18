@@ -12,7 +12,7 @@
             <!-- TOP NAVBAR (PayApp glossy) -->
             <header class="bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30 shadow-sm" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
                 <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <div class="flex items-center gap-2.5">
+                    <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
                         <div class="w-9 h-9 flex items-center justify-center">
                             <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
                         </div>
@@ -20,7 +20,7 @@
                             <p class="font-heading font-bold text-lg text-blue-800 leading-tight">Halo <span class="text-green-600">MANAP</span></p>
                             <p class="text-[9px] text-gray-500 leading-none">RSUD H. Abdul Manap Kota Jambi</p>
                         </div>
-                    </div>
+                    </a>
                     <nav class="flex items-center gap-1">
                         <a href="/" class="px-4 py-2 text-sm font-semibold text-blue-600 bg-blue-50 rounded-lg">Beranda</a>
                         <a href="/pengaduan/buat?type=Pengaduan" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Pengaduan</a>
@@ -119,13 +119,13 @@
             <!-- FOOTER DESKTOP -->
             <footer class="bg-gray-900 text-gray-400 py-10">
                 <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-                    <div class="flex items-center gap-3">
+                    <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
                         <div class="flex items-center justify-center"><img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-7 h-7 object-contain"></div>
                         <div>
                             <p class="font-bold text-white text-sm">Halo MANAP</p>
                             <p class="text-xs">RSUD H. Abdul Manap Kota Jambi</p>
                         </div>
-                    </div>
+                    </a>
                     <p class="text-xs">&copy; {{ date('Y') }} Halo MANAP. Sistem Pengaduan, Aspirasi, dan Informasi Pelayanan.</p>
                 </div>
             </footer>
@@ -140,13 +140,13 @@
             <!-- TOP NAVBAR MOBILE -->
             <header class="bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
                 <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-                    <div class="flex items-center gap-2.5">
+                    <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
                         <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
                         <div>
                             <span class="font-bold text-lg text-blue-800 leading-tight">Halo <span class="text-green-600">MANAP</span></span>
                             <p class="text-[8px] text-gray-400 leading-none -mt-0.5">RSUD H. Abdul Manap</p>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </header>
 
