@@ -307,6 +307,8 @@
 
             <div class="divider"></div>
 
+            <a href="/" style="display:inline-flex;align-items:center;gap:0.5rem;color:#64748b;font-size:0.82rem;text-decoration:none;margin-bottom:1rem;transition:color 0.2s" class="back-home" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='#64748b'"><i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda</a>
+
             <p class="card-title">Selamat Datang</p>
             <p class="card-subtitle">Masuk untuk mengakses dashboard admin</p>
 
