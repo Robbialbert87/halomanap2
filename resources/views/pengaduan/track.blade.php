@@ -263,23 +263,18 @@
                                             <span class="text-[10px] text-gray-400 whitespace-nowrap flex-shrink-0">{{ $item['time']?->translatedFormat('d M, H:i') }}</span>
                                         </div>
 
-                                        @if($item['user'] ?? $item['jabatan'] ?? null)
+                                        @if($item['jabatan'] ?? null)
                                         <p class="text-[11px] text-gray-500 mt-0.5 flex items-center gap-1 flex-wrap">
                                             <i class="fa-solid fa-user text-[9px] text-gray-400"></i>
-                                            @if($item['user'])
-                                                @if($item['type'] === 'disposisi' || $item['type'] === 'eskalasi')
-                                                → {{ $item['user']->nama }}
-                                                @else
-                                                {{ $item['user']->nama }}
-                                                @endif
-                                            @endif
-                                            @if($item['jabatan'] ?? null)
-                                            <span class="text-[10px] text-gray-400">· {{ $item['jabatan']->nama ?? '-' }}</span>
+                                            @if($item['type'] === 'disposisi' || $item['type'] === 'eskalasi')
+                                            → {{ $item['jabatan']->nama ?? '-' }}
+                                            @elseif($item['type'] === 'selesai')
+                                            {{ $item['jabatan']->nama ?? '-' }}
                                             @endif
                                         </p>
                                         @endif
 
-                                        @if($item['komentar'])
+                                        @if($item['komentar'] && $item['type'] === 'selesai')
                                         <div class="mt-1.5 text-[11px] text-gray-600 bg-gray-50 rounded-lg px-2.5 py-1.5 border border-gray-100 italic leading-relaxed">
                                             <i class="fa-solid fa-quote-left text-[8px] text-gray-300 mr-0.5"></i>
                                             {{ $item['komentar'] }}
