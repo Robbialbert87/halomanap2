@@ -307,7 +307,13 @@
 
             <div class="divider"></div>
 
-            <a href="/" style="display:inline-flex;align-items:center;gap:0.5rem;color:#64748b;font-size:0.82rem;text-decoration:none;margin-bottom:1rem;transition:color 0.2s" class="back-home" onmouseover="this.style.color='#60a5fa'" onmouseout="this.style.color='#64748b'"><i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda</a>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+                <a href="/" style="display:inline-flex;align-items:center;gap:0.6rem;color:#94a3b8;font-size:0.82rem;text-decoration:none;padding:0.4rem 0.75rem;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);transition:all 0.2s;font-weight:500"
+                   onmouseover="this.style.borderColor='rgba(96,165,250,0.3)';this.style.color='#60a5fa';this.style.background='rgba(96,165,250,0.08)'"
+                   onmouseout="this.style.borderColor='rgba(255,255,255,0.06)';this.style.color='#94a3b8';this.style.background='rgba(255,255,255,0.03)'">
+                    <i class="fa-solid fa-arrow-left" style="font-size:0.75rem"></i> Beranda
+                </a>
+            </div>
 
             <p class="card-title">Selamat Datang</p>
             <p class="card-subtitle">Masuk untuk mengakses dashboard admin</p>
