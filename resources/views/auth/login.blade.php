@@ -307,9 +307,6 @@
 
             <div class="divider"></div>
 
-            <p class="card-title">Selamat Datang</p>
-            <p class="card-subtitle">Masuk untuk mengakses dashboard admin</p>
-
             {{-- Error --}}
             @if($errors->any())
             <div class="alert-error">
