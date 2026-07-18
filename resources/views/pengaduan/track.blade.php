@@ -216,7 +216,7 @@
                         @php
                             $isLast = $loop->last;
                             $isActive = $item['is_active'] ?? false;
-                            $isCompletion = $item['type'] === 'selesai' && $item['komentar'];
+                            $isCompletion = $item['type'] === 'selesai' && ($item['komentar'] ?? null);
                             $dotColor = match ($item['type']) {
                                 'diterima' => 'bg-blue-500',
                                 'diverifikasi' => 'bg-indigo-500',
@@ -263,7 +263,7 @@
                                             <span class="text-[10px] text-gray-400 whitespace-nowrap flex-shrink-0">{{ $item['time']?->translatedFormat('d M, H:i') }}</span>
                                         </div>
 
-                                        @if($item['user'] || $item['jabatan'])
+                                        @if($item['user'] ?? $item['jabatan'] ?? null)
                                         <p class="text-[11px] text-gray-500 mt-0.5 flex items-center gap-1 flex-wrap">
                                             <i class="fa-solid fa-user text-[9px] text-gray-400"></i>
                                             @if($item['user'])
@@ -273,7 +273,7 @@
                                                 {{ $item['user']->nama }}
                                                 @endif
                                             @endif
-                                            @if($item['jabatan'])
+                                            @if($item['jabatan'] ?? null)
                                             <span class="text-[10px] text-gray-400">· {{ $item['jabatan']->nama ?? '-' }}</span>
                                             @endif
                                         </p>

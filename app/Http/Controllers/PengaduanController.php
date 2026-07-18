@@ -183,6 +183,12 @@ class PengaduanController extends Controller
                 'time' => $ticket->created_at,
                 'icon' => 'fa-paper-plane',
                 'user' => null,
+                'jabatan' => null,
+                'fromUser' => null,
+                'komentar' => null,
+                'status' => null,
+                'completed_at' => null,
+                'is_active' => false,
             ];
 
             // 2. Diverifikasi (from TicketHistory)
@@ -193,6 +199,12 @@ class PengaduanController extends Controller
                     'time' => $verifiedHistory->created_at,
                     'icon' => 'fa-shield-check',
                     'user' => $verifiedHistory->user,
+                    'jabatan' => null,
+                    'fromUser' => null,
+                    'komentar' => null,
+                    'status' => null,
+                    'completed_at' => null,
+                    'is_active' => false,
                 ];
             }
 
