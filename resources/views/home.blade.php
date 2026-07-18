@@ -256,9 +256,9 @@
                     <i class="fa-solid fa-square-poll-vertical text-xl"></i>
                     <span class="text-[9px] font-medium">Survei</span>
                 </a>
-                <a href="/dashboard" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
-                    <i class="fa-regular fa-user text-xl"></i>
-                    <span class="text-[9px] font-medium">Profil</span>
+                <a href="{{ route('apresiasi.create') }}" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
+                    <i class="fa-solid fa-thumbs-up text-xl"></i>
+                    <span class="text-[9px] font-medium">Apresiasi</span>
                 </a>
             </nav>
         </div>
