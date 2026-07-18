@@ -365,8 +365,8 @@
 
             <div class="card-footer">
                 <p>Halo MANAP &mdash; <span>Manajemen Pengaduan Pasien</span></p>
-                <a href="/" style="display:block;margin-top:0.75rem;opacity:0.35;transition:opacity 0.2s" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='0.35'">
-                    <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" style="height:28px;width:auto;display:inline-block">
+                <a href="/" style="display:inline-flex;align-items:center;justify-content:center;margin-top:0.75rem;width:36px;height:36px;border-radius:10px;color:#475569;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);text-decoration:none;transition:all 0.2s;font-size:1rem" onmouseover="this.style.borderColor='rgba(96,165,250,0.3)';this.style.color='#60a5fa';this.style.background='rgba(96,165,250,0.08)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)';this.style.color='#475569';this.style.background='rgba(255,255,255,0.03)'">
+                    <i class="fa-solid fa-house"></i>
                 </a>
             </div>
         </div>
