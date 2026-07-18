@@ -272,25 +272,25 @@
                 </div>
 
                 {{-- Mobile Footer Contact --}}
-                <div class="bg-gray-900 rounded-2xl p-4 mb-4">
+                <div class="bg-white/80 backdrop-blur-xl rounded-2xl p-4 mb-4 shadow-sm border border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
                     <div class="flex items-center gap-2.5 mb-3">
                         <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-6 h-6 object-contain">
                         <div>
-                            <p class="font-bold text-white text-xs">Halo MANAP</p>
-                            <p class="text-[9px] text-gray-500">RSUD H. Abdul Manap</p>
+                            <p class="font-bold text-gray-800 text-xs">Halo MANAP</p>
+                            <p class="text-[9px] text-gray-400">RSUD H. Abdul Manap</p>
                         </div>
                     </div>
-                    <div class="space-y-1.5 text-[10px] text-gray-400">
+                    <div class="space-y-1.5 text-[10px] text-gray-500">
                         <p class="flex items-start gap-1.5">
                             <i class="fa-solid fa-location-dot text-blue-400 mt-0.5"></i>
                             Jl. Sk. Rd. Syahbudin Mayang Mangurai Alam Barajo Kota Jambi 36129
                         </p>
                         <div class="flex items-center gap-3 pt-1">
-                            <a href="https://www.instagram.com/rsudkotajambi?igsh=MWJoOTlxaGdwdm4zbA==" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-400 transition-colors"><i class="fa-brands fa-instagram text-sm"></i></a>
-                            <a href="https://simanap.rsudkotajambi.id/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-400 transition-colors"><i class="fa-solid fa-globe text-sm"></i></a>
+                            <a href="https://www.instagram.com/rsudkotajambi?igsh=MWJoOTlxaGdwdm4zbA==" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-500 transition-colors"><i class="fa-brands fa-instagram text-sm"></i></a>
+                            <a href="https://simanap.rsudkotajambi.id/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-blue-500 transition-colors"><i class="fa-solid fa-globe text-sm"></i></a>
                         </div>
                     </div>
-                    <p class="text-[8px] text-gray-600 mt-3 text-center">&copy; {{ date('Y') }} Halo MANAP — RSUD H. Abdul Manap</p>
+                    <p class="text-[8px] text-gray-400 mt-3 text-center">&copy; {{ date('Y') }} Halo MANAP — RSUD H. Abdul Manap</p>
                 </div>
             </main>
 
