@@ -9,7 +9,7 @@
         'NEW'                   => ['label' => 'Baru Masuk',        'color' => 'blue',   'icon' => 'fa-paper-plane',          'step' => 1],
         'Baru'                  => ['label' => 'Baru Masuk',        'color' => 'blue',   'icon' => 'fa-paper-plane',          'step' => 1],
         'Menunggu Verifikasi'   => ['label' => 'Menunggu Verifikasi','color' => 'yellow', 'icon' => 'fa-hourglass-half',       'step' => 1],
-        'TERVERIFIKASI'         => ['label' => 'Terverifikasi',     'color' => 'indigo', 'icon' => 'fa-shield-check',         'step' => 2],
+        'TERVERIFIKASI'         => ['label' => 'Terverifikasi',     'color' => 'indigo', 'icon' => 'fa-clipboard-check',         'step' => 2],
         'Diproses'              => ['label' => 'Sedang Diproses',   'color' => 'blue',   'icon' => 'fa-gear',                 'step' => 3],
         'eskalasi'              => ['label' => 'Diteruskan ke Atasan','color' => 'orange','icon' => 'fa-share',               'step' => 3],
         'Selesai'               => ['label' => 'Selesai',           'color' => 'green',  'icon' => 'fa-circle-check',         'step' => 4],
@@ -170,7 +170,7 @@
                         @php
                             $steps = [
                                 ['label' => 'Diterima',    'icon' => 'fa-paper-plane'],
-                                ['label' => 'Diverifikasi','icon' => 'fa-shield-check'],
+                                ['label' => 'Diverifikasi','icon' => 'fa-clipboard-check'],
                             ];
                         @endphp
                         @foreach($steps as $i => $s)
@@ -196,7 +196,7 @@
                         @php
                             $steps = [
                                 ['label' => 'Diterima',    'icon' => 'fa-paper-plane'],
-                                ['label' => 'Diverifikasi','icon' => 'fa-shield-check'],
+                                ['label' => 'Diverifikasi','icon' => 'fa-clipboard-check'],
                                 ['label' => 'Diproses',   'icon' => 'fa-gear'],
                                 ['label' => 'Selesai',    'icon' => 'fa-circle-check'],
                             ];
@@ -386,10 +386,7 @@
                     <div class="flex-1 min-w-0">
                         <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Laporan Penyelesaian</p>
                         <p class="text-xs text-emerald-700 font-semibold mb-1">
-                            Diselesaikan oleh {{ $completion['user']?->nama ?? 'Petugas' }}
-                            @if($completion['jabatan'])
-                            <span class="text-emerald-500 font-normal">· {{ $completion['jabatan']->nama }}</span>
-                            @endif
+                            Diselesaikan oleh {{ $completion['jabatan']?->nama ?? ($completion['user']?->nama ?? 'Petugas') }}
                         </p>
                         @if($completion['komentar'])
                         <div class="mt-2 text-xs text-gray-700 leading-relaxed bg-emerald-50 rounded-xl px-3.5 py-2.5 border border-emerald-100">

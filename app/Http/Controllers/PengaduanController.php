@@ -197,7 +197,7 @@ class PengaduanController extends Controller
                     'type' => 'diverifikasi',
                     'label' => 'Diverifikasi',
                     'time' => $verifiedHistory->created_at,
-                    'icon' => 'fa-shield-check',
+                    'icon' => 'fa-clipboard-check',
                     'user' => $verifiedHistory->user,
                     'jabatan_label' => 'Admin Pengaduan',
                     'fromUser' => null,
