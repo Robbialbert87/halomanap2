@@ -4,7 +4,8 @@
 
 @section('content')
 <div class="bg-gray-50 min-h-screen">
-    <header class="bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+    {{-- DESKTOP HEADER --}}
+    <header class="hidden md:block bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
         <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
             <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
                 <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
@@ -15,6 +16,19 @@
             </a>
             <a href="/" class="text-sm font-medium text-gray-400 hover:text-blue-600 flex items-center gap-1.5 transition-colors">
                 <i class="fa-solid fa-arrow-left"></i> Kembali</a>
+        </div>
+    </header>
+
+    {{-- MOBILE HEADER --}}
+    <header class="md:hidden bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+        <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                <div>
+                    <span class="font-bold text-lg text-blue-800 leading-tight">Halo <span class="text-green-600">MANAP</span></span>
+                    <p class="text-[8px] text-gray-400 leading-none -mt-0.5">RSUD H. Abdul Manap</p>
+                </div>
+            </a>
         </div>
     </header>
 
@@ -257,9 +271,35 @@
         </div>
 
     </div>
+
+    {{-- BOTTOM NAV MOBILE --}}
+    <nav class="md:hidden fixed bottom-3 left-3 right-3 bg-white/70 backdrop-blur-xl border border-white/30 rounded-2xl flex justify-around items-center px-2 pt-1.5 pb-5 z-50 shadow-[0_-4px_30px_rgba(0,0,0,0.08)]" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+        <a href="/" class="flex flex-col items-center gap-0.5 w-14 py-1 text-blue-600">
+            <i class="fa-solid fa-house text-xl"></i>
+            <span class="text-[9px] font-semibold">Beranda</span>
+        </a>
+        <a href="{{ route('pengaduan.track') }}" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
+            <i class="fa-solid fa-magnifying-glass text-xl"></i>
+            <span class="text-[9px] font-medium">Cek Status</span>
+        </a>
+        <div class="relative w-14 flex flex-col items-center">
+            <a href="/pengaduan/buat" class="absolute -top-7 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/40 border-[3px] border-white active:scale-90 transition-transform">
+                <i class="fa-solid fa-plus text-xl"></i>
+            </a>
+            <span class="text-[9px] font-medium text-gray-400 mt-6 text-center leading-tight">Buat<br>Laporan</span>
+        </div>
+        <a href="#" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
+            <i class="fa-solid fa-clock-rotate-left text-xl"></i>
+            <span class="text-[9px] font-medium">Riwayat</span>
+        </a>
+        <a href="/dashboard" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
+            <i class="fa-regular fa-user text-xl"></i>
+            <span class="text-[9px] font-medium">Profil</span>
+        </a>
+    </nav>
 </div>
 @endsection
-
+ 
 @push('scripts')
 <script>
     const roomsByUnit = @json($rooms);
