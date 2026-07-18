@@ -115,16 +115,65 @@
             </section>
 
             <!-- FOOTER DESKTOP -->
-            <footer class="bg-gray-900 text-gray-400 py-10">
-                <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-                    <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                        <div class="flex items-center justify-center"><img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-7 h-7 object-contain"></div>
+            <footer class="bg-gray-900 text-gray-400 py-12">
+                <div class="max-w-7xl mx-auto px-6">
+                    <div class="grid grid-cols-3 gap-8 mb-8">
+                        {{-- Brand --}}
                         <div>
-                            <p class="font-bold text-white text-sm">Halo MANAP</p>
-                            <p class="text-xs">RSUD H. Abdul Manap Kota Jambi</p>
+                            <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity mb-3">
+                                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                                <div>
+                                    <p class="font-bold text-white text-sm">Halo MANAP</p>
+                                    <p class="text-xs">RSUD H. Abdul Manap</p>
+                                </div>
+                            </a>
+                            <p class="text-xs leading-relaxed text-gray-500">Pusat Pengaduan, Aspirasi dan Informasi Pelayanan RSUD H. Abdul Manap Kota Jambi.</p>
                         </div>
-                    </a>
-                    <p class="text-xs">&copy; {{ date('Y') }} Halo MANAP. Sistem Pengaduan, Aspirasi, dan Informasi Pelayanan.</p>
+                        {{-- Layanan --}}
+                        <div>
+                            <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-3">Layanan</h4>
+                            <ul class="space-y-2 text-xs">
+                                <li><a href="/pengaduan/buat?type=Pengaduan" class="hover:text-white transition-colors">Pengaduan</a></li>
+                                <li><a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">Survei Kepuasan</a></li>
+                                <li><a href="{{ route('apresiasi.create') }}" class="hover:text-white transition-colors">Apresiasi</a></li>
+                                <li><a href="/pengaduan/buat?type=Informasi" class="hover:text-white transition-colors">Informasi</a></li>
+                                <li><a href="{{ route('pengaduan.track') }}" class="hover:text-white transition-colors">Lacak Pengaduan</a></li>
+                            </ul>
+                        </div>
+                        {{-- Kontak --}}
+                        <div>
+                            <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-3">Kontak</h4>
+                            <ul class="space-y-2.5 text-xs">
+                                <li class="flex items-center gap-2.5">
+                                    <i class="fa-solid fa-location-dot text-blue-400 w-3.5 text-center"></i>
+                                    <span>Jl. Kol. M. Kukuhan No.11, Sungai Putri, Kec. Danau Teluk, Kota Jambi</span>
+                                </li>
+                                <li class="flex items-center gap-2.5">
+                                    <i class="fa-solid fa-phone text-blue-400 w-3.5 text-center"></i>
+                                    <span>(0741) 500-6908</span>
+                                </li>
+                                <li class="flex items-center gap-2.5">
+                                    <i class="fa-solid fa-envelope text-blue-400 w-3.5 text-center"></i>
+                                    <a href="mailto:rsudhamanap.jambi@gmail.com" class="hover:text-white transition-colors">rsudhamanap.jambi@gmail.com</a>
+                                </li>
+                                <li class="flex items-center gap-2.5">
+                                    <i class="fa-brands fa-instagram text-blue-400 w-3.5 text-center"></i>
+                                    <a href="https://www.instagram.com/rsud_h_abdul_manap/" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">@rsud_h_abdul_manap</a>
+                                </li>
+                                <li class="flex items-center gap-2.5">
+                                    <i class="fa-brands fa-youtube text-blue-400 w-3.5 text-center"></i>
+                                    <a href="https://www.youtube.com/@rsudh.abdulmanapkotaJambi" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">RSUD H. Abdul Manap</a>
+                                </li>
+                                <li class="flex items-center gap-2.5">
+                                    <i class="fa-solid fa-globe text-blue-400 w-3.5 text-center"></i>
+                                    <a href="https://rsudkotajambi.id" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">rsudkotajambi.id</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="border-t border-gray-800 pt-6 text-center text-xs text-gray-600">
+                        &copy; {{ date('Y') }} Halo MANAP — RSUD H. Abdul Manap Kota Jambi. All rights reserved.
+                    </div>
                 </div>
             </footer>
         </div>
@@ -232,6 +281,31 @@
                             </button>
                         </div>
                     </form>
+                </div>
+
+                {{-- Mobile Footer Contact --}}
+                <div class="bg-gray-900 rounded-2xl p-4 mb-4">
+                    <div class="flex items-center gap-2.5 mb-3">
+                        <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-6 h-6 object-contain">
+                        <div>
+                            <p class="font-bold text-white text-xs">Halo MANAP</p>
+                            <p class="text-[9px] text-gray-500">RSUD H. Abdul Manap</p>
+                        </div>
+                    </div>
+                    <div class="space-y-1.5 text-[10px] text-gray-400">
+                        <p class="flex items-start gap-1.5">
+                            <i class="fa-solid fa-location-dot text-blue-400 mt-0.5"></i>
+                            Jl. Kol. M. Kukuhan No.11, Sungai Putri, Danau Teluk, Kota Jambi
+                        </p>
+                        <p class="flex items-center gap-1.5"><i class="fa-solid fa-phone text-blue-400"></i> (0741) 500-6908</p>
+                        <p class="flex items-center gap-1.5"><i class="fa-solid fa-envelope text-blue-400"></i> rsudhamanap.jambi@gmail.com</p>
+                        <div class="flex items-center gap-3 pt-1">
+                            <a href="https://www.instagram.com/rsud_h_abdul_manap/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-400 transition-colors"><i class="fa-brands fa-instagram text-sm"></i></a>
+                            <a href="https://www.youtube.com/@rsudh.abdulmanapkotaJambi" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-400 transition-colors"><i class="fa-brands fa-youtube text-sm"></i></a>
+                            <a href="https://rsudkotajambi.id" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-400 transition-colors"><i class="fa-solid fa-globe text-sm"></i></a>
+                        </div>
+                    </div>
+                    <p class="text-[8px] text-gray-600 mt-3 text-center">&copy; {{ date('Y') }} Halo MANAP — RSUD H. Abdul Manap</p>
                 </div>
             </main>
 
