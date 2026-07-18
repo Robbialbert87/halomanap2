@@ -119,7 +119,7 @@ class PengaduanController extends Controller
                 "📝 *Judul:* {$ticket->title}",
                 "",
                 "Simpan nomor tiket untuk melacak status.",
-                "🔗 " . route('lacak') . '?ticket_number=' . $ticket->ticket_number,
+                "🔗 " . route('pengaduan.track') . '?ticket_number=' . $ticket->ticket_number,
                 "─────────────────────",
                 "_RSUD H. Abdul Manap Kota Jambi_",
             ]);
@@ -149,8 +149,12 @@ class PengaduanController extends Controller
 
         if ($request->filled('ticket_number')) {
             $ticket = Ticket::with([
-                'room', 'category',
-                'workflows' => fn($q) => $q->with('fromUser')->orderBy('created_at', 'desc'),
+                'room',
+                'category',
+                'histories.user',
+                'workflows' => fn($q) => $q
+                    ->with(['toUser.jabatan', 'fromUser', 'toJabatan', 'toUnit'])
+                    ->orderBy('created_at', 'asc'),
             ])
                 ->where('ticket_number', strtoupper(trim($request->ticket_number)))
                 ->first();
@@ -160,7 +164,79 @@ class PengaduanController extends Controller
             }
         }
 
-        return view('pengaduan.track', compact('ticket', 'notFound'));
+        $timeline = [];
+        $activeWorkflow = null;
+        $completion = null;
+
+        if ($ticket) {
+            // Build timeline from TicketHistory + WorkflowHistory
+            $histories = $ticket->histories ?? collect();
+            $workflows = $ticket->workflows ?? collect();
+
+            // Find TicketHistory entry for verification event
+            $verifiedHistory = $histories->firstWhere('new_status', 'TERVERIFIKASI');
+
+            // 1. Diterima (from ticket creation)
+            $timeline[] = [
+                'type' => 'diterima',
+                'label' => 'Diterima',
+                'time' => $ticket->created_at,
+                'icon' => 'fa-paper-plane',
+                'user' => null,
+            ];
+
+            // 2. Diverifikasi (from TicketHistory)
+            if ($verifiedHistory) {
+                $timeline[] = [
+                    'type' => 'diverifikasi',
+                    'label' => 'Diverifikasi',
+                    'time' => $verifiedHistory->created_at,
+                    'icon' => 'fa-shield-check',
+                    'user' => $verifiedHistory->user,
+                ];
+            }
+
+            // 3. Workflow steps
+            foreach ($workflows as $wf) {
+                $isActiveWf = $activeWorkflow && $activeWorkflow->id === $wf->id;
+
+                $entry = [
+                    'type' => $wf->action,
+                    'label' => $wf->action_label,
+                    'time' => $wf->created_at,
+                    'icon' => match ($wf->action) {
+                        'disposisi' => 'fa-arrow-right',
+                        'eskalasi' => 'fa-share',
+                        'tangani_sendiri' => 'fa-hand',
+                        'selesai' => 'fa-circle-check',
+                        'tutup' => 'fa-lock',
+                        'ditolak' => 'fa-circle-xmark',
+                        default => 'fa-circle',
+                    },
+                    'user' => $wf->toUser,
+                    'jabatan' => $wf->toJabatan,
+                    'fromUser' => $wf->fromUser,
+                    'komentar' => $wf->komentar,
+                    'status' => $wf->status,
+                    'completed_at' => $wf->completed_at,
+                    'is_active' => $isActiveWf,
+                ];
+
+                $timeline[] = $entry;
+
+                // Capture completion report
+                if ($wf->action === 'selesai' && $wf->komentar) {
+                    $completion = $entry;
+                }
+            }
+
+            // Active workflow (non-terminal)
+            $activeWorkflow = $workflows
+                ->whereIn('status', ['menunggu_respon', 'dalam_penanganan'])
+                ->last();
+        }
+
+        return view('pengaduan.track', compact('ticket', 'notFound', 'timeline', 'activeWorkflow', 'completion'));
     }
 
     private function notifyAdmins(Ticket $ticket): void

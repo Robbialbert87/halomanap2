@@ -204,6 +204,102 @@
                     @endif
                 </div>
 
+                {{-- WORKFLOW TIMELINE --}}
+                @if(count($timeline) > 1)
+                <div class="mb-4">
+                    <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-3">Riwayat Penanganan</p>
+                    <div class="relative pl-6">
+                        {{-- Vertical line --}}
+                        <div class="absolute left-2.5 top-2 bottom-2 w-0.5 bg-gray-200"></div>
+
+                        @foreach($timeline as $i => $item)
+                        @php
+                            $isLast = $loop->last;
+                            $isActive = $item['is_active'] ?? false;
+                            $isCompletion = $item['type'] === 'selesai' && $item['komentar'];
+                            $dotColor = match ($item['type']) {
+                                'diterima' => 'bg-blue-500',
+                                'diverifikasi' => 'bg-indigo-500',
+                                'disposisi' => 'bg-purple-500',
+                                'eskalasi' => 'bg-orange-500',
+                                'tangani_sendiri' => 'bg-indigo-500',
+                                'selesai' => 'bg-emerald-500',
+                                'tutup' => 'bg-gray-500',
+                                'ditolak' => 'bg-red-500',
+                                default => 'bg-gray-400',
+                            };
+                            $iconColor = match ($item['type']) {
+                                'diterima' => 'text-blue-600',
+                                'diverifikasi' => 'text-indigo-600',
+                                'disposisi' => 'text-purple-600',
+                                'eskalasi' => 'text-orange-600',
+                                'tangani_sendiri' => 'text-indigo-600',
+                                'selesai' => 'text-emerald-600',
+                                'tutup' => 'text-gray-600',
+                                'ditolak' => 'text-red-600',
+                                default => 'text-gray-500',
+                            };
+                        @endphp
+                        <div class="relative pb-4 {{ $isLast ? '' : '' }}">
+                            {{-- Dot --}}
+                            <div class="absolute -left-4 top-1 w-3.5 h-3.5 rounded-full border-2 border-white {{ $dotColor }} {{ $isActive ? 'ring-2 ring-blue-300 animate-pulse' : '' }} shadow-sm z-10"></div>
+
+                            {{-- Content --}}
+                            <div class="bg-white rounded-xl border {{ $isActive ? 'border-blue-200 bg-blue-50/40' : 'border-gray-100' }} p-3 ml-2">
+                                <div class="flex items-start gap-2.5">
+                                    <span class="w-7 h-7 rounded-lg {{ $isActive ? 'bg-blue-100' : 'bg-gray-100' }} flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <i class="fa-solid {{ $item['icon'] }} text-[10px] {{ $iconColor }}"></i>
+                                    </span>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="text-xs font-bold {{ $isActive ? 'text-blue-700' : 'text-gray-700' }}">
+                                                {{ $item['label'] }}
+                                                @if($isActive)
+                                                <span class="ml-1.5 inline-flex items-center gap-1 text-[9px] font-semibold text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded-full">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Aktif
+                                                </span>
+                                                @endif
+                                            </span>
+                                            <span class="text-[10px] text-gray-400 whitespace-nowrap flex-shrink-0">{{ $item['time']?->translatedFormat('d M, H:i') }}</span>
+                                        </div>
+
+                                        @if($item['user'] || $item['jabatan'])
+                                        <p class="text-[11px] text-gray-500 mt-0.5 flex items-center gap-1 flex-wrap">
+                                            <i class="fa-solid fa-user text-[9px] text-gray-400"></i>
+                                            @if($item['user'])
+                                                @if($item['type'] === 'disposisi' || $item['type'] === 'eskalasi')
+                                                → {{ $item['user']->nama }}
+                                                @else
+                                                {{ $item['user']->nama }}
+                                                @endif
+                                            @endif
+                                            @if($item['jabatan'])
+                                            <span class="text-[10px] text-gray-400">· {{ $item['jabatan']->nama ?? '-' }}</span>
+                                            @endif
+                                        </p>
+                                        @endif
+
+                                        @if($item['komentar'])
+                                        <div class="mt-1.5 text-[11px] text-gray-600 bg-gray-50 rounded-lg px-2.5 py-1.5 border border-gray-100 italic leading-relaxed">
+                                            <i class="fa-solid fa-quote-left text-[8px] text-gray-300 mr-0.5"></i>
+                                            {{ $item['komentar'] }}
+                                        </div>
+                                        @endif
+
+                                        @if($isCompletion && $item['completed_at'])
+                                        <p class="text-[10px] text-gray-400 mt-1">
+                                            <i class="fa-regular fa-clock mr-0.5"></i> Selesai: {{ $item['completed_at']?->translatedFormat('d M Y, H:i') }}
+                                        </p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
                 {{-- Ticket Details --}}
                 <div class="bg-gray-50 rounded-xl p-3.5">
                     <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2.5">Detail Pengaduan</p>
@@ -262,6 +358,38 @@
                         <p class="text-[10px] text-gray-400 mt-1.5">
                             Admin Pengaduan • {{ $adminWorkflow->created_at->format('d M Y, H:i') }}
                         </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- Completion Report --}}
+        @if($completion)
+        <div class="bg-white rounded-2xl shadow-sm border border-emerald-100 overflow-hidden mb-4">
+            <div class="px-5 py-4">
+                <div class="flex items-start gap-3">
+                    <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm flex-shrink-0 mt-0.5">
+                        <i class="fa-solid fa-circle-check text-white text-xs"></i>
+                    </span>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Laporan Penyelesaian</p>
+                        <p class="text-xs text-emerald-700 font-semibold mb-1">
+                            Diselesaikan oleh {{ $completion['user']?->nama ?? 'Petugas' }}
+                            @if($completion['jabatan'])
+                            <span class="text-emerald-500 font-normal">· {{ $completion['jabatan']->nama }}</span>
+                            @endif
+                        </p>
+                        @if($completion['komentar'])
+                        <div class="mt-2 text-xs text-gray-700 leading-relaxed bg-emerald-50 rounded-xl px-3.5 py-2.5 border border-emerald-100">
+                            {{ $completion['komentar'] }}
+                        </div>
+                        @endif
+                        @if($completion['completed_at'])
+                        <p class="text-[10px] text-gray-400 mt-1.5">
+                            <i class="fa-regular fa-clock mr-0.5"></i> {{ $completion['completed_at']->translatedFormat('d M Y, H:i') }}
+                        </p>
+                        @endif
                     </div>
                 </div>
             </div>
