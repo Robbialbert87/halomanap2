@@ -394,6 +394,25 @@
         </div>
         @endif
 
+        {{-- Apresiasi Button --}}
+        @if(in_array($ticket->status, ['Selesai', 'Ditutup']))
+        <div class="bg-white rounded-2xl shadow-sm border border-blue-100 p-4 mb-4">
+            <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
+                    <i class="fa-solid fa-thumbs-up text-white text-sm"></i>
+                </span>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-semibold text-gray-800">Berikan Apresiasi</p>
+                    <p class="text-[10px] text-gray-400 mt-0.5">Bantu kami terus berkembang dengan penilaian Anda.</p>
+                </div>
+                <a href="{{ route('apresiasi.create') }}"
+                    class="bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-semibold rounded-xl px-4 py-2.5 text-xs transition-all shadow-sm shadow-blue-200/50 flex items-center gap-1.5 active:scale-[0.98] whitespace-nowrap">
+                    <i class="fa-solid fa-star"></i> Beri Nilai
+                </a>
+            </div>
+        </div>
+        @endif
+
         {{-- Download Ticket Button --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4 flex items-center justify-between">
             <div>
