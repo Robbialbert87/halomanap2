@@ -158,7 +158,7 @@
                                 </li>
                                 <li class="flex items-center gap-2.5">
                                     <i class="fa-brands fa-instagram text-blue-400 w-3.5 text-center"></i>
-                                    <a href="https://www.instagram.com/reel/DGSGXi9zGeU/" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">@rsud_h_abdul_manap</a>
+                                    <a href="https://www.instagram.com/rsudkotajambi?igsh=MWJoOTlxaGdwdm4zbA==" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">@rsudkotajambi</a>
                                 </li>
                                 <li class="flex items-center gap-2.5">
                                     <i class="fa-brands fa-youtube text-blue-400 w-3.5 text-center"></i>
@@ -300,7 +300,7 @@
                         <p class="flex items-center gap-1.5"><i class="fa-solid fa-phone text-blue-400"></i> (0741) 500-6908</p>
                         <p class="flex items-center gap-1.5"><i class="fa-solid fa-envelope text-blue-400"></i> rsudhamanap.jambi@gmail.com</p>
                         <div class="flex items-center gap-3 pt-1">
-                            <a href="https://www.instagram.com/reel/DGSGXi9zGeU/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-400 transition-colors"><i class="fa-brands fa-instagram text-sm"></i></a>
+                            <a href="https://www.instagram.com/rsudkotajambi?igsh=MWJoOTlxaGdwdm4zbA==" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-400 transition-colors"><i class="fa-brands fa-instagram text-sm"></i></a>
                             <a href="https://www.youtube.com/@rsudh.abdulmanapkotaJambi" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-400 transition-colors"><i class="fa-brands fa-youtube text-sm"></i></a>
                             <a href="https://rsudkotajambi.id" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-400 transition-colors"><i class="fa-solid fa-globe text-sm"></i></a>
                         </div>
