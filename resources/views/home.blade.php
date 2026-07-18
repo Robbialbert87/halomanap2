@@ -28,9 +28,10 @@
                         <a href="{{ route('apresiasi.create') }}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Apresiasi</a>
                         <a href="/pengaduan/buat?type=Informasi" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Informasi</a>
                     </nav>
-                    <div class="flex items-center gap-2">
-                        <a href="/dashboard" class="w-9 h-9 rounded-xl flex items-center justify-center text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all" title="Admin">
+                    <div class="flex items-center gap-1">
+                        <a href="/dashboard" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all" title="Login">
                             <i class="fa-solid fa-shield-halved text-base"></i>
+                            <span>Login</span>
                         </a>
                     </div>
                 </div>

@@ -7,7 +7,7 @@
 
     {{-- HEADER --}}
     <header class="bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
-        <div class="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
+        <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
             <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
                 <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
                 <div>
@@ -21,56 +21,62 @@
         </div>
     </header>
 
-    <div class="max-w-lg mx-auto px-4 pt-5 pb-28">
+    <div class="max-w-5xl mx-auto px-4 pt-5 pb-28">
 
         {{-- HERO BANNER --}}
-        <div class="bg-white/80 backdrop-blur-xl rounded-2xl p-5 shadow-sm border border-white/30 mb-4 flex items-center gap-4" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
-            <span class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md shadow-blue-200/50 flex-shrink-0">
-                <i class="fa-solid fa-thumbs-up text-white text-2xl"></i>
+        <div class="bg-white/80 backdrop-blur-xl rounded-2xl p-5 lg:p-8 shadow-sm border border-white/30 mb-4 lg:mb-6 flex flex-col md:flex-row items-center gap-4" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+            <span class="w-14 h-14 lg:w-20 lg:h-20 rounded-2xl lg:rounded-3xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md shadow-blue-200/50 flex-shrink-0">
+                <i class="fa-solid fa-thumbs-up text-white text-2xl lg:text-4xl"></i>
             </span>
-            <div class="flex-1">
-                <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold mb-2 uppercase tracking-wider">
+            <div class="flex-1 text-center md:text-left">
+                <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-full bg-blue-100 text-blue-700 text-[10px] lg:text-xs font-bold mb-2 uppercase tracking-wider">
                     <i class="fa-solid fa-thumbs-up"></i> Apresiasi
                 </span>
-                <h1 class="text-lg font-bold text-gray-800 leading-tight mt-1">Sampaikan Apresiasi Anda</h1>
-                <p class="text-xs text-gray-500 leading-relaxed mt-1">
+                <h1 class="text-lg lg:text-3xl font-bold text-gray-800 leading-tight mt-1">Sampaikan Apresiasi Anda</h1>
+                <p class="text-xs lg:text-base text-gray-500 leading-relaxed mt-1">
                     Beri penghargaan atas pelayanan yang memuaskan dari kami.
                 </p>
             </div>
         </div>
 
-        {{-- INFO CARDS --}}
-        <div class="grid grid-cols-2 gap-3 mb-4">
-            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 p-3.5 flex items-start gap-2.5" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
-                <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md shadow-blue-200/50 flex-shrink-0">
-                    <i class="fa-solid fa-star text-white text-sm"></i>
-                </span>
-                <div>
-                    <h3 class="font-bold text-gray-800 text-[11px] mb-0.5">Beri Nilai</h3>
-                    <p class="text-[9px] text-gray-400 leading-snug">Pilih bintang sesuai kepuasan</p>
-                </div>
-            </div>
-            <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 p-3.5 flex items-start gap-2.5" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
-                <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md shadow-emerald-200/50 flex-shrink-0">
-                    <i class="fa-solid fa-pen text-white text-sm"></i>
-                </span>
-                <div>
-                    <h3 class="font-bold text-gray-800 text-[11px] mb-0.5">Tulis Pesan</h3>
-                    <p class="text-[9px] text-gray-400 leading-snug">Sampaikan apresiasi Anda</p>
-                </div>
-            </div>
-        </div>
+        {{-- FORM + INFO CARDS in 2-column on desktop --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
 
-        {{-- FORM --}}
-        <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 mb-5 overflow-hidden" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
-            <div class="border-b border-white/30 px-5 py-4">
-                <h2 class="text-base font-heading font-bold text-gray-800 flex items-center gap-2.5">
-                    <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md shadow-blue-200/50">
-                        <i class="fa-regular fa-pen-to-square text-white text-xs"></i>
-                    </span> Formulir Apresiasi
-                </h2>
+            {{-- LEFT: info cards --}}
+            <div class="lg:col-span-1">
+                <div class="grid grid-cols-2 lg:grid-cols-1 gap-3 mb-4 lg:mb-0">
+                    <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 p-3.5 lg:p-5 flex items-start gap-2.5 lg:gap-3" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+                        <span class="w-9 h-9 lg:w-11 lg:h-11 rounded-xl lg:rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md shadow-blue-200/50 flex-shrink-0">
+                            <i class="fa-solid fa-star text-white text-sm lg:text-base"></i>
+                        </span>
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-[11px] lg:text-sm mb-0.5">Beri Nilai</h3>
+                            <p class="text-[9px] lg:text-xs text-gray-400 leading-snug">Pilih bintang sesuai kepuasan</p>
+                        </div>
+                    </div>
+                    <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 p-3.5 lg:p-5 flex items-start gap-2.5 lg:gap-3" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+                        <span class="w-9 h-9 lg:w-11 lg:h-11 rounded-xl lg:rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md shadow-emerald-200/50 flex-shrink-0">
+                            <i class="fa-solid fa-pen text-white text-sm lg:text-base"></i>
+                        </span>
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-[11px] lg:text-sm mb-0.5">Tulis Pesan</h3>
+                            <p class="text-[9px] lg:text-xs text-gray-400 leading-snug">Sampaikan apresiasi Anda</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <form method="POST" action="{{ route('apresiasi.store') }}" class="px-5 py-5">
+
+            {{-- RIGHT: Form --}}
+            <div class="lg:col-span-2">
+                <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 mb-5 overflow-hidden" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+                    <div class="border-b border-white/30 px-5 lg:px-6 py-4">
+                        <h2 class="text-base lg:text-xl font-heading font-bold text-gray-800 flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md shadow-blue-200/50">
+                                <i class="fa-regular fa-pen-to-square text-white text-xs"></i>
+                            </span> Formulir Apresiasi
+                        </h2>
+                    </div>
+                    <form method="POST" action="{{ route('apresiasi.store') }}" class="px-5 lg:px-6 py-5">
                 @csrf
 
                 <div class="mb-4">
@@ -107,6 +113,8 @@
                     <i class="fa-solid fa-paper-plane"></i> Kirim Apresiasi
                 </button>
             </form>
+                </div>
+            </div>
         </div>
 
         {{-- Footer --}}
