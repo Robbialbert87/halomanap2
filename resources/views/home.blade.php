@@ -252,9 +252,9 @@
                     </a>
                     <span class="text-[9px] font-medium text-gray-400 mt-6 text-center leading-tight">Buat<br>Laporan</span>
                 </div>
-                <a href="#" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
-                    <i class="fa-solid fa-clock-rotate-left text-xl"></i>
-                    <span class="text-[9px] font-medium">Riwayat</span>
+                <a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
+                    <i class="fa-solid fa-square-poll-vertical text-xl"></i>
+                    <span class="text-[9px] font-medium">Survei</span>
                 </a>
                 <a href="/dashboard" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
                     <i class="fa-regular fa-user text-xl"></i>
