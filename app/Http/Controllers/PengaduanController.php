@@ -35,8 +35,8 @@ class PengaduanController extends Controller
             'unit_id' => 'required',
             'room_id' => 'required',
             'category_id' => 'required',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string|min:10',
+            'title' => 'required|string',
+            'description' => 'required|string',
             'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,heic,heif,webp|max:20480',
             'is_anonymous' => 'nullable|boolean',
         ]);
