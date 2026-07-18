@@ -299,21 +299,13 @@
     <div class="login-wrapper">
         <div class="login-card">
             <!-- Logo -->
-            <div class="logo-wrap">
+            <a href="/" class="logo-wrap" style="text-decoration:none;display:block">
                 <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo HaloMANAP" class="logo-img">
                 <div class="brand-name">Halo<span>MANAP</span></div>
                 <div class="brand-sub">Sistem Manajemen Pengaduan</div>
-            </div>
+            </a>
 
             <div class="divider"></div>
-
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
-                <a href="/" style="display:inline-flex;align-items:center;gap:0.6rem;color:#94a3b8;font-size:0.82rem;text-decoration:none;padding:0.4rem 0.75rem;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);transition:all 0.2s;font-weight:500"
-                   onmouseover="this.style.borderColor='rgba(96,165,250,0.3)';this.style.color='#60a5fa';this.style.background='rgba(96,165,250,0.08)'"
-                   onmouseout="this.style.borderColor='rgba(255,255,255,0.06)';this.style.color='#94a3b8';this.style.background='rgba(255,255,255,0.03)'">
-                    <i class="fa-solid fa-arrow-left" style="font-size:0.75rem"></i> Beranda
-                </a>
-            </div>
 
             <p class="card-title">Selamat Datang</p>
             <p class="card-subtitle">Masuk untuk mengakses dashboard admin</p>
@@ -376,6 +368,9 @@
 
             <div class="card-footer">
                 <p>Halo MANAP &mdash; <span>Manajemen Pengaduan Pasien</span></p>
+                <a href="/" style="display:block;margin-top:0.75rem;opacity:0.35;transition:opacity 0.2s" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='0.35'">
+                    <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" style="height:28px;width:auto;display:inline-block">
+                </a>
             </div>
         </div>
     </div>
