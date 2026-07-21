@@ -20,6 +20,7 @@ class SendWhatsAppNotification implements ShouldQueue
      * Nama queue yang akan digunakan.
      */
     public string $queue = 'notifications';
+    public $tries = 1;
 
     public function handle(WorkflowChanged $event): void
     {
@@ -38,10 +39,10 @@ class SendWhatsAppNotification implements ShouldQueue
         if (in_array($jenis, ['disposisi_baru', 'eskalasi', 'pengaduan_selesai', 'pengaduan_ditutup'])) {
             $direkturs = $this->getDirekturs($history->to_unit_id);
             foreach ($direkturs as $direktur) {
-                if ($direktur->phone_number) {
-                    $dirMessage = $this->buildMonitoringMessage($history, $ticket);
-                    $this->send($direktur, $dirMessage, 'monitoring_direktur', $history);
-                }
+                if (!$direktur->phone_number) continue;
+                if ($history->toUser && $history->toUser->id === $direktur->id) continue;
+                $dirMessage = $this->buildMonitoringMessage($history, $ticket);
+                $this->send($direktur, $dirMessage, 'monitoring_direktur', $history);
             }
         }
 
@@ -211,6 +212,19 @@ class SendWhatsAppNotification implements ShouldQueue
 
     private function send(User $recipient, string $message, string $jenis, $history): void
     {
+        if (NotificationLog::where('workflow_history_id', $history->id)
+            ->where('recipient_user_id', $recipient->id)
+            ->where('jenis', $jenis)
+            ->exists()
+        ) {
+            Log::channel('daily')->warning('[WhatsApp] Duplicate skipped', [
+                'workflow_history_id' => $history->id,
+                'recipient_user_id'   => $recipient->id,
+                'jenis'               => $jenis,
+            ]);
+            return;
+        }
+
         $status = 'failed';
         $error  = null;
 
