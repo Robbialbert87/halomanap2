@@ -8,6 +8,7 @@ use App\Models\Jabatan;
 use App\Models\User;
 use App\Services\RoleMenuService;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\QueryException;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -212,17 +213,26 @@ class SendWhatsAppNotification implements ShouldQueue
 
     private function send(User $recipient, string $message, string $jenis, $history): void
     {
-        if (NotificationLog::where('workflow_history_id', $history->id)
-            ->where('recipient_user_id', $recipient->id)
-            ->where('jenis', $jenis)
-            ->exists()
-        ) {
-            Log::channel('daily')->warning('[WhatsApp] Duplicate skipped', [
+        try {
+            $log = NotificationLog::create([
+                'ticket_id'           => $history->ticket_id,
                 'workflow_history_id' => $history->id,
                 'recipient_user_id'   => $recipient->id,
+                'nomor_wa'            => $recipient->phone_number,
                 'jenis'               => $jenis,
+                'isi_pesan'           => $message,
+                'status'              => 'pending',
             ]);
-            return;
+        } catch (QueryException $e) {
+            if (str_contains($e->getMessage(), 'Duplicate entry')) {
+                Log::channel('daily')->warning('[WhatsApp] Duplicate skipped (atomic)', [
+                    'workflow_history_id' => $history->id,
+                    'recipient_user_id'   => $recipient->id,
+                    'jenis'               => $jenis,
+                ]);
+                return;
+            }
+            throw $e;
         }
 
         $status = 'failed';
@@ -251,16 +261,10 @@ class SendWhatsAppNotification implements ShouldQueue
             ]);
         }
 
-        NotificationLog::create([
-            'ticket_id'           => $history->ticket_id,
-            'workflow_history_id' => $history->id,
-            'recipient_user_id'   => $recipient->id,
-            'nomor_wa'            => $recipient->phone_number,
-            'jenis'               => $jenis,
-            'isi_pesan'           => $message,
-            'status'              => $status,
-            'error_message'       => $error,
-            'sent_at'             => $status === 'sent' ? now() : null,
+        $log->update([
+            'status'        => $status,
+            'error_message' => $error,
+            'sent_at'       => $status === 'sent' ? now() : null,
         ]);
     }
 }

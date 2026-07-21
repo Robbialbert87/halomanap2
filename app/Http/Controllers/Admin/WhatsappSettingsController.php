@@ -29,6 +29,9 @@ class WhatsappSettingsController extends Controller
         // 1. Kill existing node process biar gak bentrok port
         exec('taskkill /F /IM node.exe 2>NUL', $killOut, $killCode);
 
+        // 1.5 Kill existing queue worker(s) biar gak dobel worker
+        exec('wmic process where "name=\'php.exe\' and commandline like \'%artisan queue:work%\'" delete 2>NUL', $killQwOut, $killQwCode);
+
         sleep(1);
 
         // 2. Start Node.js - pakai start /B (background, no window)
