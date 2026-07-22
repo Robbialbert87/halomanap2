@@ -172,7 +172,8 @@
                                 </svg>
                                 <span>Memproses foto...</span>
                             </div>
-                            <div id="upload-info" class="hidden text-xs text-gray-500 bg-gray-50/80 rounded-xl px-4 py-2.5 border border-gray-200/50 mt-2">
+                            <div id="upload-info" class="hidden text-xs text-green-600 bg-green-50/80 rounded-xl px-4 py-2.5 border border-green-200/50 mt-2">
+                                <i class="fa-solid fa-circle-check mr-1"></i>
                                 <span id="upload-size-info"></span>
                             </div>
                             <div id="upload-error" class="hidden text-xs text-red-500 bg-red-50/80 rounded-xl px-4 py-3 border border-red-200/50 mt-2">
@@ -477,7 +478,7 @@
                     attachmentInput.files = dataTransfer.files;
 
                     var ratio = ((1 - result.compressedSize / result.originalSize) * 100).toFixed(0);
-                    uploadSizeInfo.textContent = 'Asli: ' + formatBytes(result.originalSize) + ' → Terkompres: ' + formatBytes(result.compressedSize) + ' (hemat ' + ratio + '%)';
+                    uploadSizeInfo.textContent = 'Bukti berhasil diunggah';
                     uploadInfo.classList.remove('hidden');
 
                     var reader = new FileReader();
