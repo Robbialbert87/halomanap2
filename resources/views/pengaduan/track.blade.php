@@ -277,13 +277,26 @@
                                         </div>
 
                                         @php
-                                            $jLabel = $item['jabatan_label'] ?? ($item['jabatan']->nama ?? null);
+                                            $jLabel = $item['jabatan_label'] ?? null;
+                                            if (!$jLabel) {
+                                                if ($item['type'] === 'selesai') {
+                                                    $jLabel = $item['fromUser']?->jabatan?->nama ?? $item['fromUser']?->name ?? null;
+                                                } else {
+                                                    $jLabel = $item['jabatan']->nama ?? null;
+                                                }
+                                            }
                                         @endphp
                                         @if($jLabel)
                                         <p class="text-[11px] text-gray-500 mt-0.5 flex items-center gap-1 flex-wrap">
                                             <i class="fa-solid fa-user text-[9px] text-gray-400"></i>
                                             @if($item['type'] === 'disposisi' || $item['type'] === 'eskalasi')
                                             → {{ $jLabel }}
+                                            @elseif($item['type'] === 'selesai')
+                                            {{ $item['fromUser']?->jabatan?->nama ? $item['fromUser']->name : $jLabel }}
+                                            @if($item['fromUser']?->jabatan?->nama)
+                                            <span class="text-gray-400">•</span>
+                                            <span class="text-gray-400">{{ $item['fromUser']->jabatan->nama }}</span>
+                                            @endif
                                             @else
                                             {{ $jLabel }}
                                             @endif
@@ -386,7 +399,17 @@
                     <div class="flex-1 min-w-0">
                         <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Laporan Penyelesaian</p>
                         <p class="text-xs text-emerald-700 font-semibold mb-1">
-                            Diselesaikan oleh {{ $completion['jabatan']?->nama ?? ($completion['user']?->nama ?? 'Petugas') }}
+                            Diselesaikan oleh
+                            @if($completion['fromUser']?->jabatan?->nama)
+                                {{ $completion['fromUser']->name }}
+                                <span class="text-emerald-500 font-medium">• {{ $completion['fromUser']->jabatan->nama }}</span>
+                            @elseif($completion['jabatan']?->nama)
+                                {{ $completion['jabatan']->nama }}
+                            @elseif($completion['user']?->name)
+                                {{ $completion['user']->name }}
+                            @else
+                                Petugas
+                            @endif
                         </p>
                         @if($completion['komentar'])
                         <div class="mt-2 text-xs text-gray-700 leading-relaxed bg-emerald-50 rounded-xl px-3.5 py-2.5 border border-emerald-100">

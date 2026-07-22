@@ -153,7 +153,7 @@ class PengaduanController extends Controller
                 'category',
                 'histories.user',
                 'workflows' => fn($q) => $q
-                    ->with(['toUser.jabatan', 'fromUser', 'toJabatan', 'toUnit'])
+                    ->with(['toUser.jabatan', 'fromUser.jabatan', 'toJabatan', 'toUnit'])
                     ->orderBy('created_at', 'asc'),
             ])
                 ->where('ticket_number', strtoupper(trim($request->ticket_number)))
