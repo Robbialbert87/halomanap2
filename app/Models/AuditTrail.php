@@ -24,7 +24,7 @@ class AuditTrail extends Model
     ];
 
     protected $casts = [
-        'payload'    => 'array',
+        'payload' => 'array',
         'created_at' => 'datetime',
     ];
 
@@ -51,16 +51,16 @@ class AuditTrail extends Model
         $user = auth()->user();
 
         static::create([
-            'user_id'      => $user?->id,
-            'user_role'    => $user?->roles->first()?->name,
+            'user_id' => $user?->id,
+            'user_role' => $user?->roles->first()?->name,
             'user_jabatan' => $user?->jabatan?->nama,
-            'user_unit'    => $user?->unit?->nama,
-            'ip_address'   => request()->ip(),
-            'user_agent'   => request()->userAgent(),
-            'action'       => $action,
-            'model'        => $model,
-            'model_id'     => $modelId,
-            'payload'      => $payload ?: null,
+            'user_unit' => $user?->unit?->nama,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'action' => $action,
+            'model' => $model,
+            'model_id' => $modelId,
+            'payload' => $payload ?: null,
         ]);
     }
 }

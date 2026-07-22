@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Disposition;
+use App\Models\DispositionActivity;
 use App\Models\Ticket;
 use App\Models\Unit;
 use App\Models\WorkflowHistory;
-use App\Models\Disposition;
-use App\Models\DispositionActivity;
 use Illuminate\Http\Request;
 
 class DispositionController extends Controller
@@ -15,9 +15,9 @@ class DispositionController extends Controller
     public function index(Request $request)
     {
         $query = WorkflowHistory::with([
-            'ticket', 'toUser.jabatan', 'toUnit', 'fromUser'
+            'ticket', 'toUser.jabatan', 'toUnit', 'fromUser',
         ])->where('from_user_id', auth()->id())
-          ->orderBy('created_at', 'desc');
+            ->orderBy('created_at', 'desc');
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -27,9 +27,9 @@ class DispositionController extends Controller
             $query->where('to_unit_id', $request->unit_id);
         }
 
-        $workflows  = $query->paginate(15)->withQueryString();
-        $units      = Unit::orderBy('nama')->get();
-        $statuses   = ['menunggu_respon', 'dalam_penanganan', 'selesai', 'ditutup', 'menunggu_verifikasi'];
+        $workflows = $query->paginate(15)->withQueryString();
+        $units = Unit::orderBy('nama')->get();
+        $statuses = ['menunggu_respon', 'dalam_penanganan', 'selesai', 'ditutup', 'menunggu_verifikasi'];
 
         return view('admin.dispositions.index', compact('workflows', 'units', 'statuses'));
     }
@@ -42,7 +42,7 @@ class DispositionController extends Controller
             'head_user_id' => 'required|exists:users,id',
             'priority' => 'required|in:rendah,normal,tinggi,sangat_tinggi',
             'deadline' => 'required|date',
-            'instruction' => 'required|string'
+            'instruction' => 'required|string',
         ]);
 
         $ticket = Ticket::findOrFail($request->ticket_id);
@@ -67,7 +67,7 @@ class DispositionController extends Controller
             'user_id' => auth()->id() ?? 2, // Admin User
             'activity' => 'Disposisi Dibuat',
             'description' => 'Disposisi dibuat dan diteruskan ke Kepala Unit',
-            'ip_address' => $request->ip()
+            'ip_address' => $request->ip(),
         ]);
 
         return back()->with('success', 'Disposisi berhasil dibuat.');

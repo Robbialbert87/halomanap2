@@ -12,8 +12,8 @@ class WorkflowChanged
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * @param WorkflowHistory $history  Record workflow baru yang baru saja dibuat/diubah.
-     * @param string          $jenis    Jenis notifikasi: disposisi_baru, eskalasi, pengaduan_selesai, dll.
+     * @param  WorkflowHistory  $history  Record workflow baru yang baru saja dibuat/diubah.
+     * @param  string  $jenis  Jenis notifikasi: disposisi_baru, eskalasi, pengaduan_selesai, dll.
      */
     public function __construct(
         public readonly WorkflowHistory $history,

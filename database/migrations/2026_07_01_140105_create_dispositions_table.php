@@ -26,7 +26,7 @@ return new class extends Migration
                 'menunggu_review',
                 'revisi',
                 'menunggu_verifikasi',
-                'selesai'
+                'selesai',
             ])->default('menunggu_respon');
             $table->timestamp('accepted_at')->nullable();
             $table->timestamp('completed_at')->nullable();

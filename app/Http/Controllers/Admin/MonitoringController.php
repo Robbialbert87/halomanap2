@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
-use App\Models\WorkflowHistory;
 use App\Models\Unit;
-use Illuminate\Http\Request;
+use App\Models\WorkflowHistory;
 use Illuminate\Support\Facades\DB;
 
 class MonitoringController extends Controller
@@ -15,18 +14,18 @@ class MonitoringController extends Controller
     {
         // ── Card Stats ──────────────────────────────────────────────────────
         $stats = [
-            'total'              => Ticket::count(),
-            'baru'               => Ticket::where('status', 'Baru')->count(),
-            'dalam_penanganan'   => Ticket::where('status', 'Diproses')->count(),
-            'menunggu_verifikasi'=> Ticket::where('status', 'Menunggu Verifikasi')->count(),
-            'selesai'            => Ticket::where('status', 'Selesai')->count(),
-            'sla_breach'         => Ticket::where('sla_breached', true)->count(),
+            'total' => Ticket::count(),
+            'baru' => Ticket::where('status', 'Baru')->count(),
+            'dalam_penanganan' => Ticket::where('status', 'Diproses')->count(),
+            'menunggu_verifikasi' => Ticket::where('status', 'Menunggu Verifikasi')->count(),
+            'selesai' => Ticket::where('status', 'Selesai')->count(),
+            'sla_breach' => Ticket::where('sla_breached', true)->count(),
         ];
 
         // ── Workflow Monitoring (tiket aktif dengan penanggung jawab) ───────
         $activeWorkflows = WorkflowHistory::with([
-                'ticket', 'toUser', 'toJabatan', 'toUnit'
-            ])
+            'ticket', 'toUser', 'toJabatan', 'toUnit',
+        ])
             ->whereNotIn('status', ['didisposisikan', 'eskalasi', 'ditutup', 'selesai'])
             ->latest()
             ->take(20)
@@ -34,8 +33,8 @@ class MonitoringController extends Controller
 
         // ── Eskalasi Terbaru ─────────────────────────────────────────────────
         $latestEscalations = WorkflowHistory::with([
-                'ticket', 'fromUser', 'toUser', 'fromJabatan', 'toJabatan', 'toUnit'
-            ])
+            'ticket', 'fromUser', 'toUser', 'fromJabatan', 'toJabatan', 'toUnit',
+        ])
             ->where('action', 'eskalasi')
             ->latest()
             ->take(10)
@@ -54,14 +53,14 @@ class MonitoringController extends Controller
             ->groupBy('to_unit_id')
             ->with('toUnit')
             ->get()
-            ->map(fn($row) => [
-                'unit'      => $row->toUnit?->nama ?? '-',
-                'total'     => $row->total,
+            ->map(fn ($row) => [
+                'unit' => $row->toUnit?->nama ?? '-',
+                'total' => $row->total,
                 'avg_hours' => round($row->avg_hours, 1),
             ])
             ->sortBy('avg_hours');
 
-        $topUnits    = $unitPerformance->take(5)->values();
+        $topUnits = $unitPerformance->take(5)->values();
         $bottomUnits = $unitPerformance->sortByDesc('avg_hours')->take(5)->values();
 
         return view('admin.monitoring.index', compact(
@@ -74,8 +73,8 @@ class MonitoringController extends Controller
         $ticket = Ticket::with(['category', 'room'])->findOrFail($ticketId);
 
         $timeline = WorkflowHistory::with([
-                'fromUser', 'toUser', 'fromJabatan', 'toJabatan', 'fromUnit', 'toUnit'
-            ])
+            'fromUser', 'toUser', 'fromJabatan', 'toJabatan', 'fromUnit', 'toUnit',
+        ])
             ->where('ticket_id', $ticketId)
             ->orderBy('created_at')
             ->get();

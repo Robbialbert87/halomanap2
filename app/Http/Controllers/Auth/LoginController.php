@@ -22,6 +22,7 @@ class LoginController extends Controller
         if (Auth::check()) {
             return redirect($this->authService->getRedirectRoute(Auth::user()));
         }
+
         return view('auth.login');
     }
 
@@ -29,6 +30,7 @@ class LoginController extends Controller
     {
         if ($this->authService->login($request)) {
             $user = Auth::user();
+
             return redirect()->intended($this->authService->getRedirectRoute($user));
         }
 
@@ -40,6 +42,7 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         $this->authService->logout($request);
+
         return redirect('/login');
     }
 }

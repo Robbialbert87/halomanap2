@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
-use App\Models\User;
 use App\Models\WorkflowHistory;
 use App\Services\WorkflowService;
 use Illuminate\Http\Request;
@@ -18,10 +17,10 @@ class WorkflowController extends Controller
     public function disposisi(Request $request)
     {
         $request->validate([
-            'ticket_id'  => 'required|exists:tickets,id',
+            'ticket_id' => 'required|exists:tickets,id',
             'jabatan_id' => 'required|exists:jabatans,id',
-            'komentar'   => 'nullable|string|max:1000',
-            'due_at'     => 'nullable|date|after:now',
+            'komentar' => 'nullable|string|max:1000',
+            'due_at' => 'nullable|date|after:now',
         ]);
 
         $ticket = Ticket::findOrFail($request->ticket_id);
@@ -44,7 +43,7 @@ class WorkflowController extends Controller
     public function eskalasi(Request $request, WorkflowHistory $history)
     {
         $request->validate([
-            'komentar'       => 'nullable|string|max:1000',
+            'komentar' => 'nullable|string|max:1000',
             'target_user_id' => 'required|exists:users,id',
         ]);
 

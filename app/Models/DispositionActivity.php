@@ -10,7 +10,7 @@ class DispositionActivity extends Model
     use HasUuids;
 
     protected $fillable = [
-        'disposition_id', 'user_id', 'activity', 'description', 'ip_address'
+        'disposition_id', 'user_id', 'activity', 'description', 'ip_address',
     ];
 
     public function disposition()

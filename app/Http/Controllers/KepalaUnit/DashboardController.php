@@ -4,7 +4,6 @@ namespace App\Http\Controllers\KepalaUnit;
 
 use App\Http\Controllers\Controller;
 use App\Models\WorkflowHistory;
-use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -43,7 +42,7 @@ class DashboardController extends Controller
                 }
             }
             if ($count > 0) {
-                $avgRespon = round($totalHours / $count, 1) . ' Jam';
+                $avgRespon = round($totalHours / $count, 1).' Jam';
             }
         }
 

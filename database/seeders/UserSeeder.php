@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -36,7 +37,7 @@ class UserSeeder extends Seeder
 
         // 3. Kepala Ruangan (contoh: Poli Penyakit Dalam)
         // Assume unit_id 1 is Poli Penyakit Dalam if it exists, otherwise leave null for now
-        $unit = \App\Models\Unit::first();
+        $unit = Unit::first();
         $unitId = $unit ? $unit->id : null;
 
         User::firstOrCreate(

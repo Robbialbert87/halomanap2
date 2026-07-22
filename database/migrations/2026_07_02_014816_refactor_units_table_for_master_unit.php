@@ -2,9 +2,9 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -20,7 +20,7 @@ return new class extends Migration
 
             $table->enum('jenis', [
                 'Instalasi', 'Bidang', 'Bagian', 'Sub Bagian',
-                'Komite', 'Tim', 'Pelayanan', 'Penunjang', 'Lainnya'
+                'Komite', 'Tim', 'Pelayanan', 'Penunjang', 'Lainnya',
             ])->default('Lainnya')->after('nama');
 
             $table->unsignedBigInteger('parent_id')->nullable()->after('jenis');
@@ -36,7 +36,7 @@ return new class extends Migration
         foreach (DB::table('units')->get() as $unit) {
             DB::table('units')->where('id', $unit->id)->update([
                 'uuid' => (string) Str::uuid(),
-                'kode' => 'UNIT_' . str_pad($unit->id, 3, '0', STR_PAD_LEFT),
+                'kode' => 'UNIT_'.str_pad($unit->id, 3, '0', STR_PAD_LEFT),
             ]);
         }
 

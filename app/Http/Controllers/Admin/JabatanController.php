@@ -16,34 +16,36 @@ class JabatanController extends Controller
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('nama', 'like', "%{$search}%")
-                  ->orWhere('kode', 'like', "%{$search}%")
-                  ->orWhere('kategori_jabatan', 'like', "%{$search}%");
+                    ->orWhere('kode', 'like', "%{$search}%")
+                    ->orWhere('kategori_jabatan', 'like', "%{$search}%");
             });
         }
 
         $jabatans = $query->paginate(7)->withQueryString()->onEachSide(2);
+
         return view('admin.jabatans.index', compact('jabatans'));
     }
 
     public function create()
     {
         $kategoriList = ['Direktur', 'Kabid', 'Kabag', 'Kasi', 'Kasubbag', 'Kepala Unit', 'Petugas'];
+
         return view('admin.jabatans.create', compact('kategoriList'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama'             => 'required|string|max:255',
+            'nama' => 'required|string|max:255',
             'kategori_jabatan' => 'required|in:Direktur,Kabid,Kabag,Kasi,Kasubbag,Kepala Unit,Petugas',
-            'status'           => 'required|in:active,inactive',
+            'status' => 'required|in:active,inactive',
         ]);
 
         $baseKode = strtoupper(Str::slug($validated['nama'], '_'));
         $kode = $baseKode;
         $counter = 1;
         while (Jabatan::withTrashed()->where('kode', $kode)->exists()) {
-            $kode = $baseKode . '_' . $counter++;
+            $kode = $baseKode.'_'.$counter++;
         }
         $validated['kode'] = $kode;
 
@@ -55,15 +57,16 @@ class JabatanController extends Controller
     public function edit(Jabatan $jabatan)
     {
         $kategoriList = ['Direktur', 'Kabid', 'Kabag', 'Kasi', 'Kasubbag', 'Kepala Unit', 'Petugas'];
+
         return view('admin.jabatans.edit', compact('jabatan', 'kategoriList'));
     }
 
     public function update(Request $request, Jabatan $jabatan)
     {
         $validated = $request->validate([
-            'nama'             => 'required|string|max:255',
+            'nama' => 'required|string|max:255',
             'kategori_jabatan' => 'required|in:Direktur,Kabid,Kabag,Kasi,Kasubbag,Kepala Unit,Petugas',
-            'status'           => 'required|in:active,inactive',
+            'status' => 'required|in:active,inactive',
         ]);
 
         $baseKode = strtoupper(Str::slug($validated['nama'], '_'));
@@ -73,7 +76,7 @@ class JabatanController extends Controller
             $kode = $baseKode;
             $counter = 1;
             while (Jabatan::withTrashed()->where('kode', $kode)->where('id', '!=', $jabatan->id)->exists()) {
-                $kode = $baseKode . '_' . $counter++;
+                $kode = $baseKode.'_'.$counter++;
             }
             $validated['kode'] = $kode;
         }

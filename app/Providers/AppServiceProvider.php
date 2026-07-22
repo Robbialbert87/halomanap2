@@ -6,6 +6,8 @@ use App\Events\WorkflowChanged;
 use App\Listeners\SendWhatsAppNotification;
 use App\Models\AppNotification;
 use App\Models\Ticket;
+use App\Services\RoleMenuService;
+use App\Services\WorkflowService;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
@@ -19,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Bind WorkflowService ke service container
-        $this->app->singleton(\App\Services\WorkflowService::class);
+        $this->app->singleton(WorkflowService::class);
     }
 
     /**
@@ -40,13 +42,13 @@ class AppServiceProvider extends ServiceProvider
             // Determine role route prefix for notification links
             $roleRoute = null;
             if ($user) {
-                $roleGroup = \App\Services\RoleMenuService::getRoleGroup($user);
+                $roleGroup = RoleMenuService::getRoleGroup($user);
                 $roleRoute = match ($roleGroup) {
                     'kepala_unit' => 'kepala-unit.dispositions.show',
-                    'kasi'        => 'kasi.dispositions.show',
-                    'kabid'       => 'kabid.dispositions.show',
-                    'head_unit'   => 'head-unit.dispositions.show',
-                    default       => null,
+                    'kasi' => 'kasi.dispositions.show',
+                    'kabid' => 'kabid.dispositions.show',
+                    'head_unit' => 'head-unit.dispositions.show',
+                    default => null,
                 };
             }
 
@@ -57,35 +59,35 @@ class AppServiceProvider extends ServiceProvider
             $unreadDone = Ticket::whereIn('status', ['DONE', 'Selesai'])
                 ->whereNull('notification_seen_at');
 
-            if ($user && !$user->hasRole(['Super Admin', 'Admin Pengaduan'])) {
-                $unreadNew->whereHas('room', fn($q) => $q->where('unit_id', $user->unit_id));
-                $unreadDone->whereHas('room', fn($q) => $q->where('unit_id', $user->unit_id));
+            if ($user && ! $user->hasRole(['Super Admin', 'Admin Pengaduan'])) {
+                $unreadNew->whereHas('room', fn ($q) => $q->where('unit_id', $user->unit_id));
+                $unreadDone->whereHas('room', fn ($q) => $q->where('unit_id', $user->unit_id));
             }
 
             $newNotifs = (clone $unreadNew)
                 ->with('category')->latest()->take(10)->get()
-                ->map(fn($t) => [
-                    'id'            => $t->id,
+                ->map(fn ($t) => [
+                    'id' => $t->id,
                     'ticket_number' => $t->ticket_number,
-                    'title'         => $t->title,
-                    'type'          => $t->type,
-                    'category'      => $t->category?->name,
-                    'time'          => $t->created_at->diffForHumans(),
-                    'notif_type'    => 'new',
-                    'url'           => route('admin.tickets.show', $t->id),
+                    'title' => $t->title,
+                    'type' => $t->type,
+                    'category' => $t->category?->name,
+                    'time' => $t->created_at->diffForHumans(),
+                    'notif_type' => 'new',
+                    'url' => route('admin.tickets.show', $t->id),
                 ]);
 
             $doneNotifs = (clone $unreadDone)
                 ->with('category')->latest()->take(5)->get()
-                ->map(fn($t) => [
-                    'id'            => $t->id,
+                ->map(fn ($t) => [
+                    'id' => $t->id,
                     'ticket_number' => $t->ticket_number,
-                    'title'         => $t->title,
-                    'type'          => $t->type,
-                    'category'      => $t->category?->name,
-                    'time'          => $t->updated_at->diffForHumans(),
-                    'notif_type'    => 'selesai',
-                    'url'           => route('admin.tickets.show', $t->id),
+                    'title' => $t->title,
+                    'type' => $t->type,
+                    'category' => $t->category?->name,
+                    'time' => $t->updated_at->diffForHumans(),
+                    'notif_type' => 'selesai',
+                    'url' => route('admin.tickets.show', $t->id),
                 ]);
 
             // 2. Workflow-based notifications (disposisi, eskalasi, etc.)
@@ -97,33 +99,36 @@ class AppServiceProvider extends ServiceProvider
                     ->latest()
                     ->get()
                     ->filter(function ($n) {
-                        if (!($n->data['ticket_id'] ?? null)) return false;
+                        if (! ($n->data['ticket_id'] ?? null)) {
+                            return false;
+                        }
+
                         return Ticket::where('id', $n->data['ticket_id'])->exists();
                     });
 
                 $appNotifCount = $allAppNotifs->count();
 
                 $appNotifs = $allAppNotifs->take(15)->map(function ($n) use ($roleRoute) {
-                        $ticketId = $n->data['ticket_id'] ?? 0;
-                        $workflowUuid = $n->data['workflow_uuid'] ?? null;
+                    $ticketId = $n->data['ticket_id'] ?? 0;
+                    $workflowUuid = $n->data['workflow_uuid'] ?? null;
 
-                        if ($roleRoute && $workflowUuid) {
-                            $url = route($roleRoute, $workflowUuid);
-                        } else {
-                            $url = route('admin.tickets.show', $ticketId);
-                        }
+                    if ($roleRoute && $workflowUuid) {
+                        $url = route($roleRoute, $workflowUuid);
+                    } else {
+                        $url = route('admin.tickets.show', $ticketId);
+                    }
 
-                        return [
-                            'id'            => $ticketId,
-                            'ticket_number' => $n->data['ticket_number'] ?? '-',
-                            'title'         => $n->title,
-                            'type'          => $n->type,
-                            'category'      => null,
-                            'time'          => $n->created_at->diffForHumans(),
-                            'notif_type'    => $n->type === 'pengaduan_selesai' ? 'selesai' : 'new',
-                            'url'           => $url,
-                        ];
-                    });
+                    return [
+                        'id' => $ticketId,
+                        'ticket_number' => $n->data['ticket_number'] ?? '-',
+                        'title' => $n->title,
+                        'type' => $n->type,
+                        'category' => null,
+                        'time' => $n->created_at->diffForHumans(),
+                        'notif_type' => $n->type === 'pengaduan_selesai' ? 'selesai' : 'new',
+                        'url' => $url,
+                    ];
+                });
             }
 
             $notifications = $newNotifs->concat($doneNotifs)->concat($appNotifs)->sortByDesc('time')->take(15)->values();

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Appreciation extends Model
 {
     protected $fillable = [
-        'name', 'rating', 'message'
+        'name', 'rating', 'message',
     ];
 
     protected $casts = [

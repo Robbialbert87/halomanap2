@@ -4,12 +4,15 @@ namespace App\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SendWhatsAppNotification implements ShouldQueue
 {
     use Queueable;
 
     protected $phoneNumber;
+
     protected $message;
 
     /**
@@ -32,12 +35,13 @@ class SendWhatsAppNotification implements ShouldQueue
         }
 
         try {
-            \Illuminate\Support\Facades\Http::timeout(10)->post('http://localhost:3000/send', [
+            $url = config('whatsapp.api_url').'/send';
+            Http::timeout(10)->post($url, [
                 'number' => $this->phoneNumber,
                 'message' => $this->message,
             ]);
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Gagal mengirim WhatsApp: ' . $e->getMessage());
+            Log::error('Gagal mengirim WhatsApp: '.$e->getMessage());
         }
     }
 }

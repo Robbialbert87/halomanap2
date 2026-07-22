@@ -15,35 +15,35 @@ class TestingWorkflowSeeder extends Seeder
     {
         $this->command->info('=== TESTING WORKFLOW SEEDER ===');
 
-        $roleAdmin    = Role::firstOrCreate(['name' => 'Admin Pengaduan',  'guard_name' => 'web'], ['kode' => 'ADMIN_PENGADUAN', 'status' => 'active']);
-        $rolePegawai  = Role::firstOrCreate(['name' => 'Pegawai',          'guard_name' => 'web'], ['kode' => 'PEGAWAI',         'status' => 'active']);
+        $roleAdmin = Role::firstOrCreate(['name' => 'Admin Pengaduan',  'guard_name' => 'web'], ['kode' => 'ADMIN_PENGADUAN', 'status' => 'active']);
+        $rolePegawai = Role::firstOrCreate(['name' => 'Pegawai',          'guard_name' => 'web'], ['kode' => 'PEGAWAI',         'status' => 'active']);
         $roleDirektur = Role::firstOrCreate(['name' => 'Direktur',         'guard_name' => 'web'], ['kode' => 'DIREKTUR',        'status' => 'active']);
         $this->command->info('✓ Roles siap.');
 
         $jabKepala = Jabatan::firstOrCreate(
             ['nama' => 'Kepala Instalasi'],
             [
-                'kode'             => 'JAB_KA_INSTALASI',
+                'kode' => 'JAB_KA_INSTALASI',
                 'kategori_jabatan' => 'Kepala Unit',
-                'status'           => 'active',
+                'status' => 'active',
             ]
         );
 
         $jabKasi = Jabatan::firstOrCreate(
             ['nama' => 'Kepala Seksi Penunjang Medik'],
             [
-                'kode'             => 'JAB_KASI_PENUNJANG',
+                'kode' => 'JAB_KASI_PENUNJANG',
                 'kategori_jabatan' => 'Kasi',
-                'status'           => 'active',
+                'status' => 'active',
             ]
         );
 
         $jabDirektur = Jabatan::firstOrCreate(
             ['nama' => 'Direktur'],
             [
-                'kode'             => 'JAB_DIREKTUR',
+                'kode' => 'JAB_DIREKTUR',
                 'kategori_jabatan' => 'Direktur',
-                'status'           => 'active',
+                'status' => 'active',
             ]
         );
 
@@ -52,9 +52,9 @@ class TestingWorkflowSeeder extends Seeder
         $unit = Unit::where('kode', 'UN_RADIOLOGI')->first();
         if (! $unit) {
             $unit = Unit::create([
-                'kode'   => 'UN_RADIOLOGI',
-                'nama'   => 'Instalasi Radiologi',
-                'jenis'  => 'Instalasi',
+                'kode' => 'UN_RADIOLOGI',
+                'nama' => 'Instalasi Radiologi',
+                'jenis' => 'Instalasi',
                 'status' => 'active',
             ]);
         }
@@ -62,44 +62,44 @@ class TestingWorkflowSeeder extends Seeder
 
         $users = [
             [
-                'nip'          => '100000000000000001',
-                'nama'         => 'Admin Pengaduan',
+                'nip' => '100000000000000001',
+                'nama' => 'Admin Pengaduan',
                 'phone_number' => '081111111111',
-                'unit_id'      => null,
-                'jabatan_id'   => null,
-                'status'       => 'active',
-                'role'         => $roleAdmin->name,
-                'info'         => 'NIP: 100000000000000001 | Password: password123',
+                'unit_id' => null,
+                'jabatan_id' => null,
+                'status' => 'active',
+                'role' => $roleAdmin->name,
+                'info' => 'NIP: 100000000000000001 | Password: password123',
             ],
             [
-                'nip'          => '100000000000000002',
-                'nama'         => 'Hendra Kusuma',
+                'nip' => '100000000000000002',
+                'nama' => 'Hendra Kusuma',
                 'phone_number' => '082222222222',
-                'unit_id'      => $unit->id,
-                'jabatan_id'   => $jabKepala->id,
-                'status'       => 'active',
-                'role'         => $rolePegawai->name,
-                'info'         => 'NIP: 100000000000000002 | Password: password123 | Role: Kepala Instalasi',
+                'unit_id' => $unit->id,
+                'jabatan_id' => $jabKepala->id,
+                'status' => 'active',
+                'role' => $rolePegawai->name,
+                'info' => 'NIP: 100000000000000002 | Password: password123 | Role: Kepala Instalasi',
             ],
             [
-                'nip'          => '100000000000000003',
-                'nama'         => 'dr. Siti Rahayu',
+                'nip' => '100000000000000003',
+                'nama' => 'dr. Siti Rahayu',
                 'phone_number' => '083333333333',
-                'unit_id'      => $unit->id,
-                'jabatan_id'   => $jabKasi->id,
-                'status'       => 'active',
-                'role'         => $rolePegawai->name,
-                'info'         => 'NIP: 100000000000000003 | Password: password123 | Role: Kasi Penunjang Medik',
+                'unit_id' => $unit->id,
+                'jabatan_id' => $jabKasi->id,
+                'status' => 'active',
+                'role' => $rolePegawai->name,
+                'info' => 'NIP: 100000000000000003 | Password: password123 | Role: Kasi Penunjang Medik',
             ],
             [
-                'nip'          => '100000000000000004',
-                'nama'         => 'dr. Ahmad Fauzi',
+                'nip' => '100000000000000004',
+                'nama' => 'dr. Ahmad Fauzi',
                 'phone_number' => '084444444444',
-                'unit_id'      => $unit->id,
-                'jabatan_id'   => $jabDirektur->id,
-                'status'       => 'active',
-                'role'         => $roleDirektur->name,
-                'info'         => 'NIP: 100000000000000004 | Password: password123 | Role: Direktur',
+                'unit_id' => $unit->id,
+                'jabatan_id' => $jabDirektur->id,
+                'status' => 'active',
+                'role' => $roleDirektur->name,
+                'info' => 'NIP: 100000000000000004 | Password: password123 | Role: Direktur',
             ],
         ];
 
@@ -107,12 +107,12 @@ class TestingWorkflowSeeder extends Seeder
             $user = User::updateOrCreate(
                 ['nip' => $data['nip']],
                 [
-                    'nama'         => $data['nama'],
+                    'nama' => $data['nama'],
                     'phone_number' => $data['phone_number'],
-                    'password'     => Hash::make('password123'),
-                    'unit_id'      => $data['unit_id'],
-                    'jabatan_id'   => $data['jabatan_id'],
-                    'status'       => $data['status'],
+                    'password' => Hash::make('password123'),
+                    'unit_id' => $data['unit_id'],
+                    'jabatan_id' => $data['jabatan_id'],
+                    'status' => $data['status'],
                 ]
             );
             $user->syncRoles([$data['role']]);

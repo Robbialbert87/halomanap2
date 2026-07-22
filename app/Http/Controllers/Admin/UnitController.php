@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Unit;
 use App\Models\UnitType;
 use Illuminate\Http\Request;
-use App\Models\Unit;
 use Illuminate\Support\Facades\Schema;
 
 class UnitController extends Controller
@@ -15,8 +15,8 @@ class UnitController extends Controller
         $query = Unit::orderBy('jenis')->orderBy('nama');
 
         if ($request->has('search') && $request->search != '') {
-            $query->where('nama', 'like', '%' . $request->search . '%')
-                  ->orWhere('kode', 'like', '%' . $request->search . '%');
+            $query->where('nama', 'like', '%'.$request->search.'%')
+                ->orWhere('kode', 'like', '%'.$request->search.'%');
         }
 
         if ($request->has('jenis') && $request->jenis != '') {
@@ -24,15 +24,16 @@ class UnitController extends Controller
         }
 
         $units = $query->paginate(7)->withQueryString()->onEachSide(2);
-        
+
         $jenisList = $this->getJenisList();
-        
+
         return view('admin.units.index', compact('units', 'jenisList'));
     }
 
     public function create()
     {
         $jenisList = $this->getJenisList();
+
         return view('admin.units.create', compact('jenisList'));
     }
 
@@ -41,19 +42,21 @@ class UnitController extends Controller
         $jenisList = $this->getJenisList()->toArray();
 
         $validated = $request->validate([
-            'kode'   => 'required|string|max:125|unique:units,kode',
-            'nama'   => 'required|string|max:255',
-            'jenis'  => 'required|in:' . implode(',', $jenisList),
+            'kode' => 'required|string|max:125|unique:units,kode',
+            'nama' => 'required|string|max:255',
+            'jenis' => 'required|in:'.implode(',', $jenisList),
             'status' => 'required|in:active,inactive',
         ]);
 
         Unit::create($validated);
+
         return redirect()->route('admin.units.index')->with('success', 'Master Unit berhasil ditambahkan.');
     }
 
     public function edit(Unit $unit)
     {
         $jenisList = $this->getJenisList();
+
         return view('admin.units.edit', compact('unit', 'jenisList'));
     }
 
@@ -62,19 +65,21 @@ class UnitController extends Controller
         $jenisList = $this->getJenisList()->toArray();
 
         $validated = $request->validate([
-            'kode'   => 'required|string|max:125|unique:units,kode,' . $unit->id,
-            'nama'   => 'required|string|max:255',
-            'jenis'  => 'required|in:' . implode(',', $jenisList),
+            'kode' => 'required|string|max:125|unique:units,kode,'.$unit->id,
+            'nama' => 'required|string|max:255',
+            'jenis' => 'required|in:'.implode(',', $jenisList),
             'status' => 'required|in:active,inactive',
         ]);
 
         $unit->update($validated);
+
         return redirect()->route('admin.units.index')->with('success', 'Master Unit berhasil diperbarui.');
     }
 
     public function destroy(Unit $unit)
     {
         $unit->forceDelete();
+
         return redirect()->route('admin.units.index')->with('success', 'Master Unit berhasil dihapus.');
     }
 

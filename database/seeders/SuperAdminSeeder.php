@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-use App\Models\Role;
 use Spatie\Permission\Models\Permission;
 
 class SuperAdminSeeder extends Seeder
@@ -35,9 +35,9 @@ class SuperAdminSeeder extends Seeder
         $user = User::updateOrCreate(
             ['nip' => $nip],
             [
-                'nama'      => 'Super Admin',
-                'password'  => Hash::make($nip),
-                'status'    => 'active',
+                'nama' => 'Super Admin',
+                'password' => Hash::make($nip),
+                'status' => 'active',
             ]
         );
 

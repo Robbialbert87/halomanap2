@@ -14,13 +14,13 @@ class AuthService
     public function login(LoginRequest $request): bool
     {
         $credentials = $request->only('nip', 'password');
-        
+
         // We only allow active users to login
         $credentials['status'] = 'active';
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $user = Auth::user();
-            
+
             // Update last login
             $user->update([
                 'last_login_at' => now(),

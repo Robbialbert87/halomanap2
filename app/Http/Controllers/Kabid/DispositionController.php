@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Kabid;
 
 use App\Http\Controllers\Controller;
 use App\Models\AppNotification;
-use App\Models\WorkflowHistory;
 use App\Models\User;
+use App\Models\WorkflowHistory;
 use App\Services\WorkflowService;
 use Illuminate\Http\Request;
 
@@ -40,7 +40,7 @@ class DispositionController extends Controller
             'ticket.workflows.toUser',
             'ticket.workflows.toJabatan',
             'ticket.workflows.fromJabatan',
-            'fromUser'
+            'fromUser',
         ])->where('uuid', $id)->firstOrFail();
 
         if ($workflow->to_user_id !== $user->id) {
@@ -86,7 +86,7 @@ class DispositionController extends Controller
         }
 
         $request->validate([
-            'komentar'       => 'nullable|string|max:1000',
+            'komentar' => 'nullable|string|max:1000',
             'target_user_id' => 'required|exists:users,id',
         ]);
 

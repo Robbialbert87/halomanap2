@@ -158,11 +158,17 @@
             </a>
             @endcan
             @can('manage-whatsapp')
-            <a href="{{ route('admin.whatsapp.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('admin.whatsapp.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.whatsapp.index') ? 'bg-blue-50 text-blue-700' : '' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-sm shadow-green-200/50 flex-shrink-0">
                     <i class="fa-brands fa-whatsapp text-white text-xs"></i>
                 </span>
                 WhatsApp Gateway
+            </a>
+            <a href="{{ route('admin.whatsapp.test') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.whatsapp.test') ? 'bg-blue-50 text-blue-700' : '' }}">
+                <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm shadow-emerald-200/50 flex-shrink-0">
+                    <i class="fa-solid fa-paper-plane text-white text-xs"></i>
+                </span>
+                Test Kirim WA
             </a>
             @endcan
             @can('manage-settings')

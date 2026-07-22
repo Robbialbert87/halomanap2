@@ -13,7 +13,7 @@ class DummyTicketSeeder extends Seeder
 
         $tickets = [
             [
-                'ticket_number' => 'HM' . $date . '0001',
+                'ticket_number' => 'HM'.$date.'0001',
                 'type' => 'Pengaduan',
                 'category_id' => 1,
                 'room_id' => 5,
@@ -27,7 +27,7 @@ class DummyTicketSeeder extends Seeder
                 'sla_breached' => false,
             ],
             [
-                'ticket_number' => 'HM' . $date . '0002',
+                'ticket_number' => 'HM'.$date.'0002',
                 'type' => 'Pengaduan',
                 'category_id' => 4,
                 'room_id' => 2,
@@ -41,7 +41,7 @@ class DummyTicketSeeder extends Seeder
                 'sla_breached' => false,
             ],
             [
-                'ticket_number' => 'HM' . $date . '0003',
+                'ticket_number' => 'HM'.$date.'0003',
                 'type' => 'Survei',
                 'category_id' => 7,
                 'room_id' => 8,
@@ -57,7 +57,7 @@ class DummyTicketSeeder extends Seeder
                 'review' => 'Pelayanan sangat memuaskan, semoga dipertahankan dan ditingkatkan.',
             ],
             [
-                'ticket_number' => 'HM' . $date . '0004',
+                'ticket_number' => 'HM'.$date.'0004',
                 'type' => 'Apresiasi',
                 'category_id' => 2,
                 'room_id' => 14,
@@ -71,7 +71,7 @@ class DummyTicketSeeder extends Seeder
                 'sla_breached' => false,
             ],
             [
-                'ticket_number' => 'HM' . $date . '0005',
+                'ticket_number' => 'HM'.$date.'0005',
                 'type' => 'Informasi',
                 'category_id' => 7,
                 'room_id' => 1,
@@ -85,7 +85,7 @@ class DummyTicketSeeder extends Seeder
                 'sla_breached' => false,
             ],
             [
-                'ticket_number' => 'HM' . $date . '0006',
+                'ticket_number' => 'HM'.$date.'0006',
                 'type' => 'Pengaduan',
                 'category_id' => 5,
                 'room_id' => 25,
@@ -99,7 +99,7 @@ class DummyTicketSeeder extends Seeder
                 'sla_breached' => false,
             ],
             [
-                'ticket_number' => 'HM' . $date . '0007',
+                'ticket_number' => 'HM'.$date.'0007',
                 'type' => 'Pengaduan',
                 'category_id' => 6,
                 'room_id' => 36,
@@ -113,7 +113,7 @@ class DummyTicketSeeder extends Seeder
                 'sla_breached' => true,
             ],
             [
-                'ticket_number' => 'HM' . $date . '0008',
+                'ticket_number' => 'HM'.$date.'0008',
                 'type' => 'Apresiasi',
                 'category_id' => 2,
                 'room_id' => 30,
@@ -127,7 +127,7 @@ class DummyTicketSeeder extends Seeder
                 'sla_breached' => false,
             ],
             [
-                'ticket_number' => 'HM' . $date . '0009',
+                'ticket_number' => 'HM'.$date.'0009',
                 'type' => 'Pengaduan',
                 'category_id' => 3,
                 'room_id' => 9,
@@ -141,7 +141,7 @@ class DummyTicketSeeder extends Seeder
                 'sla_breached' => false,
             ],
             [
-                'ticket_number' => 'HM' . $date . '0010',
+                'ticket_number' => 'HM'.$date.'0010',
                 'type' => 'Survei',
                 'category_id' => 7,
                 'room_id' => 1,

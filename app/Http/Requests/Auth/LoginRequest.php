@@ -14,7 +14,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nip'      => ['required', 'string'],
+            'nip' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -22,7 +22,7 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'nip.required'      => 'NIP wajib diisi.',
+            'nip.required' => 'NIP wajib diisi.',
             'password.required' => 'Password wajib diisi.',
         ];
     }

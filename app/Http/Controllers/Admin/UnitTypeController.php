@@ -11,6 +11,7 @@ class UnitTypeController extends Controller
     public function index()
     {
         $unitTypes = UnitType::orderBy('name')->paginate(10)->withQueryString();
+
         return view('admin.unit_types.index', compact('unitTypes'));
     }
 
@@ -41,7 +42,7 @@ class UnitTypeController extends Controller
     public function update(Request $request, UnitType $unitType)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:unit_types,name,' . $unitType->id,
+            'name' => 'required|string|max:255|unique:unit_types,name,'.$unitType->id,
             'color' => 'nullable|string|max:7',
             'is_active' => 'boolean',
         ]);

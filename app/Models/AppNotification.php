@@ -10,7 +10,7 @@ class AppNotification extends Model
     use HasUuids;
 
     protected $fillable = [
-        'user_id', 'type', 'title', 'message', 'data', 'read_at'
+        'user_id', 'type', 'title', 'message', 'data', 'read_at',
     ];
 
     protected $casts = [

@@ -14,13 +14,13 @@ return new class extends Migration
             $table->renameColumn('name', 'nama');
             $table->string('email')->nullable()->change();
             $table->string('phone_number')->nullable()->after('email');
-            
+
             // replace is_active with status
             if (Schema::hasColumn('users', 'is_active')) {
                 $table->dropColumn('is_active');
             }
             $table->enum('status', ['active', 'inactive', 'suspended'])->default('active')->after('jabatan');
-            
+
             $table->timestamp('last_login_at')->nullable();
             $table->string('last_login_ip')->nullable();
             $table->softDeletes();

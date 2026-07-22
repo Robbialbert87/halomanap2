@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Models\TicketAttachment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class TicketAttachmentController extends Controller
@@ -15,8 +14,8 @@ class TicketAttachmentController extends Controller
     {
         $request->validate([
             'attachment_type' => 'required|string',
-            'description'     => 'nullable|string',
-            'file'            => 'required|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx|max:10240',
+            'description' => 'nullable|string',
+            'file' => 'required|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx|max:10240',
         ]);
 
         $ticket = Ticket::findOrFail($ticketId);
@@ -27,16 +26,16 @@ class TicketAttachmentController extends Controller
         $fileSize = $file->getSize();
 
         // Generate a unique path
-        $path = $file->storeAs('ticket_attachments', Str::uuid() . '_' . $originalName, 'public');
+        $path = $file->storeAs('ticket_attachments', Str::uuid().'_'.$originalName, 'public');
 
         $ticket->attachments()->create([
-            'user_id'         => auth()->id(), // null if not authenticated
+            'user_id' => auth()->id(), // null if not authenticated
             'attachment_type' => $request->attachment_type,
-            'description'     => $request->description,
-            'file_name'       => $originalName,
-            'file_path'       => $path,
-            'mime_type'       => $mimeType,
-            'file_size'       => $fileSize,
+            'description' => $request->description,
+            'file_name' => $originalName,
+            'file_path' => $path,
+            'mime_type' => $mimeType,
+            'file_size' => $fileSize,
         ]);
 
         return back()->with('success', 'Lampiran berhasil ditambahkan.');
@@ -45,10 +44,10 @@ class TicketAttachmentController extends Controller
     public function download(string $ticketId, string $attachmentId)
     {
         $attachment = TicketAttachment::where('ticket_id', $ticketId)->findOrFail($attachmentId);
-        
-        $path = storage_path('app/public/' . $attachment->file_path);
-        
-        if (!file_exists($path)) {
+
+        $path = storage_path('app/public/'.$attachment->file_path);
+
+        if (! file_exists($path)) {
             abort(404, 'File not found');
         }
 

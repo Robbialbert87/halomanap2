@@ -2,24 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Unit;
-use App\Models\Room;
-use App\Models\ReportCategory;
-use App\Models\Ticket;
-use App\Models\User;
 use App\Jobs\SendWhatsAppNotification;
+use App\Models\ReportCategory;
+use App\Models\Room;
+use App\Models\Ticket;
+use App\Models\Unit;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class PengaduanController extends Controller
 {
     public function create(Request $request)
     {
-        $units      = Unit::where('status', 'active')->orderBy('nama')->get();
-        $rooms      = Room::orderBy('name')->get()->groupBy('unit_id');
+        $units = Unit::where('status', 'active')->orderBy('nama')->get();
+        $rooms = Room::orderBy('name')->get()->groupBy('unit_id');
         $categories = ReportCategory::orderBy('name')->get();
 
         $type = in_array($request->query('type'), ['Pengaduan', 'Survei', 'Apresiasi', 'Informasi'])
@@ -42,8 +41,8 @@ class PengaduanController extends Controller
         ]);
 
         $isAnonymous = $request->has('is_anonymous');
-        
-        if (!$isAnonymous) {
+
+        if (! $isAnonymous) {
             $request->validate([
                 'reporter_name' => 'required|string|max:255',
                 'reporter_phone' => 'required|string|max:20',
@@ -55,43 +54,43 @@ class PengaduanController extends Controller
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
             try {
-                if (!$file->isValid()) {
+                if (! $file->isValid()) {
                     $errorCode = $file->getError();
                     throw new \RuntimeException(match ($errorCode) {
-                        UPLOAD_ERR_INI_SIZE     => 'Ukuran file melebihi batas maksimum server',
-                        UPLOAD_ERR_FORM_SIZE    => 'Ukuran file melebihi batas maksimum form',
-                        UPLOAD_ERR_PARTIAL      => 'File hanya terupload sebagian',
-                        UPLOAD_ERR_NO_FILE      => 'Tidak ada file yang dipilih',
-                        UPLOAD_ERR_NO_TMP_DIR   => 'Folder temporary tidak ditemukan',
-                        UPLOAD_ERR_CANT_WRITE   => 'Gagal menulis file ke disk',
-                        UPLOAD_ERR_EXTENSION    => 'Upload file dihentikan oleh ekstensi',
-                        default                 => 'File gagal diupload (kode: ' . $errorCode . ')',
+                        UPLOAD_ERR_INI_SIZE => 'Ukuran file melebihi batas maksimum server',
+                        UPLOAD_ERR_FORM_SIZE => 'Ukuran file melebihi batas maksimum form',
+                        UPLOAD_ERR_PARTIAL => 'File hanya terupload sebagian',
+                        UPLOAD_ERR_NO_FILE => 'Tidak ada file yang dipilih',
+                        UPLOAD_ERR_NO_TMP_DIR => 'Folder temporary tidak ditemukan',
+                        UPLOAD_ERR_CANT_WRITE => 'Gagal menulis file ke disk',
+                        UPLOAD_ERR_EXTENSION => 'Upload file dihentikan oleh ekstensi',
+                        default => 'File gagal diupload (kode: '.$errorCode.')',
                     });
                 }
                 $ext = strtolower($file->getClientOriginalExtension() ?: 'jpg');
-                if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif', 'pdf'])) {
+                if (! in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif', 'pdf'])) {
                     $ext = 'jpg';
                 }
-                $filename = Str::random(40) . '.' . $ext;
+                $filename = Str::random(40).'.'.$ext;
                 $attachmentPath = $file->storeAs('attachments', $filename, 'public');
             } catch (\Throwable $e) {
-                return back()->withErrors(['attachment' => 'Gagal mengupload file: ' . $e->getMessage()])->withInput();
+                return back()->withErrors(['attachment' => 'Gagal mengupload file: '.$e->getMessage()])->withInput();
             }
         }
 
         // Generate Ticket Number HM + YYMMDD + XXXX
         $datePrefix = Carbon::now()->format('ymd');
-        $lastTicket = Ticket::where('ticket_number', 'like', 'HM' . $datePrefix . '%')
+        $lastTicket = Ticket::where('ticket_number', 'like', 'HM'.$datePrefix.'%')
             ->orderBy('id', 'desc')
             ->first();
-            
+
         $sequence = 1;
         if ($lastTicket) {
             $lastSequence = (int) substr($lastTicket->ticket_number, -4);
             $sequence = $lastSequence + 1;
         }
-        
-        $ticketNumber = 'HM' . $datePrefix . str_pad($sequence, 4, '0', STR_PAD_LEFT);
+
+        $ticketNumber = 'HM'.$datePrefix.str_pad($sequence, 4, '0', STR_PAD_LEFT);
 
         $ticket = Ticket::create([
             'ticket_number' => $ticketNumber,
@@ -104,7 +103,7 @@ class PengaduanController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'attachment_path' => $attachmentPath,
-            'status' => 'NEW'
+            'status' => 'NEW',
         ]);
 
         // Kirim WA ke Admin Pengaduan
@@ -113,15 +112,15 @@ class PengaduanController extends Controller
         // Kirim WA ke Pelapor
         if ($ticket->reporter_phone) {
             $pesanPelapor = implode("\n", [
-                "*HALO MANAP - Pengaduan Terdaftar*",
-                "─────────────────────",
+                '*HALO MANAP - Pengaduan Terdaftar*',
+                '─────────────────────',
                 "📋 *No Tiket:* {$ticket->ticket_number}",
                 "📝 *Judul:* {$ticket->title}",
-                "",
-                "Simpan nomor tiket untuk melacak status.",
-                "🔗 " . route('pengaduan.track') . '?ticket_number=' . $ticket->ticket_number,
-                "─────────────────────",
-                "_RSUD H. Abdul Manap Kota Jambi_",
+                '',
+                'Simpan nomor tiket untuk melacak status.',
+                '🔗 '.route('pengaduan.track').'?ticket_number='.$ticket->ticket_number,
+                '─────────────────────',
+                '_RSUD H. Abdul Manap Kota Jambi_',
             ]);
             SendWhatsAppNotification::dispatch($ticket->reporter_phone, $pesanPelapor);
         }
@@ -132,6 +131,7 @@ class PengaduanController extends Controller
     public function success($ticket_number)
     {
         $ticket = Ticket::where('ticket_number', $ticket_number)->firstOrFail();
+
         return view('pengaduan.success', compact('ticket'));
     }
 
@@ -139,7 +139,8 @@ class PengaduanController extends Controller
     {
         $ticket = Ticket::where('ticket_number', $ticket_number)->firstOrFail();
         $pdf = Pdf::loadView('pengaduan.ticket-pdf', compact('ticket'));
-        return $pdf->download('tiket-' . $ticket->ticket_number . '.pdf');
+
+        return $pdf->download('tiket-'.$ticket->ticket_number.'.pdf');
     }
 
     public function track(Request $request)
@@ -152,14 +153,14 @@ class PengaduanController extends Controller
                 'room',
                 'category',
                 'histories.user',
-                'workflows' => fn($q) => $q
+                'workflows' => fn ($q) => $q
                     ->with(['toUser.jabatan', 'fromUser.jabatan', 'toJabatan', 'toUnit'])
                     ->orderBy('created_at', 'asc'),
             ])
                 ->where('ticket_number', strtoupper(trim($request->ticket_number)))
                 ->first();
 
-            if (!$ticket) {
+            if (! $ticket) {
                 $notFound = true;
             }
         }
@@ -257,20 +258,22 @@ class PengaduanController extends Controller
             $q->whereIn('name', ['Super Admin', 'Admin Pengaduan']);
         })->where('status', 'active')->whereNotNull('phone_number')->get();
 
-        if ($admins->isEmpty()) return;
+        if ($admins->isEmpty()) {
+            return;
+        }
 
         $nama = $ticket->is_anonymous ? 'Anonim' : ($ticket->reporter_name ?? '-');
         $pesan = implode("\n", [
-            "*HALO MANAP - Pengaduan Baru*",
-            "─────────────────────",
+            '*HALO MANAP - Pengaduan Baru*',
+            '─────────────────────',
             "📋 *No:* {$ticket->ticket_number}",
             "📝 *Judul:* {$ticket->title}",
             "👤 *Pelapor:* {$nama}",
-            "",
-            "Silakan login untuk memverifikasi.",
-            "🔗 " . route('admin.tickets.index'),
-            "─────────────────────",
-            "_RSUD H. Abdul Manap Kota Jambi_",
+            '',
+            'Silakan login untuk memverifikasi.',
+            '🔗 '.route('admin.tickets.index'),
+            '─────────────────────',
+            '_RSUD H. Abdul Manap Kota Jambi_',
         ]);
 
         foreach ($admins as $admin) {

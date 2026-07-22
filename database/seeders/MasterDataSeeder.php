@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class MasterDataSeeder extends Seeder
 {
@@ -54,14 +55,14 @@ class MasterDataSeeder extends Seeder
 
         foreach ($units as $unit) {
             DB::table('units')->insert([
-                'id'          => $unit['id'],
-                'uuid'        => \Illuminate\Support\Str::uuid(),
-                'kode'        => $unit['kode'],
-                'nama'        => $unit['nama'],
-                'jenis'       => $unit['jenis'],
-                'status'      => 'active',
-                'created_at'  => now(),
-                'updated_at'  => now(),
+                'id' => $unit['id'],
+                'uuid' => Str::uuid(),
+                'kode' => $unit['kode'],
+                'nama' => $unit['nama'],
+                'jenis' => $unit['jenis'],
+                'status' => 'active',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
 
@@ -139,11 +140,11 @@ class MasterDataSeeder extends Seeder
 
         foreach ($rooms as $room) {
             DB::table('rooms')->insert([
-                'unit_id'      => $room['unit_id'],
-                'name'         => $room['name'],
+                'unit_id' => $room['unit_id'],
+                'name' => $room['name'],
                 'qr_code_path' => null,
-                'created_at'   => now(),
-                'updated_at'   => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
     }

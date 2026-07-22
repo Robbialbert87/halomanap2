@@ -25,7 +25,7 @@ class WorkflowHistory extends Model
     ];
 
     protected $casts = [
-        'due_at'       => 'datetime',
+        'due_at' => 'datetime',
         'completed_at' => 'datetime',
     ];
 
@@ -77,43 +77,43 @@ class WorkflowHistory extends Model
     public function getStatusBadgeAttribute(): array
     {
         return match ($this->status) {
-            'baru'                => ['label' => 'Baru',                'class' => 'bg-blue-100 text-blue-800'],
-            'didisposisikan'      => ['label' => 'Didisposisikan',      'class' => 'bg-purple-100 text-purple-800'],
-            'menunggu_respon'     => ['label' => 'Menunggu Respon',     'class' => 'bg-yellow-100 text-yellow-800'],
-            'dalam_penanganan'    => ['label' => 'Dalam Penanganan',    'class' => 'bg-indigo-100 text-indigo-800'],
-            'eskalasi'            => ['label' => 'Eskalasi',            'class' => 'bg-red-100 text-red-800'],
+            'baru' => ['label' => 'Baru',                'class' => 'bg-blue-100 text-blue-800'],
+            'didisposisikan' => ['label' => 'Didisposisikan',      'class' => 'bg-purple-100 text-purple-800'],
+            'menunggu_respon' => ['label' => 'Menunggu Respon',     'class' => 'bg-yellow-100 text-yellow-800'],
+            'dalam_penanganan' => ['label' => 'Dalam Penanganan',    'class' => 'bg-indigo-100 text-indigo-800'],
+            'eskalasi' => ['label' => 'Eskalasi',            'class' => 'bg-red-100 text-red-800'],
             'menunggu_verifikasi' => ['label' => 'Menunggu Verifikasi', 'class' => 'bg-orange-100 text-orange-800'],
-            'selesai'             => ['label' => 'Selesai',             'class' => 'bg-green-100 text-green-800'],
-            'ditutup'             => ['label' => 'Ditutup',             'class' => 'bg-gray-100 text-gray-800'],
-            default               => ['label' => $this->status,         'class' => 'bg-gray-100 text-gray-800'],
+            'selesai' => ['label' => 'Selesai',             'class' => 'bg-green-100 text-green-800'],
+            'ditutup' => ['label' => 'Ditutup',             'class' => 'bg-gray-100 text-gray-800'],
+            default => ['label' => $this->status,         'class' => 'bg-gray-100 text-gray-800'],
         };
     }
 
     public function getActionBadgeAttribute(): array
     {
         return match ($this->action) {
-            'disposisi'       => ['label' => 'Disposisi',          'class' => 'bg-purple-100 text-purple-800'],
-            'eskalasi'        => ['label' => 'Eskalasi',           'class' => 'bg-red-100 text-red-800'],
+            'disposisi' => ['label' => 'Disposisi',          'class' => 'bg-purple-100 text-purple-800'],
+            'eskalasi' => ['label' => 'Eskalasi',           'class' => 'bg-red-100 text-red-800'],
             'tangani_sendiri' => ['label' => 'Tangani Sendiri',    'class' => 'bg-indigo-100 text-indigo-800'],
-            'selesai'         => ['label' => 'Selesaikan',         'class' => 'bg-green-100 text-green-800'],
-            'verifikasi'      => ['label' => 'Verifikasi',         'class' => 'bg-purple-100 text-purple-800'],
-            'tutup'           => ['label' => 'Ditutup',            'class' => 'bg-gray-100 text-gray-800'],
-            'ditolak'         => ['label' => 'Ditolak',            'class' => 'bg-red-100 text-red-800'],
-            default           => ['label' => $this->action_label,  'class' => 'bg-gray-100 text-gray-800'],
+            'selesai' => ['label' => 'Selesaikan',         'class' => 'bg-green-100 text-green-800'],
+            'verifikasi' => ['label' => 'Verifikasi',         'class' => 'bg-purple-100 text-purple-800'],
+            'tutup' => ['label' => 'Ditutup',            'class' => 'bg-gray-100 text-gray-800'],
+            'ditolak' => ['label' => 'Ditolak',            'class' => 'bg-red-100 text-red-800'],
+            default => ['label' => $this->action_label,  'class' => 'bg-gray-100 text-gray-800'],
         };
     }
 
     public function getActionLabelAttribute(): string
     {
         return match ($this->action) {
-            'disposisi'      => 'Disposisi',
-            'eskalasi'       => 'Eskalasi',
-            'tangani_sendiri'=> 'Tangani Sendiri',
-            'selesai'        => 'Selesaikan',
-            'ditolak'        => 'Ditolak',
-            'verifikasi'     => 'Verifikasi',
-            'tutup'          => 'Tutup',
-            default          => ucfirst($this->action),
+            'disposisi' => 'Disposisi',
+            'eskalasi' => 'Eskalasi',
+            'tangani_sendiri' => 'Tangani Sendiri',
+            'selesai' => 'Selesaikan',
+            'ditolak' => 'Ditolak',
+            'verifikasi' => 'Verifikasi',
+            'tutup' => 'Tutup',
+            default => ucfirst($this->action),
         };
     }
 }

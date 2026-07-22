@@ -12,8 +12,8 @@ class Disposition extends Model
 
     protected $fillable = [
         'ticket_id', 'unit_id', 'head_user_id', 'assigned_user_id', 'created_by',
-        'priority', 'instruction', 'deadline', 'status', 
-        'accepted_at', 'completed_at', 'verified_at'
+        'priority', 'instruction', 'deadline', 'status',
+        'accepted_at', 'completed_at', 'verified_at',
     ];
 
     protected $casts = [

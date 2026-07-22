@@ -12,6 +12,7 @@ class ProfilController extends Controller
     public function index()
     {
         $user = auth()->user();
+
         return view('admin.profil', compact('user'));
     }
 
@@ -19,7 +20,7 @@ class ProfilController extends Controller
     {
         $request->validate([
             'current_password' => ['required', function ($attr, $value, $fail) {
-                if (!Hash::check($value, auth()->user()->password)) {
+                if (! Hash::check($value, auth()->user()->password)) {
                     $fail('Password saat ini tidak sesuai.');
                 }
             }],

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\KepalaUnit;
 
 use App\Http\Controllers\Controller;
 use App\Models\WorkflowHistory;
-use Illuminate\Http\Request;
 
 class DalamPenangananController extends Controller
 {

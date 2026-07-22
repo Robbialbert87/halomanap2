@@ -23,9 +23,9 @@ return new class extends Migration
             if (Schema::hasColumn('jabatans', 'keterangan')) {
                 $table->dropColumn('keterangan');
             }
-            if (!Schema::hasColumn('jabatans', 'kategori_jabatan')) {
+            if (! Schema::hasColumn('jabatans', 'kategori_jabatan')) {
                 $table->enum('kategori_jabatan', [
-                    'Direktur', 'Kabid', 'Kabag', 'Kasi', 'Kasubbag', 'Kepala Unit', 'Petugas'
+                    'Direktur', 'Kabid', 'Kabag', 'Kasi', 'Kasubbag', 'Kepala Unit', 'Petugas',
                 ])->default('Petugas')->after('nama');
             }
         });
@@ -73,13 +73,13 @@ return new class extends Migration
             if (Schema::hasColumn('jabatans', 'kategori_jabatan')) {
                 $table->dropColumn('kategori_jabatan');
             }
-            if (!Schema::hasColumn('jabatans', 'keterangan')) {
+            if (! Schema::hasColumn('jabatans', 'keterangan')) {
                 $table->text('keterangan')->nullable()->after('nama');
             }
-            if (!Schema::hasColumn('jabatans', 'level')) {
+            if (! Schema::hasColumn('jabatans', 'level')) {
                 $table->tinyInteger('level')->default(4)->after('nama');
             }
-            if (!Schema::hasColumn('jabatans', 'parent_id')) {
+            if (! Schema::hasColumn('jabatans', 'parent_id')) {
                 $table->unsignedBigInteger('parent_id')->nullable()->after('level');
                 $table->foreign('parent_id')->references('id')->on('jabatans')->onDelete('set null');
             }
@@ -87,19 +87,19 @@ return new class extends Migration
 
         // ── UNITS ────────────────────────────────────────────────────
         Schema::table('units', function (Blueprint $table) {
-            if (!Schema::hasColumn('units', 'head_user_id')) {
+            if (! Schema::hasColumn('units', 'head_user_id')) {
                 $table->foreignId('head_user_id')->nullable()->constrained('users')->nullOnDelete()->after('status');
             }
-            if (!Schema::hasColumn('units', 'keterangan')) {
+            if (! Schema::hasColumn('units', 'keterangan')) {
                 $table->text('keterangan')->nullable()->after('jenis');
             }
-            if (!Schema::hasColumn('units', 'is_public')) {
+            if (! Schema::hasColumn('units', 'is_public')) {
                 $table->boolean('is_public')->default(false)->after('jenis');
             }
-            if (!Schema::hasColumn('units', 'entry_jabatan_id')) {
+            if (! Schema::hasColumn('units', 'entry_jabatan_id')) {
                 $table->foreignId('entry_jabatan_id')->nullable()->constrained('jabatans')->nullOnDelete()->after('jenis');
             }
-            if (!Schema::hasColumn('units', 'parent_id')) {
+            if (! Schema::hasColumn('units', 'parent_id')) {
                 $table->unsignedBigInteger('parent_id')->nullable()->after('jenis');
                 $table->foreign('parent_id')->references('id')->on('units')->onDelete('set null');
             }
@@ -107,7 +107,7 @@ return new class extends Migration
 
         // ── WORKFLOW HISTORIES ───────────────────────────────────────
         Schema::table('workflow_histories', function (Blueprint $table) {
-            if (!Schema::hasColumn('workflow_histories', 'workflow_level')) {
+            if (! Schema::hasColumn('workflow_histories', 'workflow_level')) {
                 $table->integer('workflow_level')->default(1)->after('to_unit_id');
             }
         });

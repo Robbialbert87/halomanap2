@@ -1,138 +1,120 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\View\View;
 
 class WhatsappSettingsController extends Controller
 {
-    public function index()
+    private function apiUrl(): string
+    {
+        return config('whatsapp.api_url');
+    }
+
+    public function index(): View
     {
         return view('admin.whatsapp.index');
     }
 
-    public function startServer()
+    public function test(): View
     {
-        $nodePath = $this->findNodePath();
-        $phpPath  = $this->findPhpPath();
-        $basePath = base_path();
-        $logPath  = storage_path('logs');
+        return view('admin.whatsapp.test');
+    }
 
-        if (!$nodePath) {
-            return redirect()->back()->with('error', 'Node.js tidak ditemukan.');
+    public function sendTest(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'phone' => 'required|string|max:20',
+            'message' => 'required|string|max:1000',
+        ]);
+
+        $phone = $validated['phone'];
+        $message = $validated['message'];
+
+        $formattedNumber = preg_replace('/\D/', '', $phone);
+        if (str_starts_with($formattedNumber, '0')) {
+            $formattedNumber = '62'.substr($formattedNumber, 1);
         }
 
-        $errors = [];
-
-        // 1. Kill existing node process biar gak bentrok port
-        exec('taskkill /F /IM node.exe 2>NUL', $killOut, $killCode);
-
-        // 1.5 Kill existing queue worker(s) biar gak dobel worker
-        exec('wmic process where "name=\'php.exe\' and commandline like \'%artisan queue:work%\'" delete 2>NUL', $killQwOut, $killQwCode);
-
-        sleep(1);
-
-        // 2. Start Node.js - pakai start /B (background, no window)
-        $nodeCmd = sprintf(
-            'start /B "" cmd /c "cd /d "%s\\whatsapp-api" && "%s" index.js > "%s\\wa-node.log" 2>&1"',
-            $basePath, $nodePath, $logPath
-        );
-        exec($nodeCmd, $nodeOut, $nodeExit);
-        if ($nodeExit != 0) {
-            $errors[] = "Node.js exec gagal (exit: $nodeExit)";
-        }
-
-        sleep(1);
-
-        // 3. Start Queue Worker
-        $queueCmd = sprintf(
-            'start /B "" cmd /c "cd /d "%s" && "%s" artisan queue:work --queue=notifications --tries=1 > "%s\\wa-queue.log" 2>&1"',
-            $basePath, $phpPath, $logPath
-        );
-        exec($queueCmd, $queueOut, $queueExit);
-        if ($queueExit != 0) {
-            $errors[] = "Queue exec gagal (exit: $queueExit)";
-        }
-
-        if (!empty($errors)) {
-            return redirect()->back()->with('error', 'Gagal: ' . implode('; ', $errors) . '. Double-click file <strong>start-services.bat</strong> di folder project.');
-        }
-
-        // Verify port 3000
-        sleep(3);
         try {
-            $check = @Http::timeout(2)->get('http://localhost:3000/status');
+            $resp = Http::timeout(15)->post($this->apiUrl().'/send', [
+                'number' => $formattedNumber,
+                'message' => $message,
+            ]);
+
+            $body = $resp->json();
+
+            if ($resp->successful() && ($body['success'] ?? false)) {
+                return redirect()->route('admin.whatsapp.test')
+                    ->with('success', "Pesan berhasil dikirim ke {$formattedNumber}");
+            }
+
+            $errorMsg = $body['error'] ?? 'Gagal mengirim pesan (unknown error)';
+
+            if (str_contains($errorMsg, 'No LID for user')) {
+                $errorMsg = 'WhatsApp belum terautentikasi. Scan QR Code di halaman WhatsApp Gateway terlebih dahulu.';
+            }
+
+            return redirect()->route('admin.whatsapp.test')
+                ->with('error', "Gagal: {$errorMsg}")
+                ->withInput();
+        } catch (\Throwable $e) {
+            $errorMsg = $e->getMessage();
+
+            if (str_contains($errorMsg, 'Connection refused') || str_contains($errorMsg, 'could not connect')) {
+                $errorMsg = 'WhatsApp API tidak dapat dijangkau. Pastikan container WhatsApp berjalan (ddev start).';
+            }
+
+            return redirect()->route('admin.whatsapp.test')
+                ->with('error', "Gagal: {$errorMsg}")
+                ->withInput();
+        }
+    }
+
+    public function startServer(): RedirectResponse
+    {
+        try {
+            $resp = Http::timeout(5)->post($this->apiUrl().'/reset');
+            sleep(2);
+            $check = @Http::timeout(2)->get($this->apiUrl().'/status');
             if ($check->successful()) {
                 return redirect()->back()->with('success', 'Layanan berjalan! Tunggu QR Code muncul...');
             }
         } catch (\Throwable $e) {
-            // not running yet
+            return redirect()->back()->with('error', 'Gagal menghubungi WhatsApp API: '.$e->getMessage());
         }
 
-        return redirect()->back()->with('warning',
-            'Perintah sudah dijalankan tapi port 3000 belum merespon. Tunggu beberapa saat, atau double-click <strong>start-services.bat</strong> di folder project untuk manual.'
-        );
+        return redirect()->back()->with('warning', 'Perintah sudah dijalankan, tapi port 3000 belum merespon. Tunggu beberapa saat.');
     }
 
     public function checkStatus()
     {
         try {
-            $resp = Http::timeout(5)->get('http://localhost:3000/status');
+            $resp = Http::timeout(5)->get($this->apiUrl().'/status');
             if ($resp->successful()) {
                 return response($resp->body())->header('Content-Type', 'application/json');
             }
         } catch (\Throwable $e) {
             //
         }
-        return response()->json(['success' => false, 'error' => 'Node.js offline'], 503);
+
+        return response()->json(['success' => false, 'error' => 'WhatsApp API offline'], 503);
     }
 
     public function proxyReset()
     {
         try {
-            $resp = Http::timeout(5)->post('http://localhost:3000/reset');
+            $resp = Http::timeout(5)->post($this->apiUrl().'/reset');
+
             return response($resp->body())->header('Content-Type', 'application/json');
         } catch (\Throwable $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 503);
         }
-    }
-
-    private function findNodePath(): ?string
-    {
-        if (function_exists('shell_exec')) {
-            $output = shell_exec('where node 2>NUL');
-            if ($output) {
-                $paths = explode("\n", trim($output));
-                if (!empty($paths[0])) return trim($paths[0]);
-            }
-        }
-
-        $common = [
-            'C:\\Program Files\\nodejs\\node.exe',
-            'C:\\Program Files (x86)\\nodejs\\node.exe',
-            getenv('LOCALAPPDATA') . '\\Programs\\Nodejs\\node.exe',
-            getenv('PROGRAMFILES') . '\\nodejs\\node.exe',
-            getenv('PROGRAMFILES(X86)') . '\\nodejs\\node.exe',
-        ];
-        foreach ($common as $p) {
-            if ($p && file_exists($p)) return $p;
-        }
-
-        return null;
-    }
-
-    private function findPhpPath(): string
-    {
-        if (defined('PHP_BINARY') && PHP_BINARY) return PHP_BINARY;
-        if (function_exists('shell_exec')) {
-            $output = shell_exec('where php 2>NUL');
-            if ($output) {
-                $paths = explode("\n", trim($output));
-                if (!empty($paths[0])) return trim($paths[0]);
-            }
-        }
-        return 'php';
     }
 }

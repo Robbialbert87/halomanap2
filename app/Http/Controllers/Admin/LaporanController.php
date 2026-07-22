@@ -14,7 +14,7 @@ class LaporanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Ticket::with(['room.unit', 'category', 'workflows' => fn($q) => $q->whereIn('action', ['selesai', 'tutup'])->latest()]);
+        $query = Ticket::with(['room.unit', 'category', 'workflows' => fn ($q) => $q->whereIn('action', ['selesai', 'tutup'])->latest()]);
 
         if ($request->filled('start_date')) {
             $query->whereDate('created_at', '>=', $request->start_date);
@@ -23,7 +23,7 @@ class LaporanController extends Controller
             $query->whereDate('created_at', '<=', $request->end_date);
         }
         if ($request->filled('unit_id')) {
-            $query->whereHas('room', fn($q) => $q->where('unit_id', $request->unit_id));
+            $query->whereHas('room', fn ($q) => $q->where('unit_id', $request->unit_id));
         }
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
@@ -54,7 +54,7 @@ class LaporanController extends Controller
 
     public function exportPdf(Request $request)
     {
-        $query = Ticket::with(['room.unit', 'category', 'workflows' => fn($q) => $q->whereIn('action', ['selesai', 'tutup'])->latest()]);
+        $query = Ticket::with(['room.unit', 'category', 'workflows' => fn ($q) => $q->whereIn('action', ['selesai', 'tutup'])->latest()]);
 
         if ($request->filled('start_date')) {
             $query->whereDate('created_at', '>=', $request->start_date);
@@ -63,7 +63,7 @@ class LaporanController extends Controller
             $query->whereDate('created_at', '<=', $request->end_date);
         }
         if ($request->filled('unit_id')) {
-            $query->whereHas('room', fn($q) => $q->where('unit_id', $request->unit_id));
+            $query->whereHas('room', fn ($q) => $q->where('unit_id', $request->unit_id));
         }
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
@@ -83,11 +83,11 @@ class LaporanController extends Controller
 
         $periode = '';
         if ($request->filled('start_date') && $request->filled('end_date')) {
-            $periode = Carbon::parse($request->start_date)->format('d/m/Y') . ' - ' . Carbon::parse($request->end_date)->format('d/m/Y');
+            $periode = Carbon::parse($request->start_date)->format('d/m/Y').' - '.Carbon::parse($request->end_date)->format('d/m/Y');
         } elseif ($request->filled('start_date')) {
-            $periode = 'Dari ' . Carbon::parse($request->start_date)->format('d/m/Y');
+            $periode = 'Dari '.Carbon::parse($request->start_date)->format('d/m/Y');
         } elseif ($request->filled('end_date')) {
-            $periode = 'Sampai ' . Carbon::parse($request->end_date)->format('d/m/Y');
+            $periode = 'Sampai '.Carbon::parse($request->end_date)->format('d/m/Y');
         } else {
             $periode = 'Semua Periode';
         }
@@ -96,7 +96,8 @@ class LaporanController extends Controller
             'tickets', 'total', 'baru', 'diproses', 'menungguVerifikasi', 'selesai', 'ditolak', 'periode'
         ));
 
-        $filename = 'laporan-pengaduan-' . Carbon::now()->format('Ymd-His') . '.pdf';
+        $filename = 'laporan-pengaduan-'.Carbon::now()->format('Ymd-His').'.pdf';
+
         return $pdf->download($filename);
     }
 }
