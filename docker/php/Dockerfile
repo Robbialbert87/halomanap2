@@ -16,11 +16,11 @@ RUN if [ "$APP_ENV" = "production" ]; then \
     fi
 
 FROM php:8.4-fpm-alpine
-RUN apk add --no-cache freetype-dev libpng-dev libjpeg-turbo-dev libzip-dev zlib-dev unzip curl git supervisor \
+RUN apk add --no-cache freetype-dev libpng-dev libjpeg-turbo-dev libzip-dev zlib-dev oniguruma-dev unzip curl git supervisor \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) pdo pdo_mysql bcmath ctype fileinfo mbstring openssl tokenizer xml gd zip \
     && docker-php-ext-enable opcache \
-    && apk del freetype-dev libpng-dev libjpeg-turbo-dev libzip-dev zlib-dev
+    && apk del freetype-dev libpng-dev libjpeg-turbo-dev libzip-dev zlib-dev oniguruma-dev
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY --from=composer-build /app/vendor /var/www/html/vendor
