@@ -1,0 +1,126 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    image: halomanap-app
+    container_name: halomanap-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./storage:/var/www/html/storage
+      - ./public/uploads:/var/www/html/public/uploads
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    environment:
+      - APP_ENV=${APP_ENV:-production}
+      - APP_DEBUG=${APP_DEBUG:-false}
+      - APP_URL=${APP_URL:-http://localhost}
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=${DB_DATABASE:-halomanap}
+      - DB_USERNAME=${DB_USERNAME:-halomanap}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - QUEUE_CONNECTION=database
+      - CACHE_STORE=database
+      - SESSION_DRIVER=database
+      - WHATSAPP_API_URL=http://whatsapp:3000
+      - LOG_CHANNEL=stack
+      - LOG_LEVEL=${LOG_LEVEL:-notice}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "php", "-v"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  queue:
+    image: halomanap-app
+    container_name: halomanap-queue
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./storage:/var/www/html/storage
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    environment:
+      - APP_ENV=${APP_ENV:-production}
+      - APP_DEBUG=${APP_DEBUG:-false}
+      - APP_URL=${APP_URL:-http://localhost}
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=${DB_DATABASE:-halomanap}
+      - DB_USERNAME=${DB_USERNAME:-halomanap}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - QUEUE_CONNECTION=database
+      - CACHE_STORE=database
+      - SESSION_DRIVER=database
+      - WHATSAPP_API_URL=http://whatsapp:3000
+      - LOG_CHANNEL=stack
+      - LOG_LEVEL=${LOG_LEVEL:-notice}
+    command: php artisan queue:work --queue=notifications,default --tries=3
+    depends_on:
+      db:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: halomanap-nginx
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./public:/var/www/html/public:ro
+      - ./storage:/var/www/html/storage:ro
+    depends_on:
+      - app
+
+  db:
+    image: mariadb:11.8
+    container_name: halomanap-db
+    restart: unless-stopped
+    ports:
+      - "${DB_EXPOSE_PORT:-3306}:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE:-halomanap}
+      - MYSQL_USER=${DB_USERNAME:-halomanap}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - TZ=Asia/Jakarta
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  whatsapp:
+    build:
+      context: .
+      dockerfile: docker/whatsapp/Dockerfile
+    image: halomanap-whatsapp
+    container_name: halomanap-whatsapp
+    restart: unless-stopped
+    ports:
+      - "${WHATSAPP_PORT:-3000}:3000"
+    volumes:
+      - wa_session:/app/.wwebjs_auth
+    environment:
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+      - PUPPETEER_SKIP_DOWNLOAD=true
+      - TZ=Asia/Jakarta
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/status', r => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  db_data:
+  wa_session:
