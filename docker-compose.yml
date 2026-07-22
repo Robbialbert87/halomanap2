@@ -7,6 +7,7 @@ services:
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
+      - ./.env:/var/www/html/.env:ro
       - ./storage:/var/www/html/storage
       - ./public/uploads:/var/www/html/public/uploads
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
@@ -29,7 +30,7 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "php", "-v"]
+      test: ["CMD-SHELL", "php -v && test -f /var/www/html/.env"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -42,6 +43,7 @@ services:
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
+      - ./.env:/var/www/html/.env:ro
       - ./storage:/var/www/html/storage
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
     environment:
