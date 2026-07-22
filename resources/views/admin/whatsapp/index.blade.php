@@ -119,7 +119,7 @@
                 <div class="flex justify-center py-2">
                     <div id="barcode-container" class="bg-white p-2 border border-gray-200 rounded-lg inline-block"></div>
                 </div>
-                <p class="text-xs text-center text-gray-400 break-all">http://halomanap.rsudkotajambi.id</p>
+                <p class="text-xs text-center text-gray-400 break-all">{{ \App\Models\Setting::getValue('barcode_url', config('app.url')) }}</p>
                 <div class="flex gap-2 justify-center pt-1">
                     <button onclick="downloadBarcode()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-xs px-4 py-2 transition-colors">
                         <i class="fa-solid fa-download mr-1"></i> Download
@@ -142,7 +142,7 @@
         const container = document.getElementById('barcode-container');
         container.innerHTML = '';
         qrCodeInstance = new QRCode(container, {
-            text: 'http://halomanap.rsudkotajambi.id',
+            text: '{{ \App\Models\Setting::getValue('barcode_url', config('app.url')) }}',
             width: 180,
             height: 180,
             colorDark: '#1e293b',
@@ -170,7 +170,7 @@
             <body style="text-align:center;padding:40px;font-family:sans-serif">
                 <h2 style="margin-bottom:20px">Scan untuk mengakses pengaduan</h2>
                 <img src="${canvas.toDataURL('image/png')}" style="width:300px;height:300px">
-                <p style="margin-top:20px;color:#666">http://halomanap.rsudkotajambi.id</p>
+                <p style="margin-top:20px;color:#666">{{ \App\Models\Setting::getValue('barcode_url', config('app.url')) }}</p>
                 <script>
                     window.onload = function() { window.print(); window.close(); }
                 <\/script>

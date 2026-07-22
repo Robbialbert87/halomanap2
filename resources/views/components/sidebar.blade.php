@@ -164,7 +164,7 @@
             @endcan
 
             @can('manage-settings')
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
+            <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.settings.*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-gear w-5 text-center"></i>
                 <span class="text-sm font-medium">Pengaturan</span>
             </a>

@@ -187,6 +187,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('roles', RoleController::class);
         Route::resource('jabatans', JabatanController::class);
 
+        // Settings (Pengaturan Umum)
+        Route::get('settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
+        Route::post('settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
+
         // WhatsApp Gateway
         Route::get('whatsapp', [WhatsappSettingsController::class, 'index'])->name('whatsapp.index');
         Route::get('whatsapp/test', [WhatsappSettingsController::class, 'test'])->name('whatsapp.test');
