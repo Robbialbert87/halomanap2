@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    image: halomanap-app
     container_name: halomanap-app
     restart: unless-stopped
     working_dir: /var/www/html
@@ -36,7 +35,9 @@ services:
       retries: 3
 
   queue:
-    image: halomanap-app
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
     container_name: halomanap-queue
     restart: unless-stopped
     working_dir: /var/www/html
@@ -103,7 +104,6 @@ services:
     build:
       context: .
       dockerfile: docker/whatsapp/Dockerfile
-    image: halomanap-whatsapp
     container_name: halomanap-whatsapp
     restart: unless-stopped
     ports:
