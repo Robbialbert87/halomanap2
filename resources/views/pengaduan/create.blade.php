@@ -161,9 +161,25 @@
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">6. Upload Bukti (Opsional)</label>
                         <div class="relative">
-                            <input type="file" name="attachment" id="attachment" accept="image/*,.pdf" capture="environment" class="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-gradient-to-br file:from-blue-400 file:to-blue-600 file:text-white hover:file:from-blue-500 hover:file:to-blue-700 bg-white/70 border border-gray-200 rounded-xl cursor-pointer focus:outline-none p-2">
+                            <input type="file" name="attachment" id="attachment" accept="image/jpeg,image/png,image/webp,application/pdf" capture="environment" class="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-gradient-to-br file:from-blue-400 file:to-blue-600 file:text-white hover:file:from-blue-500 hover:file:to-blue-700 bg-white/70 border border-gray-200 rounded-xl cursor-pointer focus:outline-none p-2">
                         </div>
-                        <p class="mt-1.5 text-xs text-gray-400">Format: Gambar (JPG, PNG, HEIC, WebP) dan PDF. Maksimal 20 MB.</p>
+                        <p class="mt-1.5 text-xs text-gray-400">Format: Gambar (JPG, PNG, WebP) dan PDF. Maksimal 20 MB. Foto dari kamera akan dikompres otomatis.</p>
+                        <div id="upload-status" class="mt-3 hidden">
+                            <div id="upload-loading" class="hidden flex items-center gap-2 text-xs text-blue-600 bg-blue-50/80 rounded-xl px-4 py-3 border border-blue-200/50">
+                                <svg class="animate-spin h-4 w-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>Memproses foto...</span>
+                            </div>
+                            <div id="upload-info" class="hidden text-xs text-gray-500 bg-gray-50/80 rounded-xl px-4 py-2.5 border border-gray-200/50 mt-2">
+                                <span id="upload-size-info"></span>
+                            </div>
+                            <div id="upload-error" class="hidden text-xs text-red-500 bg-red-50/80 rounded-xl px-4 py-3 border border-red-200/50 mt-2">
+                                <i class="fa-solid fa-circle-exclamation mr-1"></i>
+                                <span id="upload-error-msg"></span>
+                            </div>
+                        </div>
                         <div id="image-preview-container" class="mt-4 hidden">
                             <p class="text-xs font-semibold text-gray-600 mb-2">Preview Gambar:</p>
                             <img id="image-preview" src="#" alt="Preview" class="max-h-48 rounded-xl border border-gray-200 shadow-sm">
@@ -347,21 +363,155 @@
         toggleAnonymous();
         checkbox.addEventListener('change', toggleAnonymous);
 
-        const attachmentInput   = document.getElementById('attachment');
-        const previewContainer  = document.getElementById('image-preview-container');
-        const previewImage      = document.getElementById('image-preview');
+        const attachmentInput    = document.getElementById('attachment');
+        const previewContainer   = document.getElementById('image-preview-container');
+        const previewImage       = document.getElementById('image-preview');
+        const uploadStatus       = document.getElementById('upload-status');
+        const uploadLoading      = document.getElementById('upload-loading');
+        const uploadInfo         = document.getElementById('upload-info');
+        const uploadSizeInfo     = document.getElementById('upload-size-info');
+        const uploadError        = document.getElementById('upload-error');
+        const uploadErrorMsg     = document.getElementById('upload-error-msg');
+        const MAX_SIZE_BYTES     = 20 * 1024 * 1024;
+
+        function formatBytes(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+
+        function compressImage(file) {
+            return new Promise(function(resolve, reject) {
+                var reader = new FileReader();
+                reader.onerror = function() { reject(new Error('Gagal membaca file')); };
+                reader.onload = function(e) {
+                    var img = new Image();
+                    img.onerror = function() { reject(new Error('Gagal memuat gambar. Pastikan file bukan HEIC/HEIF.')); };
+                    img.onload = function() {
+                        var MAX_WIDTH = 1920;
+                        var width = img.width;
+                        var height = img.height;
+
+                        if (width > MAX_WIDTH) {
+                            height = Math.round(height * MAX_WIDTH / width);
+                            width = MAX_WIDTH;
+                        }
+
+                        var canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        var ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        var quality = 0.82;
+                        var outputType = 'image/jpeg';
+                        var outputExt = 'jpg';
+
+                        if (file.type === 'image/png') {
+                            outputType = 'image/png';
+                            outputExt = 'png';
+                            quality = undefined;
+                        } else if (file.type === 'image/webp') {
+                            outputType = 'image/webp';
+                            outputExt = 'webp';
+                        }
+
+                        function tryCompress(q) {
+                            canvas.toBlob(function(blob) {
+                                if (!blob) {
+                                    reject(new Error('Gagal mengkompres gambar'));
+                                    return;
+                                }
+                                if (outputType === 'image/jpeg' || outputType === 'image/webp') {
+                                    if (q > 0.3 && blob.size > MAX_SIZE_BYTES) {
+                                        tryCompress(q - 0.1);
+                                        return;
+                                    }
+                                }
+                                var compressedFile = new File([blob], file.name.replace(/\.[^.]+$/, '.' + outputExt), {
+                                    type: outputType,
+                                    lastModified: Date.now()
+                                });
+                                resolve({ file: compressedFile, originalSize: file.size, compressedSize: blob.size });
+                            }, outputType, q);
+                        }
+
+                        tryCompress(quality);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
 
         attachmentInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file && file.type.match('image.*')) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    previewImage.src = e.target.result;
+            var file = this.files[0];
+            uploadStatus.classList.remove('hidden');
+            uploadError.classList.add('hidden');
+            uploadInfo.classList.add('hidden');
+            previewContainer.classList.add('hidden');
+
+            if (!file) {
+                uploadStatus.classList.add('hidden');
+                return;
+            }
+
+            if (file.size > MAX_SIZE_BYTES) {
+                uploadLoading.classList.add('hidden');
+                uploadError.classList.remove('hidden');
+                uploadErrorMsg.textContent = 'Ukuran file ' + formatBytes(file.size) + ' melebihi batas maksimal 20 MB.';
+                attachmentInput.value = '';
+                return;
+            }
+
+            var isImage = file.type.startsWith('image/') && file.type !== 'image/heic' && file.type !== 'image/heif';
+
+            if (isImage && file.size > 500 * 1024) {
+                uploadLoading.classList.remove('hidden');
+
+                compressImage(file).then(function(result) {
+                    uploadLoading.classList.add('hidden');
+
+                    var dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(result.file);
+                    attachmentInput.files = dataTransfer.files;
+
+                    var ratio = ((1 - result.compressedSize / result.originalSize) * 100).toFixed(0);
+                    uploadSizeInfo.textContent = 'Asli: ' + formatBytes(result.originalSize) + ' → Terkompres: ' + formatBytes(result.compressedSize) + ' (hemat ' + ratio + '%)';
+                    uploadInfo.classList.remove('hidden');
+
+                    var reader = new FileReader();
+                    reader.onload = function(ev) {
+                        previewImage.src = ev.target.result;
+                        previewContainer.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(result.file);
+                }).catch(function(err) {
+                    uploadLoading.classList.add('hidden');
+                    uploadError.classList.remove('hidden');
+                    uploadErrorMsg.textContent = err.message || 'Gagal memproses foto. Silakan coba lagi.';
+                    attachmentInput.value = '';
+                });
+            } else if (isImage) {
+                var reader = new FileReader();
+                reader.onload = function(ev) {
+                    previewImage.src = ev.target.result;
                     previewContainer.classList.remove('hidden');
                 };
                 reader.readAsDataURL(file);
             } else {
-                previewContainer.classList.add('hidden');
+                uploadLoading.classList.add('hidden');
+            }
+        });
+
+        var form = attachmentInput.closest('form');
+        form.addEventListener('submit', function(e) {
+            var file = attachmentInput.files[0];
+            if (file && file.size > MAX_SIZE_BYTES) {
+                e.preventDefault();
+                uploadError.classList.remove('hidden');
+                uploadErrorMsg.textContent = 'Ukuran file ' + formatBytes(file.size) + ' melebihi batas maksimal 20 MB.';
+                return false;
             }
         });
     });
