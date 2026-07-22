@@ -447,6 +447,7 @@
         @endif
 
         {{-- Download Ticket Button --}}
+        @if($ticket)
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4 flex items-center justify-between">
             <div>
                 <p class="text-xs font-semibold text-gray-700">{{ $ticket->ticket_number }}</p>
@@ -457,6 +458,7 @@
                 <i class="fa-solid fa-download"></i> Download Tiket
             </button>
         </div>
+        @endif
 
         {{-- Motto --}}
         <div class="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl border border-blue-200/50 px-5 py-4 text-center">
@@ -536,6 +538,7 @@
     </nav>
 
     {{-- HIDDEN TICKET VISUAL --}}
+    @if($ticket)
     <div id="ticket-visual" style="position:absolute;left:-9999px;top:0;width:380px;background:#fff;font-family:'Roboto',Arial,sans-serif;color:#1e293b;">
         <div style="padding:24px;">
             <div style="background:#eff6ff;border:2px dashed #bfdbfe;border-radius:14px;padding:18px 14px;text-align:center;margin-bottom:22px;">
@@ -601,9 +604,11 @@
             Dokumen ini sah dan diproses secara elektronik
         </div>
     </div>
+    @endif
 </div>
 
 @push('scripts')
+@if($ticket)
 <script>
     function downloadTicketJpg() {
         var el = document.getElementById('ticket-visual');
@@ -634,6 +639,7 @@
         });
     }
 </script>
+@endif
 @endpush
 
 @endsection
