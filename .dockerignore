@@ -1,0 +1,16 @@
+.env
+.env.backup
+.env.production
+.git
+.gitignore
+.ddev
+docker/ssl
+node_modules
+vendor
+storage
+whatsapp-api/node_modules
+whatsapp-api/.wwebjs_auth
+whatsapp-api/.wwebjs_cache
+docs
+Makefile
+*.md
