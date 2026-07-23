@@ -54,7 +54,7 @@ class SendWhatsAppNotification implements ShouldQueue
             $admins = User::role('Admin Pengaduan')->whereNotNull('phone_number')->get();
             $adminMessage = $this->buildAdminVerificationMessage($history, $ticket);
             foreach ($admins as $admin) {
-                $this->send($admin, $adminMessage, 'admin_verifikasi', $history);
+                $this->send($admin, $adminMessage, 'pengaduan_selesai', $history);
             }
         }
     }
