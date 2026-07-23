@@ -30,7 +30,7 @@ WORKDIR /var/www/html
 
 COPY --chown=www-data:www-data . .
 COPY --from=node-build --chown=www-data:www-data /app/public/build /var/www/html/public/build
-COPY --chown=root:root docker/php/entrypoint.sh /entrypoint.sh
+COPY --chown=root:root --chmod=755 docker/php/entrypoint.sh /entrypoint.sh
 
 RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache public/build \
