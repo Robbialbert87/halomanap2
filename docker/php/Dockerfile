@@ -40,3 +40,4 @@ RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framewor
 EXPOSE 9000
 
 ENTRYPOINT ["/entrypoint.sh"]
+CMD ["php-fpm"]
