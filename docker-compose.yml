@@ -85,8 +85,6 @@ services:
     image: mariadb:11.8
     container_name: halomanap-db
     restart: unless-stopped
-    ports:
-      - "${DB_EXPOSE_PORT:-3306}:3306"
     volumes:
       - db_data:/var/lib/mysql
     environment:
