@@ -513,27 +513,27 @@
 
     {{-- BOTTOM NAV MOBILE --}}
     <nav class="md:hidden fixed bottom-3 left-3 right-3 bg-white/70 backdrop-blur-xl border border-white/30 rounded-2xl flex justify-around items-center px-2 pt-1.5 pb-5 z-50 shadow-[0_-4px_30px_rgba(0,0,0,0.08)]" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
-        <a href="/" class="flex flex-col items-center gap-0.5 w-14 py-1 text-blue-600">
+        <a href="/" class="flex flex-col items-center gap-0.5 w-14 py-1 {{ request()->is('/') ? 'text-blue-600' : 'text-gray-400' }}">
             <i class="fa-solid fa-house text-xl"></i>
-            <span class="text-[9px] font-semibold">Beranda</span>
+            <span class="text-[9px] {{ request()->is('/') ? 'font-semibold' : 'font-medium' }}">Beranda</span>
         </a>
-        <a href="{{ route('pengaduan.track') }}" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
+        <a href="{{ route('pengaduan.track') }}" class="flex flex-col items-center gap-0.5 w-14 py-1 {{ request()->is('lacak*') ? 'text-blue-600' : 'text-gray-400' }}">
             <i class="fa-solid fa-magnifying-glass text-xl"></i>
-            <span class="text-[9px] font-medium">Cek Status</span>
+            <span class="text-[9px] {{ request()->is('lacak*') ? 'font-semibold' : 'font-medium' }}">Cek Status</span>
         </a>
         <div class="relative w-14 flex flex-col items-center">
             <a href="/pengaduan/buat" class="absolute -top-7 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/40 border-[3px] border-white active:scale-90 transition-transform">
                 <i class="fa-solid fa-plus text-xl"></i>
             </a>
-            <span class="text-[9px] font-medium text-gray-400 mt-6 text-center leading-tight">Buat<br>Laporan</span>
+            <span class="text-[9px] font-medium {{ request()->is('pengaduan/buat*') ? 'text-blue-600 font-semibold' : 'text-gray-400' }} mt-6 text-center leading-tight">Buat<br>Laporan</span>
         </div>
                 <a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
                     <i class="fa-solid fa-square-poll-vertical text-xl"></i>
                     <span class="text-[9px] font-medium">Survei</span>
                 </a>
-        <a href="{{ route('apresiasi.create') }}" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
+        <a href="{{ route('apresiasi.create') }}" class="flex flex-col items-center gap-0.5 w-14 py-1 {{ request()->is('apresiasi*') ? 'text-blue-600' : 'text-gray-400' }}">
             <i class="fa-solid fa-thumbs-up text-xl"></i>
-            <span class="text-[9px] font-medium">Apresiasi</span>
+            <span class="text-[9px] {{ request()->is('apresiasi*') ? 'font-semibold' : 'font-medium' }}">Apresiasi</span>
         </a>
     </nav>
 
