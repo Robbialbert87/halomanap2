@@ -6,63 +6,74 @@ use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Super Admin
-        User::firstOrCreate(
-            ['email' => 'superadmin@halomanap.com'],
-            [
-                'name' => 'Super Admin',
-                'password' => Hash::make('password'),
-                'role' => 'super_admin',
-                'jabatan' => 'Administrator Sistem',
-                'is_active' => true,
-            ]
-        );
-
-        // 2. Admin Pengaduan
-        User::firstOrCreate(
-            ['email' => 'admin@halomanap.com'],
-            [
-                'name' => 'Admin Pengaduan',
-                'password' => Hash::make('password'),
-                'role' => 'admin_pengaduan',
-                'jabatan' => 'Petugas Layanan Pengaduan',
-                'is_active' => true,
-            ]
-        );
-
-        // 3. Kepala Ruangan (contoh: Poli Penyakit Dalam)
-        // Assume unit_id 1 is Poli Penyakit Dalam if it exists, otherwise leave null for now
         $unit = Unit::first();
         $unitId = $unit ? $unit->id : null;
 
-        User::firstOrCreate(
-            ['email' => 'kepala@halomanap.com'],
-            [
-                'name' => 'Dr. Budi Kepala',
-                'password' => Hash::make('password'),
-                'role' => 'kepala_ruangan',
-                'unit_id' => $unitId,
-                'jabatan' => 'Kepala Unit/Ruangan',
-                'is_active' => true,
-            ]
+        $roleAdmin = Role::firstOrCreate(
+            ['name' => 'Admin Pengaduan', 'guard_name' => 'web'],
+            ['kode' => 'ADMIN_PENGADUAN', 'status' => 'active']
         );
 
-        // 4. Petugas Unit
-        User::firstOrCreate(
-            ['email' => 'petugas@halomanap.com'],
+        $users = [
             [
-                'name' => 'Petugas Ruangan',
+                'email' => 'superadmin@halomanap.com',
+                'nama' => 'Super Admin',
+                'phone_number' => '081111111111',
                 'password' => Hash::make('password'),
-                'role' => 'petugas',
+                'status' => 'active',
+                'unit_id' => null,
+                'jabatan_id' => null,
+                'role' => 'Super Admin',
+            ],
+            [
+                'email' => 'admin@halomanap.com',
+                'nama' => 'Admin Pengaduan',
+                'phone_number' => '082222222222',
+                'password' => Hash::make('password'),
+                'status' => 'active',
+                'unit_id' => null,
+                'jabatan_id' => null,
+                'role' => $roleAdmin->name,
+            ],
+            [
+                'email' => 'kepala@halomanap.com',
+                'nama' => 'Dr. Budi Kepala',
+                'phone_number' => '083333333333',
+                'password' => Hash::make('password'),
+                'status' => 'active',
                 'unit_id' => $unitId,
-                'jabatan' => 'Perawat/Petugas',
-                'is_active' => true,
-            ]
-        );
+                'jabatan_id' => null,
+                'role' => 'Pegawai',
+            ],
+            [
+                'email' => 'petugas@halomanap.com',
+                'nama' => 'Petugas Ruangan',
+                'phone_number' => '084444444444',
+                'password' => Hash::make('password'),
+                'status' => 'active',
+                'unit_id' => $unitId,
+                'jabatan_id' => null,
+                'role' => 'Pegawai',
+            ],
+        ];
+
+        foreach ($users as $data) {
+            $roleName = $data['role'];
+            unset($data['role']);
+
+            $user = User::firstOrCreate(
+                ['email' => $data['email']],
+                $data
+            );
+            $user->syncRoles([$roleName]);
+        }
+
+        $this->command->info('4 user akun berhasil dibuat (email login).');
     }
 }

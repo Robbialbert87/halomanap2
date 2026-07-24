@@ -7,6 +7,7 @@ use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 class TestingWorkflowSeeder extends Seeder
@@ -23,6 +24,7 @@ class TestingWorkflowSeeder extends Seeder
         $jabKepala = Jabatan::firstOrCreate(
             ['nama' => 'Kepala Instalasi'],
             [
+                'uuid' => (string) Str::uuid(),
                 'kode' => 'JAB_KA_INSTALASI',
                 'kategori_jabatan' => 'Kepala Unit',
                 'status' => 'active',
@@ -32,6 +34,7 @@ class TestingWorkflowSeeder extends Seeder
         $jabKasi = Jabatan::firstOrCreate(
             ['nama' => 'Kepala Seksi Penunjang Medik'],
             [
+                'uuid' => (string) Str::uuid(),
                 'kode' => 'JAB_KASI_PENUNJANG',
                 'kategori_jabatan' => 'Kasi',
                 'status' => 'active',
@@ -41,6 +44,7 @@ class TestingWorkflowSeeder extends Seeder
         $jabDirektur = Jabatan::firstOrCreate(
             ['nama' => 'Direktur'],
             [
+                'uuid' => (string) Str::uuid(),
                 'kode' => 'JAB_DIREKTUR',
                 'kategori_jabatan' => 'Direktur',
                 'status' => 'active',
@@ -107,6 +111,7 @@ class TestingWorkflowSeeder extends Seeder
             $user = User::updateOrCreate(
                 ['nip' => $data['nip']],
                 [
+                    'uuid' => (string) Str::uuid(),
                     'nama' => $data['nama'],
                     'phone_number' => $data['phone_number'],
                     'password' => Hash::make('password123'),
