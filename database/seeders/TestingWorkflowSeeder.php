@@ -56,6 +56,7 @@ class TestingWorkflowSeeder extends Seeder
         $unit = Unit::where('kode', 'UN_RADIOLOGI')->first();
         if (! $unit) {
             $unit = Unit::create([
+                'uuid' => (string) Str::uuid(),
                 'kode' => 'UN_RADIOLOGI',
                 'nama' => 'Instalasi Radiologi',
                 'jenis' => 'Instalasi',
