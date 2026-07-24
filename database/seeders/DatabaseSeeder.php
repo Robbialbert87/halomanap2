@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             SuperAdminSeeder::class,
             MasterDataSeeder::class,
+            UserSeeder::class,
+            DummyTicketSeeder::class,
+            TestingWorkflowSeeder::class,
         ]);
     }
 }
