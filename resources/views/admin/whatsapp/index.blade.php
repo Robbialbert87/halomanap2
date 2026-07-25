@@ -156,11 +156,11 @@
         </span>
     </div>
 
-    <form action="{{ route('admin.whatsapp.send-test') }}" method="POST" class="p-6">
+    <form action="{{ route('admin.whatsapp.send-test') }}" method="POST" class="p-6 space-y-3">
         @csrf
 
-        <div class="flex items-start gap-4">
-            <div class="w-56 flex-shrink-0">
+        <div class="flex items-end gap-3">
+            <div class="flex-1">
                 <input type="text"
                        id="phone"
                        name="phone"
@@ -168,27 +168,23 @@
                        placeholder="08xxxxxxxxxx"
                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
                        required>
-                <p class="mt-1 text-xs text-gray-400">08xxx atau 628xxx</p>
             </div>
+            <button type="submit"
+                    class="bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors shadow-sm flex items-center gap-2 whitespace-nowrap h-[42px]"
+                    id="send-btn">
+                <i class="fa-brands fa-whatsapp"></i>
+                <span id="send-btn-text">Kirim</span>
+                <i id="send-spinner" class="fa-solid fa-spinner fa-spin hidden"></i>
+            </button>
+        </div>
 
-            <div class="flex-1 min-w-0">
-                <textarea id="message"
-                          name="message"
-                          rows="2"
-                          placeholder="Ketik pesan yang akan dikirim..."
-                          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow resize-none"
-                          required>{{ old('message') }}</textarea>
-            </div>
-
-            <div class="flex-shrink-0 pt-0.5">
-                <button type="submit"
-                        class="bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors shadow-sm flex items-center gap-2 whitespace-nowrap"
-                        id="send-btn">
-                    <i class="fa-brands fa-whatsapp"></i>
-                    <span id="send-btn-text">Kirim</span>
-                    <i id="send-spinner" class="fa-solid fa-spinner fa-spin hidden"></i>
-                </button>
-            </div>
+        <div>
+            <textarea id="message"
+                      name="message"
+                      rows="3"
+                      placeholder="Ketik pesan yang akan dikirim..."
+                      class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow resize-none"
+                      required>{{ old('message') }}</textarea>
         </div>
     </form>
 </div>
