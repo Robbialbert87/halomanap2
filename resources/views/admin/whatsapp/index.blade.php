@@ -147,6 +147,33 @@
 <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
         <h2 class="font-semibold text-gray-800 flex items-center gap-2">
+            <i class="fa-solid fa-qrcode text-blue-500"></i>
+            Barcode Pengaduan
+        </h2>
+        <a href="{{ route('admin.settings.index') }}" class="text-xs text-blue-600 hover:underline">
+            <i class="fa-solid fa-pen mr-1"></i>Ubah URL
+        </a>
+    </div>
+    <div class="p-6 flex items-center gap-6">
+        <div id="barcode-container" class="bg-white p-2 border border-gray-200 rounded-lg inline-flex flex-shrink-0"></div>
+        <div class="space-y-3">
+            <p class="text-sm text-gray-600">Scan barcode untuk mengakses halaman pengaduan.</p>
+            <p class="text-xs text-gray-400 break-all bg-gray-50 px-3 py-2 rounded">{{ \App\Models\Setting::getValue('barcode_url', config('app.url')) }}</p>
+            <div class="flex gap-2">
+                <button onclick="downloadBarcode()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-xs px-4 py-2 transition-colors shadow-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-download"></i> Download
+                </button>
+                <button onclick="printBarcode()" class="bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg text-xs px-4 py-2 transition-colors shadow-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-print"></i> Print
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+        <h2 class="font-semibold text-gray-800 flex items-center gap-2">
             <i class="fa-regular fa-paper-plane text-green-500"></i>
             Kirim Pesan Test
         </h2>
@@ -190,6 +217,53 @@
 </div>
 
 @push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+    let qrCodeInstance;
+
+    function generateBarcode() {
+        const container = document.getElementById('barcode-container');
+        const url = '{{ \App\Models\Setting::getValue('barcode_url', config('app.url')) }}';
+        if (!container) return;
+        container.innerHTML = '';
+        qrCodeInstance = new QRCode(container, {
+            text: url,
+            width: 140,
+            height: 140,
+            colorDark: '#1e293b',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    }
+
+    function downloadBarcode() {
+        const canvas = document.querySelector('#barcode-container canvas');
+        if (!canvas) return;
+        const link = document.createElement('a');
+        link.download = 'barcode-pengaduan.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    }
+
+    function printBarcode() {
+        const canvas = document.querySelector('#barcode-container canvas');
+        if (!canvas) return;
+        const win = window.open('', '_blank');
+        win.document.write(`
+            <html>
+            <head><title>Print Barcode</title></head>
+            <body style="text-align:center;padding:40px;font-family:sans-serif">
+                <h2 style="margin-bottom:20px">Scan untuk pengaduan</h2>
+                <img src="${canvas.toDataURL('image/png')}" style="width:300px;height:300px">
+                <script>window.onload=function(){window.print();window.close()}<\/script>
+            </body>
+            </html>
+        `);
+        win.document.close();
+    }
+
+    generateBarcode();
+</script>
 <script>
     function toggleKey() {
         const input = document.getElementById('api_key');
