@@ -193,7 +193,6 @@ Route::middleware('auth')->group(function () {
 
         // WhatsApp Gateway
         Route::get('whatsapp', [WhatsappSettingsController::class, 'index'])->name('whatsapp.index');
-        Route::get('whatsapp/test', [WhatsappSettingsController::class, 'test'])->name('whatsapp.test');
         Route::post('whatsapp/test/send', [WhatsappSettingsController::class, 'sendTest'])->name('whatsapp.send-test');
         Route::get('whatsapp/status', [WhatsappSettingsController::class, 'checkStatus'])->name('whatsapp.status');
         Route::get('whatsapp/resend', [WhatsappSettingsController::class, 'showFailed'])->name('whatsapp.resend');

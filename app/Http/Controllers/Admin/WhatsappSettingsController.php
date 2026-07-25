@@ -65,11 +65,6 @@ class WhatsappSettingsController extends Controller
         return view('admin.whatsapp.index', compact('wahaConfig'));
     }
 
-    public function test(): View
-    {
-        return view('admin.whatsapp.test');
-    }
-
     public function updateConfig(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -125,14 +120,14 @@ class WhatsappSettingsController extends Controller
                 ]);
 
             if ($resp->successful() || $resp->status() === 201) {
-                return redirect()->route('admin.whatsapp.test')
+                return redirect()->route('admin.whatsapp.index')
                     ->with('success', "Pesan berhasil dikirim ke {$phone}");
             }
 
             $body = $resp->json();
             $errorMsg = $body['error'] ?? $resp->body();
 
-            return redirect()->route('admin.whatsapp.test')
+            return redirect()->route('admin.whatsapp.index')
                 ->with('error', "Gagal: {$errorMsg}")
                 ->withInput();
         } catch (\Throwable $e) {
@@ -142,7 +137,7 @@ class WhatsappSettingsController extends Controller
                 $errorMsg = 'WAHA API tidak dapat dijangkau. Pastikan WAHA berjalan.';
             }
 
-            return redirect()->route('admin.whatsapp.test')
+            return redirect()->route('admin.whatsapp.index')
                 ->with('error', "Gagal: {$errorMsg}")
                 ->withInput();
         }

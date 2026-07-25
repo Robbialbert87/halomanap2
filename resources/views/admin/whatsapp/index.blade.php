@@ -144,6 +144,57 @@
     </div>
 </div>
 
+{{-- Kirim Pesan Test --}}
+<div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+        <h2 class="font-semibold text-gray-800 flex items-center gap-2">
+            <i class="fa-solid fa-paper-plane text-green-500"></i> 
+            Kirim Pesan Test
+        </h2>
+    </div>
+    
+    <form action="{{ route('admin.whatsapp.send-test') }}" method="POST" class="p-6 space-y-5">
+        @csrf
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1.5">
+                    <i class="fa-solid fa-phone mr-1 text-gray-400"></i>
+                    Nomor WhatsApp
+                </label>
+                <input type="text" 
+                       id="phone" 
+                       name="phone" 
+                       value="{{ old('phone') }}"
+                       placeholder="08xxxxxxxxxx"
+                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
+                       required>
+                <p class="mt-1 text-xs text-gray-400">08xxx atau 628xxx</p>
+            </div>
+
+            <div class="md:col-span-2">
+                <label for="message" class="block text-sm font-medium text-gray-700 mb-1.5">
+                    <i class="fa-solid fa-comment mr-1 text-gray-400"></i>
+                    Pesan
+                </label>
+                <div class="flex gap-3">
+                    <textarea id="message" 
+                              name="message" 
+                              rows="3"
+                              placeholder="Tulis pesan..."
+                              class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow resize-y"
+                              required>{{ old('message') }}</textarea>
+                    <button type="submit" 
+                            class="bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg text-sm px-6 py-2.5 transition-colors shadow-sm flex items-center gap-2 self-end whitespace-nowrap">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        Kirim
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
 @push('scripts')
 <script>
     function toggleKey() {
