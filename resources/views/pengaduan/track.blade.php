@@ -603,6 +603,8 @@
         </div>
     </div>
 </div>
+@endif
+
 @push('scripts')
 @if($ticket)
 <script>
