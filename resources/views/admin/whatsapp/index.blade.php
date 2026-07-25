@@ -144,27 +144,26 @@
     </div>
 </div>
 
-{{-- Kirim Pesan Test --}}
 <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
         <h2 class="font-semibold text-gray-800 flex items-center gap-2">
-            <i class="fa-solid fa-paper-plane text-green-500"></i> 
+            <i class="fa-regular fa-paper-plane text-green-500"></i>
             Kirim Pesan Test
         </h2>
+        <span id="send-status" class="flex items-center gap-1.5 text-xs font-medium text-gray-500">
+            <span id="send-dot" class="w-2 h-2 rounded-full bg-gray-300"></span>
+            <span id="send-text">Memeriksa koneksi...</span>
+        </span>
     </div>
-    
-    <form action="{{ route('admin.whatsapp.send-test') }}" method="POST" class="p-6 space-y-5">
+
+    <form action="{{ route('admin.whatsapp.send-test') }}" method="POST" class="p-6">
         @csrf
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div>
-                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1.5">
-                    <i class="fa-solid fa-phone mr-1 text-gray-400"></i>
-                    Nomor WhatsApp
-                </label>
-                <input type="text" 
-                       id="phone" 
-                       name="phone" 
+        <div class="flex items-start gap-4">
+            <div class="w-56 flex-shrink-0">
+                <input type="text"
+                       id="phone"
+                       name="phone"
                        value="{{ old('phone') }}"
                        placeholder="08xxxxxxxxxx"
                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
@@ -172,24 +171,23 @@
                 <p class="mt-1 text-xs text-gray-400">08xxx atau 628xxx</p>
             </div>
 
-            <div class="md:col-span-2">
-                <label for="message" class="block text-sm font-medium text-gray-700 mb-1.5">
-                    <i class="fa-solid fa-comment mr-1 text-gray-400"></i>
-                    Pesan
-                </label>
-                <div class="flex gap-3">
-                    <textarea id="message" 
-                              name="message" 
-                              rows="3"
-                              placeholder="Tulis pesan..."
-                              class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow resize-y"
-                              required>{{ old('message') }}</textarea>
-                    <button type="submit" 
-                            class="bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg text-sm px-6 py-2.5 transition-colors shadow-sm flex items-center gap-2 self-end whitespace-nowrap">
-                        <i class="fa-brands fa-whatsapp"></i>
-                        Kirim
-                    </button>
-                </div>
+            <div class="flex-1 min-w-0">
+                <textarea id="message"
+                          name="message"
+                          rows="2"
+                          placeholder="Ketik pesan yang akan dikirim..."
+                          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow resize-none"
+                          required>{{ old('message') }}</textarea>
+            </div>
+
+            <div class="flex-shrink-0 pt-0.5">
+                <button type="submit"
+                        class="bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors shadow-sm flex items-center gap-2 whitespace-nowrap"
+                        id="send-btn">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <span id="send-btn-text">Kirim</span>
+                    <i id="send-spinner" class="fa-solid fa-spinner fa-spin hidden"></i>
+                </button>
             </div>
         </div>
     </form>
@@ -208,6 +206,41 @@
             icon.className = 'fa-solid fa-eye';
         }
     }
+
+    function updateSendStatus() {
+        fetch('{{ route('admin.whatsapp.status') }}')
+            .then(res => res.json())
+            .then(data => {
+                const dot = document.getElementById('send-dot');
+                const text = document.getElementById('send-text');
+                const btn = document.getElementById('send-btn');
+                if (data.isAuthenticated) {
+                    dot.className = 'w-2 h-2 rounded-full bg-green-500';
+                    text.textContent = 'Siap kirim';
+                    text.className = 'text-green-700 font-medium';
+                    btn.disabled = false;
+                } else {
+                    dot.className = 'w-2 h-2 rounded-full bg-red-400';
+                    text.textContent = 'Tidak terhubung';
+                    text.className = 'text-red-500 font-medium';
+                    btn.disabled = true;
+                }
+            })
+            .catch(() => {
+                document.getElementById('send-dot').className = 'w-2 h-2 rounded-full bg-red-400';
+                document.getElementById('send-text').textContent = 'WAHA offline';
+                document.getElementById('send-text').className = 'text-red-500 font-medium';
+                document.getElementById('send-btn').disabled = true;
+            });
+    }
+
+    document.querySelector('form[action*="send-test"]')?.addEventListener('submit', function() {
+        document.getElementById('send-btn').disabled = true;
+        document.getElementById('send-btn-text').textContent = 'Mengirim...';
+        document.getElementById('send-spinner').classList.remove('hidden');
+    });
+
+    updateSendStatus();
 </script>
 <script>
     function setUI(state, data = null) {
