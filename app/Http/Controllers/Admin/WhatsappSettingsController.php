@@ -213,6 +213,18 @@ class WhatsappSettingsController extends Controller
             ->with('success', "{$resent} notifikasi sedang dikirim ulang.");
     }
 
+    public function saveBarcodeUrl(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'barcode_url' => 'required|url|max:255',
+        ]);
+
+        Setting::setValue('barcode_url', $validated['barcode_url'], 'URL untuk QR Code barcode pengaduan');
+
+        return redirect()->route('admin.whatsapp.index')
+            ->with('success', 'URL barcode berhasil disimpan.');
+    }
+
     private function formatNumber(string $number): string
     {
         $digits = preg_replace('/\D/', '', $number);

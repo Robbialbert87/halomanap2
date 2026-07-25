@@ -187,16 +187,13 @@ Route::middleware('auth')->group(function () {
         Route::resource('roles', RoleController::class);
         Route::resource('jabatans', JabatanController::class);
 
-        // Settings (Pengaturan Umum)
-        Route::get('settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
-        Route::post('settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
-
         // WhatsApp Gateway
         Route::get('whatsapp', [WhatsappSettingsController::class, 'index'])->name('whatsapp.index');
         Route::post('whatsapp/test/send', [WhatsappSettingsController::class, 'sendTest'])->name('whatsapp.send-test');
         Route::get('whatsapp/status', [WhatsappSettingsController::class, 'checkStatus'])->name('whatsapp.status');
         Route::get('whatsapp/resend', [WhatsappSettingsController::class, 'showFailed'])->name('whatsapp.resend');
         Route::post('whatsapp/resend-submit', [WhatsappSettingsController::class, 'resendSubmit'])->name('whatsapp.resend-submit');
+        Route::post('whatsapp/barcode-update', [WhatsappSettingsController::class, 'saveBarcodeUrl'])->name('whatsapp.barcode-update');
         Route::post('whatsapp/update-config', [WhatsappSettingsController::class, 'updateConfig'])->name('whatsapp.update-config');
 
         // Workflow Disposisi

@@ -150,9 +150,9 @@
             <i class="fa-solid fa-qrcode text-blue-500"></i>
             Barcode Pengaduan
         </h2>
-        <a href="{{ route('admin.settings.index') }}" class="text-xs text-blue-600 hover:underline">
+        <button onclick="openBarcodeModal()" class="text-xs text-blue-600 hover:underline bg-transparent border-none cursor-pointer">
             <i class="fa-solid fa-pen mr-1"></i>Ubah URL
-        </a>
+        </button>
     </div>
     <div class="p-6 flex items-center gap-6">
         <div id="barcode-container" class="bg-white p-2 border border-gray-200 rounded-lg inline-flex flex-shrink-0"></div>
@@ -168,6 +168,41 @@
                 </button>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="barcode-modal" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+            <h3 class="font-semibold text-gray-800 flex items-center gap-2">
+                <i class="fa-solid fa-qrcode text-blue-500"></i>
+                Ubah URL Barcode
+            </h3>
+            <button type="button" onclick="closeBarcodeModal()" class="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
+        </div>
+        <form action="{{ route('admin.whatsapp.barcode-update') }}" method="POST" class="p-6 space-y-5">
+            @csrf
+            <div>
+                <label for="barcode_url" class="block text-sm font-medium text-gray-700 mb-1.5">URL Barcode Pengaduan</label>
+                <input type="url" id="barcode_url" name="barcode_url"
+                       value="{{ \App\Models\Setting::getValue('barcode_url', config('app.url')) }}"
+                       placeholder="https://example.com"
+                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
+                       required>
+                <p class="mt-1 text-xs text-gray-400">URL yang tampil di QR Code. Ubah jika domain berubah.</p>
+            </div>
+            <div class="flex items-center gap-3 pt-2">
+                <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-6 py-2.5 transition-colors shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Simpan
+                </button>
+                <button type="button" onclick="closeBarcodeModal()"
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg text-sm px-6 py-2.5 transition-colors">
+                    Batal
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -235,6 +270,16 @@
             correctLevel: QRCode.CorrectLevel.H
         });
     }
+
+    function openBarcodeModal() {
+        document.getElementById('barcode-modal').classList.remove('hidden');
+    }
+    function closeBarcodeModal() {
+        document.getElementById('barcode-modal').classList.add('hidden');
+    }
+    document.getElementById('barcode-modal')?.addEventListener('click', function(e) {
+        if (e.target === this) closeBarcodeModal();
+    });
 
     function downloadBarcode() {
         const canvas = document.querySelector('#barcode-container canvas');

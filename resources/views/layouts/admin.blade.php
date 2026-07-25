@@ -171,14 +171,6 @@
                 Kirim Ulang
             </a>
             @endcan
-            @can('manage-settings')
-            <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.settings.*') ? 'bg-blue-50 text-blue-700' : '' }}">
-                <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-sm shadow-purple-200/50 flex-shrink-0">
-                    <i class="fa-solid fa-qrcode text-white text-xs"></i>
-                </span>
-                Barcode
-            </a>
-            @endcan
             @endif
 
             @elseif($mobileRoleGroup === 'kepala_unit')
