@@ -76,24 +76,10 @@ docker compose exec app php artisan storage:link
 
 ---
 
-## 4. Pairing WhatsApp
+WhatsApp gateway menggunakan **WAHA** eksternal di `https://waha.systemwebsite.my.id/`.
+Atur `WHATSAPP_API_URL`, `WAHA_API_KEY`, dan `WAHA_SESSION` di `.env`.
 
-WhatsApp API berjalan di container `halomanap-whatsapp` port 3000.
-
-```bash
-# Lihat QR code (akan muncul di log)
-docker compose logs -f whatsapp
-```
-
-Atau buka `http://IP_SERVER:3000/status` di browser. Scan QR code dengan WhatsApp di HP.
-
-Cek status:
-
-```bash
-make whatsapp-status
-```
-
-Response `{"isReady": true}` berarti sudah siap.
+Cek status via dashboard WAHA atau halaman WhatsApp Gateway di admin panel.
 
 ---
 

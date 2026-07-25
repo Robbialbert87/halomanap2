@@ -23,7 +23,7 @@ services:
       - QUEUE_CONNECTION=database
       - CACHE_STORE=database
       - SESSION_DRIVER=database
-      - WHATSAPP_API_URL=${WHATSAPP_API_URL:-http://whatsapp:3000}
+      - WHATSAPP_API_URL=${WHATSAPP_API_URL:-https://waha.systemwebsite.my.id}
       - LOG_CHANNEL=stack
       - LOG_LEVEL=${LOG_LEVEL:-notice}
     depends_on:
@@ -58,7 +58,7 @@ services:
       - QUEUE_CONNECTION=database
       - CACHE_STORE=database
       - SESSION_DRIVER=database
-      - WHATSAPP_API_URL=${WHATSAPP_API_URL:-http://whatsapp:3000}
+      - WHATSAPP_API_URL=${WHATSAPP_API_URL:-https://waha.systemwebsite.my.id}
       - LOG_CHANNEL=stack
       - LOG_LEVEL=${LOG_LEVEL:-notice}
     command: php artisan queue:work --queue=notifications,default --tries=3
@@ -100,27 +100,5 @@ services:
       retries: 5
       start_period: 30s
 
-  whatsapp:
-    build:
-      context: .
-      dockerfile: docker/whatsapp/Dockerfile
-    container_name: halomanap-whatsapp
-    restart: unless-stopped
-    ports:
-      - "${WHATSAPP_PORT:-3000}:3000"
-    volumes:
-      - wa_session:/app/.wwebjs_auth
-    environment:
-      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
-      - PUPPETEER_SKIP_DOWNLOAD=true
-      - TZ=Asia/Jakarta
-    healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/status', r => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
 volumes:
   db_data:
-  wa_session:

@@ -1,4 +1,4 @@
-.PHONY: up down build start stop restart logs shell artisan migrate seed fresh test whatsapp-qr deploy
+.PHONY: up down build start stop restart logs shell artisan migrate seed fresh test deploy
 
 up:
 	docker compose up -d --build
@@ -42,11 +42,6 @@ deploy: up
 	docker compose exec app php artisan route:cache
 	docker compose exec app php artisan view:cache
 
-whatsapp-qr:
-	docker compose logs whatsapp 2>&1 | grep -oP 'data:image/png;base64[^"]*' | head -1
-
-whatsapp-status:
-	curl -s http://localhost:3000/status | python3 -m json.tool
 
 test:
 	docker compose exec app php artisan test
