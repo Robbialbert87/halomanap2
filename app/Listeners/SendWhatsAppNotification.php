@@ -248,25 +248,45 @@ class SendWhatsAppNotification implements ShouldQueue
         $error = null;
 
         try {
-            $url = config('whatsapp.api_url').'/send';
-            $response = Http::timeout(15)->post($url, [
-                'number' => $recipient->phone_number,
-                'message' => $message,
+            $apiUrl = config('whatsapp.api_url');
+            $apiKey = config('whatsapp.api_key');
+            $session = config('whatsapp.session');
+
+            $chatId = $this->formatNumber($recipient->phone_number);
+            if (! $chatId) {
+                $error = 'Invalid phone number format';
+                throw new \RuntimeException($error);
+            }
+
+            $delay = (int) config('whatsapp.rate_limit_delay', 3);
+            if ($delay > 0) {
+                sleep($delay);
+            }
+
+            $url = rtrim($apiUrl, '/').'/api/sendText';
+            $response = Http::withHeaders([
+                'X-Api-Key' => $apiKey,
+                'Content-Type' => 'application/json',
+            ])->timeout(15)->post($url, [
+                'session' => $session,
+                'chatId' => $chatId,
+                'text' => $message,
             ]);
 
-            if ($response->successful()) {
+            if ($response->successful() || $response->status() === 201) {
                 $status = 'sent';
             } else {
                 $error = $response->body();
-                Log::channel('daily')->warning('[WhatsApp API] Gagal', [
+                Log::channel('daily')->warning('[WAHA] Gagal', [
                     'to' => $recipient->phone_number,
+                    'status' => $response->status(),
                     'error' => $error,
                 ]);
             }
 
         } catch (\Throwable $e) {
             $error = $e->getMessage();
-            Log::channel('daily')->error('[WhatsApp API] '.$e->getMessage(), [
+            Log::channel('daily')->error('[WAHA] '.$e->getMessage(), [
                 'to' => $recipient->phone_number,
             ]);
         }
@@ -276,5 +296,17 @@ class SendWhatsAppNotification implements ShouldQueue
             'error_message' => $error,
             'sent_at' => $status === 'sent' ? now() : null,
         ]);
+    }
+
+    private function formatNumber(string $number): ?string
+    {
+        $digits = preg_replace('/\D/', '', $number);
+        if (empty($digits)) {
+            return null;
+        }
+        if (str_starts_with($digits, '0')) {
+            $digits = '62'.substr($digits, 1);
+        }
+        return $digits.'@c.us';
     }
 }

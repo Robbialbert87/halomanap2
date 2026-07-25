@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\NotificationLog;
+use App\Jobs\SendWhatsAppNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -14,7 +16,15 @@ class WhatsappSettingsController extends Controller
 {
     private function apiUrl(): string
     {
-        return config('whatsapp.api_url');
+        return rtrim(config('whatsapp.api_url'), '/');
+    }
+
+    private function wahaHeaders(): array
+    {
+        return [
+            'X-Api-Key' => config('whatsapp.api_key'),
+            'Content-Type' => 'application/json',
+        ];
     }
 
     public function index(): View
@@ -37,29 +47,24 @@ class WhatsappSettingsController extends Controller
         $phone = $validated['phone'];
         $message = $validated['message'];
 
-        $formattedNumber = preg_replace('/\D/', '', $phone);
-        if (str_starts_with($formattedNumber, '0')) {
-            $formattedNumber = '62'.substr($formattedNumber, 1);
-        }
+        $chatId = $this->formatNumber($phone);
 
         try {
-            $resp = Http::timeout(15)->post($this->apiUrl().'/send', [
-                'number' => $formattedNumber,
-                'message' => $message,
-            ]);
+            $resp = Http::withHeaders($this->wahaHeaders())
+                ->timeout(15)
+                ->post($this->apiUrl().'/api/sendText', [
+                    'session' => config('whatsapp.session'),
+                    'chatId' => $chatId,
+                    'text' => $message,
+                ]);
+
+            if ($resp->successful() || $resp->status() === 201) {
+                return redirect()->route('admin.whatsapp.test')
+                    ->with('success', "Pesan berhasil dikirim ke {$phone}");
+            }
 
             $body = $resp->json();
-
-            if ($resp->successful() && ($body['success'] ?? false)) {
-                return redirect()->route('admin.whatsapp.test')
-                    ->with('success', "Pesan berhasil dikirim ke {$formattedNumber}");
-            }
-
-            $errorMsg = $body['error'] ?? 'Gagal mengirim pesan (unknown error)';
-
-            if (str_contains($errorMsg, 'No LID for user')) {
-                $errorMsg = 'WhatsApp belum terautentikasi. Scan QR Code di halaman WhatsApp Gateway terlebih dahulu.';
-            }
+            $errorMsg = $body['error'] ?? $resp->body();
 
             return redirect()->route('admin.whatsapp.test')
                 ->with('error', "Gagal: {$errorMsg}")
@@ -68,7 +73,7 @@ class WhatsappSettingsController extends Controller
             $errorMsg = $e->getMessage();
 
             if (str_contains($errorMsg, 'Connection refused') || str_contains($errorMsg, 'could not connect')) {
-                $errorMsg = 'WhatsApp API tidak dapat dijangkau. Pastikan container WhatsApp berjalan (ddev start).';
+                $errorMsg = 'WAHA API tidak dapat dijangkau. Pastikan WAHA berjalan.';
             }
 
             return redirect()->route('admin.whatsapp.test')
@@ -77,44 +82,82 @@ class WhatsappSettingsController extends Controller
         }
     }
 
-    public function startServer(): RedirectResponse
-    {
-        try {
-            $resp = Http::timeout(5)->post($this->apiUrl().'/reset');
-            sleep(2);
-            $check = @Http::timeout(2)->get($this->apiUrl().'/status');
-            if ($check->successful()) {
-                return redirect()->back()->with('success', 'Layanan berjalan! Tunggu QR Code muncul...');
-            }
-        } catch (\Throwable $e) {
-            return redirect()->back()->with('error', 'Gagal menghubungi WhatsApp API: '.$e->getMessage());
-        }
-
-        return redirect()->back()->with('warning', 'Perintah sudah dijalankan, tapi port 3000 belum merespon. Tunggu beberapa saat.');
-    }
-
     public function checkStatus()
     {
         try {
-            $resp = Http::timeout(5)->get($this->apiUrl().'/status');
+            $session = config('whatsapp.session');
+            $resp = Http::withHeaders($this->wahaHeaders())
+                ->timeout(10)
+                ->get($this->apiUrl().'/api/sessions/'.$session);
+
             if ($resp->successful()) {
-                return response($resp->body())->header('Content-Type', 'application/json');
+                $data = $resp->json();
+                $status = $data['status'] ?? 'STOPPED';
+                $me = $data['me'] ?? null;
+
+                return response()->json([
+                    'success' => true,
+                    'status' => $status,
+                    'isAuthenticated' => $status === 'WORKING',
+                    'me' => $me,
+                    'session' => $session,
+                ]);
+            }
+
+            if ($resp->status() === 404) {
+                return response()->json([
+                    'success' => false,
+                    'status' => 'NOT_FOUND',
+                    'isAuthenticated' => false,
+                    'error' => "Session '{$session}' tidak ditemukan. Buat session di WAHA dashboard.",
+                ]);
             }
         } catch (\Throwable $e) {
             //
         }
 
-        return response()->json(['success' => false, 'error' => 'WhatsApp API offline'], 503);
+        return response()->json([
+            'success' => false,
+            'status' => 'OFFLINE',
+            'isAuthenticated' => false,
+            'error' => 'WAHA API tidak dapat dijangkau',
+        ], 503);
     }
 
-    public function proxyReset()
+    public function showFailed(): View
     {
-        try {
-            $resp = Http::timeout(5)->post($this->apiUrl().'/reset');
+        $failedLogs = NotificationLog::where('status', 'failed')
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
 
-            return response($resp->body())->header('Content-Type', 'application/json');
-        } catch (\Throwable $e) {
-            return response()->json(['success' => false, 'error' => $e->getMessage()], 503);
+        return view('admin.whatsapp.resend', compact('failedLogs'));
+    }
+
+    public function resendSubmit(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:notification_logs,id',
+        ]);
+
+        $resent = 0;
+        $logs = NotificationLog::whereIn('id', $validated['ids'])->get();
+
+        foreach ($logs as $log) {
+            SendWhatsAppNotification::dispatch($log->nomor_wa, $log->isi_pesan);
+            $resent++;
         }
+
+        return redirect()->route('admin.whatsapp.resend')
+            ->with('success', "{$resent} notifikasi sedang dikirim ulang.");
+    }
+
+    private function formatNumber(string $number): string
+    {
+        $digits = preg_replace('/\D/', '', $number);
+        if (str_starts_with($digits, '0')) {
+            $digits = '62'.substr($digits, 1);
+        }
+        return $digits.'@c.us';
     }
 }

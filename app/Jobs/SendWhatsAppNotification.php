@@ -15,9 +15,6 @@ class SendWhatsAppNotification implements ShouldQueue
 
     protected $message;
 
-    /**
-     * Create a new job instance.
-     */
     public function __construct($phoneNumber, $message)
     {
         $this->onQueue('notifications');
@@ -25,9 +22,6 @@ class SendWhatsAppNotification implements ShouldQueue
         $this->message = $message;
     }
 
-    /**
-     * Execute the job.
-     */
     public function handle(): void
     {
         if (empty($this->phoneNumber)) {
@@ -35,13 +29,48 @@ class SendWhatsAppNotification implements ShouldQueue
         }
 
         try {
-            $url = config('whatsapp.api_url').'/send';
-            Http::timeout(10)->post($url, [
-                'number' => $this->phoneNumber,
-                'message' => $this->message,
+            $apiUrl = config('whatsapp.api_url');
+            $apiKey = config('whatsapp.api_key');
+            $session = config('whatsapp.session');
+
+            $chatId = $this->formatNumber($this->phoneNumber);
+            if (! $chatId) {
+                return;
+            }
+
+            $url = rtrim($apiUrl, '/').'/api/sendText';
+            $response = Http::withHeaders([
+                'X-Api-Key' => $apiKey,
+                'Content-Type' => 'application/json',
+            ])->timeout(15)->post($url, [
+                'session' => $session,
+                'chatId' => $chatId,
+                'text' => $this->message,
             ]);
+
+            if (! $response->successful()) {
+                Log::warning('WAHA send failed', [
+                    'to' => $this->phoneNumber,
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
+            }
         } catch (\Exception $e) {
-            Log::error('Gagal mengirim WhatsApp: '.$e->getMessage());
+            Log::error('Gagal mengirim WhatsApp via WAHA: '.$e->getMessage(), [
+                'to' => $this->phoneNumber,
+            ]);
         }
+    }
+
+    private function formatNumber(string $number): ?string
+    {
+        $digits = preg_replace('/\D/', '', $number);
+        if (empty($digits)) {
+            return null;
+        }
+        if (str_starts_with($digits, '0')) {
+            $digits = '62'.substr($digits, 1);
+        }
+        return $digits.'@c.us';
     }
 }
