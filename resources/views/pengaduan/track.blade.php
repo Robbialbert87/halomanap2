@@ -535,6 +535,7 @@
         </a>
     </nav>
 
+    @if($ticket)
     {{-- HIDDEN TICKET VISUAL --}}
     <div id="ticket-visual" style="position:absolute;left:-9999px;top:0;width:380px;background:#fff;font-family:'Roboto',Arial,sans-serif;color:#1e293b;">
         <div style="padding:24px;">
@@ -602,6 +603,7 @@
         </div>
     </div>
 </div>
+@endif
 
 @push('scripts')
 <script>
