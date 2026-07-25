@@ -12,6 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\QueryException;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -258,7 +259,7 @@ class SendWhatsAppNotification implements ShouldQueue
 
             if ($dbKey) {
                 try {
-                    $apiKey = \Illuminate\Support\Facades\Crypt::decryptString($dbKey);
+                    $apiKey = Crypt::decryptString($dbKey);
                 } catch (\Throwable) {
                     $apiKey = $dbKey;
                 }
@@ -321,6 +322,7 @@ class SendWhatsAppNotification implements ShouldQueue
         if (str_starts_with($digits, '0')) {
             $digits = '62'.substr($digits, 1);
         }
+
         return $digits.'@c.us';
     }
 }

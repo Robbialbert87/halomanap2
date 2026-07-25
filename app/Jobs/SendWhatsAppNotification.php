@@ -86,6 +86,7 @@ class SendWhatsAppNotification implements ShouldQueue
         if (str_starts_with($digits, '0')) {
             $digits = '62'.substr($digits, 1);
         }
+
         return $digits.'@c.us';
     }
 }

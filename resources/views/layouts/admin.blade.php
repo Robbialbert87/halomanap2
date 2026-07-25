@@ -435,7 +435,7 @@
                         </span>
                         @else
                         <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
-                            <i class="fa-solid fa-file-lines text-white text-sm"></i>
+                            <i class="fa-solid {{ $notif['icon'] ?? 'fa-file-lines' }} text-white text-sm"></i>
                         </span>
                         @endif
                         <div class="flex-1 min-w-0">

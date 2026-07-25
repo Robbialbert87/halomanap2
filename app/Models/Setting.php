@@ -24,7 +24,7 @@ final class Setting extends Model
 
     public static function setValue(string $key, mixed $value, ?string $description = null): self
     {
-        $setting = static::updateOrCreate(
+        $setting = self::updateOrCreate(
             ['key' => $key],
             ['value' => $value, 'description' => $description],
         );

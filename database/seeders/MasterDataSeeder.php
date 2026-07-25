@@ -24,14 +24,14 @@ class MasterDataSeeder extends Seeder
         // 2. KATEGORI PENGADUAN
         // ============================================================
         DB::table('report_categories')->insert([
-            ['name' => 'Pelayanan Dokter',          'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Pelayanan Perawat',         'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Pelayanan Administrasi',    'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Fasilitas',                 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Kebersihan',                'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Keamanan',                  'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Informasi & Komunikasi',    'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Lainnya',                   'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Pelayanan Dokter',          'icon' => 'fa-user-doctor',    'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Pelayanan Perawat',         'icon' => 'fa-user-nurse',    'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Pelayanan Administrasi',    'icon' => 'fa-file-invoice',  'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Fasilitas',                 'icon' => 'fa-building',       'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Kebersihan',                'icon' => 'fa-broom',          'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Keamanan',                  'icon' => 'fa-shield-halved',  'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Informasi & Komunikasi',    'icon' => 'fa-circle-info',    'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Lainnya',                   'icon' => 'fa-tag',            'created_at' => now(), 'updated_at' => now()],
         ]);
 
         // ============================================================

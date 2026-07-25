@@ -43,7 +43,9 @@
                             <i class="fa-solid fa-check text-[10px] text-green-600"></i>
                         </div>
                         @else
-                        <div class="w-2 h-2 mt-1.5 rounded-full bg-blue-500 shrink-0"></div>
+                        <div class="w-5 h-5 mt-0.5 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                            <i class="fa-solid {{ $notif['icon'] ?? 'fa-file-lines' }} text-[10px] text-blue-600"></i>
+                        </div>
                         @endif
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-medium text-gray-800 truncate">{{ $notif['title'] }}</p>

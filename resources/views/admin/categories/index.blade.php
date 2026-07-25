@@ -50,7 +50,10 @@
         <div class="w-1 shrink-0 bg-pink-500"></div>
         <div class="flex-1 min-w-0 pl-2.5 pr-3 py-3">
             <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center gap-1.5 min-w-0 flex-1">
+                <div class="flex items-center gap-2 min-w-0 flex-1">
+                    <span class="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
+                        <i class="fa-solid {{ $category->icon ?? 'fa-tag' }} text-[10px] text-blue-600"></i>
+                    </span>
                     <span class="text-[13px] font-semibold text-gray-900 truncate">{{ $category->name }}</span>
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
@@ -84,6 +87,7 @@
         <thead class="bg-gray-50 text-gray-800 font-semibold border-b border-gray-100 uppercase text-xs">
             <tr>
                 <th class="px-6 py-4 w-16 text-center">No</th>
+                <th class="px-6 py-4">Ikon</th>
                 <th class="px-6 py-4">Nama Kategori</th>
                 <th class="px-6 py-4 w-32 text-center">Aksi</th>
             </tr>
@@ -92,6 +96,11 @@
             @forelse($categories as $index => $category)
             <tr class="hover:bg-gray-50/50 transition-colors">
                 <td class="px-6 py-4 text-center">{{ $index + 1 }}</td>
+                <td class="px-6 py-4">
+                    <span class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center">
+                        <i class="fa-solid {{ $category->icon ?? 'fa-tag' }} text-blue-600"></i>
+                    </span>
+                </td>
                 <td class="px-6 py-4 font-medium text-gray-900">{{ $category->name }}</td>
                 <td class="px-6 py-4">
                     <div class="flex items-center justify-center gap-1">
@@ -109,7 +118,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="3" class="px-6 py-8 text-center text-gray-400">Belum ada data kategori.</td>
+                <td colspan="4" class="px-6 py-8 text-center text-gray-400">Belum ada data kategori.</td>
             </tr>
             @endforelse
         </tbody>

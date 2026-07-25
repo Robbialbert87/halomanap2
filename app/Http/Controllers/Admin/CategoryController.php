@@ -27,6 +27,7 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'icon' => 'nullable|string|max:50',
         ]);
         ReportCategory::create($request->all());
 
@@ -49,6 +50,7 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'icon' => 'nullable|string|max:50',
         ]);
         $category = ReportCategory::findOrFail($id);
         $category->update($request->all());

@@ -86,6 +86,7 @@ class WhatsappSettingsController extends Controller
             if ($resp->successful()) {
                 $data = $resp->json();
                 $status = $data['status'] ?? 'UNKNOWN';
+
                 return redirect()->route('admin.whatsapp.index')
                     ->with('success', "Konfigurasi tersimpan. Status session: {$status}");
             }
@@ -231,6 +232,7 @@ class WhatsappSettingsController extends Controller
         if (str_starts_with($digits, '0')) {
             $digits = '62'.substr($digits, 1);
         }
+
         return $digits.'@c.us';
     }
 }
