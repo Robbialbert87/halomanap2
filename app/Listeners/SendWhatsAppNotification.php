@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Events\WorkflowChanged;
 use App\Models\Jabatan;
 use App\Models\NotificationLog;
+use App\Models\Setting;
 use App\Models\User;
 use App\Services\RoleMenuService;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -248,9 +249,22 @@ class SendWhatsAppNotification implements ShouldQueue
         $error = null;
 
         try {
-            $apiUrl = config('whatsapp.api_url');
-            $apiKey = config('whatsapp.api_key');
-            $session = config('whatsapp.session');
+            $dbUrl = Setting::getValue('waha_api_url');
+            $dbKey = Setting::getValue('waha_api_key');
+            $dbSession = Setting::getValue('waha_session');
+
+            $apiUrl = $dbUrl ?: config('whatsapp.api_url');
+            $session = $dbSession ?: config('whatsapp.session');
+
+            if ($dbKey) {
+                try {
+                    $apiKey = \Illuminate\Support\Facades\Crypt::decryptString($dbKey);
+                } catch (\Throwable) {
+                    $apiKey = $dbKey;
+                }
+            } else {
+                $apiKey = config('whatsapp.api_key');
+            }
 
             $chatId = $this->formatNumber($recipient->phone_number);
             if (! $chatId) {
@@ -258,7 +272,7 @@ class SendWhatsAppNotification implements ShouldQueue
                 throw new \RuntimeException($error);
             }
 
-            $delay = (int) config('whatsapp.rate_limit_delay', 3);
+            $delay = 3;
             if ($delay > 0) {
                 sleep($delay);
             }

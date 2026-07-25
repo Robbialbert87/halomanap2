@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             SuperAdminSeeder::class,
             MasterDataSeeder::class,
+            WahaSettingSeeder::class,
             UserSeeder::class,
             DummyTicketSeeder::class,
             TestingWorkflowSeeder::class,

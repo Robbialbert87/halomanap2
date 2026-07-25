@@ -1,0 +1,29 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Setting;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Crypt;
+
+class WahaSettingSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $apiUrl = env('WHATSAPP_API_URL', 'https://waha.systemwebsite.my.id');
+        $apiKey = env('WAHA_API_KEY', '');
+        $session = env('WAHA_SESSION', 'default');
+
+        if (! Setting::getValue('waha_api_url')) {
+            Setting::setValue('waha_api_url', $apiUrl, 'WAHA API URL');
+        }
+
+        if (! Setting::getValue('waha_api_key') && $apiKey) {
+            Setting::setValue('waha_api_key', Crypt::encryptString($apiKey), 'WAHA API Key (encrypted)');
+        }
+
+        if (! Setting::getValue('waha_session')) {
+            Setting::setValue('waha_session', $session, 'WAHA Session name');
+        }
+    }
+}

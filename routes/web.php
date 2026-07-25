@@ -198,6 +198,7 @@ Route::middleware('auth')->group(function () {
         Route::get('whatsapp/status', [WhatsappSettingsController::class, 'checkStatus'])->name('whatsapp.status');
         Route::get('whatsapp/resend', [WhatsappSettingsController::class, 'showFailed'])->name('whatsapp.resend');
         Route::post('whatsapp/resend-submit', [WhatsappSettingsController::class, 'resendSubmit'])->name('whatsapp.resend-submit');
+        Route::post('whatsapp/update-config', [WhatsappSettingsController::class, 'updateConfig'])->name('whatsapp.update-config');
 
         // Workflow Disposisi
         Route::post('workflow/disposisi', [WorkflowController::class, 'disposisi'])->name('workflow.disposisi');

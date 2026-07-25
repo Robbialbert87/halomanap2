@@ -2,8 +2,10 @@
 
 namespace App\Jobs;
 
+use App\Models\Setting;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -29,9 +31,22 @@ class SendWhatsAppNotification implements ShouldQueue
         }
 
         try {
-            $apiUrl = config('whatsapp.api_url');
-            $apiKey = config('whatsapp.api_key');
-            $session = config('whatsapp.session');
+            $dbUrl = Setting::getValue('waha_api_url');
+            $dbKey = Setting::getValue('waha_api_key');
+            $dbSession = Setting::getValue('waha_session');
+
+            $apiUrl = $dbUrl ?: config('whatsapp.api_url');
+            $session = $dbSession ?: config('whatsapp.session');
+
+            if ($dbKey) {
+                try {
+                    $apiKey = Crypt::decryptString($dbKey);
+                } catch (\Throwable) {
+                    $apiKey = $dbKey;
+                }
+            } else {
+                $apiKey = config('whatsapp.api_key');
+            }
 
             $chatId = $this->formatNumber($this->phoneNumber);
             if (! $chatId) {

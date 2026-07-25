@@ -15,9 +15,16 @@
 </div>
 
 @if(session('success'))
-    <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 flex items-center gap-2">
+    <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200 flex items-center gap-2">
         <i class="fa-solid fa-check-circle"></i>
         {{ session('success') }}
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200 flex items-center gap-2">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        {{ session('error') }}
     </div>
 @endif
 
@@ -73,22 +80,51 @@
         </div>
     </div>
 
-    <!-- Panel Informasi -->
+    <!-- Panel Kanan -->
     <div class="space-y-6">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 class="font-semibold text-gray-800 flex items-center gap-2 mb-4">
-                <i class="fa-solid fa-circle-info text-blue-500"></i> Informasi Gateway
-            </h2>
-            <div class="text-sm text-gray-600 space-y-3">
-                <p>Sistem terhubung ke <strong>WAHA (WhatsApp HTTP API)</strong> di:</p>
-                <p class="text-xs bg-gray-100 px-2 py-1 rounded font-mono break-all">{{ config('whatsapp.api_url') }}</p>
-                <p>Session: <strong>{{ config('whatsapp.session') }}</strong></p>
-                <ul class="list-disc pl-5 space-y-1 text-gray-500">
-                    <li>Gunakan nomor WhatsApp khusus untuk sistem.</li>
-                    <li>Pastikan handphone tetap terkoneksi internet.</li>
-                    <li>Untuk ganti nomor, buka WAHA dashboard → reset session → scan QR baru.</li>
-                </ul>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+                <h2 class="font-semibold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-gray-500"></i> Konfigurasi WAHA
+                </h2>
             </div>
+            <form action="{{ route('admin.whatsapp.update-config') }}" method="POST" class="p-6 space-y-4">
+                @csrf
+                <div>
+                    <label for="api_url" class="block text-sm font-medium text-gray-700 mb-1.5">API URL</label>
+                    <input type="url" id="api_url" name="api_url" required
+                           value="{{ old('api_url', $wahaConfig['api_url']) }}"
+                           placeholder="https://waha.domain.com"
+                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow">
+                </div>
+                <div>
+                    <label for="api_key" class="block text-sm font-medium text-gray-700 mb-1.5">API Key</label>
+                    <div class="relative">
+                        <input type="password" id="api_key" name="api_key" required
+                               value="{{ old('api_key', $wahaConfig['api_key']) }}"
+                               placeholder="WAHA API Key"
+                               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow pr-10">
+                        <button type="button" onclick="toggleKey()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                            <i id="key-icon" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label for="session" class="block text-sm font-medium text-gray-700 mb-1.5">Session</label>
+                    <input type="text" id="session" name="session" required
+                           value="{{ old('session', $wahaConfig['session']) }}"
+                           placeholder="default"
+                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow">
+                </div>
+                <div class="flex items-center gap-3 pt-2">
+                    <button type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-6 py-2.5 transition-colors shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Simpan & Uji Koneksi
+                    </button>
+                </div>
+                <p class="text-xs text-gray-400">Perubahan langsung aktif. Koneksi akan diuji otomatis saat disimpan.</p>
+            </form>
         </div>
 
         <div class="bg-blue-50 rounded-xl shadow-sm border border-blue-200 p-6">
@@ -130,6 +166,19 @@
 
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+    function toggleKey() {
+        const input = document.getElementById('api_key');
+        const icon = document.getElementById('key-icon');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'fa-solid fa-eye-slash';
+        } else {
+            input.type = 'password';
+            icon.className = 'fa-solid fa-eye';
+        }
+    }
+</script>
 <script>
     let qrCodeInstance;
 

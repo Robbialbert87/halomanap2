@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\NotificationLog;
 use App\Jobs\SendWhatsAppNotification;
+use App\Models\NotificationLog;
+use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
 
@@ -16,25 +18,89 @@ class WhatsappSettingsController extends Controller
 {
     private function apiUrl(): string
     {
-        return rtrim(config('whatsapp.api_url'), '/');
+        return rtrim($this->getConfig('api_url'), '/');
     }
 
     private function wahaHeaders(): array
     {
         return [
-            'X-Api-Key' => config('whatsapp.api_key'),
+            'X-Api-Key' => $this->getConfig('api_key'),
             'Content-Type' => 'application/json',
         ];
     }
 
+    private function getConfig(string $key): string
+    {
+        $map = [
+            'api_url' => ['db' => 'waha_api_url', 'env' => 'whatsapp.api_url'],
+            'api_key' => ['db' => 'waha_api_key', 'env' => 'whatsapp.api_key'],
+            'session' => ['db' => 'waha_session', 'env' => 'whatsapp.session'],
+        ];
+
+        $cfg = $map[$key] ?? null;
+        if (! $cfg) {
+            return '';
+        }
+
+        $dbValue = Setting::getValue($cfg['db']);
+        if ($dbValue && $key === 'api_key') {
+            try {
+                return Crypt::decryptString($dbValue);
+            } catch (\Throwable) {
+                return $dbValue;
+            }
+        }
+
+        return $dbValue ?: config($cfg['env'], '');
+    }
+
     public function index(): View
     {
-        return view('admin.whatsapp.index');
+        $wahaConfig = [
+            'api_url' => Setting::getValue('waha_api_url', config('whatsapp.api_url')),
+            'api_key' => Setting::getValue('waha_api_key', config('whatsapp.api_key')),
+            'session' => Setting::getValue('waha_session', config('whatsapp.session')),
+        ];
+
+        return view('admin.whatsapp.index', compact('wahaConfig'));
     }
 
     public function test(): View
     {
         return view('admin.whatsapp.test');
+    }
+
+    public function updateConfig(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'api_url' => 'required|url|max:255',
+            'api_key' => 'required|string|max:255',
+            'session' => 'required|string|max:100',
+        ]);
+
+        Setting::setValue('waha_api_url', rtrim($validated['api_url'], '/'), 'WAHA API URL');
+        Setting::setValue('waha_api_key', Crypt::encryptString($validated['api_key']), 'WAHA API Key (encrypted)');
+        Setting::setValue('waha_session', $validated['session'], 'WAHA Session name');
+
+        try {
+            $resp = Http::withHeaders([
+                'X-Api-Key' => $validated['api_key'],
+                'Content-Type' => 'application/json',
+            ])->timeout(10)->get(rtrim($validated['api_url'], '/').'/api/sessions/'.$validated['session']);
+
+            if ($resp->successful()) {
+                $data = $resp->json();
+                $status = $data['status'] ?? 'UNKNOWN';
+                return redirect()->route('admin.whatsapp.index')
+                    ->with('success', "Konfigurasi tersimpan. Status session: {$status}");
+            }
+
+            return redirect()->route('admin.whatsapp.index')
+                ->with('success', 'Konfigurasi tersimpan, tetapi session tidak ditemukan. Buat session di WAHA dashboard.');
+        } catch (\Throwable $e) {
+            return redirect()->route('admin.whatsapp.index')
+                ->with('success', 'Konfigurasi tersimpan. WAHA API tidak dapat dijangkau, periksa URL dan koneksi.');
+        }
     }
 
     public function sendTest(Request $request): RedirectResponse
@@ -53,7 +119,7 @@ class WhatsappSettingsController extends Controller
             $resp = Http::withHeaders($this->wahaHeaders())
                 ->timeout(15)
                 ->post($this->apiUrl().'/api/sendText', [
-                    'session' => config('whatsapp.session'),
+                    'session' => $this->getConfig('session'),
                     'chatId' => $chatId,
                     'text' => $message,
                 ]);
@@ -85,7 +151,7 @@ class WhatsappSettingsController extends Controller
     public function checkStatus()
     {
         try {
-            $session = config('whatsapp.session');
+            $session = $this->getConfig('session');
             $resp = Http::withHeaders($this->wahaHeaders())
                 ->timeout(10)
                 ->get($this->apiUrl().'/api/sessions/'.$session);
