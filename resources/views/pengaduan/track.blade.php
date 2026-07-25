@@ -603,9 +603,8 @@
         </div>
     </div>
 </div>
-@endif
-
 @push('scripts')
+@if($ticket)
 <script>
     function downloadTicketJpg() {
         var el = document.getElementById('ticket-visual');
@@ -636,6 +635,7 @@
         });
     }
 </script>
+@endif
 @endpush
 
 @endsection
