@@ -8,6 +8,7 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class SendWhatsAppNotification implements ShouldQueue
 {
@@ -48,7 +49,7 @@ class SendWhatsAppNotification implements ShouldQueue
                 $apiKey = config('whatsapp.api_key');
             }
 
-            $chatId = $this->formatNumber($this->phoneNumber);
+            $chatId = Str::phone($this->phoneNumber);
             if (! $chatId) {
                 return;
             }
@@ -75,18 +76,5 @@ class SendWhatsAppNotification implements ShouldQueue
                 'to' => $this->phoneNumber,
             ]);
         }
-    }
-
-    private function formatNumber(string $number): ?string
-    {
-        $digits = preg_replace('/\D/', '', $number);
-        if (empty($digits)) {
-            return null;
-        }
-        if (str_starts_with($digits, '0')) {
-            $digits = '62'.substr($digits, 1);
-        }
-
-        return $digits.'@c.us';
     }
 }

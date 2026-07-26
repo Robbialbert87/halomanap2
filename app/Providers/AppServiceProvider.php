@@ -6,12 +6,12 @@ use App\Events\WorkflowChanged;
 use App\Listeners\SendWhatsAppNotification;
 use App\Models\AppNotification;
 use App\Models\Ticket;
-use App\Services\RoleMenuService;
 use App\Services\WorkflowService;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,6 +32,18 @@ class AppServiceProvider extends ServiceProvider
         // Super Admin bypass semua permission
         Gate::before(fn ($user) => $user->hasRole('Super Admin') ? true : null);
 
+        Str::macro('phone', function (string $number): ?string {
+            $digits = preg_replace('/\D/', '', $number);
+            if (empty($digits)) {
+                return null;
+            }
+            if (str_starts_with($digits, '0')) {
+                $digits = '62'.substr($digits, 1);
+            }
+
+            return $digits.'@c.us';
+        });
+
         // Register Event Listener
         Event::listen(WorkflowChanged::class, SendWhatsAppNotification::class);
 
@@ -42,7 +54,7 @@ class AppServiceProvider extends ServiceProvider
             // Determine role route prefix for notification links
             $roleRoute = null;
             if ($user) {
-                $roleGroup = RoleMenuService::getRoleGroup($user);
+                $roleGroup = $user->getRoleGroup();
                 $roleRoute = match ($roleGroup) {
                     'kepala_unit' => 'kepala-unit.dispositions.show',
                     'kasi' => 'kasi.dispositions.show',

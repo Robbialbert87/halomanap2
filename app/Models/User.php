@@ -46,4 +46,78 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Jabatan::class, 'jabatan_id');
     }
+
+    public function getRoleGroup(): string
+    {
+        $role = $this->roles->first()?->name;
+        $kategori = $this->jabatan?->kategori_jabatan;
+
+        if ($role === 'Super Admin' || $role === 'Admin Pengaduan') {
+            return 'admin';
+        }
+        if ($kategori === 'Kepala Unit' || $role === 'Kepala Unit') {
+            return 'kepala_unit';
+        }
+        if ($role === 'Kepala Ruangan' || $kategori === 'Kepala Ruangan') {
+            return 'head_unit';
+        }
+        if (in_array($kategori, ['Kasi', 'Kasubbag'])) {
+            return 'kasi';
+        }
+        if (in_array($kategori, ['Kabid', 'Kabag'])) {
+            return 'kabid';
+        }
+        if ($kategori === 'Direktur' || $role === 'Direktur') {
+            return 'direktur';
+        }
+
+        return 'admin';
+    }
+
+    public function isKepalaUnit(): bool
+    {
+        return $this->getRoleGroup() === 'kepala_unit';
+    }
+
+    public function isKasi(): bool
+    {
+        return $this->getRoleGroup() === 'kasi';
+    }
+
+    public function isKabid(): bool
+    {
+        return $this->getRoleGroup() === 'kabid';
+    }
+
+    public function isDirektur(): bool
+    {
+        return $this->getRoleGroup() === 'direktur';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->getRoleGroup() === 'admin';
+    }
+
+    public function isHeadUnit(): bool
+    {
+        return $this->getRoleGroup() === 'head_unit';
+    }
+
+    public function getRoleLabel(): string
+    {
+        return match ($this->getRoleGroup()) {
+            'kabid' => 'Kabid / Kabag',
+            'kasi' => 'Kasi / Kasubbag',
+            'kepala_unit' => 'Kepala Unit',
+            'head_unit' => 'Kepala Ruangan',
+            'direktur' => 'Direktur',
+            default => 'Pegawai',
+        };
+    }
+
+    public function getRoutePrefix(): string
+    {
+        return str_replace('_', '-', $this->getRoleGroup());
+    }
 }

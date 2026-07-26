@@ -26,7 +26,7 @@
 
         @php
             $mobileUser = auth()->user();
-            $mobileRoleGroup = \App\Services\RoleMenuService::getRoleGroup($mobileUser);
+            $mobileRoleGroup = $mobileUser->getRoleGroup();
         @endphp
 
         {{-- Navigation --}}
@@ -169,6 +169,12 @@
                     <i class="fa-solid fa-clock-rotate-left text-white text-xs"></i>
                 </span>
                 Kirim Ulang
+            </a>
+            <a href="{{ route('admin.whatsapp-sessions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.whatsapp-sessions*') ? 'bg-blue-50 text-blue-700' : '' }}">
+                <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-sm shadow-purple-200/50 flex-shrink-0">
+                    <i class="fa-solid fa-qrcode text-white text-xs"></i>
+                </span>
+                WhatsApp Sessions
             </a>
             @endcan
             @endif

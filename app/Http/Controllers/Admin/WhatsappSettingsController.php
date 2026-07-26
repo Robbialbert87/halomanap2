@@ -109,7 +109,7 @@ class WhatsappSettingsController extends Controller
         $phone = $validated['phone'];
         $message = $validated['message'];
 
-        $chatId = $this->formatNumber($phone);
+        $chatId = Str::phone($phone);
 
         try {
             $resp = Http::withHeaders($this->wahaHeaders())
@@ -224,15 +224,5 @@ class WhatsappSettingsController extends Controller
 
         return redirect()->route('admin.whatsapp.index')
             ->with('success', 'URL barcode berhasil disimpan.');
-    }
-
-    private function formatNumber(string $number): string
-    {
-        $digits = preg_replace('/\D/', '', $number);
-        if (str_starts_with($digits, '0')) {
-            $digits = '62'.substr($digits, 1);
-        }
-
-        return $digits.'@c.us';
     }
 }

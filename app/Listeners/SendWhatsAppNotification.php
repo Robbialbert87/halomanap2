@@ -7,7 +7,6 @@ use App\Models\Jabatan;
 use App\Models\NotificationLog;
 use App\Models\Setting;
 use App\Models\User;
-use App\Services\RoleMenuService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\QueryException;
 use Illuminate\Queue\InteractsWithQueue;
@@ -15,6 +14,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class SendWhatsAppNotification implements ShouldQueue
 {
@@ -209,7 +209,7 @@ class SendWhatsAppNotification implements ShouldQueue
             return route('admin.tickets.index');
         }
 
-        $roleGroup = RoleMenuService::getRoleGroup($user);
+        $roleGroup = $user->getRoleGroup();
 
         return match ($roleGroup) {
             'kepala_unit' => route('kepala-unit.dispositions.index'),
@@ -267,7 +267,7 @@ class SendWhatsAppNotification implements ShouldQueue
                 $apiKey = config('whatsapp.api_key');
             }
 
-            $chatId = $this->formatNumber($recipient->phone_number);
+            $chatId = Str::phone($recipient->phone_number);
             if (! $chatId) {
                 $error = 'Invalid phone number format';
                 throw new \RuntimeException($error);
@@ -311,18 +311,5 @@ class SendWhatsAppNotification implements ShouldQueue
             'error_message' => $error,
             'sent_at' => $status === 'sent' ? now() : null,
         ]);
-    }
-
-    private function formatNumber(string $number): ?string
-    {
-        $digits = preg_replace('/\D/', '', $number);
-        if (empty($digits)) {
-            return null;
-        }
-        if (str_starts_with($digits, '0')) {
-            $digits = '62'.substr($digits, 1);
-        }
-
-        return $digits.'@c.us';
     }
 }

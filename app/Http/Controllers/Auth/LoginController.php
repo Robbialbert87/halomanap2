@@ -4,23 +4,15 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Services\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    protected AuthService $authService;
-
-    public function __construct(AuthService $authService)
-    {
-        $this->authService = $authService;
-    }
-
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect($this->authService->getRedirectRoute(Auth::user()));
+            return redirect($this->getRedirectRoute(Auth::user()));
         }
 
         return view('auth.login');
@@ -28,10 +20,26 @@ class LoginController extends Controller
 
     public function login(LoginRequest $request)
     {
-        if ($this->authService->login($request)) {
+        $credentials = $request->only('nip', 'password');
+        $credentials['status'] = 'active';
+
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $user = Auth::user();
 
-            return redirect()->intended($this->authService->getRedirectRoute($user));
+            $user->update([
+                'last_login_at' => now(),
+                'last_login_ip' => $request->ip(),
+            ]);
+
+            $request->session()->regenerate();
+            $request->session()->put('user_uuid', $user->uuid);
+            $request->session()->put('user_nip', $user->nip);
+            $request->session()->put('user_nama', $user->nama);
+            $request->session()->put('user_role', $user->roles->first()?->name ?? 'Pegawai');
+            $request->session()->put('user_jabatan', $user->jabatan);
+            $request->session()->put('user_unit', $user->unit?->name);
+
+            return redirect()->intended($this->getRedirectRoute($user));
         }
 
         return back()->withErrors([
@@ -41,8 +49,38 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        $this->authService->logout($request);
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return redirect('/login');
+    }
+
+    private function getRedirectRoute($user): string
+    {
+        $role = $user->roles->first()?->name;
+        $kategori = $user->jabatan?->kategori_jabatan;
+
+        if ($role === 'Super Admin' || $role === 'Admin Pengaduan') {
+            return '/dashboard';
+        }
+
+        if ($kategori === 'Kepala Unit' || $role === 'Kepala Unit') {
+            return '/kepala-unit/dashboard';
+        }
+
+        if (in_array($kategori, ['Kasi', 'Kasubbag'])) {
+            return '/kasi/dashboard';
+        }
+
+        if (in_array($kategori, ['Kabid', 'Kabag'])) {
+            return '/kabid/dashboard';
+        }
+
+        if ($kategori === 'Direktur' || $role === 'Direktur') {
+            return '/direktur/dashboard';
+        }
+
+        return '/dashboard';
     }
 }

@@ -17,7 +17,7 @@
     <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 no-scrollbar">
         @php
             $user = auth()->user();
-            $roleGroup = \App\Services\RoleMenuService::getRoleGroup($user);
+            $roleGroup = $user->getRoleGroup();
             $currentRoute = request()->route()?->getName();
         @endphp
 
@@ -157,11 +157,15 @@
                 <i class="fa-brands fa-whatsapp w-5 text-center"></i>
                 <span class="text-sm font-medium">WhatsApp Gateway</span>
             </a>
-            <a href="{{ route('admin.whatsapp.resend') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.whatsapp.resend') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
-                <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
-                <span class="text-sm font-medium">Kirim Ulang</span>
-            </a>
-            @endcan
+<a href="{{ route('admin.whatsapp.resend') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.whatsapp.resend') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+<i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
+<span class="text-sm font-medium">Kirim Ulang</span>
+</a>
+<a href="{{ route('admin.whatsapp-sessions.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.whatsapp-sessions*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+<i class="fa-solid fa-qrcode w-5 text-center"></i>
+<span class="text-sm font-medium">Kelola Session</span>
+</a>
+@endcan
 
             @endif
 

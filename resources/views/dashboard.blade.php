@@ -4,7 +4,7 @@
 
 @section('admin_content')
 @php
-    $mobileRoleGroup = auth()->user() ? \App\Services\RoleMenuService::getRoleGroup(auth()->user()) : null;
+    $mobileRoleGroup = auth()->user()?->getRoleGroup();
 @endphp
 <style>
     @keyframes fadeInUp {
