@@ -152,4 +152,13 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Run tests: `php artisan test --compact` or filter: `php artisan test --compact --filter=testName`.
 - Do NOT delete tests without approval.
 
+## AI Working Rules
+
+- Never create temporary files in the project root.
+- Store temporary files under `.ai/temp/`.
+- Store analysis output under `.ai/dumps/`.
+- Delete temporary files before finishing.
+- Never commit files inside `.ai/`.
+- If a temporary file is needed, reuse an existing one instead of creating many files.
+
 </laravel-boost-guidelines>

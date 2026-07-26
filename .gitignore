@@ -30,3 +30,13 @@ Thumbs.db
 /_analysis/
 
 /*.txt
+# AI
+.ai/
+
+# Temporary
+*.tmp
+*.cache
+*.bak
+
+# WhatsApp dumps
+whatsapp_*.txt
