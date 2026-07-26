@@ -14,7 +14,6 @@ use App\Http\Controllers\Admin\TicketController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\UnitTypeController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\WhatsAppSessionController;
 use App\Http\Controllers\Admin\WhatsappSettingsController;
 use App\Http\Controllers\Admin\WorkflowController;
 use App\Http\Controllers\ApresiasiController;
@@ -131,17 +130,15 @@ Route::middleware('auth')->group(function () {
         Route::post('whatsapp/resend-submit', [WhatsappSettingsController::class, 'resendSubmit'])->name('whatsapp.resend-submit');
         Route::post('whatsapp/barcode-update', [WhatsappSettingsController::class, 'saveBarcodeUrl'])->name('whatsapp.barcode-update');
         Route::post('whatsapp/update-config', [WhatsappSettingsController::class, 'updateConfig'])->name('whatsapp.update-config');
-
-        // WhatsApp Sessions
-        Route::get('whatsapp-sessions', [WhatsAppSessionController::class, 'index'])->name('whatsapp-sessions.index');
-        Route::get('whatsapp-sessions/create', [WhatsAppSessionController::class, 'create'])->name('whatsapp-sessions.create');
-        Route::post('whatsapp-sessions', [WhatsAppSessionController::class, 'store'])->name('whatsapp-sessions.store');
-        Route::get('whatsapp-sessions/{session}', [WhatsAppSessionController::class, 'show'])->name('whatsapp-sessions.show');
-        Route::get('whatsapp-sessions/{session}/refresh-qr', [WhatsAppSessionController::class, 'refreshQr'])->name('whatsapp-sessions.refresh-qr');
-        Route::get('whatsapp-sessions/{session}/status', [WhatsAppSessionController::class, 'status'])->name('whatsapp-sessions.status');
-        Route::post('whatsapp-sessions/{session}/sync', [WhatsAppSessionController::class, 'sync'])->name('whatsapp-sessions.sync');
-        Route::post('whatsapp-sessions/{session}/disconnect', [WhatsAppSessionController::class, 'disconnect'])->name('whatsapp-sessions.disconnect');
-        Route::delete('whatsapp-sessions/{session}', [WhatsAppSessionController::class, 'destroy'])->name('whatsapp-sessions.destroy');
+        Route::post('whatsapp/sessions', [WhatsappSettingsController::class, 'storeSession'])->name('whatsapp.sessions.store');
+        Route::get('whatsapp/sessions/{session}', [WhatsappSettingsController::class, 'showSession'])->name('whatsapp.sessions.show');
+        Route::get('whatsapp/sessions/{session}/qr', [WhatsappSettingsController::class, 'refreshQr'])->name('whatsapp.sessions.qr');
+        Route::get('whatsapp/sessions/{session}/status', [WhatsappSettingsController::class, 'sessionStatus'])->name('whatsapp.sessions.status');
+        Route::post('whatsapp/sessions/{session}/sync', [WhatsappSettingsController::class, 'syncSession'])->name('whatsapp.sessions.sync');
+        Route::post('whatsapp/sessions/sync-all', [WhatsappSettingsController::class, 'syncAllSessions'])->name('whatsapp.sessions.sync-all');
+        Route::get('whatsapp/sessions/{session}/set-default', [WhatsappSettingsController::class, 'setDefaultSession'])->name('whatsapp.sessions.set-default');
+        Route::post('whatsapp/sessions/{session}/disconnect', [WhatsappSettingsController::class, 'disconnectSession'])->name('whatsapp.sessions.disconnect');
+        Route::delete('whatsapp/sessions/{session}', [WhatsappSettingsController::class, 'deleteSession'])->name('whatsapp.sessions.destroy');
 
         // Workflow Disposisi
         Route::post('workflow/disposisi', [WorkflowController::class, 'disposisi'])->name('workflow.disposisi');

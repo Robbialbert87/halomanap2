@@ -1,417 +1,74 @@
 @extends('layouts.admin')
 
-@section('title', 'WhatsApp Gateway - Halo MANAP')
+@section('title', 'WhatsApp - Halo MANAP')
 
 @section('admin_content')
 <div class="flex items-center justify-between mb-6">
     <div>
-        <h1 class="text-2xl font-bold text-gray-800">WhatsApp Gateway</h1>
-        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <span class="text-blue-600">Pengaturan Sistem</span> 
-            <span class="text-gray-400">/</span> 
-            <span>WhatsApp Gateway</span>
-        </div>
+        <h1 class="text-2xl font-bold text-gray-800">WhatsApp</h1>
+        <p class="text-sm text-gray-500 mt-1">Konfigurasi dan manajemen session WhatsApp</p>
     </div>
 </div>
 
 @if(session('success'))
-    <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200 flex items-center gap-2">
-        <i class="fa-solid fa-check-circle"></i>
-        {{ session('success') }}
+    <div class="mb-4 p-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200 flex items-center gap-2">
+        <i class="fa-solid fa-check-circle"></i> {{ session('success') }}
     </div>
 @endif
-
 @if(session('error'))
-    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200 flex items-center gap-2">
-        <i class="fa-solid fa-circle-exclamation"></i>
-        {{ session('error') }}
+    <div class="mb-4 p-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200 flex items-center gap-2">
+        <i class="fa-solid fa-circle-exclamation"></i> {{ session('error') }}
     </div>
 @endif
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- Panel Status -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50">
-            <h2 class="font-semibold text-gray-800">Status Koneksi WAHA</h2>
-            <span id="api-status-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-600">
-                <i class="fa-solid fa-spinner fa-spin mr-1"></i> Memeriksa...
-            </span>
-        </div>
-        
-        <div class="p-6 flex flex-col items-center justify-center min-h-[300px]">
-            
-            <!-- Box Error (WAHA Offline) -->
-            <div id="error-box" class="hidden text-center">
-                <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-                    <i class="fa-solid fa-server"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-800 mb-2">WAHA Tidak Terjangkau</h3>
-                <p class="text-gray-500 text-sm mb-6 max-w-sm" id="error-message">WAHA API sedang offline.</p>
-            </div>
-
-            <!-- Box Session Not Found -->
-            <div id="notfound-box" class="hidden text-center">
-                <div class="w-16 h-16 bg-yellow-100 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-                    <i class="fa-solid fa-circle-exclamation"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-800 mb-2">Session Belum Dibuat</h3>
-                <p class="text-gray-500 text-sm mb-3 max-w-sm">Session <strong id="session-name-display"></strong> tidak ditemukan. Buat session dan scan QR di WAHA dashboard.</p>
-                <a href="https://waha.systemwebsite.my.id/" target="_blank" 
-                   class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-6 py-2.5 transition-colors shadow-sm">
-                    <i class="fa-solid fa-external-link mr-2"></i> Buka WAHA Dashboard
-                </a>
-            </div>
-
-            <!-- Box Connected -->
-            <div id="connected-box" class="hidden text-center">
-                <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl shadow-inner border border-green-200">
-                    <i class="fa-brands fa-whatsapp"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">WhatsApp Tersambung!</h3>
-                <p class="text-gray-500 text-sm mb-2 max-w-sm" id="connected-detail">Sistem dapat mengirimkan notifikasi otomatis.</p>
-                <p class="text-xs text-gray-400 mb-6" id="connected-phone"></p>
-                
-                <a href="https://waha.systemwebsite.my.id/" target="_blank"
-                   class="bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 font-medium rounded-lg text-sm px-6 py-2.5 transition-colors inline-flex items-center gap-2">
-                    <i class="fa-solid fa-external-link"></i> Kelola Session
-                </a>
-            </div>
-            
-        </div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+        @include('admin.whatsapp._status')
+        @include('admin.whatsapp._sessions')
+        @include('admin.whatsapp._failed')
     </div>
-
-    <!-- Panel Kanan -->
     <div class="space-y-6">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                <h2 class="font-semibold text-gray-800 flex items-center gap-2">
-                    <i class="fa-solid fa-sliders text-gray-500"></i> Konfigurasi WAHA
-                </h2>
-            </div>
-            <form action="{{ route('admin.whatsapp.update-config') }}" method="POST" class="p-6 space-y-4">
-                @csrf
-                <div>
-                    <label for="api_url" class="block text-sm font-medium text-gray-700 mb-1.5">API URL</label>
-                    <input type="url" id="api_url" name="api_url" required
-                           value="{{ old('api_url', $wahaConfig['api_url']) }}"
-                           placeholder="https://waha.domain.com"
-                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow">
-                </div>
-                <div>
-                    <label for="api_key" class="block text-sm font-medium text-gray-700 mb-1.5">API Key</label>
-                    <div class="relative">
-                        <input type="password" id="api_key" name="api_key" required
-                               value="{{ old('api_key', $wahaConfig['api_key']) }}"
-                               placeholder="WAHA API Key"
-                               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow pr-10">
-                        <button type="button" onclick="toggleKey()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                            <i id="key-icon" class="fa-solid fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-                <div>
-                    <label for="session" class="block text-sm font-medium text-gray-700 mb-1.5">Session</label>
-                    <input type="text" id="session" name="session" required
-                           value="{{ old('session', $wahaConfig['session']) }}"
-                           placeholder="default"
-                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow">
-                </div>
-                <div class="flex items-center gap-3 pt-2">
-                    <button type="submit"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-6 py-2.5 transition-colors shadow-sm flex items-center gap-2">
-                        <i class="fa-solid fa-floppy-disk"></i>
-                        Simpan & Uji Koneksi
-                    </button>
-                </div>
-                <p class="text-xs text-gray-400">Perubahan langsung aktif. Koneksi akan diuji otomatis saat disimpan.</p>
-            </form>
-        </div>
-
-        <div class="bg-blue-50 rounded-xl shadow-sm border border-blue-200 p-6">
-            <h2 class="font-semibold text-blue-800 flex items-center gap-2 mb-2">
-                <i class="fa-solid fa-external-link"></i> WAHA Dashboard
-            </h2>
-            <p class="text-sm text-blue-700 mb-4">
-                Kelola session WhatsApp, scan QR code, dan pantau status di WAHA dashboard.
-            </p>
-            <a href="https://waha.systemwebsite.my.id/" target="_blank"
-               class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors shadow-sm">
-                <i class="fa-solid fa-external-link mr-2"></i> Buka WAHA Dashboard
-            </a>
-        </div>
-
-
+        @include('admin.whatsapp._config')
     </div>
-</div>
-
-<div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
-        <h2 class="font-semibold text-gray-800 flex items-center gap-2">
-            <i class="fa-solid fa-qrcode text-blue-500"></i>
-            Barcode Pengaduan
-        </h2>
-        <button onclick="openBarcodeModal()" class="text-xs text-blue-600 hover:underline bg-transparent border-none cursor-pointer">
-            <i class="fa-solid fa-pen mr-1"></i>Ubah URL
-        </button>
-    </div>
-    <div class="p-6 flex items-center gap-6">
-        <div id="barcode-container" class="bg-white p-2 border border-gray-200 rounded-lg inline-flex flex-shrink-0"></div>
-        <div class="space-y-3">
-            <p class="text-sm text-gray-600">Scan barcode untuk mengakses halaman pengaduan.</p>
-            <p class="text-xs text-gray-400 break-all bg-gray-50 px-3 py-2 rounded">{{ \App\Models\Setting::getValue('barcode_url', config('app.url')) }}</p>
-            <div class="flex gap-2">
-                <button onclick="downloadBarcode()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-xs px-4 py-2 transition-colors shadow-sm flex items-center gap-1.5">
-                    <i class="fa-solid fa-download"></i> Download
-                </button>
-                <button onclick="printBarcode()" class="bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg text-xs px-4 py-2 transition-colors shadow-sm flex items-center gap-1.5">
-                    <i class="fa-solid fa-print"></i> Print
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="barcode-modal" class="fixed inset-0 z-50 hidden bg-black/40 flex items-center justify-center">
-    <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
-            <h3 class="font-semibold text-gray-800 flex items-center gap-2">
-                <i class="fa-solid fa-qrcode text-blue-500"></i>
-                Ubah URL Barcode
-            </h3>
-            <button type="button" onclick="closeBarcodeModal()" class="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
-        </div>
-        <form action="{{ route('admin.whatsapp.barcode-update') }}" method="POST" class="p-6 space-y-5">
-            @csrf
-            <div>
-                <label for="barcode_url" class="block text-sm font-medium text-gray-700 mb-1.5">URL Barcode Pengaduan</label>
-                <input type="url" id="barcode_url" name="barcode_url"
-                       value="{{ \App\Models\Setting::getValue('barcode_url', config('app.url')) }}"
-                       placeholder="https://example.com"
-                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
-                       required>
-                <p class="mt-1 text-xs text-gray-400">URL yang tampil di QR Code. Ubah jika domain berubah.</p>
-            </div>
-            <div class="flex items-center gap-3 pt-2">
-                <button type="submit"
-                        class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-6 py-2.5 transition-colors shadow-sm flex items-center gap-2">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    Simpan
-                </button>
-                <button type="button" onclick="closeBarcodeModal()"
-                        class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg text-sm px-6 py-2.5 transition-colors">
-                    Batal
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
-        <h2 class="font-semibold text-gray-800 flex items-center gap-2">
-            <i class="fa-regular fa-paper-plane text-green-500"></i>
-            Kirim Pesan Test
-        </h2>
-        <span id="send-status" class="flex items-center gap-1.5 text-xs font-medium text-gray-500">
-            <span id="send-dot" class="w-2 h-2 rounded-full bg-gray-300"></span>
-            <span id="send-text">Memeriksa koneksi...</span>
-        </span>
-    </div>
-
-    <form action="{{ route('admin.whatsapp.send-test') }}" method="POST" class="p-6 space-y-3">
-        @csrf
-
-        <div class="flex items-end gap-3">
-            <div class="flex-1">
-                <input type="text"
-                       id="phone"
-                       name="phone"
-                       value="{{ old('phone') }}"
-                       placeholder="08xxxxxxxxxx"
-                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
-                       required>
-            </div>
-            <button type="submit"
-                    class="bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-colors shadow-sm flex items-center gap-2 whitespace-nowrap h-[42px]"
-                    id="send-btn">
-                <i class="fa-brands fa-whatsapp"></i>
-                <span id="send-btn-text">Kirim</span>
-                <i id="send-spinner" class="fa-solid fa-spinner fa-spin hidden"></i>
-            </button>
-        </div>
-
-        <div>
-            <textarea id="message"
-                      name="message"
-                      rows="3"
-                      placeholder="Ketik pesan yang akan dikirim..."
-                      class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow resize-none"
-                      required>{{ old('message') }}</textarea>
-        </div>
-    </form>
 </div>
 
 @push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-    let qrCodeInstance;
+const STATUS_URL = '{{ route('admin.whatsapp.status') }}';
 
-    function generateBarcode() {
-        const container = document.getElementById('barcode-container');
-        const url = '{{ \App\Models\Setting::getValue('barcode_url', config('app.url')) }}';
-        if (!container) return;
-        container.innerHTML = '';
-        qrCodeInstance = new QRCode(container, {
-            text: url,
-            width: 140,
-            height: 140,
-            colorDark: '#1e293b',
-            colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.H
-        });
-    }
+function setUI(state, data) {
+  const panel = document.getElementById('status-panel');
+  const badge = document.getElementById('api-status-badge');
+  if (state === 'loading') {
+    badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-gray-200 text-gray-600';
+    badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Memeriksa...';
+  } else if (state === 'connected') {
+    badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700';
+    badge.innerHTML = '<i class="fa-solid fa-check-circle mr-1"></i> Terhubung';
+    panel.innerHTML = '<div class="text-center py-4"><div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl"><i class="fa-brands fa-whatsapp"></i></div><h3 class="text-xl font-bold text-gray-800">Siap!</h3><p class="text-sm text-gray-500 mt-1">Sistem dapat mengirim notifikasi otomatis.</p></div>';
+  } else if (state === 'notfound') {
+    badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700';
+    badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Belum Dibuat';
+    panel.innerHTML = '<div class="text-center py-4"><div class="w-16 h-16 bg-yellow-100 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fa-solid fa-circle-exclamation"></i></div><h3 class="text-lg font-bold text-gray-800">Session Belum Dibuat</h3><p class="text-sm text-gray-500 mt-1">Buat session WhatsApp dan scan QR untuk menghubungkan.</p></div>';
+  } else {
+    badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700';
+    badge.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> Offline';
+    panel.innerHTML = '<div class="text-center py-4"><div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fa-solid fa-server"></i></div><h3 class="text-lg font-bold text-gray-800">WAHA Tidak Terjangkau</h3><p class="text-sm text-gray-500 mt-1" id="error-message">' + (data?.error || 'Periksa koneksi server.') + '</p></div>';
+  }
+}
 
-    function openBarcodeModal() {
-        document.getElementById('barcode-modal').classList.remove('hidden');
-    }
-    function closeBarcodeModal() {
-        document.getElementById('barcode-modal').classList.add('hidden');
-    }
-    document.getElementById('barcode-modal')?.addEventListener('click', function(e) {
-        if (e.target === this) closeBarcodeModal();
-    });
+async function checkStatus() {
+  try {
+    const res = await fetch(STATUS_URL);
+    if (!res.ok) throw new Error('offline');
+    const data = await res.json();
+    if (data.success && data.isAuthenticated) setUI('connected', data);
+    else if (!data.success && data.status === 'NOT_FOUND') setUI('notfound', data);
+    else setUI('error', data);
+  } catch { setUI('error', { error: 'WAHA API tidak dapat dijangkau.' }); }
+}
 
-    function downloadBarcode() {
-        const canvas = document.querySelector('#barcode-container canvas');
-        if (!canvas) return;
-        const link = document.createElement('a');
-        link.download = 'barcode-pengaduan.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-    }
-
-    function printBarcode() {
-        const canvas = document.querySelector('#barcode-container canvas');
-        if (!canvas) return;
-        const win = window.open('', '_blank');
-        win.document.write(`
-            <html>
-            <head><title>Print Barcode</title></head>
-            <body style="text-align:center;padding:40px;font-family:sans-serif">
-                <h2 style="margin-bottom:20px">Scan untuk pengaduan</h2>
-                <img src="${canvas.toDataURL('image/png')}" style="width:300px;height:300px">
-                <script>window.onload=function(){window.print();window.close()}<\/script>
-            </body>
-            </html>
-        `);
-        win.document.close();
-    }
-
-    generateBarcode();
-</script>
-<script>
-    function toggleKey() {
-        const input = document.getElementById('api_key');
-        const icon = document.getElementById('key-icon');
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.className = 'fa-solid fa-eye-slash';
-        } else {
-            input.type = 'password';
-            icon.className = 'fa-solid fa-eye';
-        }
-    }
-
-    function updateSendStatus() {
-        fetch('{{ route('admin.whatsapp.status') }}')
-            .then(res => res.json())
-            .then(data => {
-                const dot = document.getElementById('send-dot');
-                const text = document.getElementById('send-text');
-                const btn = document.getElementById('send-btn');
-                if (data.isAuthenticated) {
-                    dot.className = 'w-2 h-2 rounded-full bg-green-500';
-                    text.textContent = 'Siap kirim';
-                    text.className = 'text-green-700 font-medium';
-                    btn.disabled = false;
-                } else {
-                    dot.className = 'w-2 h-2 rounded-full bg-red-400';
-                    text.textContent = 'Tidak terhubung';
-                    text.className = 'text-red-500 font-medium';
-                    btn.disabled = true;
-                }
-            })
-            .catch(() => {
-                document.getElementById('send-dot').className = 'w-2 h-2 rounded-full bg-red-400';
-                document.getElementById('send-text').textContent = 'WAHA offline';
-                document.getElementById('send-text').className = 'text-red-500 font-medium';
-                document.getElementById('send-btn').disabled = true;
-            });
-    }
-
-    document.querySelector('form[action*="send-test"]')?.addEventListener('submit', function() {
-        document.getElementById('send-btn').disabled = true;
-        document.getElementById('send-btn-text').textContent = 'Mengirim...';
-        document.getElementById('send-spinner').classList.remove('hidden');
-    });
-
-    updateSendStatus();
-</script>
-<script>
-    function setUI(state, data = null) {
-        const errorBox = document.getElementById('error-box');
-        const notfoundBox = document.getElementById('notfound-box');
-        const connectedBox = document.getElementById('connected-box');
-        const statusBadge = document.getElementById('api-status-badge');
-
-        errorBox.classList.add('hidden');
-        notfoundBox.classList.add('hidden');
-        connectedBox.classList.add('hidden');
-
-        if (state === 'error') {
-            errorBox.classList.remove('hidden');
-            statusBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200';
-            statusBadge.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> Offline';
-        } 
-        else if (state === 'notfound') {
-            notfoundBox.classList.remove('hidden');
-            document.getElementById('session-name-display').textContent = data?.session || 'default';
-            statusBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700 border border-yellow-200';
-            statusBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation mr-1"></i> Session Tidak Ditemukan';
-        }
-        else if (state === 'connected') {
-            connectedBox.classList.remove('hidden');
-            if (data?.me) {
-                document.getElementById('connected-phone').textContent = 'Nomor: ' + (data.me.id || '-') + ' (' + (data.me.pushName || '-') + ')';
-            }
-            statusBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200';
-            statusBadge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Aktif';
-        }
-    }
-
-    function checkStatus() {
-        fetch('{{ route('admin.whatsapp.status') }}')
-            .then(res => {
-                if (!res.ok) throw new Error('WAHA offline');
-                return res.json();
-            })
-            .then(data => {
-                if (data.isAuthenticated) {
-                    setUI('connected', data);
-                } else if (data.status === 'NOT_FOUND') {
-                    setUI('notfound', data);
-                } else {
-                    document.getElementById('error-message').textContent = data.error || 'Session tidak aktif.';
-                    setUI('error');
-                }
-            })
-            .catch(() => {
-                document.getElementById('error-message').textContent = 'WAHA API tidak dapat dijangkau. Periksa koneksi server.';
-                setUI('error');
-            });
-    }
-
-    checkStatus();
+document.addEventListener('DOMContentLoaded', checkStatus);
 </script>
 @endpush
 @endsection

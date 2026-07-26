@@ -8,14 +8,22 @@ use App\Http\Controllers\Controller;
 use App\Jobs\SendWhatsAppNotification;
 use App\Models\NotificationLog;
 use App\Models\Setting;
+use App\Models\WhatsAppSession;
+use App\Services\WahaApiService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class WhatsappSettingsController extends Controller
 {
+    public function __construct(
+        private readonly WahaApiService $waha,
+    ) {}
+
     private function apiUrl(): string
     {
         return rtrim($this->getConfig('api_url'), '/');
@@ -62,7 +70,13 @@ class WhatsappSettingsController extends Controller
             'session' => Setting::getValue('waha_session', config('whatsapp.session')),
         ];
 
-        return view('admin.whatsapp.index', compact('wahaConfig'));
+        $sessions = WhatsAppSession::with('user')->latest()->get();
+
+        $failedLogs = NotificationLog::where('status', 'failed')
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+        return view('admin.whatsapp.index', compact('wahaConfig', 'sessions', 'failedLogs'));
     }
 
     public function updateConfig(Request $request): RedirectResponse
@@ -186,6 +200,192 @@ class WhatsappSettingsController extends Controller
         ], 503);
     }
 
+    public function storeSession(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'session_id' => 'required|string|max:255|unique:whatsapp_sessions',
+            'phone_number' => 'required|string|max:20',
+            'webhook_url' => 'nullable|url|max:255',
+        ]);
+
+        $sessionConfig = [
+            'webhook' => $request->filled('webhook_url') ? [
+                'url' => $request->webhook_url,
+                'events' => ['message'],
+            ] : null,
+        ];
+
+        try {
+            $this->waha->upsertAndStartSession($validated['session_id'], $sessionConfig);
+        } catch (\RuntimeException $e) {
+            return back()->withInput()->with('error', 'Gagal membuat session: '.$e->getMessage());
+        }
+
+        WhatsAppSession::create([
+            'user_id' => auth()->id(),
+            'session_id' => $validated['session_id'],
+            'phone_number' => $validated['phone_number'],
+            'status' => 'scanning',
+            'webhook_config' => $sessionConfig['webhook'],
+        ]);
+
+        return redirect()->route('admin.whatsapp.index')
+            ->with('success', 'Session WhatsApp berhasil dibuat. Scan QR code untuk menghubungkan.');
+    }
+
+    public function showSession(string $sessionId): View
+    {
+        $session = WhatsAppSession::with('user')
+            ->where('session_id', $sessionId)
+            ->firstOrFail();
+
+        $qr = null;
+        try {
+            $qr = $this->waha->getQr($sessionId);
+        } catch (\RuntimeException $e) {
+            //
+        }
+
+        return view('admin.whatsapp.show', compact('session', 'qr'));
+    }
+
+    public function refreshQr(string $sessionId): JsonResponse
+    {
+        try {
+            $qr = $this->waha->getQr($sessionId);
+
+            WhatsAppSession::where('session_id', $sessionId)->update([
+                'qr_code' => $qr,
+                'status' => 'scanning',
+            ]);
+
+            return response()->json(['qr' => $qr]);
+        } catch (\RuntimeException $e) {
+            return response()->json(['error' => $e->getMessage()], 502);
+        }
+    }
+
+    public function sessionStatus(string $sessionId): JsonResponse
+    {
+        $session = WhatsAppSession::where('session_id', $sessionId)->firstOrFail();
+
+        try {
+            $info = $this->waha->getSession($sessionId);
+            $status = $info['status'] ?? 'unknown';
+        } catch (\RuntimeException $e) {
+            $session->update(['status' => 'NOT_CONNECTED']);
+
+            return response()->json(['status' => 'NOT_CONNECTED', 'error' => $e->getMessage()]);
+        }
+
+        $session->update([
+            'status' => $status,
+            'connected_at' => $status === 'CONNECTED' ? now() : $session->connected_at,
+        ]);
+
+        return response()->json(['status' => $status, 'info' => $info]);
+    }
+
+    public function syncSession(string $sessionId): JsonResponse
+    {
+        $session = WhatsAppSession::where('session_id', $sessionId)->firstOrFail();
+
+        try {
+            $info = $this->waha->getSession($sessionId);
+            $status = $info['status'] ?? 'NOT_CONNECTED';
+            $me = $status === 'CONNECTED' ? $this->waha->getSession($sessionId) : [];
+        } catch (\RuntimeException $e) {
+            $session->update(['status' => 'NOT_CONNECTED']);
+
+            return response()->json(['status' => 'NOT_CONNECTED', 'synced' => true]);
+        }
+
+        $session->update([
+            'status' => $status,
+            'connected_at' => $status === 'CONNECTED' ? now() : null,
+        ]);
+
+        return response()->json([
+            'status' => $status,
+            'synced' => true,
+            'connected' => $status === 'CONNECTED',
+        ]);
+    }
+
+    public function syncAllSessions(Request $request): RedirectResponse
+    {
+        try {
+            $resp = Http::withHeaders($this->wahaHeaders())
+                ->timeout(30)
+                ->get($this->apiUrl().'/api/sessions');
+
+            if ($resp->failed()) {
+                throw new \RuntimeException('WAHA unreachable');
+            }
+
+            $remoteSessions = $resp->json();
+            $synced = 0;
+
+            foreach ($remoteSessions as $remote) {
+                $sid = $remote['name'] ?? $remote['id'] ?? null;
+                if (! $sid) {
+                    continue;
+                }
+
+                $status = $remote['status'] ?? 'UNKNOWN';
+                $me = $remote['me'] ?? [];
+                $phone = is_string($me) ? $me : ($me['user'] ?? $me['id'] ?? '');
+
+                WhatsAppSession::updateOrCreate(
+                    ['session_id' => $sid],
+                    [
+                        'user_id' => auth()->id(),
+                        'phone_number' => $phone ?: '',
+                        'status' => $status ?: 'UNKNOWN',
+                        'connected_at' => $status === 'CONNECTED' ? now() : null,
+                    ]
+                );
+                $synced++;
+            }
+
+            return redirect()->route('admin.whatsapp.index')
+                ->with('success', "Sinkronisasi selesai: {$synced} session dari server.");
+        } catch (\Throwable $e) {
+            return redirect()->route('admin.whatsapp.index')
+                ->with('error', 'Gagal sinkronisasi: '.$e->getMessage());
+        }
+    }
+
+    public function disconnectSession(string $sessionId): RedirectResponse
+    {
+        try {
+            $this->waha->logoutSession($sessionId);
+        } catch (\RuntimeException $e) {
+            return back()->with('error', 'Gagal disconnect: '.$e->getMessage());
+        }
+
+        WhatsAppSession::where('session_id', $sessionId)->update([
+            'status' => 'disconnected',
+        ]);
+
+        return redirect()->route('admin.whatsapp.index')
+            ->with('success', 'Session WhatsApp berhasil diputuskan.');
+    }
+
+    public function deleteSession(string $sessionId): RedirectResponse
+    {
+        try {
+            $this->waha->deleteSession($sessionId);
+        } catch (\RuntimeException $e) {
+            return back()->with('error', 'Gagal menghapus session: '.$e->getMessage());
+        }
+
+        WhatsAppSession::where('session_id', $sessionId)->delete();
+
+        return redirect()->route('admin.whatsapp.index')
+            ->with('success', 'Session WhatsApp berhasil dihapus.');
+    }
+
     public function showFailed(): View
     {
         $failedLogs = NotificationLog::where('status', 'failed')
@@ -224,5 +424,20 @@ class WhatsappSettingsController extends Controller
 
         return redirect()->route('admin.whatsapp.index')
             ->with('success', 'URL barcode berhasil disimpan.');
+    }
+
+    public function setDefaultSession(string $sessionId): RedirectResponse
+    {
+        $session = WhatsAppSession::where('session_id', $sessionId)->first();
+
+        if (! $session) {
+            return redirect()->route('admin.whatsapp.index')
+                ->with('error', 'Session tidak ditemukan.');
+        }
+
+        Setting::setValue('waha_session', $sessionId, 'WAHA Default Session');
+
+        return redirect()->route('admin.whatsapp.index')
+            ->with('success', "Session {$sessionId} sekarang menjadi default untuk kirim pesan.");
     }
 }

@@ -153,7 +153,7 @@
             @endcan
 
             @can('manage-whatsapp')
-            <a href="{{ route('admin.whatsapp.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.whatsapp.index') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('admin.whatsapp.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.whatsapp*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-brands fa-whatsapp w-5 text-center"></i>
                 <span class="text-sm font-medium">WhatsApp Gateway</span>
             </a>
@@ -161,9 +161,7 @@
 <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
 <span class="text-sm font-medium">Kirim Ulang</span>
 </a>
-<a href="{{ route('admin.whatsapp-sessions.index') }}" class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('admin.whatsapp-sessions*') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
 <i class="fa-solid fa-qrcode w-5 text-center"></i>
-<span class="text-sm font-medium">Kelola Session</span>
 </a>
 @endcan
 
