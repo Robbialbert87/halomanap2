@@ -209,6 +209,11 @@
                             <p class="text-[8px] text-gray-400 leading-none -mt-0.5">RSUD H. Abdul Manap</p>
                         </div>
                     </a>
+                    <a href="/dashboard"
+                       class="w-9 h-9 flex items-center justify-center bg-white/80 rounded-xl text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all shadow-sm"
+                       title="Login">
+                        <i class="fa-solid fa-door-open text-base"></i>
+                    </a>
                 </div>
             </header>
 

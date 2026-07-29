@@ -23,10 +23,10 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
         ]);
-        \App\Models\ReportCategory::create($request->all());
+        \App\Models\ReportCategory::create($validated);
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil ditambahkan.');
     }
 
@@ -43,11 +43,11 @@ class CategoryController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
         ]);
         $category = \App\Models\ReportCategory::findOrFail($id);
-        $category->update($request->all());
+        $category->update($validated);
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil diperbarui.');
     }
 

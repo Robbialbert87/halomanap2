@@ -190,9 +190,6 @@ Route::middleware('auth')->group(function () {
         Route::get('dispositions/{disposition}', [App\Http\Controllers\HeadUnit\DispositionController::class, 'show'])->name('dispositions.show');
         Route::post('dispositions/{history}/selesai',  [App\Http\Controllers\HeadUnit\DispositionController::class, 'selesai'])->name('dispositions.selesai');
         Route::post('dispositions/{history}/eskalasi', [App\Http\Controllers\HeadUnit\DispositionController::class, 'eskalasi'])->name('dispositions.eskalasi');
-        Route::post('dispositions/{disposition}/accept', [App\Http\Controllers\HeadUnit\DispositionController::class, 'accept'])->name('dispositions.accept');
-        Route::post('dispositions/{disposition}/handle-self', [App\Http\Controllers\HeadUnit\DispositionController::class, 'handleSelf'])->name('dispositions.handle-self');
-        Route::post('dispositions/{disposition}/assign', [App\Http\Controllers\HeadUnit\DispositionController::class, 'assign'])->name('dispositions.assign');
         Route::get('/dalam-penanganan',         [App\Http\Controllers\HeadUnit\DalamPenangananController::class, 'index'])->name('dalam-penanganan');
         Route::get('/riwayat',                  [App\Http\Controllers\HeadUnit\RiwayatController::class, 'index'])->name('riwayat');
     });

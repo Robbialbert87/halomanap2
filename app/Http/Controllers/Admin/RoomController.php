@@ -35,11 +35,11 @@ class RoomController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'unit_id' => 'required|exists:units,id',
             'name' => 'required|string|max:255',
         ]);
-        \App\Models\Room::create($request->all());
+        \App\Models\Room::create($validated);
         return redirect()->route('admin.rooms.index')->with('success', 'Ruangan berhasil ditambahkan.');
     }
 
@@ -57,12 +57,12 @@ class RoomController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'unit_id' => 'required|exists:units,id',
             'name' => 'required|string|max:255',
         ]);
         $room = \App\Models\Room::findOrFail($id);
-        $room->update($request->all());
+        $room->update($validated);
         return redirect()->route('admin.rooms.index')->with('success', 'Ruangan berhasil diperbarui.');
     }
 

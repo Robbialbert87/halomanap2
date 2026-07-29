@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Kasi;
 
 use App\Http\Controllers\Controller;
 use App\Models\WorkflowHistory;
-use Illuminate\Http\Request;
 
 class RiwayatController extends Controller
 {

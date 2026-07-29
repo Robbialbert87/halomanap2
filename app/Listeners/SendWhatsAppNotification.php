@@ -29,6 +29,11 @@ class SendWhatsAppNotification implements ShouldQueue
         $jenis   = $event->jenis;
         $ticket  = $history->ticket;
 
+        if (!$ticket) {
+            Log::channel('daily')->warning('[WhatsApp] Tiket tidak ditemukan untuk history ID: ' . $history->id);
+            return;
+        }
+
         // ─── 1. Kirim ke User Penerima (To User) ────────────────────────────
         if ($history->toUser && $history->toUser->phone_number) {
             $message = $this->buildMessage($jenis, $history, $ticket);
