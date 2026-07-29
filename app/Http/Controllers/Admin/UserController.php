@@ -60,7 +60,6 @@ class UserController extends Controller
         $validated = $request->validate([
             'nip'          => ['required', 'string', Rule::unique('users', 'nip')->withoutTrashed()],
             'nama'         => 'required|string|max:255',
-            'email'        => ['nullable', 'email', Rule::unique('users', 'email')->withoutTrashed()],
             'phone_number' => 'required|string|max:20',
             'password'     => 'required|string|min:8|confirmed',
             'role'         => 'required|exists:roles,name',
@@ -72,7 +71,7 @@ class UserController extends Controller
         $user = User::create([
             'nip'          => $validated['nip'],
             'nama'         => $validated['nama'],
-            'email'        => $validated['email'] ?? null,
+            'email'        => null,
             'phone_number' => $validated['phone_number'],
             'password'     => Hash::make($validated['password']),
             'unit_id'      => $validated['unit_id'],
@@ -99,7 +98,6 @@ class UserController extends Controller
         $validated = $request->validate([
             'nip'          => ['required', 'string', Rule::unique('users', 'nip')->withoutTrashed()->ignore($user->id)],
             'nama'         => 'required|string|max:255',
-            'email'        => ['nullable', 'email', Rule::unique('users', 'email')->withoutTrashed()->ignore($user->id)],
             'phone_number' => 'required|string|max:20',
             'password'     => 'nullable|string|min:8|confirmed',
             'role'         => 'required|exists:roles,name',
@@ -111,7 +109,7 @@ class UserController extends Controller
         $data = [
             'nip'          => $validated['nip'],
             'nama'         => $validated['nama'],
-            'email'        => $validated['email'] ?? null,
+            'email'        => null,
             'phone_number' => $validated['phone_number'],
             'unit_id'      => $validated['unit_id'],
             'jabatan_id'   => $validated['jabatan_id'],
