@@ -41,7 +41,10 @@
     <header class="hidden md:block bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
         <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
             <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                <picture>
+                    <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                    <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                </picture>
                 <div>
                     <span class="font-bold text-lg text-blue-800 leading-tight">Halo <span class="text-green-600">MANAP</span></span>
                     <p class="text-[8px] text-gray-400 leading-none -mt-0.5">RSUD H. Abdul Manap</p>
@@ -57,7 +60,10 @@
     <header class="md:hidden bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
         <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
             <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                <picture>
+                    <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                    <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                </picture>
                 <div>
                     <span class="font-bold text-lg text-blue-800 leading-tight">Halo <span class="text-green-600">MANAP</span></span>
                     <p class="text-[8px] text-gray-400 leading-none -mt-0.5">RSUD H. Abdul Manap</p>
@@ -542,7 +548,10 @@
     <div id="ticket-visual" style="position:absolute;left:-9999px;top:0;width:380px;background:#fff;font-family:'Roboto',Arial,sans-serif;color:#1e293b;">
         <div style="padding:24px;">
             <div style="background:#eff6ff;border:2px dashed #bfdbfe;border-radius:14px;padding:18px 14px;text-align:center;margin-bottom:22px;">
-                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo" style="width:44px;height:44px;margin:0 auto 8px;display:block;object-fit:contain;">
+                <picture>
+                    <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                    <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo" style="width:44px;height:44px;margin:0 auto 8px;display:block;object-fit:contain;">
+                </picture>
                 <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#3b82f6;margin-bottom:6px;">Nomor Tiket</div>
                 <div style="font-size:28px;font-weight:900;font-family:'Courier New',monospace;color:#1e3a8a;letter-spacing:2px;">{{ $ticket->ticket_number }}</div>
             </div>
@@ -609,6 +618,7 @@
 
 @push('scripts')
 @if($ticket)
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
     function downloadTicketJpg() {
         var el = document.getElementById('ticket-visual');

@@ -1,7 +1,10 @@
 <aside class="fixed inset-y-0 left-0 bg-[#1e293b] w-64 text-white flex flex-col transition-transform duration-300 z-50 lg:translate-x-0 -translate-x-full" id="sidebar">
     <div class="flex items-center justify-center h-16 border-b border-slate-700 px-4">
         <div class="flex items-center gap-2">
-            <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo" class="h-8 w-auto">
+            <picture>
+                <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo" class="h-8 w-auto">
+            </picture>
             <span class="font-bold text-xl tracking-wide">Halo<span class="text-blue-400">MANAP</span></span>
         </div>
     </div>

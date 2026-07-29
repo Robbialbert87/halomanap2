@@ -29,7 +29,10 @@
                 <div class="max-w-7xl mx-auto px-6 h-16 grid grid-cols-[auto_1fr_auto] items-center">
                     <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
                         <div class="w-9 h-9 flex items-center justify-center">
-                            <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                            <picture>
+                                <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                            </picture>
                         </div>
                         <div>
                             <p class="font-heading font-bold text-lg text-blue-800 leading-tight">Halo <span class="text-green-600">MANAP</span></p>
@@ -75,7 +78,10 @@
                     </div>
                     <div class="w-1/2">
                         <div class="rounded-2xl overflow-hidden shadow-xl shadow-blue-900/10 border border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
-                            <img src="{{ asset('assets/images/banner-halo-manap.jpg') }}" alt="Banner" class="w-full h-auto object-cover" onerror="this.src='https://placehold.co/800x400/eff6ff/1d4ed8?text=Halo+MANAP'">
+                            <picture>
+                                <source srcset="{{ asset('assets/images/banner-halo-manap.webp') }}" type="image/webp">
+                                <img src="{{ asset('assets/images/banner-halo-manap.jpg') }}" alt="Banner" class="w-full h-auto object-cover" onerror="this.src='https://placehold.co/800x400/eff6ff/1d4ed8?text=Halo+MANAP'">
+                            </picture>
                         </div>
                     </div>
                 </div>
@@ -136,7 +142,10 @@
                         {{-- Brand --}}
                         <div>
                             <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity mb-3">
-                                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                                <picture>
+                                    <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                                    <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                                </picture>
                                 <div>
                                     <p class="font-bold text-white text-sm">Halo MANAP</p>
                                     <p class="text-xs">RSUD H. Abdul Manap</p>
@@ -191,7 +200,10 @@
             <header class="bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
                 <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
                     <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-                        <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                        <picture>
+                            <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                            <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                        </picture>
                         <div>
                             <span class="font-bold text-lg text-blue-800 leading-tight">Halo <span class="text-green-600">MANAP</span></span>
                             <p class="text-[8px] text-gray-400 leading-none -mt-0.5">RSUD H. Abdul Manap</p>
@@ -205,9 +217,14 @@
 
                 <!-- Banner Mobile -->
                 <div class="anim-fade rounded-2xl overflow-hidden shadow-sm border border-white/30 mb-5" style="animation-delay:0s;background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
-                    <img src="{{ asset('assets/images/banner-halo-manap.jpg') }}" alt="Banner"
-                        class="w-full h-auto object-cover"
-                        onerror="this.src='https://placehold.co/600x300/eff6ff/1d4ed8?text=Halo+MANAP'">
+                    <picture>
+                        <source srcset="{{ asset('assets/images/banner-halo-manap.webp') }}" type="image/webp">
+                        <img src="{{ asset('assets/images/banner-halo-manap.jpg') }}" alt="Banner"
+                            width="2146" height="733"
+                            fetchpriority="high"
+                            class="w-full h-auto object-cover"
+                            onerror="this.src='https://placehold.co/600x300/eff6ff/1d4ed8?text=Halo+MANAP'">
+                    </picture>
                 </div>
 
                 <!-- Menu Grid 2x2 ala PayApp -->

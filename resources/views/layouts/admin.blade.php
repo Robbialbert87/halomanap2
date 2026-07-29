@@ -360,7 +360,10 @@
         <header class="md:hidden fixed top-3 left-3 right-3 bg-white/70 backdrop-blur-xl z-50 rounded-2xl border border-white/30 shadow-[0_4px_30px_rgba(0,0,0,0.08)]" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
             <div class="flex items-center justify-between px-4 h-14">
                 <div class="flex items-center gap-2">
-                    <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo" class="h-6 w-auto">
+                    <picture>
+                        <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                        <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo" class="h-6 w-auto">
+                    </picture>
                     <span class="font-heading font-bold text-base tracking-wide text-blue-800">Halo<span class="text-green-600">MANAP</span></span>
                 </div>
                 <div class="flex items-center gap-2">
