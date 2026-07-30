@@ -47,9 +47,7 @@ class TicketAttachmentController extends Controller
 
         $path = storage_path('app/public/'.$attachment->file_path);
 
-        if (! file_exists($path)) {
-            abort(404, 'File not found');
-        }
+        abort_unless(file_exists($path), 404, 'File not found');
 
         return response()->download($path, $attachment->file_name);
     }

@@ -10,6 +10,6 @@ class LaporanController extends Controller
     {
         $user = auth()->user();
 
-        return view('direktur.laporan', compact('user'));
+        return view('direktur.laporan', ['user' => $user]);
     }
 }

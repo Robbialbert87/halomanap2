@@ -36,9 +36,6 @@ class DashboardController extends Controller
         $topUnits = $unitStats->take(5)->values();
         $bottomUnits = $unitStats->sortByDesc('avg_hours')->take(5)->values();
 
-        return view('direktur.dashboard', compact(
-            'user', 'totalTickets', 'diproses', 'selesai', 'slaBreach',
-            'activeWorkflows', 'topUnits', 'bottomUnits'
-        ));
+        return view('direktur.dashboard', ['user' => $user, 'totalTickets' => $totalTickets, 'diproses' => $diproses, 'selesai' => $selesai, 'slaBreach' => $slaBreach, 'activeWorkflows' => $activeWorkflows, 'topUnits' => $topUnits, 'bottomUnits' => $bottomUnits]);
     }
 }

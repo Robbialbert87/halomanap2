@@ -28,8 +28,6 @@ class StatistikController extends Controller
             ->sortByDesc('total')
             ->values();
 
-        return view('direktur.statistik', compact(
-            'user', 'totalTickets', 'diproses', 'selesai', 'baru', 'slaBreach', 'perUnit'
-        ));
+        return view('direktur.statistik', ['user' => $user, 'totalTickets' => $totalTickets, 'diproses' => $diproses, 'selesai' => $selesai, 'baru' => $baru, 'slaBreach' => $slaBreach, 'perUnit' => $perUnit]);
     }
 }

@@ -76,7 +76,7 @@ class WhatsappSettingsController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return view('admin.whatsapp.index', compact('wahaConfig', 'sessions', 'failedLogs'));
+        return view('admin.whatsapp.index', ['wahaConfig' => $wahaConfig, 'sessions' => $sessions, 'failedLogs' => $failedLogs]);
     }
 
     public function updateConfig(Request $request): RedirectResponse
@@ -233,21 +233,39 @@ class WhatsappSettingsController extends Controller
             ->with('success', 'Session WhatsApp berhasil dibuat. Scan QR code untuk menghubungkan.');
     }
 
-    public function showSession(string $sessionId): View
-    {
-        $session = WhatsAppSession::with('user')
-            ->where('session_id', $sessionId)
-            ->firstOrFail();
+public function showSession(string $sessionId): View
+ {
+ $session = WhatsAppSession::with('user')
+ ->where('session_id', $sessionId)
+ ->firstOrFail();
 
-        $qr = null;
-        try {
-            $qr = $this->waha->getQr($sessionId);
-        } catch (\RuntimeException $e) {
-            //
-        }
+ $qr = null;
+ $wahaInfo = [];
 
-        return view('admin.whatsapp.show', compact('session', 'qr'));
-    }
+ try {
+ $wahaInfo = $this->waha->getSession($sessionId);
+ } catch (\RuntimeException) {
+ //
+ }
+
+ try {
+ $qr = $this->waha->getQr($sessionId);
+ } catch (\RuntimeException) {
+ //
+ }
+
+ $wahaConfig = [
+ 'api_url' => Setting::getValue('waha_api_url', config('whatsapp.api_url')),
+ 'api_key' => Setting::getValue('waha_api_key', config('whatsapp.api_key')),
+ 'session' => Setting::getValue('waha_session', config('whatsapp.session'))];
+
+ return view('admin.whatsapp.show', [
+ 'session' => $session,
+ 'qr' => $qr,
+ 'wahaInfo' => $wahaInfo,
+ 'wahaConfig' => $wahaConfig,
+ ]);
+ }
 
     public function refreshQr(string $sessionId): JsonResponse
     {
@@ -319,9 +337,7 @@ class WhatsappSettingsController extends Controller
                 ->timeout(30)
                 ->get($this->apiUrl().'/api/sessions');
 
-            if ($resp->failed()) {
-                throw new \RuntimeException('WAHA unreachable');
-            }
+            throw_if($resp->failed(), new \RuntimeException('WAHA unreachable'));
 
             $remoteSessions = $resp->json();
             $synced = 0;
@@ -392,7 +408,7 @@ class WhatsappSettingsController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return view('admin.whatsapp.resend', compact('failedLogs'));
+        return view('admin.whatsapp.resend', ['failedLogs' => $failedLogs]);
     }
 
     public function resendSubmit(Request $request): RedirectResponse

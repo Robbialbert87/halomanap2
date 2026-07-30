@@ -24,7 +24,7 @@ class DispositionController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
-        return view('dispositions.index', compact('activeWorkflows', 'user'));
+        return view('dispositions.index', ['activeWorkflows' => $activeWorkflows, 'user' => $user]);
     }
 
     public function show(string $id)
@@ -42,9 +42,7 @@ class DispositionController extends Controller
             'fromUser',
         ])->where('uuid', $id)->firstOrFail();
 
-        if ($workflow->to_user_id !== $user->id) {
-            abort(403);
-        }
+        abort_if($workflow->to_user_id !== $user->id, 403);
 
         AppNotification::where('user_id', $user->id)
             ->where('data->ticket_id', $workflow->ticket_id)
@@ -66,7 +64,7 @@ class DispositionController extends Controller
             ->orderBy('jabatan_id')
             ->get();
 
-        return view('dispositions.show', compact('workflow', 'user', 'eskalasiUsers'));
+        return view('dispositions.show', ['workflow' => $workflow, 'user' => $user, 'eskalasiUsers' => $eskalasiUsers]);
     }
 
     public function selesai(Request $request, WorkflowHistory $history)

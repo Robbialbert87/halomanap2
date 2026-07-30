@@ -63,9 +63,7 @@ class MonitoringController extends Controller
         $topUnits = $unitPerformance->take(5)->values();
         $bottomUnits = $unitPerformance->sortByDesc('avg_hours')->take(5)->values();
 
-        return view('admin.monitoring.index', compact(
-            'stats', 'activeWorkflows', 'latestEscalations', 'latestTickets', 'topUnits', 'bottomUnits'
-        ));
+        return view('admin.monitoring.index', ['stats' => $stats, 'activeWorkflows' => $activeWorkflows, 'latestEscalations' => $latestEscalations, 'latestTickets' => $latestTickets, 'topUnits' => $topUnits, 'bottomUnits' => $bottomUnits]);
     }
 
     public function show(int $ticketId)
@@ -81,6 +79,6 @@ class MonitoringController extends Controller
 
         $activeWorkflow = $timeline->whereNotIn('status', ['didisposisikan', 'eskalasi', 'ditutup', 'selesai'])->last();
 
-        return view('admin.monitoring.show', compact('ticket', 'timeline', 'activeWorkflow'));
+        return view('admin.monitoring.show', ['ticket' => $ticket, 'timeline' => $timeline, 'activeWorkflow' => $activeWorkflow]);
     }
 }

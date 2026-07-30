@@ -40,6 +40,6 @@ class MonitoringWorkflowController extends Controller
             'selesai' => Ticket::where('status', 'Selesai')->count(),
         ];
 
-        return view('direktur.monitoring_workflow', compact('tickets', 'units', 'statuses', 'user', 'counts'));
+        return view('direktur.monitoring_workflow', ['tickets' => $tickets, 'units' => $units, 'statuses' => $statuses, 'user' => $user, 'counts' => $counts]);
     }
 }

@@ -11,6 +11,6 @@ class ApresiasiController extends Controller
     {
         $appreciations = Appreciation::latest()->paginate(20);
 
-        return view('admin.apresiasi.index', compact('appreciations'));
+        return view('admin.apresiasi.index', ['appreciations' => $appreciations]);
     }
 }

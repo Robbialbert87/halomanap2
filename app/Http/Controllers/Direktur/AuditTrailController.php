@@ -16,6 +16,6 @@ class AuditTrailController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return view('direktur.audit_trail', compact('auditTrails', 'user'));
+        return view('direktur.audit_trail', ['auditTrails' => $auditTrails, 'user' => $user]);
     }
 }

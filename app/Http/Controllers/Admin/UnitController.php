@@ -27,14 +27,14 @@ class UnitController extends Controller
 
         $jenisList = $this->getJenisList();
 
-        return view('admin.units.index', compact('units', 'jenisList'));
+        return view('admin.units.index', ['units' => $units, 'jenisList' => $jenisList]);
     }
 
     public function create()
     {
         $jenisList = $this->getJenisList();
 
-        return view('admin.units.create', compact('jenisList'));
+        return view('admin.units.create', ['jenisList' => $jenisList]);
     }
 
     public function store(Request $request)
@@ -57,7 +57,7 @@ class UnitController extends Controller
     {
         $jenisList = $this->getJenisList();
 
-        return view('admin.units.edit', compact('unit', 'jenisList'));
+        return view('admin.units.edit', ['unit' => $unit, 'jenisList' => $jenisList]);
     }
 
     public function update(Request $request, Unit $unit)

@@ -24,6 +24,6 @@ class DalamPenangananController extends Controller
 
         $workflows = $query->orderBy('created_at', 'desc')->paginate(15);
 
-        return view('dalam_penanganan', compact('user', 'workflows'));
+        return view('dalam_penanganan', ['user' => $user, 'workflows' => $workflows]);
     }
 }

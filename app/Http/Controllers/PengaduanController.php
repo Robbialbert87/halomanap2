@@ -25,7 +25,7 @@ class PengaduanController extends Controller
             ? $request->query('type')
             : 'Pengaduan';
 
-        return view('pengaduan.create', compact('units', 'rooms', 'categories', 'type'));
+        return view('pengaduan.create', ['units' => $units, 'rooms' => $rooms, 'categories' => $categories, 'type' => $type]);
     }
 
     public function store(Request $request)
@@ -132,13 +132,13 @@ class PengaduanController extends Controller
     {
         $ticket = Ticket::where('ticket_number', $ticket_number)->firstOrFail();
 
-        return view('pengaduan.success', compact('ticket'));
+        return view('pengaduan.success', ['ticket' => $ticket]);
     }
 
     public function downloadTicket($ticket_number)
     {
         $ticket = Ticket::where('ticket_number', $ticket_number)->firstOrFail();
-        $pdf = Pdf::loadView('pengaduan.ticket-pdf', compact('ticket'));
+        $pdf = Pdf::loadView('pengaduan.ticket-pdf', ['ticket' => $ticket]);
 
         return $pdf->download('tiket-'.$ticket->ticket_number.'.pdf');
     }
@@ -249,7 +249,7 @@ class PengaduanController extends Controller
                 ->last();
         }
 
-        return view('pengaduan.track', compact('ticket', 'notFound', 'timeline', 'activeWorkflow', 'completion'));
+        return view('pengaduan.track', ['ticket' => $ticket, 'notFound' => $notFound, 'timeline' => $timeline, 'activeWorkflow' => $activeWorkflow, 'completion' => $completion]);
     }
 
     private function notifyAdmins(Ticket $ticket): void

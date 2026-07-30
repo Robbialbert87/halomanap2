@@ -23,14 +23,14 @@ class JabatanController extends Controller
 
         $jabatans = $query->paginate(7)->withQueryString()->onEachSide(2);
 
-        return view('admin.jabatans.index', compact('jabatans'));
+        return view('admin.jabatans.index', ['jabatans' => $jabatans]);
     }
 
     public function create()
     {
         $kategoriList = ['Direktur', 'Kabid', 'Kabag', 'Kasi', 'Kasubbag', 'Kepala Unit', 'Petugas'];
 
-        return view('admin.jabatans.create', compact('kategoriList'));
+        return view('admin.jabatans.create', ['kategoriList' => $kategoriList]);
     }
 
     public function store(Request $request)
@@ -58,7 +58,7 @@ class JabatanController extends Controller
     {
         $kategoriList = ['Direktur', 'Kabid', 'Kabag', 'Kasi', 'Kasubbag', 'Kepala Unit', 'Petugas'];
 
-        return view('admin.jabatans.edit', compact('jabatan', 'kategoriList'));
+        return view('admin.jabatans.edit', ['jabatan' => $jabatan, 'kategoriList' => $kategoriList]);
     }
 
     public function update(Request $request, Jabatan $jabatan)

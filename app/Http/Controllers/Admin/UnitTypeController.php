@@ -12,7 +12,7 @@ class UnitTypeController extends Controller
     {
         $unitTypes = UnitType::orderBy('name')->paginate(10)->withQueryString();
 
-        return view('admin.unit_types.index', compact('unitTypes'));
+        return view('admin.unit_types.index', ['unitTypes' => $unitTypes]);
     }
 
     public function create()
@@ -36,7 +36,7 @@ class UnitTypeController extends Controller
 
     public function edit(UnitType $unitType)
     {
-        return view('admin.unit_types.edit', compact('unitType'));
+        return view('admin.unit_types.edit', ['unitType' => $unitType]);
     }
 
     public function update(Request $request, UnitType $unitType)

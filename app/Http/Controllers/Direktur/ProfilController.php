@@ -10,6 +10,6 @@ class ProfilController extends Controller
     {
         $user = auth()->user();
 
-        return view('direktur.profil', compact('user'));
+        return view('direktur.profil', ['user' => $user]);
     }
 }

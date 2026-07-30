@@ -126,11 +126,7 @@ class AppServiceProvider extends ServiceProvider
                     $ticketId = $n->data['ticket_id'] ?? 0;
                     $workflowUuid = $n->data['workflow_uuid'] ?? null;
 
-                    if ($roleRoute && $workflowUuid) {
-                        $url = route($roleRoute, $workflowUuid);
-                    } else {
-                        $url = route('admin.tickets.show', $ticketId);
-                    }
+                    $url = $roleRoute && $workflowUuid ? route($roleRoute, $workflowUuid) : route('admin.tickets.show', $ticketId);
 
                     return [
                         'id' => $ticketId,
@@ -151,7 +147,7 @@ class AppServiceProvider extends ServiceProvider
             $doneCount = (clone $unreadDone)->count();
             $unreadCount = $newCount + $doneCount + $appNotifCount;
 
-            $view->with(compact('unreadCount', 'notifications', 'newCount'));
+            $view->with(['unreadCount' => $unreadCount, 'notifications' => $notifications, 'newCount' => $newCount]);
         });
     }
 }

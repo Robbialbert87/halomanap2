@@ -52,7 +52,7 @@ class TicketController extends Controller
         $units = Unit::orderBy('nama')->get();
         $categories = ReportCategory::orderBy('name')->get();
 
-        return view('admin.tickets.index', compact('tickets', 'units', 'categories'));
+        return view('admin.tickets.index', ['tickets' => $tickets, 'units' => $units, 'categories' => $categories]);
     }
 
     public function mobileSearch(Request $request)
@@ -81,7 +81,7 @@ class TicketController extends Controller
             'Selesai' => ['label' => 'Selesai',  'class' => 'bg-green-100 text-green-700'],
         ];
 
-        $html = view('admin.tickets._mobile_list', compact('tickets', 'statusMap'))->render();
+        $html = view('admin.tickets._mobile_list', ['tickets' => $tickets, 'statusMap' => $statusMap])->render();
 
         return response()->json(['html' => $html]);
     }
@@ -109,7 +109,7 @@ class TicketController extends Controller
         $headUsers = User::orderBy('nama')->get();
         $jabatans = Jabatan::where('status', 'active')->orderBy('nama')->get();
 
-        return view('admin.tickets.show', compact('ticket', 'units', 'headUsers', 'jabatans'));
+        return view('admin.tickets.show', ['ticket' => $ticket, 'units' => $units, 'headUsers' => $headUsers, 'jabatans' => $jabatans]);
     }
 
     public function verify(Request $request, string $id)
@@ -212,7 +212,7 @@ class TicketController extends Controller
         $rooms = Room::orderBy('name')->get()->groupBy('unit_id');
         $categories = ReportCategory::orderBy('name')->get();
 
-        return view('admin.tickets.create', compact('units', 'rooms', 'categories'));
+        return view('admin.tickets.create', ['units' => $units, 'rooms' => $rooms, 'categories' => $categories]);
     }
 
     public function store(Request $request)

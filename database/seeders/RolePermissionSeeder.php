@@ -50,7 +50,7 @@ class RolePermissionSeeder extends Seeder
         $direkturRole->syncPermissions(array_map(fn ($p) => Permission::firstOrCreate(['name' => $p, 'guard_name' => 'web']), $direkturPerms));
 
         // Ensure permissions exist for any roles assigned directly via Spatie
-        $allPermissions = array_unique(array_merge(
+        array_unique(array_merge(
             ...array_values(array_map(fn ($r) => $r['perms'], [
                 ['perms' => $jabatanRoles['Kepala Unit']],
                 ['perms' => $adminPerms],

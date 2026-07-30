@@ -31,7 +31,7 @@ class DispositionController extends Controller
         $units = Unit::orderBy('nama')->get();
         $statuses = ['menunggu_respon', 'dalam_penanganan', 'selesai', 'ditutup', 'menunggu_verifikasi'];
 
-        return view('admin.dispositions.index', compact('workflows', 'units', 'statuses'));
+        return view('admin.dispositions.index', ['workflows' => $workflows, 'units' => $units, 'statuses' => $statuses]);
     }
 
     public function store(Request $request)

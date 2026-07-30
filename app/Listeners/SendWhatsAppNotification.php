@@ -42,7 +42,7 @@ class SendWhatsAppNotification implements ShouldQueue
         // ─── 2. Kirim Monitoring ke Direktur ────────────────────────────────
         // Direktur adalah observer: menerima WA untuk setiap perubahan workflow penting
         if (in_array($jenis, ['disposisi_baru', 'eskalasi', 'pengaduan_selesai', 'pengaduan_ditutup'])) {
-            $direkturs = $this->getDirekturs($history->to_unit_id);
+            $direkturs = $this->getDirekturs();
             foreach ($direkturs as $direktur) {
                 if (! $direktur->phone_number) {
                     continue;
@@ -67,7 +67,7 @@ class SendWhatsAppNotification implements ShouldQueue
         }
     }
 
-    private function getDirekturs(?int $unitId): Collection
+    private function getDirekturs(): Collection
     {
         $jabatanDirektur = Jabatan::where('kategori_jabatan', 'Direktur')
             ->where('status', 'active')
@@ -205,7 +205,7 @@ class SendWhatsAppNotification implements ShouldQueue
      */
     private function getInboxUrl(?User $user): string
     {
-        if (! $user) {
+        if (! $user instanceof User) {
             return route('admin.tickets.index');
         }
 
@@ -274,9 +274,7 @@ class SendWhatsAppNotification implements ShouldQueue
             }
 
             $delay = 3;
-            if ($delay > 0) {
-                sleep($delay);
-            }
+            sleep($delay);
 
             $url = rtrim($apiUrl, '/').'/api/sendText';
             $response = Http::withHeaders([

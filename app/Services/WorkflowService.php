@@ -23,9 +23,7 @@ class WorkflowService
         $actor = auth()->user();
 
         $jabatan = Jabatan::find($toJabatanId);
-        if (! $jabatan) {
-            throw new \RuntimeException("Jabatan ID {$toJabatanId} tidak ditemukan.");
-        }
+        throw_unless($jabatan, new \RuntimeException("Jabatan ID {$toJabatanId} tidak ditemukan."));
 
         $toUser = User::where('jabatan_id', $toJabatanId)
             ->where('status', 'active')
@@ -46,9 +44,7 @@ class WorkflowService
                 ->lockForUpdate()
                 ->first();
 
-            if ($existing) {
-                throw new \RuntimeException('Tiket ini masih memiliki disposisi yang aktif. Selesaikan disposisi yang ada terlebih dahulu.');
-            }
+            throw_if($existing, new \RuntimeException('Tiket ini masih memiliki disposisi yang aktif. Selesaikan disposisi yang ada terlebih dahulu.'));
 
             $this->deactivateActiveWorkflows($ticket->id);
 
@@ -73,7 +69,7 @@ class WorkflowService
                 'user_id' => $actor?->id,
                 'old_status' => 'TERVERIFIKASI',
                 'new_status' => 'Diproses',
-                'notes' => 'Pengaduan didisposisikan ke jabatan: '.($jabatan->nama ?? '-').' ('.($toUnit->nama ?? '-').')'.($komentar ? ' — '.$komentar : ''),
+                'notes' => 'Pengaduan didisposisikan ke jabatan: '.($jabatan->nama ?? '-').' ('.($toUnit->nama ?? '-').')'.($komentar !== '' && $komentar !== '0' ? ' — '.$komentar : ''),
             ]);
 
             AuditTrail::log('disposisi', Ticket::class, $ticket->id, [
@@ -111,20 +107,14 @@ class WorkflowService
         $actor = auth()->user();
 
         $toUser = User::with('jabatan')->find($targetUserId);
-        if (! $toUser || $toUser->status !== 'active') {
-            throw new \RuntimeException('User tujuan tidak ditemukan atau tidak aktif.');
-        }
+        throw_if(! $toUser || $toUser->status !== 'active', new \RuntimeException('User tujuan tidak ditemukan atau tidak aktif.'));
 
         $targetJabatan = $toUser->jabatan;
-        if (! $targetJabatan) {
-            throw new \RuntimeException('User tujuan tidak memiliki jabatan.');
-        }
+        throw_unless($targetJabatan, new \RuntimeException('User tujuan tidak memiliki jabatan.'));
 
         return DB::transaction(function () use ($currentHistory, $actor, $targetJabatan, $toUser, $komentar) {
             $fresh = WorkflowHistory::lockForUpdate()->find($currentHistory->id);
-            if (! $fresh || ! in_array($fresh->status, ['menunggu_respon', 'dalam_penanganan'])) {
-                throw new \RuntimeException('Workflow ini sudah tidak aktif atau telah diubah.');
-            }
+            throw_if(! $fresh || ! in_array($fresh->status, ['menunggu_respon', 'dalam_penanganan']), new \RuntimeException('Workflow ini sudah tidak aktif atau telah diubah.'));
 
             $currentHistory->update(['status' => 'eskalasi', 'completed_at' => now()]);
 
@@ -210,7 +200,7 @@ class WorkflowService
                 'user_id' => auth()->id(),
                 'old_status' => 'Diproses',
                 'new_status' => 'Menunggu Verifikasi',
-                'notes' => 'Penanganan selesai oleh '.(auth()->user()?->nama ?? 'Petugas').($komentar ? ': '.$komentar : '.'),
+                'notes' => 'Penanganan selesai oleh '.(auth()->user()?->nama ?? 'Petugas').($komentar !== '' && $komentar !== '0' ? ': '.$komentar : '.'),
             ]);
 
             AuditTrail::log('selesai', Ticket::class, $ticket->id);
@@ -265,7 +255,7 @@ class WorkflowService
                 'user_id' => auth()->id(),
                 'old_status' => 'Menunggu Verifikasi',
                 'new_status' => 'Selesai',
-                'notes' => 'Pengaduan diverifikasi dan ditutup oleh Admin.'.($komentar ? ' Catatan: '.$komentar : ''),
+                'notes' => 'Pengaduan diverifikasi dan ditutup oleh Admin.'.($komentar !== '' && $komentar !== '0' ? ' Catatan: '.$komentar : ''),
             ]);
 
             AuditTrail::log('tutup_pengaduan', Ticket::class, $ticket->id);

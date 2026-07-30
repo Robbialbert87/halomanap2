@@ -27,14 +27,14 @@ class RoomController extends Controller
 
         $rooms = $query->orderBy('name')->paginate(7)->withQueryString()->onEachSide(2);
 
-        return view('admin.rooms.index', compact('rooms'));
+        return view('admin.rooms.index', ['rooms' => $rooms]);
     }
 
     public function create()
     {
         $units = Unit::orderBy('nama')->get();
 
-        return view('admin.rooms.create', compact('units'));
+        return view('admin.rooms.create', ['units' => $units]);
     }
 
     public function store(Request $request)
@@ -58,7 +58,7 @@ class RoomController extends Controller
         $room = Room::findOrFail($id);
         $units = Unit::orderBy('nama')->get();
 
-        return view('admin.rooms.edit', compact('room', 'units'));
+        return view('admin.rooms.edit', ['room' => $room, 'units' => $units]);
     }
 
     public function update(Request $request, string $id)

@@ -15,7 +15,7 @@ class CategoryController extends Controller
     {
         $categories = ReportCategory::orderBy('name')->get();
 
-        return view('admin.categories.index', compact('categories'));
+        return view('admin.categories.index', ['categories' => $categories]);
     }
 
     public function create()
@@ -43,7 +43,7 @@ class CategoryController extends Controller
     {
         $category = ReportCategory::findOrFail($id);
 
-        return view('admin.categories.edit', compact('category'));
+        return view('admin.categories.edit', ['category' => $category]);
     }
 
     public function update(Request $request, string $id)

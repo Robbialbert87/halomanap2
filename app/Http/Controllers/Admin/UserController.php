@@ -44,7 +44,7 @@ class UserController extends Controller
         $jabatans = Jabatan::where('status', 'active')->orderBy('kategori_jabatan')->orderBy('nama')->get();
         $roles = Role::orderBy('name')->get();
 
-        return view('admin.users.index', compact('users', 'units', 'jabatans', 'roles'));
+        return view('admin.users.index', ['users' => $users, 'units' => $units, 'jabatans' => $jabatans, 'roles' => $roles]);
     }
 
     public function create()
@@ -53,7 +53,7 @@ class UserController extends Controller
         $units = Unit::orderBy('nama')->get();
         $jabatans = Jabatan::where('status', 'active')->orderBy('kategori_jabatan')->orderBy('nama')->get();
 
-        return view('admin.users.create', compact('roles', 'units', 'jabatans'));
+        return view('admin.users.create', ['roles' => $roles, 'units' => $units, 'jabatans' => $jabatans]);
     }
 
     public function store(Request $request)
@@ -93,7 +93,7 @@ class UserController extends Controller
         $units = Unit::orderBy('nama')->get();
         $jabatans = Jabatan::where('status', 'active')->orderBy('kategori_jabatan')->orderBy('nama')->get();
 
-        return view('admin.users.edit', compact('user', 'roles', 'units', 'jabatans'));
+        return view('admin.users.edit', ['user' => $user, 'roles' => $roles, 'units' => $units, 'jabatans' => $jabatans]);
     }
 
     public function update(Request $request, User $user)

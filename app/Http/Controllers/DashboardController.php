@@ -125,11 +125,6 @@ class DashboardController extends Controller
             $unitData = [$unitName => $total];
         }
 
-        return view('dashboard', compact(
-            'user', 'total', 'baru', 'menunggu', 'diproses', 'selesai', 'ditolak',
-            'pMenunggu', 'pDiproses', 'pSelesai', 'pDitolak',
-            'dalamProses', 'avgRespon', 'monitoring', 'latestWorkflows',
-            'categoryData', 'categoryColors', 'unitData', 'monthlyData', 'monthlyLabels',
-        ));
+        return view('dashboard', ['user' => $user, 'total' => $total, 'baru' => $baru, 'menunggu' => $menunggu, 'diproses' => $diproses, 'selesai' => $selesai, 'ditolak' => $ditolak, 'pMenunggu' => $pMenunggu, 'pDiproses' => $pDiproses, 'pSelesai' => $pSelesai, 'pDitolak' => $pDitolak, 'dalamProses' => $dalamProses, 'avgRespon' => $avgRespon, 'monitoring' => $monitoring, 'latestWorkflows' => $latestWorkflows, 'categoryData' => $categoryData, 'categoryColors' => $categoryColors, 'unitData' => $unitData, 'monthlyData' => $monthlyData, 'monthlyLabels' => $monthlyLabels]);
     }
 }

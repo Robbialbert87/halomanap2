@@ -13,7 +13,7 @@ class ProfilController extends Controller
     {
         $user = auth()->user();
 
-        return view('admin.profil', compact('user'));
+        return view('admin.profil', ['user' => $user]);
     }
 
     public function updatePassword(Request $request)

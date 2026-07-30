@@ -19,6 +19,6 @@ class LaporanController extends Controller
             ->latest()
             ->get();
 
-        return view('laporan', compact('user', 'tickets'));
+        return view('laporan', ['user' => $user, 'tickets' => $tickets]);
     }
 }

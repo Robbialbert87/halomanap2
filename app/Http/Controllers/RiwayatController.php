@@ -16,6 +16,6 @@ class RiwayatController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return view('riwayat', compact('user', 'workflows'));
+        return view('riwayat', ['user' => $user, 'workflows' => $workflows]);
     }
 }

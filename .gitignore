@@ -32,6 +32,7 @@ Thumbs.db
 /*.txt
 # AI
 .ai/
+.rector_temp/
 
 # Temporary
 *.tmp

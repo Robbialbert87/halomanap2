@@ -46,10 +46,7 @@ class LaporanController extends Controller
 
         $statuses = ['Baru', 'Diproses', 'Menunggu Verifikasi', 'Selesai', 'Ditolak'];
 
-        return view('admin.laporan.index', compact(
-            'tickets', 'total', 'baru', 'diproses', 'menungguVerifikasi', 'selesai', 'ditolak',
-            'units', 'categories', 'statuses'
-        ));
+        return view('admin.laporan.index', ['tickets' => $tickets, 'total' => $total, 'baru' => $baru, 'diproses' => $diproses, 'menungguVerifikasi' => $menungguVerifikasi, 'selesai' => $selesai, 'ditolak' => $ditolak, 'units' => $units, 'categories' => $categories, 'statuses' => $statuses]);
     }
 
     public function exportPdf(Request $request)
@@ -92,9 +89,7 @@ class LaporanController extends Controller
             $periode = 'Semua Periode';
         }
 
-        $pdf = Pdf::loadView('admin.laporan.pdf', compact(
-            'tickets', 'total', 'baru', 'diproses', 'menungguVerifikasi', 'selesai', 'ditolak', 'periode'
-        ));
+        $pdf = Pdf::loadView('admin.laporan.pdf', ['tickets' => $tickets, 'total' => $total, 'baru' => $baru, 'diproses' => $diproses, 'menungguVerifikasi' => $menungguVerifikasi, 'selesai' => $selesai, 'ditolak' => $ditolak, 'periode' => $periode]);
 
         $filename = 'laporan-pengaduan-'.Carbon::now()->format('Ymd-His').'.pdf';
 
