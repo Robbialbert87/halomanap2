@@ -50,7 +50,7 @@ final class WahaApiService
 
     public function getSession(string $sessionId): array
     {
-        $response = Waha::sessions()->getSessionInformation($sessionId);
+        $response = Waha::sessions()->getSessionInformation($sessionId, null);
 
         if ($response->failed()) {
             throw new \RuntimeException('WAHA session fetch failed: '.$response->body());

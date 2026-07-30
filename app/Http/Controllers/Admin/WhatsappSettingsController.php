@@ -233,39 +233,39 @@ class WhatsappSettingsController extends Controller
             ->with('success', 'Session WhatsApp berhasil dibuat. Scan QR code untuk menghubungkan.');
     }
 
-public function showSession(string $sessionId): View
- {
- $session = WhatsAppSession::with('user')
- ->where('session_id', $sessionId)
- ->firstOrFail();
+    public function showSession(string $sessionId): View
+    {
+        $session = WhatsAppSession::with('user')
+            ->where('session_id', $sessionId)
+            ->firstOrFail();
 
- $qr = null;
- $wahaInfo = [];
+        $qr = null;
+        $wahaInfo = [];
 
- try {
- $wahaInfo = $this->waha->getSession($sessionId);
- } catch (\RuntimeException) {
- //
- }
+        try {
+            $wahaInfo = $this->waha->getSession($sessionId);
+        } catch (\RuntimeException) {
+            //
+        }
 
- try {
- $qr = $this->waha->getQr($sessionId);
- } catch (\RuntimeException) {
- //
- }
+        try {
+            $qr = $this->waha->getQr($sessionId);
+        } catch (\RuntimeException) {
+            //
+        }
 
- $wahaConfig = [
- 'api_url' => Setting::getValue('waha_api_url', config('whatsapp.api_url')),
- 'api_key' => Setting::getValue('waha_api_key', config('whatsapp.api_key')),
- 'session' => Setting::getValue('waha_session', config('whatsapp.session'))];
+        $wahaConfig = [
+            'api_url' => Setting::getValue('waha_api_url', config('whatsapp.api_url')),
+            'api_key' => Setting::getValue('waha_api_key', config('whatsapp.api_key')),
+            'session' => Setting::getValue('waha_session', config('whatsapp.session'))];
 
- return view('admin.whatsapp.show', [
- 'session' => $session,
- 'qr' => $qr,
- 'wahaInfo' => $wahaInfo,
- 'wahaConfig' => $wahaConfig,
- ]);
- }
+        return view('admin.whatsapp.show', [
+            'session' => $session,
+            'qr' => $qr,
+            'wahaInfo' => $wahaInfo,
+            'wahaConfig' => $wahaConfig,
+        ]);
+    }
 
     public function refreshQr(string $sessionId): JsonResponse
     {
@@ -375,7 +375,7 @@ public function showSession(string $sessionId): View
     public function disconnectSession(string $sessionId): RedirectResponse
     {
         try {
-            $this->waha->logoutSession($sessionId);
+            $this->waha->logout($sessionId);
         } catch (\RuntimeException $e) {
             return back()->with('error', 'Gagal disconnect: '.$e->getMessage());
         }

@@ -6,33 +6,33 @@
         <div class="flex items-center gap-2">
             <form action="{{ route('admin.whatsapp.sessions.sync-all') }}" method="POST">
                 @csrf
-                <button type="submit" class="text-sm bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg px-4 py-2 transition-colors">
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg text-sm px-4 py-2.5 transition-colors">
                     <i class="fa-solid fa-rotate mr-1"></i> Sync dari Server
                 </button>
             </form>
-            <button onclick="this.nextElementSibling.classList.toggle('hidden')" class="text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-4 py-2 transition-colors">
+            <button onclick="this.parentElement.parentElement.nextElementSibling.classList.toggle('hidden')" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-4 py-2.5 transition-colors">
                 <i class="fa-solid fa-plus mr-1"></i> Tambah Session
             </button>
         </div>
     </div>
-    <div class="hidden p-6 border-b border-gray-100 bg-blue-50">
+    <div class="hidden p-6 border-b border-gray-100">
         <form method="POST" action="{{ route('admin.whatsapp.sessions.store') }}" class="space-y-3">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Nama Session</label>
-                    <input type="text" name="session_id" required class="w-full rounded-lg border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Session</label>
+                    <input type="text" name="session_id" required class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Nomor Telepon</label>
-                    <input type="text" name="phone_number" required placeholder="628xxx" class="w-full rounded-lg border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nomor Telepon</label>
+                    <input type="text" name="phone_number" required placeholder="628xxx" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Webhook URL (opsional)</label>
-                <input type="url" name="webhook_url" placeholder="https://example.com/webhook" class="w-full rounded-lg border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Webhook URL (opsional)</label>
+                <input type="url" name="webhook_url" placeholder="https://example.com/webhook" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
             </div>
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg px-4 py-2 transition-colors">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-4 py-2.5 transition-colors">
                 <i class="fa-solid fa-play mr-1"></i> Buat & Mulai Session
             </button>
         </form>
