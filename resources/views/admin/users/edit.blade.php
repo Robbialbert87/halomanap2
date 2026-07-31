@@ -65,10 +65,6 @@
                         <p class="text-xs text-gray-400 mt-1.5">Wajib untuk notifikasi disposisi.</p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Email (Opsional)</label>
-                        <input type="email" name="email" value="{{ old('email', $user->email) }}" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="email@contoh.com">
-                    </div>
-                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Password Baru (Opsional)</label>
                         <input type="password" name="password" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition" placeholder="Kosongkan jika tidak ingin mengubah password">
                     </div>

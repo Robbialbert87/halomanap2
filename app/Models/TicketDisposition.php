@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class TicketDisposition extends Model
 {
-    //
+    protected $guarded = [];
 }

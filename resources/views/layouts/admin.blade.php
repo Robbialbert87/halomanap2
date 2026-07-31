@@ -180,31 +180,31 @@
             @endif
 
             @elseif($mobileRoleGroup === 'kepala_unit')
-            <a href="{{ route('kepala-unit.dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
                     <i class="fa-solid fa-house text-white text-xs"></i>
                 </span>
                 Dashboard
             </a>
-            <a href="{{ route('kepala-unit.dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-sm shadow-teal-200/50 flex-shrink-0">
                     <i class="fa-solid fa-inbox text-white text-xs"></i>
                 </span>
                 Kotak Masuk Disposisi
             </a>
-            <a href="{{ route('kepala-unit.dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-sm shadow-yellow-200/50 flex-shrink-0">
                     <i class="fa-solid fa-spinner text-white text-xs"></i>
                 </span>
                 Dalam Penanganan
             </a>
-            <a href="{{ route('kepala-unit.riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-sm shadow-violet-200/50 flex-shrink-0">
                     <i class="fa-solid fa-clock-rotate-left text-white text-xs"></i>
                 </span>
                 Riwayat Pengaduan Unit
             </a>
-            <a href="{{ route('kepala-unit.laporan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('laporan.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm shadow-emerald-200/50 flex-shrink-0">
                     <i class="fa-solid fa-file-lines text-white text-xs"></i>
                 </span>
@@ -212,31 +212,31 @@
             </a>
 
             @elseif($mobileRoleGroup === 'kasi')
-            <a href="{{ route('kasi.dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
                     <i class="fa-solid fa-house text-white text-xs"></i>
                 </span>
                 Dashboard
             </a>
-            <a href="{{ route('kasi.dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-sm shadow-teal-200/50 flex-shrink-0">
                     <i class="fa-solid fa-inbox text-white text-xs"></i>
                 </span>
                 Kotak Masuk Disposisi
             </a>
-            <a href="{{ route('kasi.dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-sm shadow-yellow-200/50 flex-shrink-0">
                     <i class="fa-solid fa-spinner text-white text-xs"></i>
                 </span>
                 Dalam Penanganan
             </a>
-            <a href="{{ route('kasi.riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-sm shadow-violet-200/50 flex-shrink-0">
                     <i class="fa-solid fa-clock-rotate-left text-white text-xs"></i>
                 </span>
                 Riwayat Pengaduan Bidang
             </a>
-            <a href="{{ route('kasi.laporan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('laporan.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm shadow-emerald-200/50 flex-shrink-0">
                     <i class="fa-solid fa-file-lines text-white text-xs"></i>
                 </span>
@@ -244,37 +244,31 @@
             </a>
 
             @elseif($mobileRoleGroup === 'kabid')
-            <a href="{{ route('kabid.dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
                     <i class="fa-solid fa-house text-white text-xs"></i>
                 </span>
                 Dashboard
             </a>
-            <a href="{{ route('kabid.dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-sm shadow-teal-200/50 flex-shrink-0">
                     <i class="fa-solid fa-inbox text-white text-xs"></i>
                 </span>
                 Kotak Masuk Disposisi
             </a>
-            <a href="{{ route('kabid.dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-sm shadow-yellow-200/50 flex-shrink-0">
                     <i class="fa-solid fa-spinner text-white text-xs"></i>
                 </span>
                 Dalam Penanganan
             </a>
-            <a href="{{ route('kabid.riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-sm shadow-violet-200/50 flex-shrink-0">
                     <i class="fa-solid fa-clock-rotate-left text-white text-xs"></i>
                 </span>
                 Riwayat Pengaduan
             </a>
-            <a href="{{ route('kabid.monitoring') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
-                <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm shadow-emerald-200/50 flex-shrink-0">
-                    <i class="fa-solid fa-chart-line text-white text-xs"></i>
-                </span>
-                Monitoring Bidang
-            </a>
-            <a href="{{ route('kabid.laporan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('laporan.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-sm shadow-amber-200/50 flex-shrink-0">
                     <i class="fa-solid fa-file-lines text-white text-xs"></i>
                 </span>
@@ -282,19 +276,19 @@
             </a>
 
             @elseif($mobileRoleGroup === 'head_unit')
-            <a href="{{ route('head-unit.dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-sm shadow-teal-200/50 flex-shrink-0">
                     <i class="fa-solid fa-inbox text-white text-xs"></i>
                 </span>
                 Kotak Masuk
             </a>
-            <a href="{{ route('head-unit.dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-sm shadow-yellow-200/50 flex-shrink-0">
                     <i class="fa-solid fa-spinner text-white text-xs"></i>
                 </span>
                 Dalam Penanganan
             </a>
-            <a href="{{ route('head-unit.riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-sm shadow-violet-200/50 flex-shrink-0">
                     <i class="fa-solid fa-clock-rotate-left text-white text-xs"></i>
                 </span>
@@ -364,7 +358,10 @@
         <header class="md:hidden fixed top-3 left-3 right-3 bg-white/70 backdrop-blur-xl z-50 rounded-2xl border border-white/30 shadow-[0_4px_30px_rgba(0,0,0,0.08)]" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
             <div class="flex items-center justify-between px-4 h-14">
                 <div class="flex items-center gap-2">
-                    <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo" class="h-6 w-auto">
+                    <picture>
+                        <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                        <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo" class="h-6 w-auto">
+                    </picture>
                     <span class="font-heading font-bold text-base tracking-wide text-blue-800">Halo<span class="text-green-600">MANAP</span></span>
                 </div>
                 <div class="flex items-center gap-2">
@@ -500,7 +497,7 @@
                 <span class="text-[8px] font-medium">Pengaduan</span>
             </a>
             @elseif(in_array($mobileRoleGroup, ['kepala_unit', 'kasi', 'kabid', 'head_unit']))
-            <a href="{{ route(str_replace('_', '-', $mobileRoleGroup) . '.dispositions.index') }}" class="flex flex-col items-center gap-0.5 w-12 {{ request()->routeIs(str_replace('_', '-', $mobileRoleGroup) . '.dispositions.*') ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-500 transition-colors">
+            <a href="{{ route('dispositions.index') }}" class="flex flex-col items-center gap-0.5 w-12 {{ request()->routeIs('dispositions.*') ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-500 transition-colors">
                 <i class="fa-solid fa-inbox text-lg"></i>
                 <span class="text-[8px] font-medium">Disposisi</span>
             </a>
@@ -526,15 +523,10 @@
                 <span class="text-[8px] font-medium">Monitoring</span>
             </a>
 
-            @elseif(in_array($mobileRoleGroup, ['kepala_unit', 'kasi']))
-            <a href="{{ route(str_replace('_', '-', $mobileRoleGroup) . '.laporan') }}" class="flex flex-col items-center gap-0.5 w-12 {{ request()->routeIs(str_replace('_', '-', $mobileRoleGroup) . '.laporan') ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-500 transition-colors">
+            @elseif(in_array($mobileRoleGroup, ['kepala_unit', 'kasi', 'kabid']))
+            <a href="{{ route('laporan.index') }}" class="flex flex-col items-center gap-0.5 w-12 {{ request()->routeIs('laporan.*') ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-500 transition-colors">
                 <i class="fa-solid fa-file-lines text-lg"></i>
                 <span class="text-[8px] font-medium">Laporan</span>
-            </a>
-            @elseif($mobileRoleGroup === 'kabid')
-            <a href="{{ route('kabid.monitoring') }}" class="flex flex-col items-center gap-0.5 w-12 {{ request()->routeIs('kabid.monitoring') ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-500 transition-colors">
-                <i class="fa-solid fa-chart-line text-lg"></i>
-                <span class="text-[8px] font-medium">Monitoring</span>
             </a>
             @elseif($mobileRoleGroup === 'direktur')
             <a href="{{ route('direktur.laporan') }}" class="flex flex-col items-center gap-0.5 w-12 {{ request()->routeIs('direktur.laporan') ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-500 transition-colors">

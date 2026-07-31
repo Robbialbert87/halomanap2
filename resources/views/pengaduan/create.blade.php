@@ -8,7 +8,10 @@
     <header class="hidden md:block bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
         <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
             <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                <picture>
+                    <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                    <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                </picture>
                 <div>
                     <span class="font-heading font-bold text-lg text-blue-800 leading-tight">Halo <span class="text-green-600">MANAP</span></span>
                     <p class="text-[8px] text-gray-400 leading-none -mt-0.5">RSUD H. Abdul Manap</p>
@@ -23,7 +26,10 @@
     <header class="md:hidden bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
         <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
             <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                <picture>
+                    <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                    <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                </picture>
                 <div>
                     <span class="font-bold text-lg text-blue-800 leading-tight">Halo <span class="text-green-600">MANAP</span></span>
                     <p class="text-[8px] text-gray-400 leading-none -mt-0.5">RSUD H. Abdul Manap</p>
@@ -172,7 +178,8 @@
                                 </svg>
                                 <span>Memproses foto...</span>
                             </div>
-                            <div id="upload-info" class="hidden text-xs text-gray-500 bg-gray-50/80 rounded-xl px-4 py-2.5 border border-gray-200/50 mt-2">
+                            <div id="upload-info" class="hidden text-xs text-green-600 bg-green-50/80 rounded-xl px-4 py-2.5 border border-green-200/50 mt-2">
+                                <i class="fa-solid fa-circle-check mr-1"></i>
                                 <span id="upload-size-info"></span>
                             </div>
                             <div id="upload-error" class="hidden text-xs text-red-500 bg-red-50/80 rounded-xl px-4 py-3 border border-red-200/50 mt-2">
@@ -290,27 +297,27 @@
 
     {{-- BOTTOM NAV MOBILE --}}
     <nav class="md:hidden fixed bottom-3 left-3 right-3 bg-white/70 backdrop-blur-xl border border-white/30 rounded-2xl flex justify-around items-center px-2 pt-1.5 pb-5 z-50 shadow-[0_-4px_30px_rgba(0,0,0,0.08)]" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
-        <a href="/" class="flex flex-col items-center gap-0.5 w-14 py-1 text-blue-600">
+        <a href="/" class="flex flex-col items-center gap-0.5 w-14 py-1 {{ request()->is('/') ? 'text-blue-600' : 'text-gray-400' }}">
             <i class="fa-solid fa-house text-xl"></i>
-            <span class="text-[9px] font-semibold">Beranda</span>
+            <span class="text-[9px] {{ request()->is('/') ? 'font-semibold' : 'font-medium' }}">Beranda</span>
         </a>
-        <a href="{{ route('pengaduan.track') }}" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
+        <a href="{{ route('pengaduan.track') }}" class="flex flex-col items-center gap-0.5 w-14 py-1 {{ request()->is('lacak*') ? 'text-blue-600' : 'text-gray-400' }}">
             <i class="fa-solid fa-magnifying-glass text-xl"></i>
-            <span class="text-[9px] font-medium">Cek Status</span>
+            <span class="text-[9px] {{ request()->is('lacak*') ? 'font-semibold' : 'font-medium' }}">Cek Status</span>
         </a>
         <div class="relative w-14 flex flex-col items-center">
             <a href="/pengaduan/buat" class="absolute -top-7 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/40 border-[3px] border-white active:scale-90 transition-transform">
                 <i class="fa-solid fa-plus text-xl"></i>
             </a>
-            <span class="text-[9px] font-medium text-gray-400 mt-6 text-center leading-tight">Buat<br>Laporan</span>
+            <span class="text-[9px] font-medium {{ request()->is('pengaduan/buat*') ? 'text-blue-600 font-semibold' : 'text-gray-400' }} mt-6 text-center leading-tight">Buat<br>Laporan</span>
         </div>
                 <a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
                     <i class="fa-solid fa-square-poll-vertical text-xl"></i>
                     <span class="text-[9px] font-medium">Survei</span>
                 </a>
-        <a href="{{ route('apresiasi.create') }}" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
+        <a href="{{ route('apresiasi.create') }}" class="flex flex-col items-center gap-0.5 w-14 py-1 {{ request()->is('apresiasi*') ? 'text-blue-600' : 'text-gray-400' }}">
             <i class="fa-solid fa-thumbs-up text-xl"></i>
-            <span class="text-[9px] font-medium">Apresiasi</span>
+            <span class="text-[9px] {{ request()->is('apresiasi*') ? 'font-semibold' : 'font-medium' }}">Apresiasi</span>
         </a>
     </nav>
 </div>
@@ -477,7 +484,7 @@
                     attachmentInput.files = dataTransfer.files;
 
                     var ratio = ((1 - result.compressedSize / result.originalSize) * 100).toFixed(0);
-                    uploadSizeInfo.textContent = 'Asli: ' + formatBytes(result.originalSize) + ' → Terkompres: ' + formatBytes(result.compressedSize) + ' (hemat ' + ratio + '%)';
+                    uploadSizeInfo.textContent = 'Bukti berhasil diunggah';
                     uploadInfo.classList.remove('hidden');
 
                     var reader = new FileReader();

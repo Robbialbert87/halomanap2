@@ -116,7 +116,7 @@ class WorkflowService
             $fresh = WorkflowHistory::lockForUpdate()->find($currentHistory->id);
             throw_if(! $fresh || ! in_array($fresh->status, ['menunggu_respon', 'dalam_penanganan']), new \RuntimeException('Workflow ini sudah tidak aktif atau telah diubah.'));
 
-            $currentHistory->update(['status' => 'eskalasi', 'completed_at' => now()]);
+            $fresh->update(['status' => 'eskalasi', 'completed_at' => now()]);
 
             $newHistory = WorkflowHistory::create([
                 'ticket_id' => $currentHistory->ticket_id,
@@ -145,7 +145,7 @@ class WorkflowService
                 'message' => $komentar ?: 'Ada pengaduan dieskalasi kepada Anda.',
                 'data' => [
                     'ticket_id' => $currentHistory->ticket_id,
-                    'ticket_number' => $currentHistory->ticket->ticket_number,
+                    'ticket_number' => $currentHistory->ticket?->ticket_number,
                     'workflow_uuid' => $newHistory->uuid,
                     'url' => route('admin.tickets.show', $currentHistory->ticket_id),
                 ],
@@ -173,6 +173,9 @@ class WorkflowService
     public function selesai(WorkflowHistory $history, string $komentar = ''): WorkflowHistory
     {
         $ticket = $history->ticket;
+        if (! $ticket) {
+            throw new \RuntimeException('Tiket terkait sudah tidak ditemukan.');
+        }
 
         DB::transaction(function () use ($history, $ticket, $komentar) {
             $history->update([
@@ -229,6 +232,9 @@ class WorkflowService
     public function tutup(WorkflowHistory $history, string $komentar = ''): WorkflowHistory
     {
         $ticket = $history->ticket;
+        if (! $ticket) {
+            throw new \RuntimeException('Tiket terkait sudah tidak ditemukan.');
+        }
 
         DB::transaction(function () use ($history, $ticket, $komentar) {
             $history->update([

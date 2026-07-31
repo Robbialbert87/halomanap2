@@ -3,7 +3,10 @@
     id="sidebar">
     <div class="flex items-center justify-center h-16 border-b border-slate-700 px-4">
         <div class="flex items-center gap-2">
-            <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo" class="h-8 w-auto">
+            <picture>
+                <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo" class="h-8 w-auto">
+            </picture>
             <span class="font-bold text-xl tracking-wide">Halo<span class="text-blue-400">MANAP</span></span>
         </div>
     </div>
@@ -206,32 +209,32 @@
                 <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Menu Kepala Unit</p>
             </div>
 
-            <a href="{{ route('kepala-unit.dashboard') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kepala-unit.dashboard') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('dashboard') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('dashboard') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-house w-5 text-center"></i>
                 <span class="text-sm font-medium">Dashboard</span>
             </a>
 
-            <a href="{{ route('kepala-unit.dispositions.index') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kepala-unit.dispositions.index') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('dispositions.index') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('dispositions.index') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-inbox w-5 text-center"></i>
                 <span class="text-sm font-medium">Kotak Masuk Disposisi</span>
             </a>
 
-            <a href="{{ route('kepala-unit.dalam-penanganan') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kepala-unit.dalam-penanganan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('dalam-penanganan') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('dalam-penanganan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-spinner w-5 text-center"></i>
                 <span class="text-sm font-medium">Dalam Penanganan</span>
             </a>
 
-            <a href="{{ route('kepala-unit.riwayat') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kepala-unit.riwayat') || (request()->routeIs('kepala-unit.dispositions.show') && str_contains(url()->previous(), 'riwayat')) ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('riwayat') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('riwayat') || (request()->routeIs('dispositions.show') && str_contains(url()->previous(), 'riwayat')) ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
                 <span class="text-sm font-medium">Riwayat Pengaduan</span>
             </a>
 
-            <a href="{{ route('kepala-unit.laporan') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kepala-unit.laporan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('laporan.index') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('laporan.index') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-file-lines w-5 text-center"></i>
                 <span class="text-sm font-medium">Laporan Unit</span>
             </a>
@@ -240,8 +243,8 @@
                 <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Akun</p>
             </div>
 
-            <a href="{{ route('kepala-unit.profil') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kepala-unit.profil') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('profil.index') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('profil.index') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-user w-5 text-center"></i>
                 <span class="text-sm font-medium">Profil</span>
             </a>
@@ -254,32 +257,32 @@
                 <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Menu Kasi / Kasubbag</p>
             </div>
 
-            <a href="{{ route('kasi.dashboard') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kasi.dashboard') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('dashboard') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('dashboard') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-house w-5 text-center"></i>
                 <span class="text-sm font-medium">Dashboard</span>
             </a>
 
-            <a href="{{ route('kasi.dispositions.index') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kasi.dispositions.index') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('dispositions.index') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('dispositions.index') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-inbox w-5 text-center"></i>
                 <span class="text-sm font-medium">Kotak Masuk Disposisi</span>
             </a>
 
-            <a href="{{ route('kasi.dalam-penanganan') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kasi.dalam-penanganan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('dalam-penanganan') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('dalam-penanganan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-spinner w-5 text-center"></i>
                 <span class="text-sm font-medium">Dalam Penanganan</span>
             </a>
 
-            <a href="{{ route('kasi.riwayat') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kasi.riwayat') || (request()->routeIs('kasi.dispositions.show') && str_contains(url()->previous(), 'riwayat')) ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('riwayat') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('riwayat') || (request()->routeIs('dispositions.show') && str_contains(url()->previous(), 'riwayat')) ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
                 <span class="text-sm font-medium">Riwayat Bidang</span>
             </a>
 
-            <a href="{{ route('kasi.laporan') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kasi.laporan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('laporan.index') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('laporan.index') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-file-lines w-5 text-center"></i>
                 <span class="text-sm font-medium">Laporan Bidang</span>
             </a>
@@ -288,8 +291,8 @@
                 <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Akun</p>
             </div>
 
-            <a href="{{ route('kasi.profil') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kasi.profil') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('profil.index') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('profil.index') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-user w-5 text-center"></i>
                 <span class="text-sm font-medium">Profil</span>
             </a>
@@ -302,38 +305,32 @@
                 <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Menu Kabid / Kabag</p>
             </div>
 
-            <a href="{{ route('kabid.dashboard') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kabid.dashboard') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('dashboard') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('dashboard') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-house w-5 text-center"></i>
                 <span class="text-sm font-medium">Dashboard</span>
             </a>
 
-            <a href="{{ route('kabid.dispositions.index') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kabid.dispositions.index') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('dispositions.index') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('dispositions.index') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-inbox w-5 text-center"></i>
                 <span class="text-sm font-medium">Kotak Masuk Disposisi</span>
             </a>
 
-            <a href="{{ route('kabid.dalam-penanganan') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kabid.dalam-penanganan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('dalam-penanganan') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('dalam-penanganan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-spinner w-5 text-center"></i>
                 <span class="text-sm font-medium">Dalam Penanganan</span>
             </a>
 
-            <a href="{{ route('kabid.riwayat') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kabid.riwayat') || (request()->routeIs('kabid.dispositions.show') && str_contains(url()->previous(), 'riwayat')) ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('riwayat') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('riwayat') || (request()->routeIs('dispositions.show') && str_contains(url()->previous(), 'riwayat')) ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
                 <span class="text-sm font-medium">Riwayat Pengaduan</span>
             </a>
 
-            <a href="{{ route('kabid.monitoring') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kabid.monitoring') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
-                <i class="fa-solid fa-chart-line w-5 text-center"></i>
-                <span class="text-sm font-medium">Monitoring Bidang</span>
-            </a>
-
-            <a href="{{ route('kabid.laporan') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kabid.laporan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('laporan.index') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('laporan.index') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-file-lines w-5 text-center"></i>
                 <span class="text-sm font-medium">Laporan Bidang</span>
             </a>
@@ -342,8 +339,8 @@
                 <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Akun</p>
             </div>
 
-            <a href="{{ route('kabid.profil') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('kabid.profil') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('profil.index') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('profil.index') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-user w-5 text-center"></i>
                 <span class="text-sm font-medium">Profil</span>
             </a>
@@ -356,20 +353,20 @@
                 <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Menu Kepala Ruangan</p>
             </div>
 
-            <a href="{{ route('head-unit.dispositions.index') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('head-unit.dispositions.index') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('dispositions.index') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('dispositions.index') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-inbox w-5 text-center"></i>
                 <span class="text-sm font-medium">Kotak Masuk</span>
             </a>
 
-            <a href="{{ route('head-unit.dalam-penanganan') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('head-unit.dalam-penanganan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('dalam-penanganan') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('dalam-penanganan') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-spinner w-5 text-center"></i>
                 <span class="text-sm font-medium">Dalam Penanganan</span>
             </a>
 
-            <a href="{{ route('head-unit.riwayat') }}"
-                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('head-unit.riwayat') || (request()->routeIs('head-unit.dispositions.show') && str_contains(url()->previous(), 'riwayat')) ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
+            <a href="{{ route('riwayat') }}"
+                class="flex items-center gap-3 px-3 py-2.5 {{ request()->routeIs('riwayat') || (request()->routeIs('dispositions.show') && str_contains(url()->previous(), 'riwayat')) ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
                 <span class="text-sm font-medium">Riwayat Pengaduan</span>
             </a>

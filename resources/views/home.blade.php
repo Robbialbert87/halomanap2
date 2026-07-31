@@ -29,7 +29,10 @@
                 <div class="max-w-7xl mx-auto px-6 h-16 grid grid-cols-[auto_1fr_auto] items-center">
                     <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
                         <div class="w-9 h-9 flex items-center justify-center">
-                            <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                            <picture>
+                                <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                            </picture>
                         </div>
                         <div>
                             <p class="font-heading font-bold text-lg text-blue-800 leading-tight">Halo <span class="text-green-600">MANAP</span></p>
@@ -75,7 +78,10 @@
                     </div>
                     <div class="w-1/2">
                         <div class="rounded-2xl overflow-hidden shadow-xl shadow-blue-900/10 border border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
-                            <img src="{{ asset('assets/images/banner-halo-manap.jpg') }}" alt="Banner" class="w-full h-auto object-cover" onerror="this.src='https://placehold.co/800x400/eff6ff/1d4ed8?text=Halo+MANAP'">
+                            <picture>
+                                <source srcset="{{ asset('assets/images/banner-halo-manap.webp') }}" type="image/webp">
+                                <img src="{{ asset('assets/images/banner-halo-manap.jpg') }}" alt="Banner" class="w-full h-auto object-cover" onerror="this.src='https://placehold.co/800x400/eff6ff/1d4ed8?text=Halo+MANAP'">
+                            </picture>
                         </div>
                     </div>
                 </div>
@@ -136,7 +142,10 @@
                         {{-- Brand --}}
                         <div>
                             <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity mb-3">
-                                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                                <picture>
+                                    <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                                    <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                                </picture>
                                 <div>
                                     <p class="font-bold text-white text-sm">Halo MANAP</p>
                                     <p class="text-xs">RSUD H. Abdul Manap</p>
@@ -191,11 +200,19 @@
             <header class="bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
                 <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
                     <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-                        <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                        <picture>
+                            <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                            <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                        </picture>
                         <div>
                             <span class="font-bold text-lg text-blue-800 leading-tight">Halo <span class="text-green-600">MANAP</span></span>
                             <p class="text-[8px] text-gray-400 leading-none -mt-0.5">RSUD H. Abdul Manap</p>
                         </div>
+                    </a>
+                    <a href="/dashboard"
+                       class="w-9 h-9 flex items-center justify-center bg-white/80 rounded-xl text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all shadow-sm"
+                       title="Login">
+                        <i class="fa-solid fa-door-open text-base"></i>
                     </a>
                 </div>
             </header>
@@ -205,9 +222,14 @@
 
                 <!-- Banner Mobile -->
                 <div class="anim-fade rounded-2xl overflow-hidden shadow-sm border border-white/30 mb-5" style="animation-delay:0s;background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
-                    <img src="{{ asset('assets/images/banner-halo-manap.jpg') }}" alt="Banner"
-                        class="w-full h-auto object-cover"
-                        onerror="this.src='https://placehold.co/600x300/eff6ff/1d4ed8?text=Halo+MANAP'">
+                    <picture>
+                        <source srcset="{{ asset('assets/images/banner-halo-manap.webp') }}" type="image/webp">
+                        <img src="{{ asset('assets/images/banner-halo-manap.jpg') }}" alt="Banner"
+                            width="2146" height="733"
+                            fetchpriority="high"
+                            class="w-full h-auto object-cover"
+                            onerror="this.src='https://placehold.co/600x300/eff6ff/1d4ed8?text=Halo+MANAP'">
+                    </picture>
                 </div>
 
                 <!-- Menu Grid 2x2 ala PayApp -->
@@ -288,7 +310,10 @@
 
                 {{-- Mobile Footer --}}
                 <div class="anim-fade bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 px-5 py-5 mb-4" style="animation-delay:0.3s;background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
-                    <div class="flex items-center justify-center gap-6">
+                    <div class="flex items-center justify-center gap-5">
+                        <a href="https://wa.me/6281178779889" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-500 hover:bg-green-100 transition-colors">
+                            <i class="fa-brands fa-whatsapp text-xl"></i>
+                        </a>
                         <a href="https://www.instagram.com/rsudkotajambi?igsh=MWJoOTlxaGdwdm4zbA==" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center text-pink-500 hover:bg-pink-100 transition-colors">
                             <i class="fa-brands fa-instagram text-xl"></i>
                         </a>
@@ -305,28 +330,28 @@
 
             <!-- BOTTOM NAV ala PayApp (detached rounded) -->
             <nav class="anim-slide fixed bottom-3 left-3 right-3 bg-white/70 backdrop-blur-xl border border-white/30 rounded-2xl flex justify-around items-center px-2 pt-1.5 pb-5 z-50 shadow-[0_-4px_30px_rgba(0,0,0,0.08)]" style="animation-delay:0.35s;background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
-                <a href="/" class="flex flex-col items-center gap-0.5 w-14 py-1 text-blue-600">
+                <a href="/" class="flex flex-col items-center gap-0.5 w-14 py-1 {{ request()->is('/') ? 'text-blue-600' : 'text-gray-400' }}">
                     <i class="fa-solid fa-house text-xl"></i>
-                    <span class="text-[9px] font-semibold">Beranda</span>
+                    <span class="text-[9px] {{ request()->is('/') ? 'font-semibold' : 'font-medium' }}">Beranda</span>
                 </a>
-                <a href="{{ route('pengaduan.track') }}" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
+                <a href="{{ route('pengaduan.track') }}" class="flex flex-col items-center gap-0.5 w-14 py-1 {{ request()->is('lacak*') ? 'text-blue-600' : 'text-gray-400' }}">
                     <i class="fa-solid fa-magnifying-glass text-xl"></i>
-                    <span class="text-[9px] font-medium">Cek Status</span>
+                    <span class="text-[9px] {{ request()->is('lacak*') ? 'font-semibold' : 'font-medium' }}">Cek Status</span>
                 </a>
                 <!-- FAB Center -->
                 <div class="relative w-14 flex flex-col items-center">
                     <a href="/pengaduan/buat" class="absolute -top-7 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/40 border-[3px] border-white active:scale-90 transition-transform">
                         <i class="fa-solid fa-plus text-xl"></i>
                     </a>
-                    <span class="text-[9px] font-medium text-gray-400 mt-6 text-center leading-tight">Buat<br>Laporan</span>
+                    <span class="text-[9px] font-medium {{ request()->is('pengaduan/buat*') ? 'text-blue-600 font-semibold' : 'text-gray-400' }} mt-6 text-center leading-tight">Buat<br>Laporan</span>
                 </div>
                 <a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
                     <i class="fa-solid fa-square-poll-vertical text-xl"></i>
                     <span class="text-[9px] font-medium">Survei</span>
                 </a>
-                <a href="{{ route('apresiasi.create') }}" class="flex flex-col items-center gap-0.5 w-14 py-1 text-gray-400">
+                <a href="{{ route('apresiasi.create') }}" class="flex flex-col items-center gap-0.5 w-14 py-1 {{ request()->is('apresiasi*') ? 'text-blue-600' : 'text-gray-400' }}">
                     <i class="fa-solid fa-thumbs-up text-xl"></i>
-                    <span class="text-[9px] font-medium">Apresiasi</span>
+                    <span class="text-[9px] {{ request()->is('apresiasi*') ? 'font-semibold' : 'font-medium' }}">Apresiasi</span>
                 </a>
             </nav>
         </div>

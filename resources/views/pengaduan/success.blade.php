@@ -10,7 +10,10 @@
         <div id="ticket-visual" style="position:absolute;left:-9999px;top:0;width:380px;background:#fff;font-family:'Roboto',Arial,sans-serif;color:#1e293b;">
             <div style="padding:24px;">
                 <div style="background:#eff6ff;border:2px dashed #bfdbfe;border-radius:14px;padding:18px 14px;text-align:center;margin-bottom:22px;">
-                    <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo" style="width:44px;height:44px;margin:0 auto 8px;display:block;object-fit:contain;">
+                    <picture>
+                        <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                        <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo" style="width:44px;height:44px;margin:0 auto 8px;display:block;object-fit:contain;">
+                    </picture>
                     <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#3b82f6;margin-bottom:6px;">Nomor Tiket</div>
                     <div style="font-size:28px;font-weight:900;font-family:'Courier New',monospace;color:#1e3a8a;letter-spacing:2px;">{{ $ticket->ticket_number }}</div>
                 </div>
@@ -150,6 +153,7 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
     function copyTicket() {
         var ticketText = document.getElementById('ticket_number').innerText;

@@ -300,7 +300,10 @@
         <div class="login-card">
             <!-- Logo -->
             <a href="/" class="logo-wrap" style="text-decoration:none;display:block">
-                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo HaloMANAP" class="logo-img">
+                <picture>
+                    <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
+                    <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo HaloMANAP" class="logo-img">
+                </picture>
                 <div class="brand-name">Halo<span>MANAP</span></div>
                 <div class="brand-sub">Sistem Manajemen Pengaduan</div>
             </a>

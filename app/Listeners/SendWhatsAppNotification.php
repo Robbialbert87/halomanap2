@@ -33,6 +33,12 @@ class SendWhatsAppNotification implements ShouldQueue
         $jenis = $event->jenis;
         $ticket = $history->ticket;
 
+        if (! $ticket) {
+            Log::channel('daily')->warning('[WhatsApp] Tiket tidak ditemukan untuk history ID: '.$history->id);
+
+            return;
+        }
+
         // ─── 1. Kirim ke User Penerima (To User) ────────────────────────────
         if ($history->toUser && $history->toUser->phone_number) {
             $message = $this->buildMessage($jenis, $history, $ticket);
@@ -62,7 +68,7 @@ class SendWhatsAppNotification implements ShouldQueue
             $admins = User::role('Admin Pengaduan')->whereNotNull('phone_number')->get();
             $adminMessage = $this->buildAdminVerificationMessage($history, $ticket);
             foreach ($admins as $admin) {
-                $this->send($admin, $adminMessage, 'admin_verifikasi', $history);
+                $this->send($admin, $adminMessage, 'pengaduan_selesai', $history);
             }
         }
     }
