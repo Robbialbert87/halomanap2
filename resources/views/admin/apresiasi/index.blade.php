@@ -31,7 +31,7 @@
     {{-- Mobile List --}}
     <div class="md:hidden space-y-2.5">
         @forelse($appreciations as $a)
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden active:scale-[0.99] transition-transform">
+        <div class="admin-card overflow-hidden active:scale-[0.99] transition-transform">
             <div class="flex items-start gap-3 px-3.5 py-3">
                 <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0 text-white text-sm">
                     <i class="fa-solid fa-thumbs-up"></i>
@@ -66,16 +66,16 @@
     </div>
 
     {{-- Desktop Table --}}
-    <div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="hidden md:block admin-card overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="admin-table w-full text-sm">
                 <thead>
-                    <tr class="bg-gray-50 text-left">
-                        <th class="px-4 py-3 font-semibold text-gray-500 text-[11px] uppercase tracking-wider">No</th>
-                        <th class="px-4 py-3 font-semibold text-gray-500 text-[11px] uppercase tracking-wider">Nama</th>
-                        <th class="px-4 py-3 font-semibold text-gray-500 text-[11px] uppercase tracking-wider">Rating</th>
-                        <th class="px-4 py-3 font-semibold text-gray-500 text-[11px] uppercase tracking-wider">Pesan</th>
-                        <th class="px-4 py-3 font-semibold text-gray-500 text-[11px] uppercase tracking-wider">Tanggal</th>
+                    <tr>
+                        <th class="px-4 py-3">No</th>
+                        <th class="px-4 py-3">Nama</th>
+                        <th class="px-4 py-3">Rating</th>
+                        <th class="px-4 py-3">Pesan</th>
+                        <th class="px-4 py-3">Tanggal</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">

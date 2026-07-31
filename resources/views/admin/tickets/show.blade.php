@@ -40,7 +40,7 @@
         </div>
     </div>
     <div class="flex gap-3">
-        <a href="{{ route('admin.tickets.index') }}" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors active:scale-[0.97]">
+        <a href="{{ route('admin.tickets.index') }}" class="admin-btn admin-btn-ghost">
             <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
         </a>
     </div>
@@ -58,8 +58,8 @@
     <div class="lg:col-span-2 space-y-6">
 
         {{-- Ticket Info Card --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.1s">
-            <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div class="admin-card overflow-hidden animate-fadeInUp" style="animation-delay:.1s">
+            <div class="admin-card-head flex items-center justify-between">
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fa-regular fa-file-lines text-blue-600"></i>
                     Informasi Pengaduan
@@ -151,7 +151,7 @@
 
 
         {{-- Reporter Info --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.2s">
+        <div class="admin-card overflow-hidden animate-fadeInUp" style="animation-delay:.2s">
             <button type="button" onclick="toggleSection(this)" data-target="reporter-content" class="w-full bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between text-left group md:cursor-default">
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fa-solid fa-address-card text-blue-600"></i> Data Pelapor
@@ -188,7 +188,7 @@
 
         {{-- Verifikasi Pengaduan (hanya jika status NEW) --}}
         @if($ticket->status === 'NEW')
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.25s">
+        <div class="admin-card overflow-hidden animate-fadeInUp" style="animation-delay:.25s">
             <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fa-solid fa-clipboard-check text-blue-600"></i> Verifikasi Pengaduan
@@ -220,7 +220,7 @@
 
         {{-- Ubah Status: sembunyikan jika status NEW, sudah selesai, atau sudah di-disposisi --}}
         @if(!$isClosed && !$ticket->activeWorkflow && $ticket->status !== 'NEW')
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.3s">
+        <div class="admin-card overflow-hidden animate-fadeInUp" style="animation-delay:.3s">
             <button type="button" onclick="toggleSection(this)" data-target="status-content" class="w-full bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between text-left group md:cursor-default">
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fa-solid fa-pen-to-square text-blue-600"></i> Ubah Status
@@ -233,7 +233,7 @@
                     @method('PUT')
                     <div class="mb-4">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Status Saat Ini</label>
-                        <select name="status" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                        <select name="status" class="admin-input">
                             <option value="NEW"         {{ $ticket->status == 'NEW'         ? 'selected' : '' }}>Baru</option>
                             <option value="TERVERIFIKASI" {{ $ticket->status == 'TERVERIFIKASI' ? 'selected' : '' }}>Terverifikasi</option>
                             <option value="IN_PROGRESS" {{ $ticket->status == 'IN_PROGRESS' ? 'selected' : '' }}>Diproses</option>
@@ -243,9 +243,9 @@
                     </div>
                     <div class="mb-4">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Catatan (Opsional)</label>
-                        <textarea name="notes" rows="3" placeholder="Masukkan catatan penanganan..." class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"></textarea>
+                        <textarea name="notes" rows="3" placeholder="Masukkan catatan penanganan..." class="admin-input"></textarea>
                     </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-all active:scale-[0.97] shadow-sm">
+                    <button type="submit" class="admin-btn admin-btn-primary w-full">
                         <i class="fa-solid fa-save mr-1"></i> Simpan Status
                     </button>
                 </form>
@@ -278,7 +278,7 @@
 
         @if(!$isClosed && in_array($ticket->status, ['TERVERIFIKASI', 'IN_PROGRESS', 'DONE', 'Diproses', 'Menunggu Verifikasi']))
         {{-- Disposisi / Workflow Aktif: hanya tampil jika belum selesai --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6 animate-fadeInUp" style="animation-delay:.35s">
+        <div class="admin-card overflow-hidden mb-6 animate-fadeInUp" style="animation-delay:.35s">
             <button type="button" onclick="toggleSection(this)" data-target="disposisi-content" class="w-full bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between text-left group md:cursor-default">
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fa-solid fa-share-nodes text-blue-600"></i> Disposisi
@@ -292,7 +292,7 @@
             </button>
             <div id="disposisi-content" class="p-6">
                 @if(!$ticket->activeWorkflow)
-                    <button onclick="openDispositionModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-all active:scale-[0.97] shadow-sm">
+                    <button onclick="openDispositionModal()" class="admin-btn admin-btn-primary w-full">
                         <i class="fa-solid fa-plus mr-1"></i> Buat Disposisi
                     </button>
                 @else
@@ -337,7 +337,7 @@
         @endif
 
         {{-- Timeline Workflow --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.4s">
+        <div class="admin-card overflow-hidden animate-fadeInUp" style="animation-delay:.4s">
             <button type="button" onclick="toggleSection(this)" data-target="timeline-content" class="w-full bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between text-left group md:cursor-default">
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fa-solid fa-clock-rotate-left text-indigo-500"></i> Timeline Workflow
@@ -395,7 +395,7 @@
 
         {{-- Lampiran Penanganan: sembunyikan jika sudah selesai --}}
         @if(!$isClosed)
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.45s">
+        <div class="admin-card overflow-hidden animate-fadeInUp" style="animation-delay:.45s">
             <button type="button" onclick="toggleSection(this)" data-target="lampiran-content" class="w-full bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between text-left group md:cursor-default">
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fa-solid fa-paperclip text-blue-600"></i> Lampiran Penanganan
@@ -405,7 +405,7 @@
             <div id="lampiran-content" class="p-6">
                 {{-- Form Upload Lampiran --}}
                 <div class="mb-6">
-                    <button onclick="toggleUploadForm()" type="button" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg text-sm px-4 py-2 transition-all active:scale-[0.97] border border-gray-300 w-full flex justify-between items-center">
+                    <button onclick="toggleUploadForm()" type="button" class="admin-btn admin-btn-ghost w-full justify-between">
                         <span><i class="fa-solid fa-upload mr-1"></i> Tambah Lampiran</span>
                         <i id="upload-icon" class="fa-solid fa-chevron-down"></i>
                     </button>
@@ -414,7 +414,7 @@
                         @csrf
                         <div>
                             <label class="block text-xs font-semibold text-gray-700 mb-1">Jenis Lampiran</label>
-                            <select name="attachment_type" required class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
+                            <select name="attachment_type" required class="admin-input w-full">
                                 <option value="Foto Sebelum">Foto Sebelum</option>
                                 <option value="Foto Sesudah">Foto Sesudah</option>
                                 <option value="Dokumen">Dokumen</option>
@@ -425,7 +425,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-700 mb-1">Keterangan (Opsional)</label>
-                            <textarea name="description" rows="2" class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2"></textarea>
+                            <textarea name="description" rows="2" class="admin-input w-full"></textarea>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-700 mb-1">Upload File (Max 10MB)</label>
@@ -433,7 +433,7 @@
                             <p class="text-[10px] text-gray-500 mt-1">Format: JPG, PNG, PDF, DOCX, XLSX</p>
                         </div>
                         <div class="pt-2">
-                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-4 py-2 transition-all active:scale-[0.97] shadow-sm w-full">
+                            <button type="submit" class="admin-btn admin-btn-primary w-full">
                                 Simpan Lampiran
                             </button>
                         </div>
@@ -496,7 +496,7 @@
         @endif
 
         {{-- Metadata --}}
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fadeInUp" style="animation-delay:.5s">
+        <div class="admin-card overflow-hidden animate-fadeInUp" style="animation-delay:.5s">
             <button type="button" onclick="toggleSection(this)" data-target="metadata-content" class="w-full bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between text-left group md:cursor-default">
                 <h2 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fa-solid fa-circle-info text-blue-600"></i> Metadata
@@ -543,7 +543,7 @@
             
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Jabatan Tujuan <span class="text-red-500">*</span></label>
-                <select name="jabatan_id" required class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                <select name="jabatan_id" required class="admin-input">
                     <option value="">Pilih Jabatan</option>
                     @foreach($jabatans as $jabatan)
                         <option value="{{ $jabatan->id }}">{{ $jabatan->nama }}</option>
@@ -554,19 +554,19 @@
             
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Deadline SLA (Opsional)</label>
-                <input type="datetime-local" name="due_at" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" min="{{ date('Y-m-d\TH:i') }}">
+                <input type="datetime-local" name="due_at" class="admin-input" min="{{ date('Y-m-d\TH:i') }}">
             </div>
             
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Komentar / Instruksi Awal (Opsional)</label>
-                <textarea name="komentar" rows="3" placeholder="Tuliskan pesan untuk penerima disposisi..." class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"></textarea>
+                <textarea name="komentar" rows="3" placeholder="Tuliskan pesan untuk penerima disposisi..." class="admin-input"></textarea>
             </div>
             
             <div class="pt-4 border-t border-gray-100 flex gap-3 justify-end">
-                <button type="button" onclick="closeDispositionModal()" class="flex-1 md:flex-none bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg text-sm px-5 py-2.5 transition-all active:scale-[0.97]">
+                <button type="button" onclick="closeDispositionModal()" class="admin-btn admin-btn-ghost flex-1 md:flex-none">
                     Batal
                 </button>
-                <button type="submit" id="btn-kirim-disposisi" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition-all active:scale-[0.97] shadow-sm">
+                <button type="submit" id="btn-kirim-disposisi" class="admin-btn admin-btn-primary flex-1 md:flex-none">
                     <i class="fa-solid fa-paper-plane mr-1"></i> Kirim Disposisi
                 </button>
             </div>
@@ -622,7 +622,7 @@ function closeDispositionModal() {
                 </div>
             </div>
             <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-2xl">
-                <button type="button" onclick="closeSetujuiModal()" class="bg-white hover:bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-gray-200">Batal</button>
+                <button type="button" onclick="closeSetujuiModal()" class="admin-btn admin-btn-ghost">Batal</button>
                 <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
                     <i class="fa-solid fa-check"></i> Setujui & Lanjutkan
                 </button>
@@ -652,7 +652,7 @@ function closeDispositionModal() {
                 </div>
             </div>
             <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-2xl">
-                <button type="button" onclick="closeTolakModal()" class="bg-white hover:bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-gray-200">Batal</button>
+                <button type="button" onclick="closeTolakModal()" class="admin-btn admin-btn-ghost">Batal</button>
                 <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
                     <i class="fa-solid fa-xmark"></i> Tolak Pengaduan
                 </button>

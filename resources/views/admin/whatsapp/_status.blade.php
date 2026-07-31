@@ -1,5 +1,5 @@
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+<div class="admin-card overflow-hidden">
+    <div class="admin-card-head flex items-center justify-between">
         <h2 class="font-semibold text-gray-800 flex items-center gap-2">
             <i class="fa-solid fa-signal text-gray-500"></i> Status Koneksi WAHA
         </h2>

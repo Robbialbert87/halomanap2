@@ -12,7 +12,7 @@
             <span class="font-mono text-blue-600">{{ $ticket->ticket_number }}</span>
         </div>
     </div>
-    <a href="{{ route('admin.monitoring.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+    <a href="{{ route('admin.monitoring.index') }}" class="admin-btn admin-btn-ghost">
         <i class="fa-solid fa-arrow-left"></i> Kembali
     </a>
 </div>
@@ -20,7 +20,7 @@
 <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
     {{-- ── Info Pengaduan ──────────────────────────────────────────── --}}
     <div class="xl:col-span-1">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-4">
+        <div class="admin-card p-6 mb-4">
             <h2 class="font-semibold text-gray-800 mb-4 flex items-center gap-2">
                 <i class="fa-regular fa-file-lines text-blue-500"></i> Info Pengaduan
             </h2>
@@ -61,7 +61,7 @@
         </div>
 
         @if($activeWorkflow)
-        <div class="bg-white rounded-xl shadow-sm border border-blue-100 p-6">
+        <div class="admin-card p-6">
             <h2 class="font-semibold text-gray-800 mb-4 flex items-center gap-2">
                 <i class="fa-solid fa-user-clock text-blue-500"></i> Penanggung Jawab Aktif
             </h2>
@@ -93,7 +93,7 @@
     </div>
 
     {{-- ── Timeline Workflow ───────────────────────────────────────── --}}
-    <div class="xl:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <div class="xl:col-span-2 admin-card p-6">
         <h2 class="font-semibold text-gray-800 mb-6 flex items-center gap-2">
             <i class="fa-solid fa-clock-rotate-left text-indigo-500"></i> Timeline Workflow
         </h2>

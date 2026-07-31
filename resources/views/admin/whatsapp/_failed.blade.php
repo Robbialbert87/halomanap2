@@ -1,5 +1,5 @@
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+<div class="admin-card overflow-hidden">
+    <div class="admin-card-head">
         <h2 class="font-semibold text-gray-800 flex items-center gap-2">
             <i class="fa-solid fa-circle-exclamation text-gray-500"></i> Log Gagal Kirim
         </h2>
@@ -14,9 +14,9 @@
         </div>
     @else
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="admin-table w-full text-sm">
                 <thead>
-                    <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+                    <tr>
                         <th class="text-left px-4 py-3">Tujuan</th>
                         <th class="text-left px-4 py-3">Pesan</th>
                         <th class="text-left px-4 py-3">Gagal</th>

@@ -27,7 +27,7 @@
             <span>Pengguna</span>
         </div>
     </div>
-    <a href="{{ route('admin.users.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+    <a href="{{ route('admin.users.create') }}" class="admin-btn admin-btn-primary">
         <i class="fa-solid fa-plus"></i> Tambah Pengguna
     </a>
 </div>
@@ -62,12 +62,12 @@
         <i id="mobile-filter-icon" class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300 text-xs"></i>
     </button>
 
-    <div id="filter-container" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 mb-3" style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 100%);">
+    <div id="filter-container" class="admin-card p-3 mb-3">
     <form action="{{ route('admin.users.index') }}" method="GET" class="flex flex-col gap-2.5">
         <div class="relative">
             <input type="text" name="search" value="{{ request('search') }}"
                 placeholder="Cari NIP, Nama, atau No WA..." autocomplete="off"
-                class="w-full bg-white/70 border border-gray-200 text-gray-900 text-[13px] rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2.5 pl-9">
+                class="admin-input text-[13px] pl-9">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
             @if(request('search'))
             <a href="{{ route('admin.users.index', request()->except(['search', 'page'])) }}" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -76,29 +76,29 @@
             @endif
         </div>
         <div class="grid grid-cols-2 gap-2">
-            <select name="unit_id" class="w-full bg-white/70 border border-gray-200 text-gray-900 text-[13px] rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2.5">
+            <select name="unit_id" class="admin-input text-[13px]">
                 <option value="">Semua Unit</option>
                 @foreach($units as $u)
                     <option value="{{ $u->id }}" {{ request('unit_id') == $u->id ? 'selected' : '' }}>{{ $u->nama }}</option>
                 @endforeach
             </select>
-            <select name="jabatan_id" class="w-full bg-white/70 border border-gray-200 text-gray-900 text-[13px] rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2.5">
+            <select name="jabatan_id" class="admin-input text-[13px]">
                 <option value="">Semua Jabatan</option>
                 @foreach($jabatans as $j)
                     <option value="{{ $j->id }}" {{ request('jabatan_id') == $j->id ? 'selected' : '' }}>{{ $j->nama }}</option>
                 @endforeach
             </select>
-            <select name="role" class="w-full bg-white/70 border border-gray-200 text-gray-900 text-[13px] rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2.5">
+            <select name="role" class="admin-input text-[13px]">
                 <option value="">Semua Role</option>
                 @foreach($roles as $r)
                     <option value="{{ $r->name }}" {{ request('role') == $r->name ? 'selected' : '' }}>{{ $r->name }}</option>
                 @endforeach
             </select>
             <div class="flex gap-2">
-                <button type="submit" class="flex-1 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 text-white px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all shadow-sm shadow-emerald-200/50 active:scale-[0.98]">
+                <button type="submit" class="admin-btn admin-btn-primary flex-1">
                     <i class="fa-solid fa-search mr-1 text-xs"></i> Filter
                 </button>
-                <a href="{{ route('admin.users.index') }}" class="flex-1 bg-gradient-to-br from-gray-100 to-white border border-gray-200 hover:from-gray-200 hover:to-gray-100 text-gray-700 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all active:scale-[0.98] text-center">
+                <a href="{{ route('admin.users.index') }}" class="admin-btn admin-btn-ghost flex-1 text-center">
                     Reset
                 </a>
             </div>
@@ -108,7 +108,7 @@
 </div>
 
 {{-- Desktop Filter --}}
-<div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+<div class="hidden md:block admin-card overflow-hidden mb-6">
     <div class="p-4 border-b border-gray-100 bg-gray-50/50">
         <form action="{{ route('admin.users.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-3">
             <div class="lg:col-span-2">
@@ -155,7 +155,7 @@
                 @endif
             </div>
             <div class="flex items-end">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg"><i class="fa-solid fa-filter mr-1"></i> Filter</button>
+                <button type="submit" class="admin-btn admin-btn-primary"><i class="fa-solid fa-filter mr-1"></i> Filter</button>
             </div>
         </form>
     </div>
@@ -163,7 +163,7 @@
 
 {{-- Mobile: User List --}}
 <div class="block md:hidden mb-4">
-    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-white/30 divide-y divide-gray-100" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+    <div class="admin-card overflow-hidden divide-y divide-gray-100">
     @forelse($users as $user)
     <div class="flex items-stretch active:bg-gray-50 transition-colors">
         <div class="w-1 shrink-0 bg-emerald-500"></div>
@@ -227,10 +227,10 @@
 </div>
 
 {{-- Table (Desktop) --}}
-<div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+<div class="hidden md:block admin-card overflow-hidden">
     <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm text-gray-600">
-            <thead class="bg-gray-50 text-gray-800 font-semibold border-b border-gray-100 uppercase text-xs">
+        <table class="admin-table w-full text-left text-sm text-gray-600">
+            <thead>
                 <tr>
                     <th class="px-6 py-4">Pegawai</th>
                     <th class="px-6 py-4">Kontak</th>

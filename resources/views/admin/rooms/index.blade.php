@@ -27,7 +27,7 @@
             <span>Ruangan</span>
         </div>
     </div>
-    <a href="{{ route('admin.rooms.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+    <a href="{{ route('admin.rooms.create') }}" class="admin-btn admin-btn-primary">
         <i class="fa-solid fa-plus"></i> Tambah Ruangan
     </a>
 </div>
@@ -54,12 +54,12 @@
         <i id="mobile-filter-icon" class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300 text-xs"></i>
     </button>
 
-    <div id="filter-container" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 mb-3" style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 100%);">
+    <div id="filter-container" class="admin-card p-3 mb-3">
     <form method="GET" action="{{ route('admin.rooms.index') }}" class="flex flex-col gap-2.5">
         <div class="relative">
             <input type="text" name="search" value="{{ request('search') }}"
                 placeholder="Cari ruangan atau unit..." autocomplete="off"
-                class="w-full bg-white/70 border border-gray-200 text-gray-900 text-[13px] rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2.5 pl-9">
+                class="admin-input text-[13px] pl-9">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
             @if(request('search'))
             <a href="{{ route('admin.rooms.index', request()->except(['search', 'page'])) }}" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -85,7 +85,7 @@
         <div class="relative max-w-md">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari ruangan atau unit..." autocomplete="off"
-                class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg pl-10 pr-10 py-2.5 focus:ring-blue-500 focus:border-blue-500">
+                class="admin-input w-full pl-10 pr-10">
             @if(request('search'))
             <a href="{{ route('admin.rooms.index') }}" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                 <i class="fa-solid fa-xmark"></i>
@@ -97,7 +97,7 @@
 
 {{-- Mobile: Room List --}}
 <div class="block md:hidden mb-4">
-    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-white/30 divide-y divide-gray-100" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+    <div class="admin-card overflow-hidden divide-y divide-gray-100">
     @forelse($rooms as $room)
     <div class="flex items-stretch active:bg-gray-50 transition-colors">
         <div class="w-1 shrink-0 bg-violet-500"></div>
@@ -137,9 +137,9 @@
 </div>
 
 {{-- Table (Desktop) --}}
-<div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <table class="w-full text-left text-sm text-gray-600">
-        <thead class="bg-gray-50 text-gray-800 font-semibold border-b border-gray-100 uppercase text-xs">
+<div class="hidden md:block admin-card overflow-hidden">
+    <table class="admin-table w-full text-left text-sm text-gray-600">
+        <thead>
             <tr>
                 <th class="px-6 py-4 w-16 text-center">No</th>
                 <th class="px-6 py-4">Nama Ruangan</th>

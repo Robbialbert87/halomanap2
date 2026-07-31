@@ -57,7 +57,7 @@
 
 <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
     {{-- Workflow Monitoring --}}
-    <div class="xl:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+    <div class="xl:col-span-2 admin-card overflow-hidden">
         <div class="px-4 md:px-6 py-3 md:py-4 border-b border-gray-100 flex items-center justify-between">
             <h2 class="font-semibold text-gray-800 text-sm md:text-base flex items-center gap-2 font-heading"><i class="fa-solid fa-diagram-project text-blue-500"></i> Workflow Aktif</h2>
             <span class="text-[10px] md:text-xs text-gray-400">{{ $activeWorkflows->count() }} tiket</span>
@@ -92,8 +92,8 @@
         </div>
         {{-- Desktop: Workflow table --}}
         <div class="hidden md:block overflow-x-auto">
-            <table class="w-full text-sm text-left text-gray-600">
-                <thead class="bg-gray-50 text-xs uppercase text-gray-500 font-semibold border-b">
+            <table class="admin-table w-full text-sm text-left text-gray-600">
+                <thead>
                     <tr>
                         <th class="px-4 py-3">No. Pengaduan</th>
                         <th class="px-4 py-3">Unit</th>
@@ -140,7 +140,7 @@
     </div>
 
     {{-- Eskalasi Terbaru --}}
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+    <div class="admin-card overflow-hidden">
         <div class="px-4 md:px-6 py-3 md:py-4 border-b border-gray-100 flex items-center gap-2">
             <i class="fa-solid fa-arrow-up-right-dots text-red-500 text-sm"></i>
             <h2 class="font-semibold text-gray-800 text-sm md:text-base font-heading">Eskalasi Terbaru</h2>
@@ -170,7 +170,7 @@
 
 <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6">
     {{-- Pengaduan Terbaru --}}
-    <div class="xl:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+    <div class="xl:col-span-2 admin-card overflow-hidden">
         <div class="px-4 md:px-6 py-3 md:py-4 border-b border-gray-100">
             <h2 class="font-semibold text-gray-800 text-sm md:text-base flex items-center gap-2 font-heading"><i class="fa-regular fa-comment-dots text-indigo-500"></i> Pengaduan Terbaru</h2>
         </div>
@@ -201,7 +201,7 @@
 
     {{-- Top & Bottom Unit --}}
     <div class="flex flex-col gap-3 md:gap-4">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+        <div class="admin-card overflow-hidden">
             <div class="px-4 md:px-5 py-3 md:py-4 border-b border-gray-100">
                 <h2 class="font-semibold text-gray-800 flex items-center gap-2 text-sm md:text-base font-heading"><i class="fa-solid fa-trophy text-amber-500"></i> Top Unit (Tercepat)</h2>
             </div>
@@ -219,7 +219,7 @@
                 @endforelse
             </ul>
         </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+        <div class="admin-card overflow-hidden">
             <div class="px-4 md:px-5 py-3 md:py-4 border-b border-gray-100">
                 <h2 class="font-semibold text-gray-800 flex items-center gap-2 text-sm md:text-base font-heading"><i class="fa-solid fa-circle-exclamation text-red-500"></i> Bottom Unit (Terlambat)</h2>
             </div>

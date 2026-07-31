@@ -27,7 +27,7 @@
             <span>Role</span>
         </div>
     </div>
-    <a href="{{ route('admin.roles.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+    <a href="{{ route('admin.roles.create') }}" class="admin-btn admin-btn-primary">
         <i class="fa-solid fa-plus"></i> Tambah Role
     </a>
 </div>
@@ -108,12 +108,12 @@
 </div>
 
 {{-- Roles Table (Desktop only) --}}
-<div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100">
+<div class="hidden md:block admin-card overflow-hidden">
+    <div class="admin-card-head">
         <h2 class="font-semibold text-gray-800 text-sm">Daftar Semua Role</h2>
     </div>
-    <table class="w-full text-left text-sm text-gray-600">
-        <thead class="bg-gray-50 text-gray-800 font-semibold border-b border-gray-100 uppercase text-xs">
+    <table class="admin-table w-full text-left text-sm text-gray-600">
+        <thead>
             <tr>
                 <th class="px-6 py-4 w-12 text-center">No</th>
                 <th class="px-6 py-4">Kode Role</th>

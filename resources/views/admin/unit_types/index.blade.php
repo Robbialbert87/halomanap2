@@ -27,7 +27,7 @@
             <span>Jenis Unit</span>
         </div>
     </div>
-    <a href="{{ route('admin.unit-types.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+    <a href="{{ route('admin.unit-types.create') }}" class="admin-btn admin-btn-primary">
         <i class="fa-solid fa-plus"></i> Tambah Jenis Unit
     </a>
 </div>
@@ -52,7 +52,7 @@
 
 {{-- Mobile: Jenis Unit List --}}
 <div class="block md:hidden mb-4">
-    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-white/30 divide-y divide-gray-100" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+    <div class="admin-card overflow-hidden divide-y divide-gray-100">
     @forelse($unitTypes as $unitType)
     <div class="flex items-stretch active:bg-gray-50 transition-colors">
         <div class="w-1 shrink-0 bg-cyan-500"></div>
@@ -103,9 +103,9 @@
 </div>
 
 {{-- Table (Desktop) --}}
-<div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <table class="w-full text-left text-sm text-gray-600">
-        <thead class="bg-gray-50 text-gray-800 font-semibold border-b border-gray-100 uppercase text-xs">
+<div class="hidden md:block admin-card overflow-hidden">
+    <table class="admin-table w-full text-left text-sm text-gray-600">
+        <thead>
             <tr>
                 <th class="px-6 py-4 w-12 text-center">No</th>
                 <th class="px-6 py-4">Nama Jenis</th>

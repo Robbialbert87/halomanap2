@@ -14,7 +14,7 @@
     </div>
 @endif
 
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100">
+<div class="admin-card overflow-hidden">
     <div class="border-b border-gray-100 p-6 bg-gray-50/50 flex items-center justify-between">
         <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
             <i class="fa-regular fa-pen-to-square text-blue-600"></i> Form Pengaduan Baru
@@ -30,7 +30,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Jenis <span class="text-red-500">*</span></label>
-                <select name="type" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
+                <select name="type" class="admin-input" required>
                     <option value="Pengaduan" {{ old('type', 'Pengaduan') == 'Pengaduan' ? 'selected' : '' }}>Pengaduan</option>
                     <option value="Survei" {{ old('type') == 'Survei' ? 'selected' : '' }}>Survei</option>
                     <option value="Apresiasi" {{ old('type') == 'Apresiasi' ? 'selected' : '' }}>Apresiasi</option>
@@ -40,7 +40,7 @@
 
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Kategori <span class="text-red-500">*</span></label>
-                <select name="category_id" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
+                <select name="category_id" class="admin-input" required>
                     <option value="">-- Pilih Kategori --</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
@@ -50,7 +50,7 @@
 
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Unit Pelayanan <span class="text-red-500">*</span></label>
-                <select name="unit_id" id="unit_id" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
+                <select name="unit_id" id="unit_id" class="admin-input" required>
                     <option value="">-- Pilih Unit --</option>
                     @foreach($units as $unit)
                         <option value="{{ $unit->id }}" {{ old('unit_id') == $unit->id ? 'selected' : '' }}>{{ $unit->nama }}</option>
@@ -60,19 +60,19 @@
 
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Ruangan <span class="text-red-500">*</span></label>
-                <select name="room_id" id="room_id" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
+                <select name="room_id" id="room_id" class="admin-input" required>
                     <option value="">-- Pilih Unit dahulu --</option>
                 </select>
             </div>
 
             <div class="md:col-span-2">
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Judul <span class="text-red-500">*</span></label>
-                <input type="text" name="title" value="{{ old('title') }}" placeholder="Contoh: AC di Ruang Tunggu Poli Umum Mati" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
+                <input type="text" name="title" value="{{ old('title') }}" placeholder="Contoh: AC di Ruang Tunggu Poli Umum Mati" class="admin-input" required>
             </div>
 
             <div class="md:col-span-2">
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi <span class="text-red-500">*</span></label>
-                <textarea name="description" rows="5" placeholder="Jelaskan kronologi pengaduan secara lengkap." class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>{{ old('description') }}</textarea>
+                <textarea name="description" rows="5" placeholder="Jelaskan kronologi pengaduan secara lengkap." class="admin-input" required>{{ old('description') }}</textarea>
             </div>
 
             <div class="md:col-span-2">
@@ -94,11 +94,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Pelapor <span class="text-red-500">*</span></label>
-                    <input type="text" name="reporter_name" value="{{ old('reporter_name') }}" placeholder="Nama lengkap pelapor" class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
+                    <input type="text" name="reporter_name" value="{{ old('reporter_name') }}" placeholder="Nama lengkap pelapor" class="admin-input w-full" required>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Nomor HP <span class="text-red-500">*</span></label>
-                    <input type="text" name="reporter_phone" value="{{ old('reporter_phone') }}" placeholder="Nomor WhatsApp" class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
+                    <input type="text" name="reporter_phone" value="{{ old('reporter_phone') }}" placeholder="Nomor WhatsApp" class="admin-input w-full" required>
                 </div>
             </div>
         </div>
@@ -107,7 +107,7 @@
             <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg text-sm px-8 py-3 transition-colors shadow-sm">
                 <i class="fa-solid fa-paper-plane mr-1"></i> Simpan Pengaduan
             </button>
-            <a href="{{ route('admin.tickets.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg text-sm px-8 py-3 transition-colors">
+            <a href="{{ route('admin.tickets.index') }}" class="admin-btn admin-btn-ghost">
                 Batal
             </a>
         </div>

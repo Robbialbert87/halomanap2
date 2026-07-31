@@ -218,6 +218,130 @@
             border-radius: .55rem;
             font-size: .6875rem;
         }
+
+        /* === Content area: kartu, tabel, form, tombol === */
+        .admin-card {
+            background: #fff;
+            border: 1px solid rgba(226, 232, 240, .7);
+            border-radius: 1.25rem;
+            box-shadow: 0 20px 40px -15px rgba(15, 23, 42, .06);
+        }
+
+        .admin-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        /* Tabel: header seragam + baris rapi */
+        .admin-table { border-collapse: separate; border-spacing: 0; }
+
+        .admin-table thead tr {
+            background: #f8fafc;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            font-size: .6875rem;
+            font-weight: 600;
+        }
+
+        .admin-table thead th {
+            padding: .875rem 1rem;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .admin-table tbody td {
+            padding: .875rem 1rem;
+            font-size: .8125rem;
+            vertical-align: middle;
+        }
+
+        .admin-table tbody tr {
+            transition: background-color .18s var(--admin-ease);
+        }
+
+        .admin-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Input & select seragam */
+        .admin-input {
+            width: 100%;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: .75rem;
+            padding: .625rem .875rem;
+            font-size: .8125rem;
+            color: #0f172a;
+            transition: border-color .22s var(--admin-ease), box-shadow .22s var(--admin-ease);
+        }
+
+        .admin-input::placeholder { color: #94a3b8; }
+
+        .admin-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+        }
+
+        /* Tombol seragam */
+        .admin-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            border-radius: .75rem;
+            padding: .625rem 1.125rem;
+            font-size: .8125rem;
+            font-weight: 600;
+            line-height: 1;
+            transition: all .22s var(--admin-ease);
+        }
+
+        .admin-btn:active { transform: scale(.97); }
+
+        .admin-btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+            box-shadow: 0 10px 22px -12px rgba(37, 99, 235, .55);
+        }
+
+        .admin-btn-primary:hover { filter: brightness(1.05); box-shadow: 0 14px 26px -12px rgba(37, 99, 235, .6); }
+
+        .admin-btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+            box-shadow: 0 10px 22px -12px rgba(220, 38, 38, .5);
+        }
+
+        .admin-btn-danger:hover { filter: brightness(1.05); box-shadow: 0 14px 26px -12px rgba(220, 38, 38, .55); }
+
+        .admin-btn-ghost {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .admin-btn-ghost:hover { background: #f8fafc; border-color: #cbd5e1; color: #0f172a; }
+
+        /* Empty state */
+        .admin-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: .5rem;
+            padding: 3rem 1rem;
+            text-align: center;
+            color: #94a3b8;
+        }
+
+        .admin-empty i { font-size: 2.25rem; color: #cbd5e1; }
+        .admin-empty p { font-size: .875rem; font-weight: 500; color: #64748b; }
+        .admin-empty span { font-size: .75rem; color: #94a3b8; }
     </style>
     @stack('styles')
 </head>

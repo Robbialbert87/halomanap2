@@ -123,24 +123,24 @@
         <div>
           <label class="block text-sm font-semibold text-gray-700 mb-2">API URL</label>
           <input type="url" name="api_url" value="{{ old('api_url', $wahaConfig['api_url'] ?? '') }}"
-                 class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                 class="admin-input"
                  placeholder="https://waha.systemwebsite.my.id">
         </div>
         <div>
           <label class="block text-sm font-semibold text-gray-700 mb-2">API Key</label>
           <input type="text" name="api_key" value="{{ old('api_key', $wahaConfig['api_key'] ?? '') }}"
-                 class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                 class="admin-input"
                  placeholder="API Key">
         </div>
         <div>
           <label class="block text-sm font-semibold text-gray-700 mb-2">Session Name</label>
           <input type="text" name="session" value="{{ old('session', $wahaConfig['session'] ?? '') }}"
-                 class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                 class="admin-input"
                  placeholder="default">
         </div>
         <div class="flex items-center justify-end gap-3 pt-2">
-          <a href="{{ route('admin.whatsapp.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg text-sm px-4 py-2.5 transition-colors">Batal</a>
-          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-4 py-2.5 transition-colors">Simpan</button>
+          <a href="{{ route('admin.whatsapp.index') }}" class="admin-btn admin-btn-ghost">Batal</a>
+          <button type="submit" class="admin-btn admin-btn-primary">Simpan</button>
         </div>
       </form>
     </div>

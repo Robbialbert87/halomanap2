@@ -1,5 +1,5 @@
 <div class="block md:hidden mb-4" id="mobile-ticket-list">
-    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-white/30 divide-y divide-gray-100" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+    <div class="admin-card overflow-hidden divide-y divide-gray-100">
     @forelse($tickets as $ticket)
     @php
         $statusStyle = $statusMap[$ticket->status] ?? ['label' => $ticket->status, 'class' => 'bg-gray-100 text-gray-700'];

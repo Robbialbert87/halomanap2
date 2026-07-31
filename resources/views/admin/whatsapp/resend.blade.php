@@ -23,7 +23,7 @@
     </div>
 @endif
 
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+<div class="admin-card overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
         <h2 class="font-semibold text-gray-800 flex items-center gap-2">
             <i class="fa-solid fa-clock-rotate-left text-orange-500"></i>

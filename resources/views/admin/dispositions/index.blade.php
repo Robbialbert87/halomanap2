@@ -35,19 +35,19 @@
 
 {{-- Statistik Cards (di-mobile juga ditampilkan) --}}
 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-6">
-    <div class="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+    <div class="admin-card p-3 md:p-4">
         <p class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-wide">Total</p>
         <p class="text-lg md:text-2xl font-bold text-gray-800 mt-0.5">{{ $total }}</p>
     </div>
-    <div class="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+    <div class="admin-card p-3 md:p-4">
         <p class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-wide">Menunggu</p>
         <p class="text-lg md:text-2xl font-bold text-yellow-600 mt-0.5">{{ $menunggu }}</p>
     </div>
-    <div class="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+    <div class="admin-card p-3 md:p-4">
         <p class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-wide">Diproses</p>
         <p class="text-lg md:text-2xl font-bold text-indigo-600 mt-0.5">{{ $proses }}</p>
     </div>
-    <div class="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+    <div class="admin-card p-3 md:p-4">
         <p class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-wide">Terlambat</p>
         <p class="text-lg md:text-2xl font-bold {{ $terlambat > 0 ? 'text-red-600' : 'text-gray-800' }} mt-0.5">{{ $terlambat }}</p>
     </div>
@@ -65,10 +65,10 @@
         <i id="mobile-filter-icon" class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300 text-xs"></i>
     </button>
 
-    <div id="filter-container" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 mb-3" style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 100%);">
+    <div id="filter-container" class="admin-card p-3 mb-3">
     <form method="GET" class="flex flex-col md:flex-row gap-2.5">
         <div class="flex-1">
-            <select name="status" class="w-full bg-white/70 border border-gray-200 text-gray-900 text-[13px] rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2.5">
+            <select name="status" class="admin-input text-[13px]">
                 <option value="">Semua Status</option>
                 @foreach($statuses as $s)
                     <option value="{{ $s }}" {{ request('status') == $s ? 'selected' : '' }}>{{ ucwords(str_replace('_', ' ', $s)) }}</option>
@@ -76,7 +76,7 @@
             </select>
         </div>
         <div class="flex-1">
-            <select name="unit_id" class="w-full bg-white/70 border border-gray-200 text-gray-900 text-[13px] rounded-xl focus:ring-blue-500 focus:border-blue-500 p-2.5">
+            <select name="unit_id" class="admin-input text-[13px]">
                 <option value="">Semua Unit</option>
                 @foreach($units as $unit)
                     <option value="{{ $unit->id }}" {{ request('unit_id') == $unit->id ? 'selected' : '' }}>{{ $unit->nama }}</option>
@@ -84,10 +84,10 @@
             </select>
         </div>
         <div class="flex gap-2">
-            <button type="submit" class="flex-1 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all shadow-sm shadow-blue-200/50 active:scale-[0.98]">
+            <button type="submit" class="admin-btn admin-btn-primary flex-1">
                 <i class="fa-solid fa-filter mr-1 text-xs"></i> Filter
             </button>
-            <a href="{{ route('admin.dispositions.index') }}" class="flex-1 bg-gradient-to-br from-gray-100 to-white border border-gray-200 hover:from-gray-200 hover:to-gray-100 text-gray-700 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all active:scale-[0.98] text-center">
+            <a href="{{ route('admin.dispositions.index') }}" class="admin-btn admin-btn-ghost flex-1 text-center">
                 Reset
             </a>
         </div>
@@ -96,11 +96,11 @@
 </div>
 
 {{-- Desktop Filter --}}
-<div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+<div class="hidden md:block admin-card p-4 mb-6">
     <form method="GET" class="flex flex-wrap items-end gap-3">
         <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">Status</label>
-            <select name="status" class="w-44 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
+            <select name="status" class="admin-input w-44">
                 <option value="">Semua</option>
                 @foreach($statuses as $s)
                     <option value="{{ $s }}" {{ request('status') == $s ? 'selected' : '' }}>{{ ucwords(str_replace('_', ' ', $s)) }}</option>
@@ -109,21 +109,21 @@
         </div>
         <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">Unit</label>
-            <select name="unit_id" class="w-56 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
+            <select name="unit_id" class="admin-input w-56">
                 <option value="">Semua</option>
                 @foreach($units as $unit)
                     <option value="{{ $unit->id }}" {{ request('unit_id') == $unit->id ? 'selected' : '' }}>{{ $unit->nama }}</option>
                 @endforeach
             </select>
         </div>
-        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg"><i class="fa-solid fa-filter mr-1"></i> Filter</button>
-        <a href="{{ route('admin.dispositions.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg"><i class="fa-solid fa-rotate-right mr-1"></i> Reset</a>
+        <button type="submit" class="admin-btn admin-btn-primary text-sm"><i class="fa-solid fa-filter mr-1"></i> Filter</button>
+        <a href="{{ route('admin.dispositions.index') }}" class="admin-btn admin-btn-ghost text-sm"><i class="fa-solid fa-rotate-right mr-1"></i> Reset</a>
     </form>
 </div>
 
 {{-- Mobile: Disposition List --}}
 <div class="block md:hidden mb-4">
-    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-white/30 divide-y divide-gray-100" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+    <div class="admin-card overflow-hidden divide-y divide-gray-100">
     @forelse($workflows as $wf)
     @php
         $isOverdue = $wf->due_at && $wf->due_at->isPast() && !in_array($wf->status, ['selesai','ditutup','menunggu_verifikasi']);
@@ -159,21 +159,21 @@
 </div>
 
 {{-- Table (Desktop) --}}
-<div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-            <thead>
-                <tr class="bg-gray-50 text-left text-gray-500 font-semibold text-xs uppercase tracking-wider">
-                    <th class="px-4 py-3">Tiket</th>
-                    <th class="px-4 py-3">Judul</th>
-                    <th class="px-4 py-3">Unit</th>
-                    <th class="px-4 py-3">Penerima</th>
-                    <th class="px-4 py-3">Status</th>
-                    <th class="px-4 py-3">Tenggat</th>
-                    <th class="px-4 py-3">Tgl</th>
-                    <th class="px-4 py-3"></th>
-                </tr>
-            </thead>
+<div class="hidden md:block admin-card overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="admin-table w-full text-sm">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-3">Tiket</th>
+                        <th class="px-4 py-3">Judul</th>
+                        <th class="px-4 py-3">Unit</th>
+                        <th class="px-4 py-3">Penerima</th>
+                        <th class="px-4 py-3">Status</th>
+                        <th class="px-4 py-3">Tenggat</th>
+                        <th class="px-4 py-3">Tgl</th>
+                        <th class="px-4 py-3"></th>
+                    </tr>
+                </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse($workflows as $wf)
                 @php

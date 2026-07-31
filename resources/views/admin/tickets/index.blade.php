@@ -54,7 +54,7 @@ $typeMap = [
             <span>Pengaduan</span>
         </div>
     </div>
-    <a href="{{ route('admin.tickets.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap shadow-sm">
+    <a href="{{ route('admin.tickets.create') }}" class="admin-btn admin-btn-primary whitespace-nowrap">
         <i class="fa-solid fa-plus"></i> Tambah Pengaduan
     </a>
 </div>
@@ -72,12 +72,12 @@ $typeMap = [
     </button>
 
     {{-- Filter & Search --}}
-    <div id="filter-container" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 mb-4" style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 100%);">
+    <div id="filter-container" class="admin-card p-3 mb-3">
     <form action="{{ route('admin.tickets.index') }}" method="GET" class="flex flex-col md:flex-row gap-2.5">
         <div class="flex-1 relative">
             <input type="text" name="search" value="{{ request('search') }}"
                 placeholder="Cari no. tiket, judul, atau nama pelapor..." autocomplete="off"
-                class="w-full bg-white/70 md:bg-gray-50 border border-gray-200 md:border-gray-300 text-gray-900 text-[13px] rounded-xl md:rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 md:p-2.5 pl-9"
+                class="admin-input text-[13px] pl-9"
                 id="mobile-search-input">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
             @if(request('search'))
@@ -87,7 +87,7 @@ $typeMap = [
             @endif
         </div>
         <div class="md:min-w-[140px]">
-            <select name="status" class="w-full bg-white/70 md:bg-gray-50 border border-gray-200 md:border-gray-300 text-gray-900 text-[13px] rounded-xl md:rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 md:p-2.5">
+            <select name="status" class="admin-input text-[13px]">
                 <option value="">Semua Status</option>
                 <option value="NEW" {{ request('status') == 'NEW' ? 'selected' : '' }}>Baru</option>
                 <option value="TERVERIFIKASI" {{ request('status') == 'TERVERIFIKASI' ? 'selected' : '' }}>Terverifikasi</option>
@@ -97,7 +97,7 @@ $typeMap = [
             </select>
         </div>
         <div class="md:min-w-[130px]">
-            <select name="type" class="w-full bg-white/70 md:bg-gray-50 border border-gray-200 md:border-gray-300 text-gray-900 text-[13px] rounded-xl md:rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 md:p-2.5">
+            <select name="type" class="admin-input text-[13px]">
                 <option value="">Semua Jenis</option>
                 <option value="Pengaduan" {{ request('type') == 'Pengaduan' ? 'selected' : '' }}>Pengaduan</option>
                 <option value="Survei" {{ request('type') == 'Survei' ? 'selected' : '' }}>Survei</option>
@@ -106,7 +106,7 @@ $typeMap = [
             </select>
         </div>
         <div class="md:min-w-[180px]">
-            <select name="unit_id" class="w-full bg-white/70 md:bg-gray-50 border border-gray-200 md:border-gray-300 text-gray-900 text-[13px] rounded-xl md:rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 md:p-2.5">
+            <select name="unit_id" class="admin-input text-[13px]">
                 <option value="">Semua Unit</option>
                 @foreach($units as $unit)
                     <option value="{{ $unit->id }}" {{ request('unit_id') == $unit->id ? 'selected' : '' }}>{{ $unit->nama }}</option>
@@ -114,10 +114,10 @@ $typeMap = [
             </select>
         </div>
         <div class="flex gap-2">
-            <button type="submit" class="flex-1 md:flex-none bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-4 py-2.5 md:py-2.5 rounded-xl md:rounded-lg text-[13px] font-semibold transition-all shadow-sm shadow-blue-200/50 active:scale-[0.98]">
+            <button type="submit" class="admin-btn admin-btn-primary flex-1 md:flex-none">
                 <i class="fa-solid fa-search mr-1 text-xs"></i> Filter
             </button>
-            <a href="{{ route('admin.tickets.index') }}" class="flex-1 md:flex-none bg-gradient-to-br from-gray-100 to-white border border-gray-200 hover:from-gray-200 hover:to-gray-100 text-gray-700 px-4 py-2.5 md:py-2.5 rounded-xl md:rounded-lg text-[13px] font-semibold transition-all active:scale-[0.98] text-center">
+            <a href="{{ route('admin.tickets.index') }}" class="admin-btn admin-btn-ghost flex-1 md:flex-none text-center">
                 Reset
             </a>
         </div>
@@ -127,7 +127,7 @@ $typeMap = [
 
 {{-- Mobile: Ticket Cards (Gmail Inbox style) --}}
 <div class="block md:hidden mb-4" id="mobile-ticket-list">
-    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-white/30 divide-y divide-gray-100" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+    <div class="admin-card overflow-hidden divide-y divide-gray-100">
     @forelse($tickets as $ticket)
     @php
         $statusStyle = $statusMap[$ticket->status] ?? ['label' => $ticket->status, 'class' => 'bg-gray-100 text-gray-700'];
@@ -178,10 +178,10 @@ $typeMap = [
 </div>
 
 {{-- Table (Desktop) --}}
-<div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+<div class="hidden md:block admin-card overflow-hidden">
     <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm text-gray-600">
-            <thead class="bg-gray-50 text-gray-700 font-semibold border-b border-gray-100 uppercase text-xs">
+        <table class="admin-table w-full text-left text-sm text-gray-600">
+            <thead>
                 <tr>
                     <th class="px-4 py-4">No. Tiket</th>
                     <th class="px-4 py-4">Pelapor</th>
@@ -294,7 +294,7 @@ $typeMap = [
                 <form id="delete-form" method="POST" class="flex-1">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="w-full bg-gradient-to-br from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white font-semibold rounded-xl py-2.5 md:py-2 text-[12px] transition-all shadow-sm shadow-red-200/50 active:scale-[0.98]">
+                    <button type="submit" class="admin-btn admin-btn-danger w-full text-[12px]">
                         <i class="fa-solid fa-trash mr-1"></i> Ya, Hapus
                     </button>
                 </form>

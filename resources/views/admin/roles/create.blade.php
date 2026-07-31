@@ -14,12 +14,12 @@
             <span>Tambah</span>
         </div>
     </div>
-    <a href="{{ route('admin.roles.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+    <a href="{{ route('admin.roles.index') }}" class="admin-btn admin-btn-ghost">
         <i class="fa-solid fa-arrow-left"></i> Kembali
     </a>
 </div>
 
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+<div class="admin-card overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
         <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
             <i class="fa-solid fa-shield-halved text-blue-600 text-sm"></i>
@@ -94,10 +94,10 @@
             </div>
 
             <div class="flex items-center gap-3 pt-6 border-t border-gray-100">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+                <button type="submit" class="admin-btn admin-btn-primary">
                     <i class="fa-solid fa-floppy-disk"></i> Simpan Role
                 </button>
-                <a href="{{ route('admin.roles.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-6 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                <a href="{{ route('admin.roles.index') }}" class="admin-btn admin-btn-ghost">
                     Batal
                 </a>
             </div>

@@ -1,5 +1,5 @@
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+<div class="admin-card overflow-hidden">
+    <div class="admin-card-head">
         <h2 class="font-semibold text-gray-800 flex items-center gap-2">
             <i class="fa-solid fa-sliders text-gray-500"></i> Konfigurasi WAHA
         </h2>
@@ -9,17 +9,17 @@
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-2">Base URL WAHA</label>
             <input type="url" name="api_url" value="{{ old('api_url', $wahaConfig['api_url'] ?? 'http://localhost:3000') }}"
-                   class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                   class="admin-input">
         </div>
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-2">API Key</label>
             <input type="password" name="api_key" value="{{ old('api_key', $wahaConfig['api_key'] ?? '') }}"
-                   class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                   class="admin-input">
         </div>
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-2">Session Default Kirim</label>
             <select name="session"
-                    class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                    class="admin-input">
                 <option value="">-- Pilih Session --</option>
                 @foreach($sessions as $s)
                 <option value="{{ $s->session_id }}" {{ old('session', $wahaConfig['session'] ?? '') == $s->session_id ? 'selected' : '' }}>
@@ -32,17 +32,17 @@
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-2">Webhook URL (opsional)</label>
             <input type="url" name="webhook_url" value="{{ old('webhook_url', $wahaConfig['webhook_url'] ?? '') }}"
-                   class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                   class="admin-input">
             <p class="text-xs text-gray-400 mt-1">Terima notifikasi status pesan.</p>
         </div>
-        <button type="submit" class="w-full bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg text-sm px-4 py-2.5 transition-colors">
+        <button type="submit" class="admin-btn admin-btn-primary w-full">
             <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Konfigurasi
         </button>
     </form>
 </div>
 
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+<div class="admin-card overflow-hidden">
+    <div class="admin-card-head">
         <h2 class="font-semibold text-gray-800 flex items-center gap-2">
             <i class="fa-solid fa-paper-plane text-gray-500"></i> Uji Kirim
         </h2>
@@ -52,20 +52,20 @@
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-2">Nomor Tujuan</label>
             <input type="text" name="phone" required placeholder="628xxx"
-                   class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                   class="admin-input">
         </div>
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-2">Pesan</label>
             <textarea name="message" rows="3" required
-                      class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">Test dari Halo MANAP</textarea>
+                      class="admin-input">Test dari Halo MANAP</textarea>
         </div>
-        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-4 py-2.5 transition-colors">
+        <button type="submit" class="admin-btn admin-btn-primary w-full">
             <i class="fa-solid fa-paper-plane mr-1"></i> Kirim Test
         </button>
     </form>
 </div>
 
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+<div class="admin-card p-6">
     <a href="{{ route('admin.whatsapp.resend') }}" class="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition-colors">
         <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center">
             <i class="fa-solid fa-clock-rotate-left"></i>

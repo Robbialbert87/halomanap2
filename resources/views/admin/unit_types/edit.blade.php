@@ -14,12 +14,12 @@
             <span>Edit</span>
         </div>
     </div>
-    <a href="{{ route('admin.unit-types.index') }}" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+    <a href="{{ route('admin.unit-types.index') }}" class="admin-btn admin-btn-ghost">
         Kembali
     </a>
 </div>
 
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden max-w-2xl">
+<div class="admin-card overflow-hidden max-w-2xl">
     <form action="{{ route('admin.unit-types.update', $unitType->id) }}" method="POST" class="p-6">
         @csrf
         @method('PUT')
@@ -27,7 +27,7 @@
         <div class="mb-5">
             <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Nama Jenis Unit <span class="text-red-500">*</span></label>
             <input type="text" name="name" id="name" value="{{ old('name', $unitType->name) }}"
-                class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                class="admin-input"
                 required placeholder="Contoh: Instalasi">
             @error('name')
                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
@@ -40,7 +40,7 @@
                 <input type="color" name="color" id="color" value="{{ old('color', $unitType->color ?? '#3b82f6') }}"
                     class="w-10 h-10 rounded border border-gray-300 cursor-pointer">
                 <input type="text" name="color_preview" value="{{ old('color', $unitType->color ?? '#3b82f6') }}"
-                    class="w-32 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 font-mono"
+                    class="admin-input w-32 font-mono"
                     placeholder="#3b82f6" oninput="document.getElementById('color').value=this.value">
             </div>
             @error('color')
@@ -58,7 +58,7 @@
         </div>
 
         <div class="flex justify-end">
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-6 py-2.5 transition-colors">
+            <button type="submit" class="admin-btn admin-btn-primary">
                 Perbarui Jenis Unit
             </button>
         </div>

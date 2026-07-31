@@ -26,22 +26,22 @@
 </div>
 
 {{-- FILTER FORM --}}
-<div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 p-4 md:p-6 mb-4 md:mb-6" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+<div class="admin-card p-4 md:p-6 mb-4 md:mb-6">
     <form method="GET" action="{{ route('admin.laporan') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
         <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">Dari Tanggal</label>
             <input type="date" name="start_date" value="{{ request('start_date') }}"
-                class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                class="admin-input">
         </div>
         <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">Sampai Tanggal</label>
             <input type="date" name="end_date" value="{{ request('end_date') }}"
-                class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                class="admin-input">
         </div>
         <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">Unit</label>
             <select name="unit_id"
-                class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                class="admin-input">
                 <option value="">Semua Unit</option>
                 @foreach($units as $unit)
                     <option value="{{ $unit->id }}" {{ request('unit_id') == $unit->id ? 'selected' : '' }}>{{ $unit->nama }}</option>
@@ -51,7 +51,7 @@
         <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">Kategori</label>
             <select name="category_id"
-                class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                class="admin-input">
                 <option value="">Semua Kategori</option>
                 @foreach($categories as $cat)
                     <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
@@ -61,7 +61,7 @@
         <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">Status</label>
             <select name="status"
-                class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                class="admin-input">
                 <option value="">Semua Status</option>
                 @foreach($statuses as $st)
                     <option value="{{ $st }}" {{ request('status') === $st ? 'selected' : '' }}>{{ $st }}</option>
@@ -72,16 +72,16 @@
             <div class="flex flex-col md:flex-row gap-2">
                 <div class="flex gap-2 w-full md:w-auto">
                     <button type="submit"
-                        class="flex-1 md:flex-none bg-gradient-to-br from-blue-500 to-blue-700 text-white font-semibold rounded-xl px-5 py-2.5 text-sm shadow-md shadow-blue-200/50 hover:shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-1.5">
+                        class="admin-btn admin-btn-primary flex-1 md:flex-none">
                         <i class="fa-solid fa-filter"></i> Filter
                     </button>
                     <a href="{{ route('admin.laporan') }}"
-                        class="flex-1 md:flex-none bg-white/70 border border-gray-200 text-gray-600 font-medium rounded-xl px-5 py-2.5 text-sm hover:bg-gray-50 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5">
+                        class="admin-btn admin-btn-ghost flex-1 md:flex-none">
                         <i class="fa-solid fa-rotate-right"></i> Reset
                     </a>
                 </div>
                 <a href="{{ route('admin.laporan.export-pdf', request()->query()) }}"
-                    class="w-full md:w-auto bg-gradient-to-br from-red-500 to-red-700 text-white font-semibold rounded-xl px-5 py-2.5 text-sm shadow-md shadow-red-200/50 hover:shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 md:ml-auto">
+                    class="admin-btn admin-btn-danger w-full md:w-auto md:ml-auto">
                     <i class="fa-solid fa-file-pdf"></i> Export PDF
                 </a>
             </div>
@@ -131,8 +131,8 @@
 </div>
 
 {{-- TABEL DATA --}}
-<div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 overflow-hidden" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
-    <div class="px-4 md:px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+<div class="admin-card overflow-hidden">
+    <div class="admin-card-head">
         <h2 class="text-sm md:text-base font-bold text-gray-800 font-heading flex items-center gap-2">
             <span class="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm">
                 <i class="fa-solid fa-list text-white text-xs"></i>
@@ -142,16 +142,16 @@
     </div>
 
     @if($tickets->isEmpty())
-        <div class="text-center py-12 text-gray-400">
-            <i class="fa-solid fa-inbox text-4xl mb-3"></i>
-            <p class="text-sm font-medium">Tidak ada data pengaduan</p>
-            <p class="text-xs mt-1">Coba ubah filter atau periode tanggal</p>
+        <div class="admin-empty">
+            <i class="fa-solid fa-inbox"></i>
+            <p>Tidak ada data pengaduan</p>
+            <span>Coba ubah filter atau periode tanggal</span>
         </div>
     @else
     <div class="overflow-x-auto">
-        <table class="w-full text-sm">
+        <table class="admin-table w-full text-sm">
             <thead>
-                <tr class="bg-gray-50/80 text-gray-500 text-[11px] md:text-xs uppercase tracking-wider font-semibold">
+                <tr>
                     <th class="text-left px-4 md:px-6 py-3">No Tiket</th>
                     <th class="text-left px-4 md:px-6 py-3">Judul</th>
                     <th class="text-left px-4 md:px-6 py-3 hidden md:table-cell">Pelapor</th>

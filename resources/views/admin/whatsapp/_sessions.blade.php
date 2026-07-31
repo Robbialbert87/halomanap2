@@ -1,5 +1,5 @@
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+<div class="admin-card overflow-hidden">
+    <div class="admin-card-head">
         <h2 class="font-semibold text-gray-800 flex items-center gap-2">
             <i class="fa-solid fa-qrcode text-gray-500"></i> Session WhatsApp
         </h2>
@@ -10,7 +10,7 @@
                     <i class="fa-solid fa-rotate mr-1"></i> Sync dari Server
                 </button>
             </form>
-            <button onclick="this.parentElement.parentElement.nextElementSibling.classList.toggle('hidden')" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-4 py-2.5 transition-colors">
+            <button onclick="this.parentElement.parentElement.nextElementSibling.classList.toggle('hidden')" class="admin-btn admin-btn-primary">
                 <i class="fa-solid fa-plus mr-1"></i> Tambah Session
             </button>
         </div>
@@ -21,18 +21,18 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Session</label>
-                    <input type="text" name="session_id" required class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                    <input type="text" name="session_id" required class="admin-input">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nomor Telepon</label>
-                    <input type="text" name="phone_number" required placeholder="628xxx" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                    <input type="text" name="phone_number" required placeholder="628xxx" class="admin-input">
                 </div>
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Webhook URL (opsional)</label>
-                <input type="url" name="webhook_url" placeholder="https://example.com/webhook" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                <input type="url" name="webhook_url" placeholder="https://example.com/webhook" class="admin-input">
             </div>
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-4 py-2.5 transition-colors">
+            <button type="submit" class="admin-btn admin-btn-primary">
                 <i class="fa-solid fa-play mr-1"></i> Buat & Mulai Session
             </button>
         </form>
@@ -47,9 +47,9 @@
         </div>
     @else
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="admin-table w-full text-sm">
                 <thead>
-                    <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+                    <tr>
                         <th class="text-left px-4 py-3">Session</th>
                         <th class="text-left px-4 py-3">Nomor</th>
                         <th class="text-left px-4 py-3">Status</th>

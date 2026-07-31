@@ -35,7 +35,7 @@
 
     {{-- PROFIL CARD --}}
     <div class="lg:col-span-1">
-        <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 p-6 text-center" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+        <div class="admin-card p-6 text-center">
             <img src="https://ui-avatars.com/api/?name={{ urlencode($user->nama) }}&background=3b82f6&color=fff&size=120" alt="Avatar" class="w-28 h-28 rounded-full mx-auto mb-4 shadow-md border-4 border-white">
             <h2 class="text-xl font-bold text-gray-800">{{ $user->nama }}</h2>
             <p class="text-gray-500 text-sm mt-0.5">{{ $user->nip }}</p>
@@ -57,7 +57,7 @@
 
     {{-- GANTI PASSWORD --}}
     <div class="lg:col-span-2">
-        <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 p-6" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
+        <div class="admin-card p-6">
             <h3 class="text-lg font-bold text-gray-800 mb-1">Ganti Password</h3>
             <p class="text-sm text-gray-500 mb-5">Pastikan password baru minimal 8 karakter dan tidak mudah ditebak.</p>
 
@@ -68,7 +68,7 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">Password Saat Ini</label>
                     <div class="relative">
                         <input type="password" name="current_password" required
-                            class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5 pr-10">
+                            class="admin-input pr-10">
                         <button type="button" onclick="togglePassword('current_password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                             <i class="fa-regular fa-eye"></i>
                         </button>
@@ -79,7 +79,7 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">Password Baru</label>
                     <div class="relative">
                         <input type="password" name="new_password" required
-                            class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5 pr-10">
+                            class="admin-input pr-10">
                         <button type="button" onclick="togglePassword('new_password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                             <i class="fa-regular fa-eye"></i>
                         </button>
@@ -90,7 +90,7 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">Konfirmasi Password Baru</label>
                     <div class="relative">
                         <input type="password" name="new_password_confirmation" required
-                            class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-2.5 pr-10">
+                            class="admin-input pr-10">
                         <button type="button" onclick="togglePassword('new_password_confirmation', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                             <i class="fa-regular fa-eye"></i>
                         </button>
@@ -98,7 +98,7 @@
                 </div>
 
                 <button type="submit"
-                    class="bg-gradient-to-br from-blue-500 to-blue-700 text-white font-semibold rounded-xl px-6 py-2.5 text-sm shadow-md shadow-blue-200/50 hover:shadow-lg active:scale-[0.98] transition-all flex items-center gap-2">
+                    class="admin-btn admin-btn-primary gap-2">
                     <i class="fa-solid fa-key"></i> Simpan Password
                 </button>
             </form>
