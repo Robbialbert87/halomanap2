@@ -1,39 +1,40 @@
-<header class="bg-white h-16 shadow-sm flex items-center justify-between px-4 lg:px-8 z-30 sticky top-0 w-full border-b border-gray-100">
+<header class="sticky top-0 z-30 w-full px-4 lg:px-8 pt-4">
+    <div class="admin-glass h-16 rounded-[1.5rem] flex items-center justify-between px-4 lg:px-5">
     <!-- Left: Hamburger Menu (Mobile) & Header Title -->
     <div class="flex items-center gap-4">
-        <button onclick="toggleSidebar()" class="lg:hidden text-gray-500 hover:text-gray-700 focus:outline-none">
+        <button onclick="toggleSidebar()" class="lg:hidden w-10 h-10 rounded-2xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 focus:outline-none transition-all active:scale-[0.96]">
             <i class="fa-solid fa-bars text-xl"></i>
         </button>
         <!-- Center Logo (Visible only on desktop/tablet usually) -->
         <div class="hidden md:flex items-center gap-2">
             <picture>
                 <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
-                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
+                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-9 h-9 object-contain">
             </picture>
             <div class="flex flex-col">
-                <span class="font-bold text-lg text-blue-800 leading-tight">Halo MANAP</span>
-                <span class="text-[10px] text-gray-500 leading-tight">Pusat Pengaduan, Aspirasi dan Informasi Pelayanan<br>RSUD H. Abdul Manap Kota Jambi</span>
+                <span class="font-heading font-bold text-lg tracking-tight text-slate-900 leading-tight">Halo MANAP</span>
+                <span class="text-[10px] text-slate-500 leading-tight">Pusat Pengaduan, Aspirasi dan Informasi Pelayanan<br>RSUD H. Abdul Manap Kota Jambi</span>
             </div>
         </div>
     </div>
 
     <!-- Right: Notifications & Profile -->
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-3">
         <!-- Notifications -->
         <div class="relative" id="notifDropdown">
             <button onclick="toggleNotifMenu()"
-                class="relative text-gray-500 hover:text-blue-600 transition-colors">
-                <i class="fa-regular fa-bell text-xl"></i>
+                class="relative w-10 h-10 rounded-2xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-all active:scale-[0.96]">
+                <i class="fa-regular fa-bell text-lg"></i>
                 @if($unreadCount > 0)
-                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border border-white">{{ $unreadCount > 99 ? '99+' : $unreadCount }}</span>
+                <span class="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold min-w-4 h-4 px-1 rounded-full flex items-center justify-center border-2 border-white">{{ $unreadCount > 99 ? '99+' : $unreadCount }}</span>
                 @endif
             </button>
             <div id="notifMenu"
-                class="hidden absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-100 z-50">
-                <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-                    <p class="text-sm font-semibold text-gray-800">Notifikasi</p>
+                class="hidden absolute right-0 top-full mt-3 w-80 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_24px_70px_-35px_rgba(15,23,42,.55)] border border-white/70 z-50 overflow-hidden">
+                <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                    <p class="text-sm font-semibold text-slate-900">Notifikasi</p>
                     @if($unreadCount > 0)
-                    <span class="text-xs bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded-full">{{ $unreadCount }} baru</span>
+                    <span class="text-xs bg-blue-50 text-blue-700 font-semibold px-2 py-0.5 rounded-full border border-blue-100">{{ $unreadCount }} baru</span>
                     @endif
                 </div>
                 <div class="max-h-72 overflow-y-auto">
@@ -51,8 +52,8 @@
                         </div>
                         @endif
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-800 truncate">{{ $notif['title'] }}</p>
-                            <p class="text-xs text-gray-400 mt-0.5">
+                            <p class="text-sm font-medium text-slate-800 truncate">{{ $notif['title'] }}</p>
+                            <p class="text-xs text-slate-400 mt-0.5">
                                 <span class="font-medium text-blue-600">{{ $notif['ticket_number'] }}</span>
                                 @if($notif['category']) · {{ $notif['category'] }} @endif
                                 @if($notif['notif_type'] === 'selesai')
@@ -63,7 +64,7 @@
                         </div>
                     </a>
                     @empty
-                    <div class="px-4 py-8 text-center text-gray-400 text-sm">
+                    <div class="px-4 py-8 text-center text-slate-400 text-sm">
                         <i class="fa-regular fa-bell-slash text-2xl mb-2 block"></i>
                         Tidak ada notifikasi baru
                     </div>
@@ -79,26 +80,26 @@
         <!-- User Profile Dropdown -->
         <div class="relative" id="profileDropdown">
             <button onclick="toggleProfileMenu()"
-                class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 px-2 py-1.5 rounded-xl transition-colors">
+                class="flex items-center gap-3 cursor-pointer hover:bg-slate-50 px-2 py-1.5 rounded-2xl transition-all active:scale-[0.98]">
                 <div class="hidden md:block text-right">
-                    <p class="text-sm font-semibold text-gray-700 leading-tight">{{ auth()->user()?->nama }}</p>
-                    <p class="text-xs text-gray-400 leading-tight">{{ auth()->user()?->roles->first()?->name ?? 'Pegawai' }}</p>
+                    <p class="text-sm font-semibold text-slate-800 leading-tight">{{ auth()->user()?->nama }}</p>
+                    <p class="text-xs text-slate-400 leading-tight">{{ auth()->user()?->roles->first()?->name ?? 'Pegawai' }}</p>
                 </div>
                 <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()?->nama ?? 'User') }}&background=eff6ff&color=1e3a8a"
-                    alt="Profile" class="w-9 h-9 rounded-full border border-gray-200">
-                <i class="fa-solid fa-chevron-down text-gray-400 text-xs hidden md:block" id="profileChevron"></i>
+                    alt="Profile" class="w-9 h-9 rounded-xl border border-white shadow-sm ring-1 ring-slate-200">
+                <i class="fa-solid fa-chevron-down text-slate-400 text-xs hidden md:block" id="profileChevron"></i>
             </button>
 
             <!-- Dropdown Menu -->
             <div id="profileMenu"
-                class="hidden absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-1.5 z-50">
-                <div class="px-4 py-2.5 border-b border-gray-100">
-                    <p class="text-sm font-semibold text-gray-800">{{ auth()->user()?->nama }}</p>
-                    <p class="text-xs text-gray-400 truncate">{{ auth()->user()?->phone_number ?? auth()->user()?->email ?? '-' }}</p>
+                class="hidden absolute right-0 top-full mt-3 w-60 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_24px_70px_-35px_rgba(15,23,42,.55)] border border-white/70 py-1.5 z-50 overflow-hidden">
+                <div class="px-4 py-3 border-b border-slate-100">
+                    <p class="text-sm font-semibold text-slate-900">{{ auth()->user()?->nama }}</p>
+                    <p class="text-xs text-slate-400 truncate">{{ auth()->user()?->phone_number ?? auth()->user()?->email ?? '-' }}</p>
                 </div>
                 <a href="{{ route('admin.profil') }}"
-                    class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
-                    <i class="fa-solid fa-user-gear w-4 text-center text-gray-400"></i> Profil & Pengaturan
+                    class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 hover:bg-blue-50 hover:text-blue-700 transition-colors">
+                    <i class="fa-solid fa-user-gear w-4 text-center text-slate-400"></i> Profil & Pengaturan
                 </a>
                 <div class="border-t border-gray-100 mt-1 pt-1">
                     <form method="POST" action="{{ route('logout') }}">
@@ -112,6 +113,7 @@
             </div>
         </div>
     </div>
+</div>
 </header>
 
 <script>

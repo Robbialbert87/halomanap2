@@ -1,23 +1,26 @@
 <aside
-    class="fixed inset-y-0 left-0 bg-[#1e293b] w-64 text-white flex flex-col transition-transform duration-300 z-50 lg:translate-x-0 -translate-x-full"
+    class="fixed inset-y-0 left-0 w-64 text-white flex flex-col transition-transform duration-300 z-50 lg:translate-x-0 -translate-x-full bg-[#0f172a] border-r border-white/10 shadow-[24px_0_60px_-42px_rgba(15,23,42,.9)]"
     id="sidebar">
-    <div class="flex items-center justify-center h-16 border-b border-slate-700 px-4">
+    <div class="flex items-center h-20 border-b border-white/10 px-5">
         <div class="flex items-center gap-2">
             <picture>
                 <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
-                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo" class="h-8 w-auto">
+                <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo" class="h-9 w-auto drop-shadow-sm">
             </picture>
-            <span class="font-bold text-xl tracking-wide">Halo<span class="text-blue-400">MANAP</span></span>
+            <div class="leading-none">
+                <span class="font-heading font-bold text-lg tracking-tight">Halo<span class="text-blue-400">MANAP</span></span>
+                <p class="mt-1 text-[10px] text-slate-400 tracking-[0.18em] uppercase">Admin Console</p>
+            </div>
         </div>
     </div>
 
-    <div class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
+    <div class="mx-3 mt-3 px-3 py-3 rounded-2xl bg-white/[0.06] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,.08)] flex items-center gap-3">
         <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()?->nama ?? 'User') }}&background=3b82f6&color=fff"
-            alt="User" class="w-10 h-10 rounded-full">
+            alt="User" class="w-10 h-10 rounded-xl ring-1 ring-white/20">
         <div class="min-w-0 flex-1">
             <p class="text-sm font-semibold truncate">{{ auth()->user()?->nama }}</p>
-            <p class="text-xs text-green-400 flex items-center gap-1"><span
-                    class="w-2 h-2 rounded-full bg-green-400 inline-block"></span> Online</p>
+            <p class="text-[11px] text-emerald-300 flex items-center gap-1.5"><span
+                    class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block admin-breathe"></span> Online</p>
         </div>
     </div>
 
@@ -445,5 +448,5 @@
     </nav>
 </aside>
 
-<div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"
+<div id="sidebar-overlay" class="fixed inset-0 bg-slate-950/50 z-40 hidden lg:hidden"
     onclick="toggleSidebar()"></div>

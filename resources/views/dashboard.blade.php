@@ -58,15 +58,15 @@
     .card-surface {
         background-color: #ffffff;
         border: 1px solid rgba(226, 232, 240, 0.6);
-        border-radius: 1.5rem;
-        box-shadow: 0 20px 40px -20px rgba(15, 23, 42, 0.08);
+        border-radius: 2rem;
+        box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.06);
     }
     .card-surface:active { transform: scale(0.995); }
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 
-<div x-data="dashboardCounter()" x-init="init()" class="relative">
+<div x-data="dashboardCounter()" x-init="init()" class="relative max-w-[1400px] mx-auto">
 
     {{-- =========================================================== --}}
     {{-- HEADER — asymmetric: eyebrow + nama kiri, aksi kanan         --}}

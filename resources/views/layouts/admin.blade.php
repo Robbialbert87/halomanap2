@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="flex min-h-[100dvh] bg-[#F9FAFB] overflow-hidden">
+<div class="flex min-h-[100dvh] overflow-hidden bg-[#F8FAFC] text-slate-800">
     {{-- ========================================================================= --}}
     {{--                          DESKTOP SIDEBAR (md+)                            --}}
     {{-- ========================================================================= --}}
@@ -13,14 +13,14 @@
     {{-- ========================================================================= --}}
     {{--                         MOBILE SLIDE-OVER MENU (PayApp style)             --}}
     {{-- ========================================================================= --}}
-    <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] hidden lg:hidden" onclick="toggleMobileMenu()"></div>
-    <div id="mobile-menu" class="fixed top-4 bottom-4 left-4 w-64 bg-white/80 backdrop-blur-xl z-[60] transform -translate-x-[calc(100%+2rem)] transition-transform duration-300 overflow-y-auto shadow-2xl lg:hidden rounded-2xl border border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-slate-950/45 backdrop-blur-sm z-[60] hidden lg:hidden" onclick="toggleMobileMenu()"></div>
+    <div id="mobile-menu" class="fixed top-4 bottom-4 left-4 w-[17rem] admin-glass z-[60] transform -translate-x-[calc(100%+2rem)] transition-transform duration-300 overflow-y-auto shadow-2xl lg:hidden rounded-[1.75rem]">
         {{-- User Profile Card --}}
-        <div class="mx-3 mt-3 p-3 bg-gradient-to-br from-blue-50 to-white rounded-2xl border border-blue-100 flex items-center gap-2.5">
-            <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()?->nama ?? 'User') }}&background=3b82f6&color=fff" class="w-10 h-10 rounded-xl shadow-sm" alt="User">
+        <div class="mx-3 mt-3 p-3 bg-white/70 rounded-2xl border border-white/70 shadow-[0_18px_38px_-30px_rgba(15,23,42,.45)] flex items-center gap-2.5">
+            <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()?->nama ?? 'User') }}&background=2563eb&color=fff" class="w-10 h-10 rounded-xl shadow-sm" alt="User">
             <div class="flex-1 min-w-0">
-                <p class="font-bold text-gray-800 text-[13px] truncate">{{ auth()->user()?->nama ?? 'User' }}</p>
-                <p class="text-[10px] text-blue-500 font-medium">● {{ auth()->user()?->roles->first()?->name ?? 'User' }}</p>
+                <p class="font-bold text-slate-900 text-[13px] truncate">{{ auth()->user()?->nama ?? 'User' }}</p>
+                <p class="text-[10px] text-blue-600 font-semibold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 admin-breathe"></span>{{ auth()->user()?->roles->first()?->name ?? 'User' }}</p>
             </div>
         </div>
 
@@ -476,14 +476,14 @@
         </div>
 
         {{-- Main Content --}}
-        <main class="flex-1 overflow-y-auto p-4 lg:p-6 no-scrollbar pt-[72px] pb-20 md:pt-6 md:pb-6">
+        <main class="flex-1 overflow-y-auto no-scrollbar px-4 lg:px-8 pt-[72px] pb-24 md:pt-6 md:pb-8">
             @yield('admin_content')
         </main>
 
         {{-- ========================================================================= --}}
         {{--                          MOBILE BOTTOM NAV (< md) Detached Rounded Glossy    --}}
         {{-- ========================================================================= --}}
-        <nav class="md:hidden fixed bottom-3 left-3 right-3 bg-white/70 backdrop-blur-xl border border-white/30 rounded-2xl flex justify-around items-center px-2 pt-1.5 pb-2 z-40 shadow-[0_-4px_30px_rgba(0,0,0,0.08)]" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+        <nav class="md:hidden fixed bottom-3 left-3 right-3 admin-glass rounded-[1.4rem] flex justify-around items-center px-2 pt-1.5 pb-2 z-40">
             {{-- Dashboard (all roles) --}}
             <a href="/dashboard" class="flex flex-col items-center gap-0.5 w-12 {{ request()->is('dashboard') ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-500 transition-colors">
                 <i class="fa-solid fa-house text-lg"></i>
@@ -510,7 +510,7 @@
 
             {{-- FAB: Buat Pengaduan Baru --}}
             <div class="relative w-12 flex flex-col items-center">
-                <a href="{{ route('pengaduan.create') }}" class="absolute -top-7 w-11 h-11 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/40 border-[3px] border-white active:scale-90 transition-transform">
+                <a href="{{ route('pengaduan.create') }}" class="absolute -top-7 w-11 h-11 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 border-[3px] border-white active:scale-90 transition-transform">
                     <i class="fa-solid fa-plus text-lg"></i>
                 </a>
                 <span class="text-[8px] font-medium text-gray-400 mt-5 text-center leading-tight">Buat</span>

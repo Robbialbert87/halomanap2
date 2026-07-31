@@ -52,8 +52,12 @@
     </script>
     
     <style>
+        :root {
+            --admin-ease: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
         body {
-            background-color: #F9FAFB;
+            background-color: #F8FAFC;
             font-family: 'Geist', sans-serif;
         }
         h1, h2, h3, h4, h5, h6, .font-heading {
@@ -66,6 +70,96 @@
         .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
+        }
+
+        @keyframes admin-rise {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes admin-breathe {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .58; transform: scale(.76); }
+        }
+
+        @keyframes admin-shimmer {
+            0% { background-position: -420px 0; }
+            100% { background-position: 420px 0; }
+        }
+
+        .admin-rise {
+            animation: admin-rise .52s var(--admin-ease) both;
+            animation-delay: calc(var(--index, 0) * 70ms);
+        }
+
+        .admin-breathe {
+            animation: admin-breathe 2.4s ease-in-out infinite;
+        }
+
+        .admin-shimmer {
+            background: linear-gradient(90deg, #f1f5f9 8%, #e2e8f0 18%, #f1f5f9 33%);
+            background-size: 840px 100%;
+            animation: admin-shimmer 1.35s linear infinite;
+        }
+
+        .admin-nav-link {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            border-radius: 1rem;
+            padding: .7rem .8rem;
+            color: rgb(203 213 225);
+            transition: color .28s var(--admin-ease), background-color .28s var(--admin-ease), transform .28s var(--admin-ease);
+        }
+
+        .admin-nav-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, .07);
+            transform: translateX(2px);
+        }
+
+        .admin-nav-active {
+            color: white;
+            background: linear-gradient(135deg, rgba(37, 99, 235, .95), rgba(30, 64, 175, .95));
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 16px 32px -22px rgba(37,99,235,.75);
+        }
+
+        .admin-glass {
+            background: linear-gradient(135deg, rgba(255,255,255,.88), rgba(255,255,255,.62));
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,.56);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.56), 0 22px 50px -28px rgba(15,23,42,.35);
+        }
+
+        #sidebar nav a {
+            border-radius: 1rem;
+            transition: color .28s var(--admin-ease), background-color .28s var(--admin-ease), transform .28s var(--admin-ease), box-shadow .28s var(--admin-ease);
+        }
+
+        #sidebar nav a:hover {
+            transform: translateX(2px);
+            background-color: rgba(255, 255, 255, .075) !important;
+        }
+
+        #sidebar nav a.bg-blue-600 {
+            background: linear-gradient(135deg, rgba(37, 99, 235, .98), rgba(30, 64, 175, .96)) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 16px 32px -22px rgba(37,99,235,.75);
+        }
+
+        #sidebar nav p {
+            letter-spacing: .18em;
+        }
+
+        #sidebar nav button[type="submit"] {
+            border-radius: 1rem;
+            transition: background-color .28s var(--admin-ease), color .28s var(--admin-ease), transform .28s var(--admin-ease);
+        }
+
+        #sidebar nav button[type="submit"]:active,
+        #sidebar nav a:active {
+            transform: scale(.985);
         }
     </style>
     @stack('styles')
