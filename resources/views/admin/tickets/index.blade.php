@@ -4,26 +4,6 @@
 
 @section('admin_content')
 
-@php
-$statusMap = [
-    'NEW'                 => ['label' => 'Baru',     'class' => 'bg-yellow-100 text-yellow-700'],
-    'TERVERIFIKASI'       => ['label' => 'Terverifikasi', 'class' => 'bg-cyan-100 text-cyan-700'],
-    'IN_PROGRESS'         => ['label' => 'Diproses', 'class' => 'bg-blue-100 text-blue-700'],
-    'DONE'                => ['label' => 'Selesai',  'class' => 'bg-green-100 text-green-700'],
-    'REJECTED'            => ['label' => 'Ditolak',  'class' => 'bg-red-100 text-red-700'],
-    'Diproses'            => ['label' => 'Diproses', 'class' => 'bg-blue-100 text-blue-700'],
-    'Menunggu Verifikasi' => ['label' => 'Menunggu Verifikasi', 'class' => 'bg-purple-100 text-purple-700'],
-    'Selesai'             => ['label' => 'Selesai',  'class' => 'bg-green-100 text-green-700'],
-];
-$typeMap = [
-    'Pengaduan'  => 'bg-red-50 text-red-700',
-    'Survei'     => 'bg-green-50 text-green-700',
-    'Saran'      => 'bg-green-50 text-green-700',
-    'Apresiasi'  => 'bg-blue-50 text-blue-700',
-    'Informasi'  => 'bg-orange-50 text-orange-700',
-];
-@endphp
-
 {{-- Flash Message --}}
 @if(session('success'))
 <div class="bg-green-50 text-green-700 p-3 rounded-lg mb-4 border border-green-200 flex items-center gap-2">
@@ -59,34 +39,23 @@ $typeMap = [
     </a>
 </div>
 
-{{-- Mobile Filter Sticky Wrapper --}}
-<div class="md:hidden sticky top-0 z-30 bg-[#F3F4F6] pt-1 pb-1 -mx-4 px-4">
-    <button id="mobile-filter-toggle" type="button" class="w-full bg-white/70 backdrop-blur-xl rounded-2xl border border-white/30 p-2.5 flex items-center justify-between text-sm text-gray-700 font-medium mb-2.5 active:scale-[0.98] transition-all shadow-sm" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
-        <span class="flex items-center gap-2">
-            <span class="w-6 h-6 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                <i class="fa-solid fa-sliders text-white text-[10px]"></i>
-            </span>
-            <span class="font-heading font-semibold text-[13px]">Filter & Pencarian</span>
-        </span>
-        <i id="mobile-filter-icon" class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300 text-xs"></i>
-    </button>
-
-    {{-- Filter & Search --}}
-    <div id="filter-container" class="admin-card p-3 mb-3">
-    <form action="{{ route('admin.tickets.index') }}" method="GET" class="flex flex-col md:flex-row gap-2.5">
-        <div class="flex-1 relative">
+{{-- Toolbar Filter & Pencarian (menyatu, satu jalur mobile & desktop, live tanpa reload) --}}
+<div class="admin-card overflow-hidden mb-4 md:mb-6">
+    <form action="{{ route('admin.tickets.index') }}" method="GET"
+        data-live-filter="#tickets-results"
+        class="admin-toolbar">
+        <div class="relative flex-1 md:min-w-[240px]">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
             <input type="text" name="search" value="{{ request('search') }}"
                 placeholder="Cari no. tiket, judul, atau nama pelapor..." autocomplete="off"
-                class="admin-input text-[13px] pl-9"
-                id="mobile-search-input">
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                class="admin-input text-[13px] pl-9">
             @if(request('search'))
             <a href="{{ route('admin.tickets.index', request()->except(['search', 'page'])) }}" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                 <i class="fa-solid fa-xmark"></i>
             </a>
             @endif
         </div>
-        <div class="md:min-w-[140px]">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-2.5 md:flex md:items-center">
             <select name="status" class="admin-input text-[13px]">
                 <option value="">Semua Status</option>
                 <option value="NEW" {{ request('status') == 'NEW' ? 'selected' : '' }}>Baru</option>
@@ -95,8 +64,6 @@ $typeMap = [
                 <option value="DONE" {{ request('status') == 'DONE' ? 'selected' : '' }}>Selesai</option>
                 <option value="REJECTED" {{ request('status') == 'REJECTED' ? 'selected' : '' }}>Ditolak</option>
             </select>
-        </div>
-        <div class="md:min-w-[130px]">
             <select name="type" class="admin-input text-[13px]">
                 <option value="">Semua Jenis</option>
                 <option value="Pengaduan" {{ request('type') == 'Pengaduan' ? 'selected' : '' }}>Pengaduan</option>
@@ -104,172 +71,28 @@ $typeMap = [
                 <option value="Apresiasi" {{ request('type') == 'Apresiasi' ? 'selected' : '' }}>Apresiasi</option>
                 <option value="Informasi" {{ request('type') == 'Informasi' ? 'selected' : '' }}>Informasi</option>
             </select>
-        </div>
-        <div class="md:min-w-[180px]">
-            <select name="unit_id" class="admin-input text-[13px]">
+            <select name="unit_id" class="admin-input text-[13px] md:min-w-[170px]">
                 <option value="">Semua Unit</option>
                 @foreach($units as $unit)
                     <option value="{{ $unit->id }}" {{ request('unit_id') == $unit->id ? 'selected' : '' }}>{{ $unit->nama }}</option>
                 @endforeach
             </select>
         </div>
-        <div class="flex gap-2">
-            <button type="submit" class="admin-btn admin-btn-primary flex-1 md:flex-none">
-                <i class="fa-solid fa-search mr-1 text-xs"></i> Filter
+        <div class="flex items-center gap-2 md:flex-col md:gap-1.5">
+            <button type="submit" class="admin-btn admin-btn-primary flex-1 md:flex-none md:w-full" title="Terapkan filter">
+                <i class="fa-solid fa-filter mr-1 text-xs"></i> Filter
             </button>
-            <a href="{{ route('admin.tickets.index') }}" class="admin-btn admin-btn-ghost flex-1 md:flex-none text-center">
-                Reset
-            </a>
+            <button type="button" data-live-reset class="admin-btn admin-btn-ghost flex-1 md:flex-none md:w-full text-center" title="Reset semua filter">
+                <i class="fa-solid fa-rotate-left mr-1 text-xs"></i> Reset
+            </button>
         </div>
     </form>
 </div>
+
+{{-- Hasil: mobile list + tabel desktop + pagination (di-refresh real-time oleh live filter) --}}
+<div id="tickets-results" class="admin-live-wrap">
+    @include('admin.tickets._table', ['tickets' => $tickets])
 </div>
-
-{{-- Mobile: Ticket Cards (Gmail Inbox style) --}}
-<div class="block md:hidden mb-4" id="mobile-ticket-list">
-    <div class="admin-card overflow-hidden divide-y divide-gray-100">
-    @forelse($tickets as $ticket)
-    @php
-        $statusStyle = $statusMap[$ticket->status] ?? ['label' => $ticket->status, 'class' => 'bg-gray-100 text-gray-700'];
-
-        $typeBar = match($ticket->type) {
-            'Pengaduan' => 'bg-red-500',
-            'Survei', 'Saran' => 'bg-emerald-500',
-            'Apresiasi' => 'bg-blue-500',
-            'Informasi' => 'bg-orange-500',
-            default => 'bg-gray-400',
-        };
-    @endphp
-    <div class="flex items-stretch cursor-pointer active:bg-gray-50 transition-colors" onclick="window.location='{{ route('admin.tickets.show', $ticket->id) }}'">
-        <div class="w-1 shrink-0 {{ $typeBar }}"></div>
-        <div class="flex-1 min-w-0 pl-2.5 pr-3 py-2.5">
-            <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center gap-1.5 min-w-0 flex-1">
-                    <span class="text-[10px] font-mono font-bold text-gray-500 truncate">{{ $ticket->ticket_number }}</span>
-                    <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full leading-tight {{ $statusStyle['class'] }}">{{ $statusStyle['label'] }}</span>
-                </div>
-                <span class="text-[10px] text-gray-400 whitespace-nowrap shrink-0">{{ $ticket->created_at->format('d M Y') }}</span>
-            </div>
-            <h3 class="text-[13px] font-semibold text-gray-900 leading-snug mt-0.5 line-clamp-1">{{ $ticket->title }}</h3>
-            <div class="flex items-center gap-2 mt-0.5">
-                <span class="text-[11px] text-gray-500 truncate">
-                    @if($ticket->is_anonymous)
-                        Anonim
-                    @else
-                        {{ $ticket->reporter_name }}
-                    @endif
-                    · {{ $ticket->category->name ?? '-' }}
-                </span>
-            </div>
-        </div>
-        <div class="flex flex-col items-center justify-center pr-2.5 gap-1 shrink-0">
-            <button onclick="event.stopPropagation(); confirmDelete('{{ $ticket->id }}', '{{ $ticket->ticket_number }}')" class="admin-action admin-action-sm admin-action-red" title="Hapus">
-                <i class="fa-solid fa-trash-can text-[10px]"></i>
-            </button>
-        </div>
-    </div>
-    @empty
-    <div class="text-center py-10 text-gray-400">
-        <i class="fa-regular fa-folder-open text-3xl mb-2 block"></i>
-        <span class="text-sm">Belum ada data pengaduan.</span>
-    </div>
-    @endforelse
-    </div>
-</div>
-
-{{-- Table (Desktop) --}}
-<div class="hidden md:block admin-card overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="admin-table w-full text-left text-sm text-gray-600">
-            <thead>
-                <tr>
-                    <th class="px-4 py-4">No. Tiket</th>
-                    <th class="px-4 py-4">Pelapor</th>
-                    <th class="px-4 py-4">Judul</th>
-                    <th class="px-4 py-4">Unit / Ruangan</th>
-                    <th class="px-4 py-4">Kategori</th>
-                    <th class="px-4 py-4">Jenis</th>
-                    <th class="px-4 py-4">Status</th>
-                    <th class="px-4 py-4">Tanggal</th>
-                    <th class="px-4 py-4 text-center">Aksi</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                @forelse($tickets as $ticket)
-                @php
-                    $typeLabel = $ticket->type === 'Saran' ? 'Survei' : $ticket->type;
-                    $statusStyle = $statusMap[$ticket->status] ?? ['label' => $ticket->status, 'class' => 'bg-gray-100 text-gray-700'];
-                    $typeClass   = $typeMap[$ticket->type] ?? 'bg-gray-100 text-gray-700';
-                @endphp
-                <tr class="hover:bg-gray-50/50 transition-colors">
-                    <td class="px-4 py-3">
-                        <span class="font-mono font-semibold text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded">{{ $ticket->ticket_number }}</span>
-                    </td>
-                    <td class="px-4 py-3">
-                        @if($ticket->is_anonymous)
-                            <span class="flex items-center gap-1 text-gray-400 text-xs italic"><i class="fa-solid fa-user-secret"></i> Anonim</span>
-                        @else
-                            <div class="font-medium text-gray-800 text-xs">{{ $ticket->reporter_name }}</div>
-                            <div class="text-gray-400 text-xs">{{ $ticket->reporter_phone }}</div>
-                        @endif
-                    </td>
-                    <td class="px-4 py-3 max-w-[180px]">
-                        <p class="font-medium text-gray-800 text-xs truncate" title="{{ $ticket->title }}">{{ $ticket->title }}</p>
-                    </td>
-                    <td class="px-4 py-3">
-                        <div class="text-xs font-semibold text-gray-800">{{ $ticket->room->unit->nama ?? '-' }}</div>
-                        <div class="text-xs text-gray-500">{{ $ticket->room->name ?? '-' }}</div>
-                    </td>
-                    <td class="px-4 py-3">
-                        <span class="text-xs text-gray-700">{{ $ticket->category->name ?? '-' }}</span>
-                    </td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex text-xs font-semibold px-2 py-0.5 rounded-full {{ $typeClass }}">{{ $typeLabel }}</span>
-                    </td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex text-xs font-semibold px-2.5 py-1 rounded-full {{ $statusStyle['class'] }}">{{ $statusStyle['label'] }}</span>
-                    </td>
-                    <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{{ $ticket->created_at->format('d M Y') }}<br>{{ $ticket->created_at->format('H:i') }}</td>
-                    <td class="px-4 py-3 text-center">
-                        <div class="flex items-center justify-center gap-1.5">
-                            <a href="{{ route('admin.tickets.show', $ticket->id) }}" class="admin-action-pill admin-action-pill-blue" title="Lihat detail">
-                                <i class="fa-solid fa-eye text-[11px]"></i> Detail
-                            </a>
-                            <button onclick="confirmDelete('{{ $ticket->id }}', '{{ $ticket->ticket_number }}')"
-                                class="admin-action-pill admin-action-pill-red" title="Hapus">
-                                <i class="fa-solid fa-trash text-[11px]"></i> Hapus
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="9" class="px-6 py-12 text-center text-gray-400">
-                        <i class="fa-regular fa-folder-open text-4xl mb-3 block"></i>
-                        Belum ada data pengaduan.
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-
-    {{-- Pagination --}}
-    @if($tickets->hasPages())
-    <div class="px-6 py-4 border-t border-gray-100">
-        {{ $tickets->links() }}
-    </div>
-    @endif
-</div>
-
-
-
-{{-- Mobile Pagination --}}
-@if($tickets->hasPages())
-<div class="block md:hidden mt-4">
-    {{ $tickets->links() }}
-</div>
-@endif
 
 {{-- Modal Konfirmasi Hapus (bottom sheet mobile, centered desktop) --}}
 <div id="delete-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden items-end md:items-center justify-center">
@@ -330,37 +153,6 @@ function closeDeleteModal() {
 }
 document.getElementById('delete-modal').addEventListener('click', function(e) {
     if (e.target === this) closeDeleteModal();
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    var toggleBtn = document.getElementById('mobile-filter-toggle');
-    var filterContainer = document.getElementById('filter-container');
-    var filterIcon = document.getElementById('mobile-filter-icon');
-
-    if (toggleBtn && filterContainer) {
-        if (window.innerWidth < 768) {
-            filterContainer.classList.add('hidden');
-        }
-        toggleBtn.addEventListener('click', function() {
-            var isHidden = filterContainer.classList.contains('hidden');
-            if (isHidden) {
-                filterContainer.classList.remove('hidden');
-                filterContainer.classList.add('block');
-                filterIcon.style.transform = 'rotate(180deg)';
-            } else {
-                filterContainer.classList.add('hidden');
-                filterContainer.classList.remove('block');
-                filterIcon.style.transform = 'rotate(0deg)';
-            }
-        });
-        window.addEventListener('resize', function() {
-            if (window.innerWidth >= 768) {
-                filterContainer.classList.remove('hidden');
-                filterContainer.classList.add('block');
-            }
-        });
-    }
-
 });
 </script>
 

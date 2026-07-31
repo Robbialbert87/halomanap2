@@ -1,8 +1,8 @@
 <header class="sticky top-0 z-30 w-full px-4 lg:px-8 pt-4">
     <div class="admin-glass h-16 rounded-[1.5rem] flex items-center justify-between px-4 lg:px-5">
-    <!-- Left: Hamburger Menu (Mobile) & Header Title -->
+    <!-- Left: Hamburger Menu & Header Title -->
     <div class="flex items-center gap-4">
-        <button onclick="toggleSidebar()" class="lg:hidden w-10 h-10 rounded-2xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 focus:outline-none transition-all active:scale-[0.96]">
+        <button onclick="toggleSidebar()" id="sidebar-toggle" class="w-10 h-10 rounded-2xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 focus:outline-none transition-all active:scale-[0.96]" title="Sembunyikan/Tampilkan Sidebar">
             <i class="fa-solid fa-bars text-xl"></i>
         </button>
         <!-- Center Logo (Visible only on desktop/tablet usually) -->

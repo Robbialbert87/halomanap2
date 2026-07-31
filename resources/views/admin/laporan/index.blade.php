@@ -25,9 +25,10 @@
     </div>
 </div>
 
-{{-- FILTER FORM --}}
-<div class="admin-card p-4 md:p-6 mb-4 md:mb-6">
-    <form method="GET" action="{{ route('admin.laporan') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
+{{-- FILTER FORM (live tanpa reload; statistik & tabel di-refresh bersama) --}}
+<div class="admin-card p-4 md:p-6 mb-4 md:mb-6 admin-rise" style="--index: 0">
+    <form method="GET" action="{{ route('admin.laporan') }}" data-live-filter="#laporan-results"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
         <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">Dari Tanggal</label>
             <input type="date" name="start_date" value="{{ request('start_date') }}"
@@ -75,12 +76,13 @@
                         class="admin-btn admin-btn-primary flex-1 md:flex-none">
                         <i class="fa-solid fa-filter"></i> Filter
                     </button>
-                    <a href="{{ route('admin.laporan') }}"
+                    <button type="button" data-live-reset
                         class="admin-btn admin-btn-ghost flex-1 md:flex-none">
                         <i class="fa-solid fa-rotate-right"></i> Reset
-                    </a>
+                    </button>
                 </div>
                 <a href="{{ route('admin.laporan.export-pdf', request()->query()) }}"
+                    data-live-export="{{ route('admin.laporan.export-pdf') }}"
                     class="admin-btn admin-btn-danger w-full md:w-auto md:ml-auto">
                     <i class="fa-solid fa-file-pdf"></i> Export PDF
                 </a>
@@ -89,119 +91,17 @@
     </form>
 </div>
 
-{{-- STATISTIK CARDS --}}
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4 md:mb-6">
-    @php
-    $statCards = [
-        ['label' => 'Total',        'value' => $total,               'icon' => 'fa-inbox',           'color' => 'blue'],
-        ['label' => 'Baru',         'value' => $baru,                'icon' => 'fa-envelope',        'color' => 'indigo'],
-        ['label' => 'Diproses',     'value' => $diproses,            'icon' => 'fa-gears',           'color' => 'amber'],
-        ['label' => 'Menunggu Ver.', 'value' => $menungguVerifikasi, 'icon' => 'fa-hourglass-half',  'color' => 'orange'],
-        ['label' => 'Selesai',      'value' => $selesai,             'icon' => 'fa-circle-check',    'color' => 'green'],
-        ['label' => 'Ditolak',      'value' => $ditolak,             'icon' => 'fa-circle-xmark',    'color' => 'red'],
-    ];
-    $palette = [
-        'blue'   => 'bg-blue-50/80 text-blue-700 border-blue-200',
-        'indigo' => 'bg-indigo-50/80 text-indigo-700 border-indigo-200',
-        'amber'  => 'bg-amber-50/80 text-amber-700 border-amber-200',
-        'orange' => 'bg-orange-50/80 text-orange-700 border-orange-200',
-        'green'  => 'bg-green-50/80 text-green-700 border-green-200',
-        'red'    => 'bg-red-50/80 text-red-700 border-red-200',
-    ];
-    $iconColors = [
-        'blue'   => 'from-blue-400 to-blue-600',
-        'indigo' => 'from-indigo-400 to-indigo-600',
-        'amber'  => 'from-amber-400 to-amber-600',
-        'orange' => 'from-orange-400 to-orange-600',
-        'green'  => 'from-green-400 to-green-600',
-        'red'    => 'from-red-400 to-red-600',
-    ];
-    @endphp
-    @foreach($statCards as $card)
-    <div class="rounded-xl border {{ $palette[$card['color']] }} p-3 md:p-4 shadow-sm flex flex-col gap-1 md:gap-2" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
-        <div class="flex items-center justify-between">
-            <p class="text-[10px] md:text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ $card['label'] }}</p>
-            <span class="w-8 h-8 rounded-xl bg-gradient-to-br {{ $iconColors[$card['color']] }} flex items-center justify-center shadow-sm flex-shrink-0">
-                <i class="fa-solid {{ $card['icon'] }} text-white text-xs"></i>
-            </span>
-        </div>
-        <p class="text-xl md:text-3xl font-bold font-heading">{{ $card['value'] }}</p>
-    </div>
-    @endforeach
-</div>
-
-{{-- TABEL DATA --}}
-<div class="admin-card overflow-hidden">
-    <div class="admin-card-head">
-        <h2 class="text-sm md:text-base font-bold text-gray-800 font-heading flex items-center gap-2">
-            <span class="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm">
-                <i class="fa-solid fa-list text-white text-xs"></i>
-            </span>
-            Data Pengaduan ({{ $tickets->count() }})
-        </h2>
-    </div>
-
-    @if($tickets->isEmpty())
-        <div class="admin-empty">
-            <i class="fa-solid fa-inbox"></i>
-            <p>Tidak ada data pengaduan</p>
-            <span>Coba ubah filter atau periode tanggal</span>
-        </div>
-    @else
-    <div class="overflow-x-auto">
-        <table class="admin-table w-full text-sm">
-            <thead>
-                <tr>
-                    <th class="text-left px-4 md:px-6 py-3">No Tiket</th>
-                    <th class="text-left px-4 md:px-6 py-3">Judul</th>
-                    <th class="text-left px-4 md:px-6 py-3 hidden md:table-cell">Pelapor</th>
-                    <th class="text-left px-4 md:px-6 py-3 hidden lg:table-cell">Unit</th>
-                    <th class="text-left px-4 md:px-6 py-3 hidden lg:table-cell">Kategori</th>
-                    <th class="text-left px-4 md:px-6 py-3">Status</th>
-                    <th class="text-left px-4 md:px-6 py-3 hidden md:table-cell">Keluhan</th>
-                    <th class="text-left px-4 md:px-6 py-3 hidden xl:table-cell">Penyelesaian</th>
-                    <th class="text-left px-4 md:px-6 py-3 hidden xl:table-cell">Tgl. Penyelesaian</th>
-                    <th class="text-left px-4 md:px-6 py-3 hidden md:table-cell">Tgl. Masuk</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                @foreach($tickets as $ticket)
-                @php
-                $penyelesaianWorkflow = $ticket->workflows->first();
-                @endphp
-                <tr class="hover:bg-gray-50/50 transition-colors">
-                    <td class="px-4 md:px-6 py-3">
-                        <a href="{{ route('admin.tickets.show', $ticket->id) }}" class="text-blue-600 font-medium hover:underline">
-                            {{ $ticket->ticket_number }}
-                        </a>
-                    </td>
-                    <td class="px-4 md:px-6 py-3 text-gray-800 max-w-[200px] truncate" title="{{ $ticket->title }}">{{ $ticket->title }}</td>
-                    <td class="px-4 md:px-6 py-3 text-gray-500 hidden md:table-cell">{{ $ticket->is_anonymous ? 'Anonim' : ($ticket->reporter_name ?? '-') }}</td>
-                    <td class="px-4 md:px-6 py-3 text-gray-500 hidden lg:table-cell">{{ $ticket->room?->unit?->nama ?? '-' }}</td>
-                    <td class="px-4 md:px-6 py-3 text-gray-500 hidden lg:table-cell">{{ $ticket->category?->name ?? '-' }}</td>
-                    <td class="px-4 md:px-6 py-3">
-                        @php
-                        $badge = match($ticket->status) {
-                            'Baru' => 'bg-blue-100 text-blue-700',
-                            'TERVERIFIKASI', 'Menunggu Verifikasi' => 'bg-orange-100 text-orange-700',
-                            'Diproses' => 'bg-amber-100 text-amber-700',
-                            'Selesai' => 'bg-green-100 text-green-700',
-                            'Ditolak' => 'bg-red-100 text-red-700',
-                            default => 'bg-gray-100 text-gray-700',
-                        };
-                        @endphp
-                        <span class="inline-block px-2.5 py-1 rounded-full text-[10px] md:text-xs font-semibold {{ $badge }}">{{ $ticket->status }}</span>
-                    </td>
-                    <td class="px-4 md:px-6 py-3 text-gray-600 text-xs max-w-[250px] truncate hidden md:table-cell" title="{{ strip_tags($ticket->description) }}">{{ Str::limit(strip_tags($ticket->description), 100) }}</td>
-                    <td class="px-4 md:px-6 py-3 text-gray-600 text-xs max-w-[200px] truncate hidden xl:table-cell" title="{{ $penyelesaianWorkflow?->komentar ?? '' }}">{{ $penyelesaianWorkflow?->komentar ? Str::limit($penyelesaianWorkflow->komentar, 80) : '-' }}</td>
-                    <td class="px-4 md:px-6 py-3 text-gray-400 text-xs hidden xl:table-cell">{{ $penyelesaianWorkflow?->completed_at ? \Carbon\Carbon::parse($penyelesaianWorkflow->completed_at)->format('d/m/Y H:i') : '-' }}</td>
-                    <td class="px-4 md:px-6 py-3 text-gray-400 text-xs hidden md:table-cell">{{ $ticket->created_at->format('d/m/Y H:i') }}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-    @endif
+{{-- Hasil: statistik bento + tabel (di-refresh real-time oleh live filter) --}}
+<div id="laporan-results" class="admin-live-wrap">
+    @include('admin.laporan._table', [
+        'tickets' => $tickets,
+        'total' => $total,
+        'baru' => $baru,
+        'diproses' => $diproses,
+        'menungguVerifikasi' => $menungguVerifikasi,
+        'selesai' => $selesai,
+        'ditolak' => $ditolak,
+    ])
 </div>
 
 @endsection

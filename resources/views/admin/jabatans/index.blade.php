@@ -50,242 +50,36 @@
 </div>
 @endif
 
-{{-- Mobile Filter Sticky Wrapper --}}
-<div class="md:hidden sticky top-0 z-30 bg-[#F3F4F6] pt-1 pb-1 -mx-4 px-4">
-    <button id="mobile-filter-toggle" type="button" class="w-full bg-white/70 backdrop-blur-xl rounded-2xl border border-white/30 p-2.5 flex items-center justify-between text-sm text-gray-700 font-medium mb-2.5 active:scale-[0.98] transition-all shadow-sm" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
-        <span class="flex items-center gap-2">
-            <span class="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
-                <i class="fa-solid fa-sliders text-white text-[10px]"></i>
-            </span>
-            <span class="font-heading font-semibold text-[13px]">Filter & Pencarian</span>
-        </span>
-        <i id="mobile-filter-icon" class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300 text-xs"></i>
-    </button>
-
-    <div id="filter-container" class="admin-card p-3 mb-3">
-    <form method="GET" action="{{ route('admin.jabatans.index') }}" class="flex flex-col gap-2.5">
-        <div class="relative">
-            <input type="text" name="search" value="{{ request('search') }}"
-                placeholder="Cari kode, nama, atau kategori..." autocomplete="off"
-                class="admin-input text-[13px] pl-9">
+{{-- Toolbar Filter & Pencarian (menyatu, satu jalur mobile & desktop, live tanpa reload) --}}
+<div class="admin-card overflow-hidden mb-4 md:mb-6">
+    <form action="{{ route('admin.jabatans.index') }}" method="GET"
+        data-live-filter="#jabatans-results"
+        class="admin-toolbar">
+        <div class="relative flex-1 md:max-w-md">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+            <input type="text" name="search" value="{{ request('search') }}"
+                placeholder="Cari kode, nama, atau kategori jabatan..." autocomplete="off"
+                class="admin-input text-[13px] pl-9">
             @if(request('search'))
             <a href="{{ route('admin.jabatans.index', request()->except(['search', 'page'])) }}" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                 <i class="fa-solid fa-xmark"></i>
             </a>
             @endif
         </div>
-        <div class="flex gap-2">
-            <button type="submit" class="flex-1 bg-gradient-to-br from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all shadow-sm shadow-amber-200/50 active:scale-[0.98]">
-                <i class="fa-solid fa-search mr-1 text-xs"></i> Cari
+        <div class="flex items-center gap-2 md:flex-col md:gap-1.5">
+            <button type="submit" class="admin-btn admin-btn-primary flex-1 md:flex-none md:w-full" title="Terapkan filter">
+                <i class="fa-solid fa-filter mr-1 text-xs"></i> Filter
             </button>
-            <a href="{{ route('admin.jabatans.index') }}" class="flex-1 bg-gradient-to-br from-gray-100 to-white border border-gray-200 hover:from-gray-200 hover:to-gray-100 text-gray-700 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all active:scale-[0.98] text-center">
-                Reset
-            </a>
-        </div>
-    </form>
-    </div>
-</div>
-
-{{-- Desktop Filter --}}
-<div class="hidden md:block mb-4">
-    <form method="GET" action="{{ route('admin.jabatans.index') }}">
-        <div class="relative max-w-md">
-            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari kode, nama, atau kategori..." autocomplete="off"
-                class="admin-input w-full pl-10 pr-10">
-            @if(request('search'))
-            <a href="{{ route('admin.jabatans.index') }}" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                <i class="fa-solid fa-xmark"></i>
-            </a>
-            @endif
+            <button type="button" data-live-reset class="admin-btn admin-btn-ghost flex-1 md:flex-none md:w-full text-center" title="Reset semua filter">
+                <i class="fa-solid fa-rotate-left mr-1 text-xs"></i> Reset
+            </button>
         </div>
     </form>
 </div>
 
-{{-- Mobile: Jabatan List --}}
-<div class="block md:hidden mb-4">
-    <div class="admin-card overflow-hidden divide-y divide-gray-100">
-    @php
-        $kategoriColors = [
-            'Direktur' => ['bg' => 'bg-purple-100 text-purple-700', 'dot' => 'bg-purple-500'],
-            'Kabid' => ['bg' => 'bg-blue-100 text-blue-700', 'dot' => 'bg-blue-500'],
-            'Kabag' => ['bg' => 'bg-blue-100 text-blue-700', 'dot' => 'bg-blue-500'],
-            'Kasi' => ['bg' => 'bg-amber-100 text-amber-700', 'dot' => 'bg-amber-500'],
-            'Kasubbag' => ['bg' => 'bg-amber-100 text-amber-700', 'dot' => 'bg-amber-500'],
-            'Kepala Unit' => ['bg' => 'bg-green-100 text-green-700', 'dot' => 'bg-green-500'],
-            'Petugas' => ['bg' => 'bg-gray-100 text-gray-700', 'dot' => 'bg-gray-400'],
-        ];
-    @endphp
-    @forelse($jabatans as $jabatan)
-    @php
-        $kc = $kategoriColors[$jabatan->kategori_jabatan] ?? ['bg' => 'bg-gray-100 text-gray-700', 'dot' => 'bg-gray-400'];
-    @endphp
-    <div class="flex items-stretch active:bg-gray-50 transition-colors">
-        <div class="w-1 shrink-0 {{ $kc['dot'] }}"></div>
-        <div class="flex-1 min-w-0 pl-2.5 pr-3 py-2.5">
-            <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center gap-1.5 min-w-0 flex-1">
-                    <span class="text-[13px] font-semibold text-gray-900 truncate">{{ $jabatan->nama }}</span>
-                    @if($jabatan->status === 'active')
-                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0"></span>
-                    @else
-                        <span class="w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0"></span>
-                    @endif
-                </div>
-                <div class="flex items-center gap-1 shrink-0">
-                    <a href="{{ route('admin.jabatans.edit', $jabatan->id) }}"
-                       class="admin-action admin-action-sm admin-action-blue" title="Edit">
-                        <i class="fa-regular fa-pen-to-square text-[10px]"></i>
-                    </a>
-                    <form action="{{ route('admin.jabatans.destroy', $jabatan->id) }}" method="POST"
-                          onsubmit="return confirm('Yakin ingin menghapus jabatan {{ $jabatan->nama }}?')" class="inline">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="admin-action admin-action-sm admin-action-red" title="Hapus">
-                            <i class="fa-regular fa-trash-can text-[10px]"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="flex items-center gap-2 mt-1">
-                <span class="text-[11px] font-mono text-blue-600">{{ $jabatan->kode }}</span>
-                <span class="text-[10px]">·</span>
-                <span class="inline-block px-1.5 py-0.5 text-[10px] font-semibold rounded-full {{ $kc['bg'] }}">{{ $jabatan->kategori_jabatan }}</span>
-                @if($jabatan->status === 'active')
-                    <span class="inline-block px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-green-50 text-green-700">Aktif</span>
-                @else
-                    <span class="inline-block px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-gray-100 text-gray-700">Nonaktif</span>
-                @endif
-            </div>
-        </div>
-    </div>
-    @empty
-    <div class="text-center py-10 text-gray-400">
-        <i class="fa-solid fa-sitemap text-3xl mb-2 block"></i>
-        <span class="text-sm">Belum ada data jabatan.</span>
-    </div>
-    @endforelse
-    </div>
+{{-- Hasil: mobile list + tabel desktop + pagination (di-refresh real-time oleh live filter) --}}
+<div id="jabatans-results" class="admin-live-wrap">
+    @include('admin.jabatans._table', ['jabatans' => $jabatans])
 </div>
 
-{{-- Table (Desktop) --}}
-<div class="hidden md:block admin-card overflow-hidden">
-    <table class="admin-table w-full text-left text-sm text-gray-600">
-        <thead>
-            <tr>
-                <th class="px-6 py-4 w-12 text-center">No</th>
-                <th class="px-6 py-4">Kode</th>
-                <th class="px-6 py-4">Nama Jabatan</th>
-                <th class="px-6 py-4 text-center">Kategori</th>
-                <th class="px-6 py-4 text-center">Status</th>
-                <th class="px-6 py-4 w-28 text-center">Aksi</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100">
-            @forelse($jabatans as $jabatan)
-            @php
-                $kategoriColors = [
-                    'Direktur' => 'bg-purple-100 text-purple-700',
-                    'Kabid' => 'bg-blue-100 text-blue-700',
-                    'Kabag' => 'bg-blue-100 text-blue-700',
-                    'Kasi' => 'bg-amber-100 text-amber-700',
-                    'Kasubbag' => 'bg-amber-100 text-amber-700',
-                    'Kepala Unit' => 'bg-green-100 text-green-700',
-                    'Petugas' => 'bg-gray-100 text-gray-700',
-                ];
-            @endphp
-            <tr class="hover:bg-gray-50/50 transition-colors">
-                <td class="px-6 py-4 text-center text-gray-400">{{ $jabatans->firstItem() + $loop->index }}</td>
-                <td class="px-6 py-4 font-mono text-xs text-blue-600">{{ $jabatan->kode }}</td>
-                <td class="px-6 py-4">
-                    <div class="font-medium text-gray-900">{{ $jabatan->nama }}</div>
-                </td>
-                <td class="px-6 py-4 text-center">
-                    <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $kategoriColors[$jabatan->kategori_jabatan] ?? 'bg-gray-100 text-gray-700' }}">
-                        {{ $jabatan->kategori_jabatan }}
-                    </span>
-                </td>
-                <td class="px-6 py-4 text-center">
-                    @if($jabatan->status === 'active')
-                        <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>
-                    @else
-                        <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Nonaktif</span>
-                    @endif
-                </td>
-                <td class="px-6 py-4">
-                    <div class="flex items-center justify-center gap-1.5">
-                        <a href="{{ route('admin.jabatans.edit', $jabatan->id) }}"
-                           class="admin-action-pill admin-action-pill-blue"
-                           title="Edit">
-                            <i class="fa-regular fa-pen-to-square text-[11px]"></i> Edit
-                        </a>
-                        <form action="{{ route('admin.jabatans.destroy', $jabatan->id) }}" method="POST"
-                              onsubmit="return confirm('Yakin ingin menghapus jabatan {{ $jabatan->nama }}?')" class="inline">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="admin-action-pill admin-action-pill-red" title="Hapus">
-                                <i class="fa-regular fa-trash-can text-[11px]"></i> Hapus
-                            </button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="6" class="px-6 py-12 text-center">
-                    <div class="flex flex-col items-center gap-2 text-gray-400">
-                        <i class="fa-solid fa-sitemap text-3xl"></i>
-                        <p>Belum ada data jabatan.</p>
-                        <a href="{{ route('admin.jabatans.create') }}" class="text-blue-600 hover:underline text-sm">Tambah sekarang</a>
-                    </div>
-                </td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
-
-    @if($jabatans->hasPages())
-    <div class="px-6 py-4 border-t border-gray-100">
-        {{ $jabatans->links() }}
-    </div>
-    @endif
-</div>
-
-{{-- Mobile Pagination --}}
-@if($jabatans->hasPages())
-<div class="block md:hidden mt-4">
-    {{ $jabatans->links() }}
-</div>
-@endif
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var toggleBtn = document.getElementById('mobile-filter-toggle');
-    var filterContainer = document.getElementById('filter-container');
-    var filterIcon = document.getElementById('mobile-filter-icon');
-
-    if (toggleBtn && filterContainer) {
-        if (window.innerWidth < 768) {
-            filterContainer.classList.add('hidden');
-        }
-        toggleBtn.addEventListener('click', function() {
-            var isHidden = filterContainer.classList.contains('hidden');
-            if (isHidden) {
-                filterContainer.classList.remove('hidden');
-                filterContainer.classList.add('block');
-                if (filterIcon) filterIcon.style.transform = 'rotate(180deg)';
-            } else {
-                filterContainer.classList.add('hidden');
-                filterContainer.classList.remove('block');
-                if (filterIcon) filterIcon.style.transform = 'rotate(0deg)';
-            }
-        });
-        window.addEventListener('resize', function() {
-            if (window.innerWidth >= 768) {
-                filterContainer.classList.remove('hidden');
-                filterContainer.classList.add('block');
-            }
-        });
-    }
-});
-</script>
 @endsection

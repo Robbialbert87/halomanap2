@@ -342,6 +342,67 @@
         .admin-empty i { font-size: 2.25rem; color: #cbd5e1; }
         .admin-empty p { font-size: .875rem; font-weight: 500; color: #64748b; }
         .admin-empty span { font-size: .75rem; color: #94a3b8; }
+
+        /* === Bento stat cards (reports & monitoring) === */
+        .admin-stat {
+            transition: transform .3s cubic-bezier(.16, 1, .3, 1), box-shadow .3s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .admin-stat:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 24px 48px -20px rgba(15, 23, 42, .14);
+        }
+
+        .admin-stat:active { transform: scale(.98); }
+
+        .admin-float {
+            animation: admin-float 6s ease-in-out infinite;
+        }
+
+        @keyframes admin-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* === Live filter: tabel real-time tanpa reload === */
+        .admin-live-wrap {
+            transition: opacity .22s var(--admin-ease);
+        }
+
+        .admin-live-wrap.is-loading {
+            opacity: .45;
+            pointer-events: none;
+        }
+
+        /* Toolbar filter menyatu dengan kartu tabel */
+        .admin-toolbar {
+            display: flex;
+            flex-direction: column;
+            gap: .625rem;
+            padding: .75rem;
+        }
+
+        @media (min-width: 768px) {
+            .admin-toolbar {
+                flex-direction: row;
+                align-items: center;
+                padding: .875rem 1.25rem;
+            }
+        }
+
+        /* Liquid-glass chip (hero banner) */
+        .admin-glass-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            background: rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, .14);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: .75rem;
+            color: #fff;
+        }
     </style>
     @stack('styles')
 </head>

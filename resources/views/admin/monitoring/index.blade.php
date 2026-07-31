@@ -17,50 +17,90 @@
     </div>
 </div>
 
-{{-- Welcome Banner --}}
-<div class="rounded-2xl bg-gradient-to-r from-blue-700 to-blue-900 px-5 md:px-8 py-5 md:py-6 text-white shadow-lg mb-4 md:mb-6">
-    <p class="text-blue-200 text-[11px] md:text-sm font-medium mb-0.5">Selamat Datang,</p>
-    <h1 class="text-lg md:text-2xl font-bold font-heading">{{ auth()->user()->nama }}</h1>
-    <p class="text-blue-200 text-[11px] md:text-sm mt-0.5">RSUD H. Abdul Manap Kota Jambi &mdash; Dashboard Monitoring</p>
+{{-- Welcome Banner — split asimetris --}}
+<div class="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-r from-blue-700 via-blue-800 to-blue-900 text-white shadow-lg shadow-blue-900/25 mb-4 md:mb-6 admin-rise" style="--index: 0">
+    <div class="absolute -right-16 -top-20 w-72 h-72 rounded-full bg-blue-400/20 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -left-12 w-64 h-64 rounded-full bg-sky-400/10 blur-3xl pointer-events-none"></div>
+    <div class="relative px-5 md:px-8 py-5 md:py-7 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-8">
+        <div class="min-w-0">
+            <p class="text-blue-200 text-[11px] md:text-sm font-medium mb-1 flex items-center gap-2">
+                Selamat Datang,
+            </p>
+            <h1 class="text-lg md:text-2xl font-bold font-heading tracking-tight">{{ auth()->user()->nama }}</h1>
+            <p class="text-blue-200/90 text-[11px] md:text-sm mt-1">RSUD H. Abdul Manap Kota Jambi &mdash; Dashboard Monitoring</p>
+        </div>
+        <div class="flex items-center gap-2 md:gap-2.5 flex-wrap md:flex-nowrap shrink-0">
+            <span class="admin-glass-chip px-3.5 py-2 text-xs font-semibold">
+                <span class="relative flex h-2 w-2">
+                    <span class="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping"></span>
+                    <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
+                </span>
+                LIVE
+            </span>
+            <span class="admin-glass-chip px-3.5 py-2 text-xs">{{ $stats['dalam_penanganan'] }} dalam penanganan</span>
+            <span class="admin-glass-chip px-3.5 py-2 text-xs font-mono">{{ $stats['sla_breach'] }} SLA breach</span>
+        </div>
+    </div>
 </div>
 
-{{-- Stats Cards --}}
-<div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 md:gap-4 mb-6 md:mb-8">
+{{-- Stats Cards — bento asimetris --}}
+<div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-12 gap-3 md:gap-4 mb-6 md:mb-8">
     @php
     $cards = [
-        ['label' => 'Total',              'value' => $stats['total'],               'icon' => 'fa-inbox',           'color' => 'blue'],
-        ['label' => 'Baru',               'value' => $stats['baru'],                'icon' => 'fa-envelope',        'color' => 'indigo'],
-        ['label' => 'Dalam Penanganan',   'value' => $stats['dalam_penanganan'],    'icon' => 'fa-gears',           'color' => 'amber'],
-        ['label' => 'Menunggu Verifikasi','value' => $stats['menunggu_verifikasi'], 'icon' => 'fa-hourglass-half',  'color' => 'orange'],
-        ['label' => 'Selesai',            'value' => $stats['selesai'],             'icon' => 'fa-circle-check',    'color' => 'green'],
+        ['label' => 'Total',              'value' => $stats['total'],               'icon' => 'fa-inbox',               'color' => 'blue'],
+        ['label' => 'Baru',               'value' => $stats['baru'],                'icon' => 'fa-envelope',            'color' => 'indigo'],
+        ['label' => 'Dalam Penanganan',   'value' => $stats['dalam_penanganan'],    'icon' => 'fa-gears',               'color' => 'amber'],
+        ['label' => 'Menunggu Verifikasi','value' => $stats['menunggu_verifikasi'], 'icon' => 'fa-hourglass-half',      'color' => 'orange'],
+        ['label' => 'Selesai',            'value' => $stats['selesai'],             'icon' => 'fa-circle-check',        'color' => 'green'],
         ['label' => 'Lewati SLA',         'value' => $stats['sla_breach'],          'icon' => 'fa-triangle-exclamation', 'color' => 'red'],
     ];
-    $palette = [
-        'blue'   => 'bg-blue-50/80 text-blue-700 border-blue-200',
-        'indigo' => 'bg-indigo-50/80 text-indigo-700 border-indigo-200',
-        'amber'  => 'bg-amber-50/80 text-amber-700 border-amber-200',
-        'orange' => 'bg-orange-50/80 text-orange-700 border-orange-200',
-        'green'  => 'bg-green-50/80 text-green-700 border-green-200',
-        'red'    => 'bg-red-50/80 text-red-700 border-red-200',
+    $spans = [
+        'blue'   => 'xl:col-span-3', 'indigo' => 'xl:col-span-2', 'amber' => 'xl:col-span-2',
+        'orange' => 'xl:col-span-1', 'green'  => 'xl:col-span-2', 'red'   => 'xl:col-span-2',
+    ];
+    $iconBg = [
+        'blue'   => 'bg-blue-50 text-blue-600',   'indigo' => 'bg-indigo-50 text-indigo-600',
+        'amber'  => 'bg-amber-50 text-amber-600', 'orange' => 'bg-orange-50 text-orange-600',
+        'green'  => 'bg-emerald-50 text-emerald-600', 'red' => 'bg-red-50 text-red-600',
     ];
     @endphp
     @foreach($cards as $card)
-    <div class="rounded-xl border {{ $palette[$card['color']] }} p-3 md:p-5 shadow-sm flex flex-col gap-1 md:gap-2" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
-        <div class="flex items-center justify-between">
-            <p class="text-[10px] md:text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ $card['label'] }}</p>
-            <i class="fa-solid {{ $card['icon'] }} text-xs md:text-sm opacity-60"></i>
+    @php $isHero = $card['color'] === 'blue'; @endphp
+    <div class="admin-card admin-stat admin-rise relative overflow-hidden p-4 md:p-5 {{ $isHero ? 'col-span-2 md:col-span-3 xl:col-span-3 md:p-6 flex flex-col justify-between' : ($card['color'] === 'red' ? 'col-span-2 md:col-span-1 ' : 'col-span-1 ') . $spans[$card['color']] }}" style="--index: {{ $loop->index + 1 }}">
+        @if($isHero)
+        <div class="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-blue-500/10 blur-2xl pointer-events-none"></div>
+        @endif
+        <div class="relative flex items-start justify-between gap-3">
+            <div class="{{ $isHero ? 'flex-1' : '' }}">
+                <p class="text-[10px] md:text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ $card['label'] }}</p>
+                <p class="{{ $isHero ? 'text-3xl md:text-4xl' : 'text-2xl' }} font-bold font-heading tracking-tight mt-1 {{ $card['color'] === 'red' ? 'text-red-600' : 'text-gray-900' }}">{{ $card['value'] }}</p>
+                @if($isHero)
+                <p class="text-[11px] text-gray-400 mt-2">Seluruh pengaduan masuk dari semua unit</p>
+                @endif
+            </div>
+            <span class="w-9 h-9 md:w-10 md:h-10 rounded-xl {{ $iconBg[$card['color']] }} flex items-center justify-center flex-shrink-0 shadow-sm {{ $isHero ? 'admin-float' : '' }}">
+                <i class="fa-solid {{ $card['icon'] }} text-xs md:text-sm"></i>
+            </span>
         </div>
-        <p class="text-xl md:text-3xl font-bold">{{ $card['value'] }}</p>
     </div>
     @endforeach
 </div>
 
 <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
     {{-- Workflow Monitoring --}}
-    <div class="xl:col-span-2 admin-card overflow-hidden">
-        <div class="px-4 md:px-6 py-3 md:py-4 border-b border-gray-100 flex items-center justify-between">
+    <div class="xl:col-span-2 admin-card overflow-hidden admin-rise" style="--index: 8">
+        <div class="admin-card-head">
             <h2 class="font-semibold text-gray-800 text-sm md:text-base flex items-center gap-2 font-heading"><i class="fa-solid fa-diagram-project text-blue-500"></i> Workflow Aktif</h2>
-            <span class="text-[10px] md:text-xs text-gray-400">{{ $activeWorkflows->count() }} tiket</span>
+            <div class="flex items-center gap-2.5">
+                <span class="inline-flex items-center gap-1.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full">
+                    <span class="relative flex h-1.5 w-1.5">
+                        <span class="absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75 animate-ping"></span>
+                        <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                    </span>
+                    LIVE
+                </span>
+                <span class="text-[10px] md:text-xs text-gray-400">{{ $activeWorkflows->count() }} tiket</span>
+            </div>
         </div>
         {{-- Mobile: Workflow cards --}}
         <div class="block md:hidden divide-y divide-gray-100">
@@ -87,7 +127,11 @@
                 </a>
             </div>
             @empty
-            <div class="px-4 py-10 text-center text-gray-400 text-sm">Tidak ada workflow aktif saat ini.</div>
+            <div class="admin-empty py-10">
+                <i class="fa-solid fa-diagram-project"></i>
+                <p>Tidak ada workflow aktif</p>
+                <span>Disposisi baru akan muncul di sini</span>
+            </div>
             @endforelse
         </div>
         {{-- Desktop: Workflow table --}}
@@ -132,7 +176,15 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="5" class="px-4 py-10 text-center text-gray-400 text-sm">Tidak ada workflow aktif saat ini.</td></tr>
+                    <tr>
+                        <td colspan="5">
+                            <div class="admin-empty py-10">
+                                <i class="fa-solid fa-diagram-project"></i>
+                                <p>Tidak ada workflow aktif</p>
+                                <span>Disposisi baru akan muncul di sini</span>
+                            </div>
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
@@ -140,10 +192,12 @@
     </div>
 
     {{-- Eskalasi Terbaru --}}
-    <div class="admin-card overflow-hidden">
-        <div class="px-4 md:px-6 py-3 md:py-4 border-b border-gray-100 flex items-center gap-2">
-            <i class="fa-solid fa-arrow-up-right-dots text-red-500 text-sm"></i>
-            <h2 class="font-semibold text-gray-800 text-sm md:text-base font-heading">Eskalasi Terbaru</h2>
+    <div class="admin-card overflow-hidden admin-rise" style="--index: 9">
+        <div class="admin-card-head">
+            <h2 class="font-semibold text-gray-800 text-sm md:text-base font-heading flex items-center gap-2">
+                <i class="fa-solid fa-arrow-up-right-dots text-red-500 text-sm"></i> Eskalasi Terbaru
+            </h2>
+            <span class="text-[10px] md:text-xs text-gray-400">{{ $latestEscalations->count() }} event</span>
         </div>
         <ul class="divide-y divide-gray-100">
             @forelse($latestEscalations as $esc)
@@ -162,7 +216,13 @@
                 </a>
             </li>
             @empty
-            <li class="px-5 py-8 text-center text-gray-400 text-sm">Belum ada eskalasi.</li>
+            <li>
+                <div class="admin-empty py-10">
+                    <i class="fa-solid fa-arrow-up-right-dots"></i>
+                    <p>Belum ada eskalasi</p>
+                    <span>Eskalasi antar unit akan tampil di sini</span>
+                </div>
+            </li>
             @endforelse
         </ul>
     </div>
@@ -170,9 +230,10 @@
 
 <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6">
     {{-- Pengaduan Terbaru --}}
-    <div class="xl:col-span-2 admin-card overflow-hidden">
-        <div class="px-4 md:px-6 py-3 md:py-4 border-b border-gray-100">
+    <div class="xl:col-span-2 admin-card overflow-hidden admin-rise" style="--index: 10">
+        <div class="admin-card-head">
             <h2 class="font-semibold text-gray-800 text-sm md:text-base flex items-center gap-2 font-heading"><i class="fa-regular fa-comment-dots text-indigo-500"></i> Pengaduan Terbaru</h2>
+            <span class="text-[10px] md:text-xs text-gray-400">{{ $latestTickets->count() }} tiket</span>
         </div>
         <ul class="divide-y divide-gray-100">
             @forelse($latestTickets as $ticket)
@@ -194,15 +255,21 @@
                 </span>
             </li>
             @empty
-            <li class="px-6 py-8 text-center text-gray-400 text-sm">Belum ada pengaduan.</li>
+            <li>
+                <div class="admin-empty py-10">
+                    <i class="fa-regular fa-comment-dots"></i>
+                    <p>Belum ada pengaduan</p>
+                    <span>Pengaduan baru akan tampil di sini</span>
+                </div>
+            </li>
             @endforelse
         </ul>
     </div>
 
     {{-- Top & Bottom Unit --}}
     <div class="flex flex-col gap-3 md:gap-4">
-        <div class="admin-card overflow-hidden">
-            <div class="px-4 md:px-5 py-3 md:py-4 border-b border-gray-100">
+        <div class="admin-card overflow-hidden admin-rise" style="--index: 11">
+            <div class="admin-card-head">
                 <h2 class="font-semibold text-gray-800 flex items-center gap-2 text-sm md:text-base font-heading"><i class="fa-solid fa-trophy text-amber-500"></i> Top Unit (Tercepat)</h2>
             </div>
             <ul class="divide-y divide-gray-100">
@@ -215,12 +282,17 @@
                     <span class="text-[10px] md:text-xs text-gray-500">~{{ $unit['avg_hours'] }}j</span>
                 </li>
                 @empty
-                <li class="px-5 py-6 text-center text-gray-400 text-sm">Belum ada data.</li>
+                <li>
+                    <div class="admin-empty py-8">
+                        <i class="fa-solid fa-trophy"></i>
+                        <p>Belum ada data</p>
+                    </div>
+                </li>
                 @endforelse
             </ul>
         </div>
-        <div class="admin-card overflow-hidden">
-            <div class="px-4 md:px-5 py-3 md:py-4 border-b border-gray-100">
+        <div class="admin-card overflow-hidden admin-rise" style="--index: 12">
+            <div class="admin-card-head">
                 <h2 class="font-semibold text-gray-800 flex items-center gap-2 text-sm md:text-base font-heading"><i class="fa-solid fa-circle-exclamation text-red-500"></i> Bottom Unit (Terlambat)</h2>
             </div>
             <ul class="divide-y divide-gray-100">
@@ -233,7 +305,12 @@
                     <span class="text-[10px] md:text-xs text-red-500">~{{ $unit['avg_hours'] }}j</span>
                 </li>
                 @empty
-                <li class="px-5 py-6 text-center text-gray-400 text-sm">Belum ada data.</li>
+                <li>
+                    <div class="admin-empty py-8">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <p>Belum ada data</p>
+                    </div>
+                </li>
                 @endforelse
             </ul>
         </div>

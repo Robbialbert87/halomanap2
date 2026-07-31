@@ -4,14 +4,6 @@
 
 @section('admin_content')
 
-{{-- Statistik --}}
-@php
-    $total   = $workflows->total();
-    $terlambat = $workflows->filter(fn($w) => $w->due_at && $w->due_at->isPast() && !in_array($w->status, ['selesai','ditutup','menunggu_verifikasi']))->count();
-    $menunggu  = $workflows->where('status', 'menunggu_respon')->count();
-    $proses    = $workflows->where('status', 'dalam_penanganan')->count();
-@endphp
-
 {{-- Mobile Page Header (PayApp style) --}}
 <div class="md:hidden mb-3">
     <div class="flex items-center gap-2.5 p-1">
@@ -33,226 +25,45 @@
     </div>
 </div>
 
-{{-- Statistik Cards (di-mobile juga ditampilkan) --}}
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-6">
-    <div class="admin-card p-3 md:p-4">
-        <p class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-wide">Total</p>
-        <p class="text-lg md:text-2xl font-bold text-gray-800 mt-0.5">{{ $total }}</p>
-    </div>
-    <div class="admin-card p-3 md:p-4">
-        <p class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-wide">Menunggu</p>
-        <p class="text-lg md:text-2xl font-bold text-yellow-600 mt-0.5">{{ $menunggu }}</p>
-    </div>
-    <div class="admin-card p-3 md:p-4">
-        <p class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-wide">Diproses</p>
-        <p class="text-lg md:text-2xl font-bold text-indigo-600 mt-0.5">{{ $proses }}</p>
-    </div>
-    <div class="admin-card p-3 md:p-4">
-        <p class="text-[10px] md:text-xs text-gray-500 font-semibold tracking-wide">Terlambat</p>
-        <p class="text-lg md:text-2xl font-bold {{ $terlambat > 0 ? 'text-red-600' : 'text-gray-800' }} mt-0.5">{{ $terlambat }}</p>
-    </div>
-</div>
-
-{{-- Mobile Filter Sticky Wrapper --}}
-<div class="md:hidden sticky top-0 z-30 bg-[#F3F4F6] pt-1 pb-1 -mx-4 px-4">
-    <button id="mobile-filter-toggle" type="button" class="w-full bg-white/70 backdrop-blur-xl rounded-2xl border border-white/30 p-2.5 flex items-center justify-between text-sm text-gray-700 font-medium mb-2.5 active:scale-[0.98] transition-all shadow-sm" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
-        <span class="flex items-center gap-2">
-            <span class="w-6 h-6 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                <i class="fa-solid fa-sliders text-white text-[10px]"></i>
-            </span>
-            <span class="font-heading font-semibold text-[13px]">Filter & Pencarian</span>
-        </span>
-        <i id="mobile-filter-icon" class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300 text-xs"></i>
-    </button>
-
-    <div id="filter-container" class="admin-card p-3 mb-3">
-    <form method="GET" class="flex flex-col md:flex-row gap-2.5">
-        <div class="flex-1">
+{{-- Toolbar Filter & Pencarian (menyatu, satu jalur mobile & desktop, live tanpa reload) --}}
+<div class="admin-card overflow-hidden mb-4 md:mb-6">
+    <form action="{{ route('admin.dispositions.index') }}" method="GET"
+        data-live-filter="#dispositions-results"
+        class="admin-toolbar">
+        <div class="grid grid-cols-2 md:flex md:items-center gap-2.5">
             <select name="status" class="admin-input text-[13px]">
                 <option value="">Semua Status</option>
                 @foreach($statuses as $s)
                     <option value="{{ $s }}" {{ request('status') == $s ? 'selected' : '' }}>{{ ucwords(str_replace('_', ' ', $s)) }}</option>
                 @endforeach
             </select>
-        </div>
-        <div class="flex-1">
-            <select name="unit_id" class="admin-input text-[13px]">
+            <select name="unit_id" class="admin-input text-[13px] md:min-w-[190px]">
                 <option value="">Semua Unit</option>
                 @foreach($units as $unit)
                     <option value="{{ $unit->id }}" {{ request('unit_id') == $unit->id ? 'selected' : '' }}>{{ $unit->nama }}</option>
                 @endforeach
             </select>
         </div>
-        <div class="flex gap-2">
-            <button type="submit" class="admin-btn admin-btn-primary flex-1">
+        <div class="flex items-center gap-2 md:flex-col md:gap-1.5">
+            <button type="submit" class="admin-btn admin-btn-primary flex-1 md:flex-none md:w-full" title="Terapkan filter">
                 <i class="fa-solid fa-filter mr-1 text-xs"></i> Filter
             </button>
-            <a href="{{ route('admin.dispositions.index') }}" class="admin-btn admin-btn-ghost flex-1 text-center">
-                Reset
-            </a>
+            <button type="button" data-live-reset class="admin-btn admin-btn-ghost flex-1 md:flex-none md:w-full text-center" title="Reset semua filter">
+                <i class="fa-solid fa-rotate-left mr-1 text-xs"></i> Reset
+            </button>
         </div>
     </form>
-    </div>
 </div>
 
-{{-- Desktop Filter --}}
-<div class="hidden md:block admin-card p-4 mb-6">
-    <form method="GET" class="flex flex-wrap items-end gap-3">
-        <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">Status</label>
-            <select name="status" class="admin-input w-44">
-                <option value="">Semua</option>
-                @foreach($statuses as $s)
-                    <option value="{{ $s }}" {{ request('status') == $s ? 'selected' : '' }}>{{ ucwords(str_replace('_', ' ', $s)) }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">Unit</label>
-            <select name="unit_id" class="admin-input w-56">
-                <option value="">Semua</option>
-                @foreach($units as $unit)
-                    <option value="{{ $unit->id }}" {{ request('unit_id') == $unit->id ? 'selected' : '' }}>{{ $unit->nama }}</option>
-                @endforeach
-            </select>
-        </div>
-        <button type="submit" class="admin-btn admin-btn-primary text-sm"><i class="fa-solid fa-filter mr-1"></i> Filter</button>
-        <a href="{{ route('admin.dispositions.index') }}" class="admin-btn admin-btn-ghost text-sm"><i class="fa-solid fa-rotate-right mr-1"></i> Reset</a>
-    </form>
+{{-- Hasil: statistik + mobile list + tabel desktop + pagination (di-refresh real-time oleh live filter) --}}
+<div id="dispositions-results" class="admin-live-wrap">
+    @include('admin.dispositions._table', [
+        'workflows' => $workflows,
+        'statTotal' => $statTotal,
+        'statMenunggu' => $statMenunggu,
+        'statProses' => $statProses,
+        'statTerlambat' => $statTerlambat,
+    ])
 </div>
 
-{{-- Mobile: Disposition List --}}
-<div class="block md:hidden mb-4">
-    <div class="admin-card overflow-hidden divide-y divide-gray-100">
-    @forelse($workflows as $wf)
-    @php
-        $isOverdue = $wf->due_at && $wf->due_at->isPast() && !in_array($wf->status, ['selesai','ditutup','menunggu_verifikasi']);
-    @endphp
-    <div class="flex items-stretch cursor-pointer active:bg-gray-50 transition-colors" onclick="window.location='{{ route('admin.tickets.show', $wf->ticket_id) }}'">
-        <div class="w-1 shrink-0 {{ $isOverdue ? 'bg-red-500' : 'bg-blue-500' }}"></div>
-        <div class="flex-1 min-w-0 pl-2.5 pr-3 py-2.5">
-            <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center gap-1.5 min-w-0 flex-1">
-                    <span class="text-[10px] font-mono font-bold text-blue-600 truncate">{{ $wf->ticket?->ticket_number ?? '-' }}</span>
-                    @if($isOverdue)
-                        <span class="text-red-500"><i class="fa-solid fa-exclamation-circle text-[10px]"></i></span>
-                    @endif
-                </div>
-                <span class="text-[10px] text-gray-400 whitespace-nowrap shrink-0">{{ $wf->created_at->format('d/m/Y') }}</span>
-            </div>
-            <h3 class="text-[13px] font-semibold text-gray-900 leading-snug mt-0.5 line-clamp-1">{{ $wf->ticket?->title ?? '-' }}</h3>
-            <div class="flex items-center gap-2 mt-0.5">
-                <span class="text-[11px] text-gray-500 truncate">
-                    {{ $wf->toUnit?->nama ?? '-' }} · {{ $wf->toUser?->nama ?? '-' }}
-                </span>
-                <span class="inline-block px-1.5 py-0.5 text-[10px] font-semibold rounded {{ $wf->action_badge['class'] }}">{{ $wf->action_badge['label'] }}</span>
-            </div>
-        </div>
-    </div>
-    @empty
-    <div class="text-center py-10 text-gray-400">
-        <i class="fa-solid fa-arrow-right-arrow-left text-3xl mb-2 block"></i>
-        <span class="text-sm">Belum ada disposisi.</span>
-    </div>
-    @endforelse
-    </div>
-</div>
-
-{{-- Table (Desktop) --}}
-<div class="hidden md:block admin-card overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="admin-table w-full text-sm">
-                <thead>
-                    <tr>
-                        <th class="px-4 py-3">Tiket</th>
-                        <th class="px-4 py-3">Judul</th>
-                        <th class="px-4 py-3">Unit</th>
-                        <th class="px-4 py-3">Penerima</th>
-                        <th class="px-4 py-3">Status</th>
-                        <th class="px-4 py-3">Tenggat</th>
-                        <th class="px-4 py-3">Tgl</th>
-                        <th class="px-4 py-3"></th>
-                    </tr>
-                </thead>
-            <tbody class="divide-y divide-gray-100">
-                @forelse($workflows as $wf)
-                @php
-                    $isOverdue = $wf->due_at && $wf->due_at->isPast() && !in_array($wf->status, ['selesai','ditutup','menunggu_verifikasi']);
-                @endphp
-                <tr class="{{ $isOverdue ? 'bg-red-50' : 'hover:bg-gray-50' }}">
-                    <td class="px-4 py-3 font-mono text-xs font-bold text-blue-600">{{ $wf->ticket?->ticket_number ?? '-' }}</td>
-                    <td class="px-4 py-3 max-w-[220px] truncate font-medium text-gray-800">{{ $wf->ticket?->title ?? '-' }}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">{{ $wf->toUnit?->nama ?? '-' }}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">
-                        {{ $wf->toUser?->nama ?? '-' }}
-                        <span class="text-xs text-gray-400 block">{{ $wf->toJabatan?->nama ?? '' }}</span>
-                    </td>
-                    <td class="px-4 py-3"><span class="inline-block px-2 py-1 text-xs font-semibold rounded {{ $wf->action_badge['class'] }}">{{ $wf->action_badge['label'] }}</span></td>
-                    <td class="px-4 py-3 whitespace-nowrap {{ $isOverdue ? 'text-red-600 font-semibold' : 'text-gray-500' }}">
-                        @if($wf->due_at)
-                            {{ $wf->due_at->format('d/m/Y') }}
-                            @if($isOverdue) <i class="fa-solid fa-exclamation-circle"></i> @endif
-                        @else
-                            -
-                        @endif
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-gray-500">{{ $wf->created_at->format('d/m/Y') }}</td>
-                    <td class="px-4 py-3">
-                        <a href="{{ route('admin.tickets.show', $wf->ticket_id) }}" class="text-blue-600 hover:text-blue-800 text-xs font-medium"><i class="fa-solid fa-eye"></i></a>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="8" class="px-4 py-12 text-center text-gray-400">
-                        <i class="fa-solid fa-arrow-right-arrow-left text-3xl mb-2"></i>
-                        <p>Belum ada disposisi</p>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-    @if($workflows->hasPages())
-    <div class="px-4 py-3 border-t border-gray-100">{{ $workflows->links() }}</div>
-    @endif
-</div>
-
-{{-- Mobile Pagination --}}
-@if($workflows->hasPages())
-<div class="block md:hidden mt-4">
-    {{ $workflows->links() }}
-</div>
-@endif
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var toggleBtn = document.getElementById('mobile-filter-toggle');
-    var filterContainer = document.getElementById('filter-container');
-    var filterIcon = document.getElementById('mobile-filter-icon');
-
-    if (toggleBtn && filterContainer) {
-        if (window.innerWidth < 768) {
-            filterContainer.classList.add('hidden');
-        }
-        toggleBtn.addEventListener('click', function() {
-            var isHidden = filterContainer.classList.contains('hidden');
-            if (isHidden) {
-                filterContainer.classList.remove('hidden');
-                filterContainer.classList.add('block');
-                if (filterIcon) filterIcon.style.transform = 'rotate(180deg)';
-            } else {
-                filterContainer.classList.add('hidden');
-                filterContainer.classList.remove('block');
-                if (filterIcon) filterIcon.style.transform = 'rotate(0deg)';
-            }
-        });
-        window.addEventListener('resize', function() {
-            if (window.innerWidth >= 768) {
-                filterContainer.classList.remove('hidden');
-                filterContainer.classList.add('block');
-            }
-        });
-    }
-});
-</script>
 @endsection

@@ -33,7 +33,7 @@
         <nav class="px-2.5 py-3 space-y-0.5">
             @if($mobileRoleGroup === 'admin')
 
-            <a href="/dashboard" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="/dashboard" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->is('dashboard') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
                     <i class="fa-solid fa-house text-white text-xs"></i>
                 </span>
@@ -43,19 +43,19 @@
             <div class="pt-3 pb-0.5 px-2.5">
                 <p class="text-[9px] font-bold text-gray-400 uppercase tracking-[0.15em]">Pelayanan</p>
             </div>
-            <a href="{{ route('admin.tickets.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('admin.tickets.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.tickets.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
                     <i class="fa-solid fa-clipboard-list text-white text-xs"></i>
                 </span>
                 Pengaduan
             </a>
-            <a href="{{ route('admin.dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('admin.dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.dispositions.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-sm shadow-teal-200/50 flex-shrink-0">
                     <i class="fa-solid fa-arrow-right-arrow-left text-white text-xs"></i>
                 </span>
                 Disposisi
             </a>
-            <a href="{{ route('admin.apresiasi.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('admin.apresiasi.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.apresiasi.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
                     <i class="fa-solid fa-thumbs-up text-white text-xs"></i>
                 </span>
@@ -68,7 +68,7 @@
                 <p class="text-[9px] font-bold text-gray-400 uppercase tracking-[0.15em]">Master Data</p>
             </div>
             @can('manage-roles')
-            <a href="{{ route('admin.roles.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('admin.roles.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.roles.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-sm shadow-indigo-200/50 flex-shrink-0">
                     <i class="fa-solid fa-shield-halved text-white text-xs"></i>
                 </span>
@@ -76,7 +76,7 @@
             </a>
             @endcan
             @can('manage-users')
-            <a href="{{ route('admin.users.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('admin.users.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.users.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm shadow-emerald-200/50 flex-shrink-0">
                     <i class="fa-solid fa-users text-white text-xs"></i>
                 </span>
@@ -84,7 +84,7 @@
             </a>
             @endcan
             @can('manage-jabatans')
-            <a href="{{ route('admin.jabatans.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('admin.jabatans.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.jabatans.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-sm shadow-orange-200/50 flex-shrink-0">
                     <i class="fa-solid fa-sitemap text-white text-xs"></i>
                 </span>
@@ -92,7 +92,7 @@
             </a>
             @endcan
             @can('manage-units')
-            <a href="{{ route('admin.units.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('admin.units.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.units.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
                     <i class="fa-solid fa-building text-white text-xs"></i>
                 </span>
@@ -100,7 +100,7 @@
             </a>
             @endcan
             @can('manage-rooms')
-            <a href="{{ route('admin.rooms.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('admin.rooms.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.rooms.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-sm shadow-violet-200/50 flex-shrink-0">
                     <i class="fa-solid fa-door-open text-white text-xs"></i>
                 </span>
@@ -108,7 +108,7 @@
             </a>
             @endcan
             @can('manage-categories')
-            <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.categories.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center shadow-sm shadow-pink-200/50 flex-shrink-0">
                     <i class="fa-solid fa-tags text-white text-xs"></i>
                 </span>
@@ -116,7 +116,7 @@
             </a>
             @endcan
             @can('manage-units')
-            <a href="{{ route('admin.unit-types.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('admin.unit-types.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.unit-types.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center shadow-sm shadow-cyan-200/50 flex-shrink-0">
                     <i class="fa-solid fa-tag text-white text-xs"></i>
                 </span>
@@ -130,13 +130,13 @@
             <div class="pt-3 pb-0.5 px-2.5">
                 <p class="text-[9px] font-bold text-gray-400 uppercase tracking-[0.15em]">Monitoring & Laporan</p>
             </div>
-            <a href="{{ route('admin.monitoring.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('admin.monitoring.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.monitoring.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm shadow-emerald-200/50 flex-shrink-0">
                     <i class="fa-solid fa-chart-line text-white text-xs"></i>
                 </span>
                 Monitoring
             </a>
-            <a href="{{ route('admin.laporan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('admin.laporan') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.laporan') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
                     <i class="fa-solid fa-file-lines text-white text-xs"></i>
                 </span>
@@ -150,7 +150,7 @@
                 <p class="text-[9px] font-bold text-gray-400 uppercase tracking-[0.15em]">Pengaturan</p>
             </div>
             @can('manage-audit-trail')
-            <a href="{{ route('direktur.audit-trail') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('direktur.audit-trail') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('direktur.audit-trail') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-slate-400 to-slate-600 flex items-center justify-center shadow-sm shadow-slate-200/50 flex-shrink-0">
                     <i class="fa-solid fa-magnifying-glass text-white text-xs"></i>
                 </span>
@@ -158,19 +158,19 @@
             </a>
             @endcan
             @can('manage-whatsapp')
-            <a href="{{ route('admin.whatsapp.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.whatsapp.index') ? 'bg-blue-50 text-blue-700' : '' }}">
+            <a href="{{ route('admin.whatsapp.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.whatsapp.index') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-sm shadow-green-200/50 flex-shrink-0">
                     <i class="fa-brands fa-whatsapp text-white text-xs"></i>
                 </span>
                 WhatsApp Gateway
             </a>
-            <a href="{{ route('admin.whatsapp.resend') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.whatsapp.resend') ? 'bg-blue-50 text-blue-700' : '' }}">
+            <a href="{{ route('admin.whatsapp.resend') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.whatsapp.resend') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-sm shadow-orange-200/50 flex-shrink-0">
                     <i class="fa-solid fa-clock-rotate-left text-white text-xs"></i>
                 </span>
                 Kirim Ulang
             </a>
-            <a href="{{ route('admin.whatsapp.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.whatsapp.index') ? 'bg-blue-50 text-blue-700' : '' }}">
+            <a href="{{ route('admin.whatsapp.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('admin.whatsapp.index') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-sm shadow-purple-200/50 flex-shrink-0">
                     <i class="fa-solid fa-qrcode text-white text-xs"></i>
                 </span>
@@ -180,31 +180,31 @@
             @endif
 
             @elseif($mobileRoleGroup === 'kepala_unit')
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
                     <i class="fa-solid fa-house text-white text-xs"></i>
                 </span>
                 Dashboard
             </a>
-            <a href="{{ route('dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('dispositions.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-sm shadow-teal-200/50 flex-shrink-0">
                     <i class="fa-solid fa-inbox text-white text-xs"></i>
                 </span>
                 Kotak Masuk Disposisi
             </a>
-            <a href="{{ route('dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('dalam-penanganan') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-sm shadow-yellow-200/50 flex-shrink-0">
                     <i class="fa-solid fa-spinner text-white text-xs"></i>
                 </span>
                 Dalam Penanganan
             </a>
-            <a href="{{ route('riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('riwayat') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-sm shadow-violet-200/50 flex-shrink-0">
                     <i class="fa-solid fa-clock-rotate-left text-white text-xs"></i>
                 </span>
                 Riwayat Pengaduan Unit
             </a>
-            <a href="{{ route('laporan.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('laporan.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('laporan.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm shadow-emerald-200/50 flex-shrink-0">
                     <i class="fa-solid fa-file-lines text-white text-xs"></i>
                 </span>
@@ -212,31 +212,31 @@
             </a>
 
             @elseif($mobileRoleGroup === 'kasi')
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
                     <i class="fa-solid fa-house text-white text-xs"></i>
                 </span>
                 Dashboard
             </a>
-            <a href="{{ route('dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('dispositions.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-sm shadow-teal-200/50 flex-shrink-0">
                     <i class="fa-solid fa-inbox text-white text-xs"></i>
                 </span>
                 Kotak Masuk Disposisi
             </a>
-            <a href="{{ route('dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('dalam-penanganan') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-sm shadow-yellow-200/50 flex-shrink-0">
                     <i class="fa-solid fa-spinner text-white text-xs"></i>
                 </span>
                 Dalam Penanganan
             </a>
-            <a href="{{ route('riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('riwayat') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-sm shadow-violet-200/50 flex-shrink-0">
                     <i class="fa-solid fa-clock-rotate-left text-white text-xs"></i>
                 </span>
                 Riwayat Pengaduan Bidang
             </a>
-            <a href="{{ route('laporan.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('laporan.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('laporan.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm shadow-emerald-200/50 flex-shrink-0">
                     <i class="fa-solid fa-file-lines text-white text-xs"></i>
                 </span>
@@ -244,31 +244,31 @@
             </a>
 
             @elseif($mobileRoleGroup === 'kabid')
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
                     <i class="fa-solid fa-house text-white text-xs"></i>
                 </span>
                 Dashboard
             </a>
-            <a href="{{ route('dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('dispositions.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-sm shadow-teal-200/50 flex-shrink-0">
                     <i class="fa-solid fa-inbox text-white text-xs"></i>
                 </span>
                 Kotak Masuk Disposisi
             </a>
-            <a href="{{ route('dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('dalam-penanganan') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-sm shadow-yellow-200/50 flex-shrink-0">
                     <i class="fa-solid fa-spinner text-white text-xs"></i>
                 </span>
                 Dalam Penanganan
             </a>
-            <a href="{{ route('riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('riwayat') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-sm shadow-violet-200/50 flex-shrink-0">
                     <i class="fa-solid fa-clock-rotate-left text-white text-xs"></i>
                 </span>
                 Riwayat Pengaduan
             </a>
-            <a href="{{ route('laporan.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('laporan.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('laporan.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-sm shadow-amber-200/50 flex-shrink-0">
                     <i class="fa-solid fa-file-lines text-white text-xs"></i>
                 </span>
@@ -276,19 +276,19 @@
             </a>
 
             @elseif($mobileRoleGroup === 'head_unit')
-            <a href="{{ route('dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dispositions.index') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('dispositions.*') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-sm shadow-teal-200/50 flex-shrink-0">
                     <i class="fa-solid fa-inbox text-white text-xs"></i>
                 </span>
                 Kotak Masuk
             </a>
-            <a href="{{ route('dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('dalam-penanganan') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('dalam-penanganan') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-sm shadow-yellow-200/50 flex-shrink-0">
                     <i class="fa-solid fa-spinner text-white text-xs"></i>
                 </span>
                 Dalam Penanganan
             </a>
-            <a href="{{ route('riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('riwayat') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('riwayat') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-sm shadow-violet-200/50 flex-shrink-0">
                     <i class="fa-solid fa-clock-rotate-left text-white text-xs"></i>
                 </span>
@@ -296,31 +296,31 @@
             </a>
 
             @elseif($mobileRoleGroup === 'direktur')
-            <a href="{{ route('direktur.dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('direktur.dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('direktur.dashboard') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
                     <i class="fa-solid fa-chart-pie text-white text-xs"></i>
                 </span>
                 Dashboard Monitoring
             </a>
-            <a href="{{ route('direktur.monitoring-workflow') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('direktur.monitoring-workflow') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('direktur.monitoring-workflow') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-sm shadow-violet-200/50 flex-shrink-0">
                     <i class="fa-solid fa-diagram-project text-white text-xs"></i>
                 </span>
                 Monitoring Workflow
             </a>
-            <a href="{{ route('direktur.statistik') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('direktur.statistik') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('direktur.statistik') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm shadow-emerald-200/50 flex-shrink-0">
                     <i class="fa-solid fa-chart-bar text-white text-xs"></i>
                 </span>
                 Statistik Pengaduan
             </a>
-            <a href="{{ route('direktur.laporan') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('direktur.laporan') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('direktur.laporan') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-sm shadow-amber-200/50 flex-shrink-0">
                     <i class="fa-solid fa-file-lines text-white text-xs"></i>
                 </span>
                 Laporan
             </a>
-            <a href="{{ route('direktur.audit-trail') }}" class="flex items-center gap-2.5 px-2.5 py-2 text-gray-600 hover:bg-blue-50 rounded-xl transition-colors text-[13px]">
+            <a href="{{ route('direktur.audit-trail') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->routeIs('direktur.audit-trail') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-slate-400 to-slate-600 flex items-center justify-center shadow-sm shadow-slate-200/50 flex-shrink-0">
                     <i class="fa-solid fa-magnifying-glass text-white text-xs"></i>
                 </span>
@@ -343,7 +343,7 @@
     </div>
 
     {{-- Main Wrapper --}}
-    <div class="flex flex-col flex-1 w-full lg:pl-64 transition-all duration-300 h-full relative">
+    <div id="main-wrapper" class="flex flex-col flex-1 w-full lg:pl-64 transition-all duration-300 h-full relative">
         
         {{-- ========================================================================= --}}
         {{--                          DESKTOP HEADER (md+)                             --}}
@@ -547,6 +547,47 @@
 </div>
 
 <script>
+function toggleSidebar() {
+    const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+
+    // Mobile / tablet (< lg): buka drawer mobile-menu
+    if (!isDesktop) {
+        toggleMobileMenu();
+        return;
+    }
+
+    // Desktop (lg+): collapse / expand sidebar
+    const sidebar = document.getElementById('sidebar');
+    const main = document.getElementById('main-wrapper');
+    if (!sidebar || !main) return;
+
+    const collapsed = sidebar.dataset.collapsed === '1';
+    if (collapsed) {
+        sidebar.dataset.collapsed = '0';
+        sidebar.style.transform = '';
+        main.style.paddingLeft = '';
+        localStorage.setItem('admin-sidebar', 'expanded');
+    } else {
+        sidebar.dataset.collapsed = '1';
+        sidebar.style.transform = 'translateX(-100%)';
+        main.style.paddingLeft = '0';
+        localStorage.setItem('admin-sidebar', 'collapsed');
+    }
+}
+
+// Restore collapsed state pada load (desktop)
+(function restoreSidebar() {
+    if (localStorage.getItem('admin-sidebar') === 'collapsed' && window.matchMedia('(min-width: 1024px)').matches) {
+        const sidebar = document.getElementById('sidebar');
+        const main = document.getElementById('main-wrapper');
+        if (sidebar && main) {
+            sidebar.dataset.collapsed = '1';
+            sidebar.style.transform = 'translateX(-100%)';
+            main.style.paddingLeft = '0';
+        }
+    }
+})();
+
 function toggleMobileMenu() {
     const menu = document.getElementById('mobile-menu');
     const overlay = document.getElementById('mobile-menu-overlay');
@@ -604,6 +645,95 @@ function closeProfileMenuMobile() {
     const menu = document.getElementById('profileMenuMobile');
     if (menu) menu.classList.add('hidden');
 }
+
+// === Live Filter: tabel + pagination tanpa reload (real-time) ===
+// Pakai pada form filter: data-live-filter="#selector" (target container hasil).
+// Server merespons fragment HTML saat header X-Live-Filter: 1 (lihat controller).
+function initLiveFilters() {
+    document.querySelectorAll('[data-live-filter]').forEach(function (form) {
+        var wrap = document.querySelector(form.getAttribute('data-live-filter'));
+        if (!wrap) return;
+
+        var timer = null;
+        var basePath = form.action.split('?')[0];
+
+        function load(url, updateHistory) {
+            wrap.classList.add('is-loading');
+            fetch(url, {
+                headers: {
+                    'X-Live-Filter': '1',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'text/html, */*; q=0.01',
+                },
+                credentials: 'same-origin',
+            })
+                .then(function (res) {
+                    if (!res.ok) throw new Error('live filter request failed');
+                    return res.text();
+                })
+                .then(function (html) {
+                    wrap.innerHTML = html;
+                    wireLinks();
+                    if (updateHistory) history.replaceState(null, '', url);
+                    // Sinkronkan tombol export (mis. Export PDF) dengan filter aktif
+                    var params = new URLSearchParams(new URL(url, window.location.href).searchParams);
+                    params.delete('page');
+                    document.querySelectorAll('a[data-live-export]').forEach(function (a) {
+                        var base = a.getAttribute('data-live-export') || a.href.split('?')[0];
+                        a.href = base + '?' + params.toString();
+                    });
+                })
+                .catch(function () {
+                    window.location.href = url; // fallback: reload normal
+                })
+                .finally(function () {
+                    wrap.classList.remove('is-loading');
+                });
+        }
+
+        function runFromForm() {
+            var params = new URLSearchParams(new FormData(form));
+            params.delete('page'); // filter berubah -> kembali ke halaman 1
+            load(basePath + '?' + params.toString(), true);
+        }
+
+        // Pagination links dalam hasil ikut di-intercept agar tetap tanpa reload
+        function wireLinks() {
+            wrap.querySelectorAll('a[href]').forEach(function (a) {
+                var href = a.getAttribute('href') || '';
+                if (href.indexOf(basePath) !== 0) return;
+                if (a.dataset.liveWired) return;
+                a.dataset.liveWired = '1';
+                a.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    load(href, true);
+                    wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+        }
+
+        form.querySelectorAll('input[name="search"]').forEach(function (inp) {
+            inp.addEventListener('input', function () {
+                clearTimeout(timer);
+                timer = setTimeout(runFromForm, 300);
+            });
+        });
+        form.querySelectorAll('select').forEach(function (sel) {
+            sel.addEventListener('change', runFromForm);
+        });
+        form.addEventListener('submit', function (e) { e.preventDefault(); runFromForm(); });
+        var reset = form.querySelector('[data-live-reset]');
+        if (reset) {
+            reset.addEventListener('click', function (e) {
+                e.preventDefault();
+                form.reset();
+                runFromForm();
+            });
+        }
+        wireLinks();
+    });
+}
+document.addEventListener('DOMContentLoaded', initLiveFilters);
 </script>
 
 @endsection

@@ -42,183 +42,36 @@
 </div>
 @endif
 
-{{-- Mobile Filter Sticky Wrapper --}}
-<div class="md:hidden sticky top-0 z-30 bg-[#F3F4F6] pt-1 pb-1 -mx-4 px-4">
-    <button id="mobile-filter-toggle" type="button" class="w-full bg-white/70 backdrop-blur-xl rounded-2xl border border-white/30 p-2.5 flex items-center justify-between text-sm text-gray-700 font-medium mb-2.5 active:scale-[0.98] transition-all shadow-sm" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
-        <span class="flex items-center gap-2">
-            <span class="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center">
-                <i class="fa-solid fa-sliders text-white text-[10px]"></i>
-            </span>
-            <span class="font-heading font-semibold text-[13px]">Filter & Pencarian</span>
-        </span>
-        <i id="mobile-filter-icon" class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300 text-xs"></i>
-    </button>
-
-    <div id="filter-container" class="admin-card p-3 mb-3">
-    <form method="GET" action="{{ route('admin.rooms.index') }}" class="flex flex-col gap-2.5">
-        <div class="relative">
+{{-- Toolbar Filter & Pencarian (menyatu, satu jalur mobile & desktop, live tanpa reload) --}}
+<div class="admin-card overflow-hidden mb-4 md:mb-6">
+    <form action="{{ route('admin.rooms.index') }}" method="GET"
+        data-live-filter="#rooms-results"
+        class="admin-toolbar">
+        <div class="relative flex-1 md:max-w-md">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
             <input type="text" name="search" value="{{ request('search') }}"
                 placeholder="Cari ruangan atau unit..." autocomplete="off"
                 class="admin-input text-[13px] pl-9">
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
             @if(request('search'))
             <a href="{{ route('admin.rooms.index', request()->except(['search', 'page'])) }}" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                 <i class="fa-solid fa-xmark"></i>
             </a>
             @endif
         </div>
-        <div class="flex gap-2">
-            <button type="submit" class="flex-1 bg-gradient-to-br from-violet-500 to-violet-700 hover:from-violet-600 hover:to-violet-800 text-white px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all shadow-sm shadow-violet-200/50 active:scale-[0.98]">
-                <i class="fa-solid fa-search mr-1 text-xs"></i> Cari
+        <div class="flex items-center gap-2 md:flex-col md:gap-1.5">
+            <button type="submit" class="admin-btn admin-btn-primary flex-1 md:flex-none md:w-full" title="Terapkan filter">
+                <i class="fa-solid fa-filter mr-1 text-xs"></i> Filter
             </button>
-            <a href="{{ route('admin.rooms.index') }}" class="flex-1 bg-gradient-to-br from-gray-100 to-white border border-gray-200 hover:from-gray-200 hover:to-gray-100 text-gray-700 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all active:scale-[0.98] text-center">
-                Reset
-            </a>
-        </div>
-    </form>
-    </div>
-</div>
-
-{{-- Desktop Filter --}}
-<div class="hidden md:block mb-4">
-    <form method="GET" action="{{ route('admin.rooms.index') }}">
-        <div class="relative max-w-md">
-            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari ruangan atau unit..." autocomplete="off"
-                class="admin-input w-full pl-10 pr-10">
-            @if(request('search'))
-            <a href="{{ route('admin.rooms.index') }}" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                <i class="fa-solid fa-xmark"></i>
-            </a>
-            @endif
+            <button type="button" data-live-reset class="admin-btn admin-btn-ghost flex-1 md:flex-none md:w-full text-center" title="Reset semua filter">
+                <i class="fa-solid fa-rotate-left mr-1 text-xs"></i> Reset
+            </button>
         </div>
     </form>
 </div>
 
-{{-- Mobile: Room List --}}
-<div class="block md:hidden mb-4">
-    <div class="admin-card overflow-hidden divide-y divide-gray-100">
-    @forelse($rooms as $room)
-    <div class="flex items-stretch active:bg-gray-50 transition-colors">
-        <div class="w-1 shrink-0 bg-violet-500"></div>
-        <div class="flex-1 min-w-0 pl-2.5 pr-3 py-2.5">
-            <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center gap-1.5 min-w-0 flex-1">
-                    <span class="text-[13px] font-semibold text-gray-900 truncate">{{ $room->name }}</span>
-                </div>
-                <div class="flex items-center gap-1 shrink-0">
-                    <a href="{{ route('admin.rooms.edit', $room->id) }}"
-                       class="admin-action admin-action-sm admin-action-blue" title="Edit">
-                        <i class="fa-regular fa-pen-to-square text-[10px]"></i>
-                    </a>
-                    <form action="{{ route('admin.rooms.destroy', $room->id) }}" method="POST"
-                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus ruangan ini?')" class="inline">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="admin-action admin-action-sm admin-action-red" title="Hapus">
-                            <i class="fa-regular fa-trash-can text-[10px]"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="flex items-center gap-2 mt-1">
-                <span class="inline-flex items-center gap-1 py-0.5 px-1.5 rounded-md bg-blue-50 text-blue-700 text-[10px] font-semibold border border-blue-100">
-                    <i class="fa-solid fa-building text-[9px]"></i> {{ $room->unit->nama ?? 'Tanpa Unit' }}
-                </span>
-            </div>
-        </div>
-    </div>
-    @empty
-    <div class="text-center py-10 text-gray-400">
-        <i class="fa-solid fa-door-open text-3xl mb-2 block"></i>
-        <span class="text-sm">Belum ada data ruangan.</span>
-    </div>
-    @endforelse
-    </div>
+{{-- Hasil: mobile list + tabel desktop + pagination (di-refresh real-time oleh live filter) --}}
+<div id="rooms-results" class="admin-live-wrap">
+    @include('admin.rooms._table', ['rooms' => $rooms])
 </div>
 
-{{-- Table (Desktop) --}}
-<div class="hidden md:block admin-card overflow-hidden">
-    <table class="admin-table w-full text-left text-sm text-gray-600">
-        <thead>
-            <tr>
-                <th class="px-6 py-4 w-16 text-center">No</th>
-                <th class="px-6 py-4">Nama Ruangan</th>
-                <th class="px-6 py-4">Unit Terkait</th>
-                <th class="px-6 py-4 w-32 text-center">Aksi</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100">
-            @forelse($rooms as $index => $room)
-            <tr class="hover:bg-gray-50/50 transition-colors">
-                <td class="px-6 py-4 text-center">{{ $rooms->firstItem() + $index }}</td>
-                <td class="px-6 py-4 font-medium text-gray-900">{{ $room->name }}</td>
-                <td class="px-6 py-4">
-                    <span class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-md bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-100">
-                        <i class="fa-solid fa-building"></i> {{ $room->unit->nama ?? 'Tanpa Unit' }}
-                    </span>
-                </td>
-                <td class="px-6 py-4">
-                    <div class="flex items-center justify-center gap-1.5">
-                        <a href="{{ route('admin.rooms.edit', $room->id) }}" class="admin-action-pill admin-action-pill-blue" title="Edit">
-                            <i class="fa-regular fa-pen-to-square text-[11px]"></i> Edit
-                        </a>
-                        <form action="{{ route('admin.rooms.destroy', $room->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus ruangan ini?');" class="inline">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="admin-action-pill admin-action-pill-red" title="Hapus">
-                                <i class="fa-regular fa-trash-can text-[11px]"></i> Hapus
-                            </button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="4" class="px-6 py-8 text-center text-gray-400">Belum ada data ruangan.</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
-
-{{-- Pagination --}}
-@if(method_exists($rooms, 'hasPages') && $rooms->hasPages())
-<div class="block md:hidden mt-4">
-    {{ $rooms->links() }}
-</div>
-<div class="hidden md:block mt-6">
-    {{ $rooms->links() }}
-</div>
-@endif
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var toggleBtn = document.getElementById('mobile-filter-toggle');
-    var filterContainer = document.getElementById('filter-container');
-    var filterIcon = document.getElementById('mobile-filter-icon');
-
-    if (toggleBtn && filterContainer) {
-        if (window.innerWidth < 768) {
-            filterContainer.classList.add('hidden');
-        }
-        toggleBtn.addEventListener('click', function() {
-            var isHidden = filterContainer.classList.contains('hidden');
-            if (isHidden) {
-                filterContainer.classList.remove('hidden');
-                filterContainer.classList.add('block');
-                if (filterIcon) filterIcon.style.transform = 'rotate(180deg)';
-            } else {
-                filterContainer.classList.add('hidden');
-                filterContainer.classList.remove('block');
-                if (filterIcon) filterIcon.style.transform = 'rotate(0deg)';
-            }
-        });
-        window.addEventListener('resize', function() {
-            if (window.innerWidth >= 768) {
-                filterContainer.classList.remove('hidden');
-                filterContainer.classList.add('block');
-            }
-        });
-    }
-});
-</script>
 @endsection

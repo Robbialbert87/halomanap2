@@ -44,6 +44,11 @@ class UserController extends Controller
         $jabatans = Jabatan::where('status', 'active')->orderBy('kategori_jabatan')->orderBy('nama')->get();
         $roles = Role::orderBy('name')->get();
 
+        // Live filter: balas fragment tabel saja (tanpa layout) untuk fetch tanpa reload
+        if ($request->header('X-Live-Filter') === '1') {
+            return view('admin.users._table', compact('users'));
+        }
+
         return view('admin.users.index', ['users' => $users, 'units' => $units, 'jabatans' => $jabatans, 'roles' => $roles]);
     }
 

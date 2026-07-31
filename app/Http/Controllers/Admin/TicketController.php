@@ -52,6 +52,11 @@ class TicketController extends Controller
         $units = Unit::orderBy('nama')->get();
         $categories = ReportCategory::orderBy('name')->get();
 
+        // Live filter: balas fragment tabel saja (tanpa layout) untuk fetch tanpa reload
+        if ($request->header('X-Live-Filter') === '1') {
+            return view('admin.tickets._table', compact('tickets'));
+        }
+
         return view('admin.tickets.index', ['tickets' => $tickets, 'units' => $units, 'categories' => $categories]);
     }
 

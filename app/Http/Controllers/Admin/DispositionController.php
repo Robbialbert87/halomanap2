@@ -27,11 +27,23 @@ class DispositionController extends Controller
             $query->where('to_unit_id', $request->unit_id);
         }
 
+        // Statistik dihitung dari seluruh hasil filter (bukan hanya halaman aktif)
+        $statTotal = (clone $query)->count();
+        $statMenunggu = (clone $query)->where('status', 'menunggu_respon')->count();
+        $statProses = (clone $query)->where('status', 'dalam_penanganan')->count();
+        $statTerlambat = (clone $query)->whereNotNull('due_at')->where('due_at', '<', now())
+            ->whereNotIn('status', ['selesai', 'ditutup', 'menunggu_verifikasi'])->count();
+
         $workflows = $query->paginate(15)->withQueryString();
         $units = Unit::orderBy('nama')->get();
         $statuses = ['menunggu_respon', 'dalam_penanganan', 'selesai', 'ditutup', 'menunggu_verifikasi'];
 
-        return view('admin.dispositions.index', ['workflows' => $workflows, 'units' => $units, 'statuses' => $statuses]);
+        // Live filter: balas fragment (statistik + tabel) untuk fetch tanpa reload
+        if ($request->header('X-Live-Filter') === '1') {
+            return view('admin.dispositions._table', compact('workflows', 'statTotal', 'statMenunggu', 'statProses', 'statTerlambat'));
+        }
+
+        return view('admin.dispositions.index', ['workflows' => $workflows, 'units' => $units, 'statuses' => $statuses, 'statTotal' => $statTotal, 'statMenunggu' => $statMenunggu, 'statProses' => $statProses, 'statTerlambat' => $statTerlambat]);
     }
 
     public function store(Request $request)
