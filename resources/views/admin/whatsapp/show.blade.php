@@ -32,11 +32,11 @@
       <div class="flex items-center gap-2">
         <form method="POST" action="{{ route('admin.whatsapp.sessions.sync', $session->session_id) }}" class="inline">
           @csrf
-          <button class="btn-tactile px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 transition-all">Sync</button>
+          <button class="admin-action-pill admin-action-pill-emerald" title="Sync session">Sync</button>
         </form>
         <form method="POST" action="{{ route('admin.whatsapp.sessions.disconnect', $session->session_id) }}" class="inline" onsubmit="return confirm('Putuskan session {{ $session->name }}?')">
           @csrf
-          <button class="btn-tactile px-3 py-1.5 rounded-lg text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 transition-all">Disconnect</button>
+          <button class="admin-action-pill admin-action-pill-red" title="Disconnect">Disconnect</button>
         </form>
       </div>
     </div>

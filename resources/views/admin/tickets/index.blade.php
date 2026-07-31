@@ -163,7 +163,7 @@ $typeMap = [
             </div>
         </div>
         <div class="flex flex-col items-center justify-center pr-2.5 gap-1 shrink-0">
-            <button onclick="event.stopPropagation(); confirmDelete('{{ $ticket->id }}', '{{ $ticket->ticket_number }}')" class="text-gray-300 hover:text-red-500 transition-colors p-1">
+            <button onclick="event.stopPropagation(); confirmDelete('{{ $ticket->id }}', '{{ $ticket->ticket_number }}')" class="admin-action admin-action-sm admin-action-red" title="Hapus">
                 <i class="fa-solid fa-trash-can text-[10px]"></i>
             </button>
         </div>
@@ -232,12 +232,12 @@ $typeMap = [
                     <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{{ $ticket->created_at->format('d M Y') }}<br>{{ $ticket->created_at->format('H:i') }}</td>
                     <td class="px-4 py-3 text-center">
                         <div class="flex items-center justify-center gap-1.5">
-                            <a href="{{ route('admin.tickets.show', $ticket->id) }}" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">
-                                <i class="fa-solid fa-eye mr-1"></i> Detail
+                            <a href="{{ route('admin.tickets.show', $ticket->id) }}" class="admin-action-pill admin-action-pill-blue" title="Lihat detail">
+                                <i class="fa-solid fa-eye text-[11px]"></i> Detail
                             </a>
                             <button onclick="confirmDelete('{{ $ticket->id }}', '{{ $ticket->ticket_number }}')"
-                                class="bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">
-                                <i class="fa-solid fa-trash"></i>
+                                class="admin-action-pill admin-action-pill-red" title="Hapus">
+                                <i class="fa-solid fa-trash text-[11px]"></i> Hapus
                             </button>
                         </div>
                     </td>

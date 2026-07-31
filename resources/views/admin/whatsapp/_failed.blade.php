@@ -35,8 +35,8 @@
                             <form action="{{ route('admin.whatsapp.resend-submit') }}" method="POST" class="inline">
                                 @csrf
                                 <input type="hidden" name="ids[]" value="{{ $log->id }}">
-                                <button type="submit" class="text-blue-600 hover:text-blue-800 text-xs font-medium">
-                                    <i class="fa-solid fa-rotate-left mr-0.5"></i> Kirim Ulang
+                                <button type="submit" class="admin-action-pill admin-action-pill-blue" title="Kirim ulang pesan">
+                                    <i class="fa-solid fa-rotate-left text-[11px]"></i> Kirim Ulang
                                 </button>
                             </form>
                         </td>

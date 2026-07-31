@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="flex flex-col items-center justify-center pr-2.5 gap-1 shrink-0">
-            <button onclick="event.stopPropagation(); confirmDelete('{{ $ticket->id }}', '{{ $ticket->ticket_number }}')" class="text-gray-300 hover:text-red-500 transition-colors p-1">
+            <button onclick="event.stopPropagation(); confirmDelete('{{ $ticket->id }}', '{{ $ticket->ticket_number }}')" class="admin-action admin-action-sm admin-action-red" title="Hapus">
                 <i class="fa-solid fa-trash-can text-[10px]"></i>
             </button>
         </div>

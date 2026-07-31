@@ -69,36 +69,36 @@
                             </span>
                         </td>
                         <td class="px-4 py-3">
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-1.5">
                                 @if(!$isOk)
-                                <a href="{{ route('admin.whatsapp.sessions.show', $session->session_id) }}" class="text-blue-600 hover:text-blue-800 text-xs font-medium">
-                                    <i class="fa-solid fa-qrcode mr-0.5"></i> QR
+                                <a href="{{ route('admin.whatsapp.sessions.show', $session->session_id) }}" class="admin-action-pill admin-action-pill-blue" title="Lihat QR code">
+                                    <i class="fa-solid fa-qrcode text-[11px]"></i> QR
                                 </a>
                                 @endif
                                 <form action="{{ route('admin.whatsapp.sessions.sync', $session->session_id) }}" method="POST" class="inline">
                                     @csrf
-                                    <button type="submit" class="text-gray-500 hover:text-gray-700 text-xs" title="Sync">
-                                        <i class="fa-solid fa-rotate"></i>
+                                    <button type="submit" class="admin-action-pill admin-action-pill-emerald" title="Sync">
+                                        <i class="fa-solid fa-rotate text-[11px]"></i> Sync
                                     </button>
                                 </form>
                                 @if(($wahaConfig['session'] ?? '') !== $session->session_id)
                                 <a href="{{ route('admin.whatsapp.sessions.set-default', $session->session_id) }}"
-                                   class="text-emerald-600 hover:text-emerald-800 text-xs font-medium" title="Jadikan default kirim">
-                                    <i class="fa-solid fa-check"></i> Default
+                                   class="admin-action-pill admin-action-pill-emerald" title="Jadikan default kirim">
+                                    <i class="fa-solid fa-check text-[11px]"></i> Default
                                 </a>
                                 @else
-                                <span class="text-emerald-600 text-xs font-medium"><i class="fa-solid fa-check-circle"></i> Default</span>
+                                <span class="admin-action-pill admin-action-pill-emerald cursor-default" title="Session default"><i class="fa-solid fa-check-circle text-[11px]"></i> Default</span>
                                 @endif
                                 <form action="{{ route('admin.whatsapp.sessions.disconnect', $session->session_id) }}" method="POST" class="inline" onsubmit="return confirm('Putuskan session {{ $session->session_id }}?')">
                                     @csrf
-                                    <button type="submit" class="text-yellow-600 hover:text-yellow-800 text-xs" title="Disconnect">
-                                        <i class="fa-solid fa-power-off"></i>
+                                    <button type="submit" class="admin-action-pill admin-action-pill-red" title="Disconnect">
+                                        <i class="fa-solid fa-power-off text-[11px]"></i> Putus
                                     </button>
                                 </form>
                                 <form action="{{ route('admin.whatsapp.sessions.destroy', $session->session_id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus session {{ $session->session_id }}?')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-800 text-xs" title="Hapus">
-                                        <i class="fa-solid fa-trash-can"></i>
+                                    <button type="submit" class="admin-action-pill admin-action-pill-red" title="Hapus">
+                                        <i class="fa-solid fa-trash-can text-[11px]"></i> Hapus
                                     </button>
                                 </form>
                             </div>

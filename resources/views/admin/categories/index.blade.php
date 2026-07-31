@@ -58,13 +58,13 @@
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
                     <a href="{{ route('admin.categories.edit', $category->id) }}"
-                       class="text-gray-300 hover:text-blue-500 transition-colors p-1" title="Edit">
+                       class="admin-action admin-action-sm admin-action-blue" title="Edit">
                         <i class="fa-regular fa-pen-to-square text-[10px]"></i>
                     </a>
                     <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST"
                           onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')" class="inline">
                         @csrf @method('DELETE')
-                        <button type="submit" class="text-gray-300 hover:text-red-500 transition-colors p-1" title="Hapus">
+                        <button type="submit" class="admin-action admin-action-sm admin-action-red" title="Hapus">
                             <i class="fa-regular fa-trash-can text-[10px]"></i>
                         </button>
                     </form>
@@ -103,14 +103,14 @@
                 </td>
                 <td class="px-6 py-4 font-medium text-gray-900">{{ $category->name }}</td>
                 <td class="px-6 py-4">
-                    <div class="flex items-center justify-center gap-1">
-                        <a href="{{ route('admin.categories.edit', $category->id) }}" class="text-blue-600 hover:text-blue-800 p-1.5 rounded-md hover:bg-blue-50 transition-colors">
-                            <i class="fa-regular fa-pen-to-square"></i>
+                    <div class="flex items-center justify-center gap-1.5">
+                        <a href="{{ route('admin.categories.edit', $category->id) }}" class="admin-action-pill admin-action-pill-blue" title="Edit">
+                            <i class="fa-regular fa-pen-to-square text-[11px]"></i> Edit
                         </a>
                         <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?');" class="inline">
                             @csrf @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-800 p-1.5 rounded-md hover:bg-red-50 transition-colors">
-                                <i class="fa-regular fa-trash-can"></i>
+                            <button type="submit" class="admin-action-pill admin-action-pill-red" title="Hapus">
+                                <i class="fa-regular fa-trash-can text-[11px]"></i> Hapus
                             </button>
                         </form>
                     </div>
