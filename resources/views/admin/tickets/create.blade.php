@@ -4,15 +4,7 @@
 
 @section('admin_content')
 
-@if ($errors->any())
-    <div class="bg-red-50 text-red-600 p-4 rounded-xl mb-6 text-sm border border-red-200">
-        <ul class="list-disc pl-5">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+<x-admin.errors />
 
 <div class="admin-card overflow-hidden">
     <div class="border-b border-gray-100 p-6 bg-gray-50/50 flex items-center justify-between">

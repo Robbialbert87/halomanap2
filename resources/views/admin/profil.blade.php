@@ -3,28 +3,22 @@
 @section('title', 'Profil - Halo MANAP')
 
 @section('admin_content')
-<div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800">Profil</h1>
-        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <span class="text-blue-600">Admin</span>
-            <span class="text-gray-400">/</span>
-            <span>Profil</span>
-        </div>
-    </div>
-</div>
+<x-admin.page-header
+    title="Profil"
+    section="Admin"
+    icon="fa-user"
+    gradient="blue"
+>
+    <x-slot name="breadcrumb">
+        <span class="text-gray-400">/</span>
+        <span>Profil</span>
+    </x-slot>
+</x-admin.page-header>
 
 <x-admin.flash />
 
-@if($errors->any())
-<div class="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm font-medium">
-    <ul class="list-disc list-inside">
-        @foreach($errors->all() as $error)
-            <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-</div>
-@endif
+<x-admin.errors />
+
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 

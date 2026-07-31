@@ -28,23 +28,20 @@
 @endphp
 
 {{-- Page Header --}}
-<div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 animate-fadeInUp" style="animation-delay:0s">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800">Detail Pengaduan</h1>
-        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <span class="text-blue-600">Beranda</span>
-            <span class="text-gray-400">/</span>
-            <a href="{{ route('admin.tickets.index') }}" class="hover:text-blue-600">Pengaduan</a>
-            <span class="text-gray-400">/</span>
-            <span class="font-mono font-semibold text-blue-700">{{ $ticket->ticket_number }}</span>
-        </div>
-    </div>
-    <div class="flex gap-3">
-        <a href="{{ route('admin.tickets.index') }}" class="admin-btn admin-btn-ghost">
-            <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
-        </a>
-    </div>
-</div>
+<x-admin.page-header
+    title="Detail Pengaduan"
+    section="Beranda"
+    icon="fa-clipboard-list"
+    gradient="blue"
+>
+    <x-slot name="breadcrumb">
+        <span class="text-gray-400">/</span>
+        <a href="{{ route('admin.tickets.index') }}" class="hover:text-blue-600">Pengaduan</a>
+        <span class="text-gray-400">/</span>
+        <span class="font-mono font-semibold text-blue-700">{{ $ticket->ticket_number }}</span>
+    </x-slot>
+    <x-admin.btn href="{{ route('admin.tickets.index') }}" variant="ghost" icon="fa-arrow-left">Kembali</x-admin.btn>
+</x-admin.page-header>
 
 <x-admin.flash />
 
