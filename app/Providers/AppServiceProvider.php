@@ -52,17 +52,8 @@ class AppServiceProvider extends ServiceProvider
             $user = auth()->user();
 
             // Determine role route prefix for notification links
-            $roleRoute = null;
-            if ($user) {
-                $roleGroup = $user->getRoleGroup();
-                $roleRoute = match ($roleGroup) {
-                    'kepala_unit' => 'kepala-unit.dispositions.show',
-                    'kasi' => 'kasi.dispositions.show',
-                    'kabid' => 'kabid.dispositions.show',
-                    'head_unit' => 'head-unit.dispositions.show',
-                    default => null,
-                };
-            }
+            // Semua role memakai route role-agnostic (route role-spesifik lama sudah dihapus).
+            $roleRoute = 'dispositions.show';
 
             // 1. Ticket-based notifications (NEW / DONE / Selesai)
             $unreadNew = Ticket::where('status', 'NEW')

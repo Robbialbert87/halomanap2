@@ -65,16 +65,10 @@ class LoginController extends Controller
             return '/dashboard';
         }
 
-        if ($kategori === 'Kepala Unit' || $role === 'Kepala Unit') {
-            return '/kepala-unit/dashboard';
-        }
-
-        if (in_array($kategori, ['Kasi', 'Kasubbag'])) {
-            return '/kasi/dashboard';
-        }
-
-        if (in_array($kategori, ['Kabid', 'Kabag'])) {
-            return '/kabid/dashboard';
+        // Role-agnostic: semua jabatan pelayanan memakai dashboard umum
+        // (route role-spesifik lama sudah dihapus pada refactor).
+        if (in_array($kategori, ['Kepala Unit', 'Kasi', 'Kasubbag', 'Kabid', 'Kabag'])) {
+            return '/dashboard';
         }
 
         if ($kategori === 'Direktur' || $role === 'Direktur') {

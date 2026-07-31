@@ -5,8 +5,7 @@
             "type": "local",
             "enabled": true,
             "command": [
-                "ddev",
-                "php",
+                "ddev php",
                 "artisan",
                 "boost:mcp"
             ]

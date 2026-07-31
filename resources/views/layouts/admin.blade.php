@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="flex h-screen bg-[#F3F4F6] overflow-hidden">
+<div class="flex min-h-[100dvh] bg-[#F9FAFB] overflow-hidden">
     {{-- ========================================================================= --}}
     {{--                          DESKTOP SIDEBAR (md+)                            --}}
     {{-- ========================================================================= --}}

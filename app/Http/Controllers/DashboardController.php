@@ -71,13 +71,6 @@ class DashboardController extends Controller
             ->where('status', 'dalam_penanganan')
             ->count();
 
-        $monitoring = null;
-        if ($user->can('menu.kabid.monitoring')) {
-            $monitoring = Ticket::whereHas('room.unit', $baseQuery)
-                ->whereNull('notification_seen_at')
-                ->count();
-        }
-
         $latestWorkflows = WorkflowHistory::with(['ticket.room.unit', 'ticket.category', 'fromUser', 'toJabatan'])
             ->where('to_user_id', $user->id)
             ->whereNotIn('status', ['selesai', 'ditutup'])
@@ -125,6 +118,6 @@ class DashboardController extends Controller
             $unitData = [$unitName => $total];
         }
 
-        return view('dashboard', ['user' => $user, 'total' => $total, 'baru' => $baru, 'menunggu' => $menunggu, 'diproses' => $diproses, 'selesai' => $selesai, 'ditolak' => $ditolak, 'pMenunggu' => $pMenunggu, 'pDiproses' => $pDiproses, 'pSelesai' => $pSelesai, 'pDitolak' => $pDitolak, 'dalamProses' => $dalamProses, 'avgRespon' => $avgRespon, 'monitoring' => $monitoring, 'latestWorkflows' => $latestWorkflows, 'categoryData' => $categoryData, 'categoryColors' => $categoryColors, 'unitData' => $unitData, 'monthlyData' => $monthlyData, 'monthlyLabels' => $monthlyLabels]);
+        return view('dashboard', ['user' => $user, 'total' => $total, 'baru' => $baru, 'menunggu' => $menunggu, 'diproses' => $diproses, 'selesai' => $selesai, 'ditolak' => $ditolak, 'pMenunggu' => $pMenunggu, 'pDiproses' => $pDiproses, 'pSelesai' => $pSelesai, 'pDitolak' => $pDitolak, 'dalamProses' => $dalamProses, 'avgRespon' => $avgRespon, 'latestWorkflows' => $latestWorkflows, 'categoryData' => $categoryData, 'categoryColors' => $categoryColors, 'unitData' => $unitData, 'monthlyData' => $monthlyData, 'monthlyLabels' => $monthlyLabels]);
     }
 }

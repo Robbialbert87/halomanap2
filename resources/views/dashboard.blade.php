@@ -5,202 +5,333 @@
 @section('admin_content')
 @php
     $mobileRoleGroup = auth()->user()?->getRoleGroup();
+    $statusMeta = [
+        'menunggu'  => ['label' => 'Menunggu',  'dot' => 'bg-amber-500',   'bar' => 'bg-amber-500',  'icon' => 'fa-regular fa-clock'],
+        'diproses'  => ['label' => 'Diproses',  'dot' => 'bg-blue-600',     'bar' => 'bg-blue-600',   'icon' => 'fa-solid fa-spinner'],
+        'selesai'   => ['label' => 'Selesai',   'dot' => 'bg-emerald-500',  'bar' => 'bg-emerald-500', 'icon' => 'fa-solid fa-check'],
+        'ditolak'   => ['label' => 'Ditolak',   'dot' => 'bg-rose-500',     'bar' => 'bg-rose-500',   'icon' => 'fa-solid fa-ban'],
+    ];
+    $kpis = [
+        'menunggu' => ['value' => $menunggu, 'pct' => $pMenunggu],
+        'diproses' => ['value' => $diproses, 'pct' => $pDiproses],
+        'selesai'  => ['value' => $selesai,  'pct' => $pSelesai],
+        'ditolak'  => ['value' => $ditolak,  'pct' => $pDitolak],
+    ];
+    $wfBadge = [
+        'dalam_penanganan' => ['text' => 'text-blue-700',  'bg' => 'bg-blue-50',   'label' => 'Dalam Penanganan'],
+        'disposisi'        => ['text' => 'text-violet-700', 'bg' => 'bg-violet-50', 'label' => 'Disposisi'],
+        'eskalasi'         => ['text' => 'text-amber-700', 'bg' => 'bg-amber-50',  'label' => 'Eskalasi'],
+        'selesai'          => ['text' => 'text-emerald-700', 'bg' => 'bg-emerald-50', 'label' => 'Selesai'],
+        'ditutup'          => ['text' => 'text-slate-600', 'bg' => 'bg-slate-100', 'label' => 'Ditutup'],
+        'diterima'         => ['text' => 'text-cyan-700',  'bg' => 'bg-cyan-50',   'label' => 'Diterima'],
+    ];
 @endphp
+
 <style>
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(24px); }
+    @keyframes rise {
+        from { opacity: 0; transform: translateY(22px); }
         to   { opacity: 1; transform: translateY(0); }
     }
-    .animate-fadeInUp {
-        animation: fadeInUp 0.45s ease-out both;
+    @keyframes breathe {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50%      { opacity: 0.55; transform: scale(0.82); }
     }
+    @keyframes shimmer {
+        0%   { background-position: -468px 0; }
+        100% { background-position: 468px 0; }
+    }
+    @keyframes growBar {
+        from { transform: scaleX(0); }
+        to   { transform: scaleX(1); }
+    }
+    .anim-rise      { animation: rise 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .dot-breathe    { animation: breathe 2.2s ease-in-out infinite; }
+    .skeleton-shimmer {
+        background: linear-gradient(90deg, #f1f5f9 8%, #e2e8f0 18%, #f1f5f9 33%);
+        background-size: 936px 100%;
+        animation: shimmer 1.4s linear infinite;
+    }
+    .bar-grow {
+        transform-origin: left;
+        animation: growBar 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .card-surface {
+        background-color: #ffffff;
+        border: 1px solid rgba(226, 232, 240, 0.6);
+        border-radius: 1.5rem;
+        box-shadow: 0 20px 40px -20px rgba(15, 23, 42, 0.08);
+    }
+    .card-surface:active { transform: scale(0.995); }
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 
-            <!-- Page Header -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 animate-fadeInUp" style="animation-delay:0s">
+<div x-data="dashboardCounter()" x-init="init()" class="relative">
+
+    {{-- =========================================================== --}}
+    {{-- HEADER — asymmetric: eyebrow + nama kiri, aksi kanan         --}}
+    {{-- =========================================================== --}}
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-5 mb-8 anim-rise" style="animation-delay:0s">
+        <div>
+            <p class="text-[11px] font-semibold tracking-[0.22em] uppercase text-blue-600 mb-2">Ringkasan Pelayanan</p>
+            <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 leading-none">
+                Selamat datang, {{ auth()->user()?->nama ?? 'Pegawai' }}
+            </h1>
+            <p class="mt-2 text-sm text-slate-500">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }} — data real-time unit Anda</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('pengaduan.track') }}"
+               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-slate-600 hover:border-slate-300 hover:text-slate-900 active:scale-[0.98] transition-all duration-300">
+                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                Cek Status
+            </a>
+            <a href="{{ route('pengaduan.create') }}"
+               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-blue-600 text-sm font-semibold text-white shadow-[0_10px_25px_-10px_rgba(37,99,235,0.55)] hover:bg-blue-700 active:scale-[0.98] transition-all duration-300">
+                <i class="fa-solid fa-plus text-xs"></i>
+                Buat Pengaduan
+            </a>
+        </div>
+    </div>
+
+    {{-- =========================================================== --}}
+    {{-- BENTO ROW 1 — KPI hero (7) + Aktivitas Terkini (5)           --}}
+    {{-- =========================================================== --}}
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-5">
+
+        {{-- KPI HERO — angka besar + breakdown inline, tanpa 5 kartu --}}
+        <div class="lg:col-span-7 card-surface p-6 md:p-8 anim-rise" style="animation-delay:0.06s">
+            <div class="flex items-start justify-between gap-4">
                 <div>
-                    <div class="hidden md:block">
-                        <h1 class="text-2xl font-bold text-gray-800 font-heading">Dashboard</h1>
-                        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-                            <span class="text-blue-600">Beranda</span>
-                            <span class="text-gray-400">/</span>
-                            <span>Dashboard</span>
-                        </div>
+                    <p class="text-sm font-medium text-slate-500">Total Pengaduan</p>
+                    <p class="mt-2 text-5xl md:text-6xl font-bold tracking-tighter text-slate-900 font-mono tabular-nums leading-none">
+                        <span x-text="fmt(total)">0</span>
+                    </p>
+                </div>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-[11px] font-semibold">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-600 dot-breathe"></span>
+                    Live
+                </span>
+            </div>
+
+            <div class="mt-7 border-t border-slate-100 pt-5 grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-5">
+                @foreach ($kpis as $key => $kpi)
+                @php $m = $statusMeta[$key]; @endphp
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full {{ $m['dot'] }}"></span>
+                        <p class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">{{ $m['label'] }}</p>
                     </div>
-                    <div class="md:hidden">
-                        <p class="text-[10px] text-blue-500 font-semibold tracking-wider uppercase">Dashboard</p>
-                        <h1 class="text-lg font-bold text-gray-800 font-heading">Selamat Datang, {{ auth()->user()?->nama ?? 'Admin' }}</h1>
+                    <p class="mt-1.5 text-2xl font-bold text-slate-800 font-mono tabular-nums">
+                        <span x-text="fmt({{ $kpi['value'] }})">{{ $kpi['value'] }}</span>
+                    </p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">{{ $kpi['pct'] }}% dari total</p>
+                    <div class="mt-2 h-1 rounded-full bg-slate-100 overflow-hidden">
+                        <div class="h-full rounded-full {{ $m['bar'] }} bar-grow" style="width: {{ $kpi['pct'] }}%; animation-delay: {{ 0.25 + $loop->index * 0.1 }}s"></div>
                     </div>
                 </div>
-                <div class="hidden md:flex items-center gap-3">
-                    <span class="text-sm text-gray-500 font-medium">Filter Tanggal</span>
-                    <div class="relative">
-                        <select class="appearance-none bg-white border border-gray-200 text-gray-700 py-2 pl-4 pr-10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm cursor-pointer">
-                            <option>01 - 30 Juni 2026</option>
-                            <option>01 - 31 Mei 2026</option>
-                        </select>
-                        <i class="fa-solid fa-chevron-down absolute right-3 top-3 text-gray-400 text-xs"></i>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- AKTIVITAS TERKINI — live list dengan breathing indicator --}}
+        <div class="lg:col-span-5 card-surface p-6 md:p-8 flex flex-col anim-rise" style="animation-delay:0.12s">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <p class="text-sm font-semibold text-slate-800">Aktivitas Terkini</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Disposisi masuk ke Anda</p>
+                </div>
+                <span class="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 dot-breathe"></span>
+                    Mengalir
+                </span>
+            </div>
+
+            @if ($latestWorkflows->isEmpty())
+            <div class="flex-1 flex flex-col items-center justify-center text-center py-10">
+                <span class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mb-4">
+                    <i class="fa-regular fa-inbox text-xl"></i>
+                </span>
+                <p class="text-sm font-semibold text-slate-700">Belum ada aktivitas</p>
+                <p class="text-xs text-slate-400 mt-1 max-w-[26ch] leading-relaxed">Disposisi pengaduan yang masuk ke Anda akan muncul di sini.</p>
+            </div>
+            @else
+            <ul class="flex-1 divide-y divide-slate-100">
+                @foreach ($latestWorkflows as $wf)
+                @php
+                    $badge = $wfBadge[$wf->status] ?? ['text' => 'text-slate-600', 'bg' => 'bg-slate-100', 'label' => ucfirst($wf->status)];
+                    $initial = strtoupper(substr($wf->fromUser?->nama ?? '?', 0, 1));
+                @endphp
+                <li class="flex items-center gap-3.5 py-3 first:pt-0 last:pb-0 anim-rise" style="animation-delay: {{ 0.2 + $loop->index * 0.07 }}s">
+                    <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 text-slate-500 flex items-center justify-center text-xs font-bold font-mono flex-shrink-0">{{ $initial }}</span>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-[13px] font-medium text-slate-700 truncate">
+                            {{ $wf->ticket?->ticket_number ?? '#' . ($wf->ticket_id ?? '—') }}
+                            <span class="text-slate-400 font-normal">·</span>
+                            <span class="text-slate-500 font-normal truncate">{{ $wf->ticket?->category?->name ?? 'Pengaduan' }}</span>
+                        </p>
+                        <p class="text-[11px] text-slate-400 mt-0.5 truncate">{{ $wf->fromUser?->nama ?? 'Sistem' }} → {{ $wf->toJabatan?->nama ?? 'Anda' }}</p>
                     </div>
+                    <div class="flex flex-col items-end gap-1 flex-shrink-0">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold {{ $badge['bg'] }} {{ $badge['text'] }}">{{ $badge['label'] }}</span>
+                        <span class="text-[10px] text-slate-400">{{ $wf->created_at?->diffForHumans() }}</span>
+                    </div>
+                </li>
+                @endforeach
+            </ul>
+            @endif
+        </div>
+    </div>
+
+    {{-- =========================================================== --}}
+    {{-- BENTO ROW 2 — Grafik bulanan (7) + Kategori (5)               --}}
+    {{-- =========================================================== --}}
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-5">
+
+        <div class="lg:col-span-7 card-surface p-6 md:p-8 anim-rise" style="animation-delay:0.18s">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <p class="text-sm font-semibold text-slate-800">Tren Pengaduan</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">12 bulan terakhir</p>
+                </div>
+                <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <i class="fa-solid fa-chart-column text-sm"></i>
+                </span>
+            </div>
+            <div class="relative h-64">
+                <div id="skeleton-monthly" class="absolute inset-0 rounded-2xl skeleton-shimmer"></div>
+                <canvas id="monthlyChart" class="relative"></canvas>
+            </div>
+        </div>
+
+        <div class="lg:col-span-5 card-surface p-6 md:p-8 anim-rise" style="animation-delay:0.24s">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <p class="text-sm font-semibold text-slate-800">Berdasarkan Kategori</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Sebaran pengaduan</p>
+                </div>
+                <span class="w-8 h-8 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center">
+                    <i class="fa-solid fa-layer-group text-sm"></i>
+                </span>
+            </div>
+            <div class="relative h-64">
+                <div id="skeleton-category" class="absolute inset-0 rounded-2xl skeleton-shimmer"></div>
+                <div class="relative h-full flex items-center justify-center">
+                    <div class="w-1/2 h-full flex items-center justify-center relative">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                    <div class="w-1/2 flex flex-col gap-2 text-xs max-h-64 overflow-y-auto scrollbar-hide" id="categoryLegend"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- =========================================================== --}}
+    {{-- BENTO ROW 3 — Per Unit (5) + Kinerja (7)                     --}}
+    {{-- =========================================================== --}}
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+        <div class="lg:col-span-5 card-surface p-6 md:p-8 anim-rise" style="animation-delay:0.3s">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <p class="text-sm font-semibold text-slate-800">Per Unit</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Distribusi pengaduan</p>
+                </div>
+                <span class="w-8 h-8 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center">
+                    <i class="fa-solid fa-building text-sm"></i>
+                </span>
+            </div>
+            <div class="relative h-64">
+                <div id="skeleton-unit" class="absolute inset-0 rounded-2xl skeleton-shimmer"></div>
+                <canvas id="unitChart" class="relative"></canvas>
+            </div>
+        </div>
+
+        <div class="lg:col-span-7 card-surface p-6 md:p-8 anim-rise" style="animation-delay:0.36s">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <p class="text-sm font-semibold text-slate-800">Kinerja Pelayanan</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Metrik dari alur kerja Anda</p>
+                </div>
+                <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <i class="fa-solid fa-gauge-high text-sm"></i>
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="rounded-2xl border border-slate-100 bg-slate-50/60 p-5">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 dot-breathe"></span>
+                        <p class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Rata-rata Respon</p>
+                    </div>
+                    <p class="mt-2.5 text-3xl font-bold text-slate-800 font-mono tabular-nums">{{ $avgRespon }}</p>
+                    <p class="text-[11px] text-slate-400 mt-1">dari tiket selesai</p>
+                </div>
+                <div class="rounded-2xl border border-slate-100 bg-slate-50/60 p-5">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-blue-600 dot-breathe" style="animation-delay:0.4s"></span>
+                        <p class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Dalam Proses</p>
+                    </div>
+                    <p class="mt-2.5 text-3xl font-bold text-slate-800 font-mono tabular-nums">{{ $dalamProses }}</p>
+                    <p class="text-[11px] text-slate-400 mt-1">tugas aktif Anda</p>
+                </div>
+                <div class="rounded-2xl border border-slate-100 bg-slate-50/60 p-5">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-amber-500 dot-breathe" style="animation-delay:0.8s"></span>
+                        <p class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Belum Dilihat</p>
+                    </div>
+                    <p class="mt-2.5 text-3xl font-bold text-slate-800 font-mono tabular-nums">{{ $baru }}</p>
+                    <p class="text-[11px] text-slate-400 mt-1">notifikasi baru</p>
                 </div>
             </div>
 
-            <!-- Stats Cards (gradient icons ala PayApp) -->
-            <div class="flex gap-3 overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-5 md:gap-4 mb-6 pb-2 md:pb-0 scrollbar-hide">
-                <div class="snap-start shrink-0 w-[72vw] md:w-auto bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 flex items-center gap-3 active:scale-[0.98] transition-transform">
-                    <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-md shadow-violet-200/50 flex-shrink-0">
-                        <i class="fa-solid fa-file-lines text-white text-lg"></i>
-                    </span>
-                    <div>
-                        <p class="text-[11px] text-gray-400 font-medium mb-0.5">Total Pengaduan</p>
-                        <h3 class="text-xl font-bold text-gray-800">{{ $total }}</h3>
-                        <p class="text-[10px] text-gray-400 mt-0.5">Semua waktu</p>
-                    </div>
+            <div class="mt-6 border-t border-slate-100 pt-5">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-xs font-medium text-slate-500">Tingkat penyelesaian</p>
+                    <p class="text-xs font-bold text-emerald-600 font-mono tabular-nums">{{ $pSelesai }}%</p>
                 </div>
-                <div class="snap-start shrink-0 w-[72vw] md:w-auto bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 flex items-center gap-3 active:scale-[0.98] transition-transform">
-                    <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-md shadow-yellow-200/50 flex-shrink-0">
-                        <i class="fa-solid fa-clock text-white text-lg"></i>
-                    </span>
-                    <div>
-                        <p class="text-[11px] text-gray-400 font-medium mb-0.5">Menunggu</p>
-                        <h3 class="text-xl font-bold text-gray-800">{{ $menunggu }}</h3>
-                        <p class="text-[10px] text-gray-400 mt-0.5">{{ $pMenunggu }}%</p>
-                    </div>
+                <div class="h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400 bar-grow" style="width: {{ $pSelesai }}%; animation-delay: 0.5s"></div>
                 </div>
-                <div class="snap-start shrink-0 w-[72vw] md:w-auto bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 flex items-center gap-3 active:scale-[0.98] transition-transform">
-                    <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md shadow-blue-200/50 flex-shrink-0">
-                        <i class="fa-solid fa-spinner text-white text-lg"></i>
-                    </span>
-                    <div>
-                        <p class="text-[11px] text-gray-400 font-medium mb-0.5">Diproses</p>
-                        <h3 class="text-xl font-bold text-gray-800">{{ $diproses }}</h3>
-                        <p class="text-[10px] text-gray-400 mt-0.5">{{ $pDiproses }}%</p>
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div class="flex items-center gap-2 text-xs text-slate-500">
+                        <span class="w-2 h-2 rounded-full bg-amber-500"></span> Menunggu <span class="ml-auto font-semibold text-slate-700 font-mono tabular-nums">{{ $pMenunggu }}%</span>
                     </div>
-                </div>
-                <div class="snap-start shrink-0 w-[72vw] md:w-auto bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 flex items-center gap-3 active:scale-[0.98] transition-transform">
-                    <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md shadow-emerald-200/50 flex-shrink-0">
-                        <i class="fa-solid fa-check text-white text-lg"></i>
-                    </span>
-                    <div>
-                        <p class="text-[11px] text-gray-400 font-medium mb-0.5">Selesai</p>
-                        <h3 class="text-xl font-bold text-gray-800">{{ $selesai }}</h3>
-                        <p class="text-[10px] text-gray-400 mt-0.5">{{ $pSelesai }}%</p>
-                    </div>
-                </div>
-                <div class="snap-start shrink-0 w-[72vw] md:w-auto bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100 flex items-center gap-3 active:scale-[0.98] transition-transform">
-                    <span class="w-11 h-11 rounded-xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-md shadow-red-200/50 flex-shrink-0">
-                        <i class="fa-solid fa-xmark text-white text-lg"></i>
-                    </span>
-                    <div>
-                        <p class="text-[11px] text-gray-400 font-medium mb-0.5">Ditolak</p>
-                        <h3 class="text-xl font-bold text-gray-800">{{ $ditolak }}</h3>
-                        <p class="text-[10px] text-gray-400 mt-0.5">{{ $pDitolak }}%</p>
+                    <div class="flex items-center gap-2 text-xs text-slate-500">
+                        <span class="w-2 h-2 rounded-full bg-blue-600"></span> Diproses <span class="ml-auto font-semibold text-slate-700 font-mono tabular-nums">{{ $pDiproses }}%</span>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
-            {{-- Quick Actions (mobile only, ala PayApp waves) --}}
-            <div class="md:hidden mb-5">
-                <div class="flex text-center gap-0">
-                    <a href="{{ route('pengaduan.create') }}" class="flex-1 flex flex-col items-center gap-1.5">
-                        <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md shadow-blue-200/50">
-                            <i class="fa-solid fa-plus text-white text-xl"></i>
-                        </span>
-                        <span class="text-[10px] font-medium text-gray-500">Pengaduan<br>Baru</span>
-                    </a>
-                    <a href="{{ route('admin.tickets.index') }}" class="flex-1 flex flex-col items-center gap-1.5">
-                        <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md shadow-emerald-200/50">
-                            <i class="fa-solid fa-inbox text-white text-xl"></i>
-                        </span>
-                        <span class="text-[10px] font-medium text-gray-500">Semua<br>Pengaduan</span>
-                    </a>
-                    <a href="{{ route('pengaduan.track') }}" class="flex-1 flex flex-col items-center gap-1.5">
-                        <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-md shadow-orange-200/50">
-                            <i class="fa-solid fa-magnifying-glass text-white text-xl"></i>
-                        </span>
-                        <span class="text-[10px] font-medium text-gray-500">Cek<br>Status</span>
-                    </a>
-                    @if($mobileRoleGroup === 'admin' && (auth()->user()?->can('manage-reports') || auth()->user()?->hasRole('Admin Pengaduan')))
-                    <a href="{{ route('admin.monitoring.index') }}" class="flex-1 flex flex-col items-center gap-1.5">
-                        <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-md shadow-violet-200/50">
-                            <i class="fa-solid fa-chart-line text-white text-xl"></i>
-                        </span>
-                        <span class="text-[10px] font-medium text-gray-500">Monitoring</span>
-                    </a>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Charts & SLA Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 animate-fadeInUp" style="animation-delay:.15s">
-                <!-- Grafik Bulanan -->
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                    <h3 class="font-bold text-gray-800 mb-4">Grafik Pengaduan Bulanan</h3>
-                    <div class="relative h-64">
-                        <canvas id="monthlyChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Pengaduan Kategori -->
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                    <h3 class="font-bold text-gray-800 mb-4">Pengaduan Berdasarkan Kategori</h3>
-                    <div class="flex items-center justify-center h-64">
-                        <div class="w-1/2 flex items-center justify-center relative">
-                            <canvas id="categoryChart"></canvas>
-                        </div>
-                        <div class="w-1/2 flex flex-col gap-2 text-xs max-h-64 overflow-y-auto" id="categoryLegend"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bottom Section (SLA and Unit) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fadeInUp" style="animation-delay:.25s">
-                 <!-- Pengaduan Unit -->
-                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                    <h3 class="font-bold text-gray-800 mb-4">Pengaduan Berdasarkan Unit</h3>
-                    <div class="relative h-64">
-                        <canvas id="unitChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- SLA Section -->
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                    <h3 class="font-bold text-gray-800 mb-4">SLA (Service Level Agreement)</h3>
-                    <div class="flex gap-3 overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 md:gap-4 h-[200px] pb-2 md:pb-0 scrollbar-hide">
-                        <div class="snap-start shrink-0 w-[200px] md:w-auto border border-green-200 bg-green-50/30 rounded-lg p-4 flex flex-col justify-center items-center text-center active:scale-[0.98] transition-transform">
-                            <div class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center mb-3">
-                                <i class="fa-solid fa-check text-lg"></i>
-                            </div>
-                            <p class="text-xs text-gray-500 font-medium mb-1">Sesuai SLA</p>
-                            <h2 class="text-3xl font-bold text-gray-800">298</h2>
-                            <p class="text-xs text-green-600 font-bold mt-1">70.0%</p>
-                        </div>
-                        
-                        <div class="snap-start shrink-0 w-[200px] md:w-auto border border-yellow-200 bg-yellow-50/30 rounded-lg p-4 flex flex-col justify-center items-center text-center active:scale-[0.98] transition-transform">
-                            <div class="w-10 h-10 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center mb-3">
-                                <i class="fa-solid fa-clock text-lg"></i>
-                            </div>
-                            <p class="text-xs text-gray-500 font-medium mb-1">Mendekati SLA</p>
-                            <h2 class="text-3xl font-bold text-gray-800">74</h2>
-                            <p class="text-xs text-yellow-600 font-bold mt-1">17.4%</p>
-                        </div>
-
-                        <div class="snap-start shrink-0 w-[200px] md:w-auto border border-red-200 bg-red-50/30 rounded-lg p-4 flex flex-col justify-center items-center text-center active:scale-[0.98] transition-transform">
-                            <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-3">
-                                <i class="fa-solid fa-triangle-exclamation text-lg"></i>
-                            </div>
-                            <p class="text-xs text-gray-500 font-medium mb-1">Melebihi SLA</p>
-                            <h2 class="text-3xl font-bold text-gray-800">54</h2>
-                            <p class="text-xs text-red-600 font-bold mt-1">12.6%</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+function dashboardCounter() {
+    return {
+        total: 0,
+        init() {
+            const target = @json($total);
+            const dur = 900;
+            const t0 = performance.now();
+            const step = (ts) => {
+                const p = Math.min(1, (ts - t0) / dur);
+                this.total = Math.round(target * (1 - Math.pow(1 - p, 3)));
+                if (p < 1) requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+        },
+        fmt(n) {
+            return new Intl.NumberFormat('id-ID').format(n);
+        }
+    };
+}
+document.addEventListener('DOMContentLoaded', function () {
+    const hideSkeleton = (id) => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    };
+
     const colors = @json($categoryColors);
     const catData  = @json($categoryData);
     const catLabels = catData.map(d => d.category?.name ?? 'Tanpa Kategori');
@@ -210,8 +341,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const mCtx = document.getElementById('monthlyChart')?.getContext('2d');
     if (mCtx) {
         const gradient = mCtx.createLinearGradient(0, 0, 0, 250);
-        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.85)');
-        gradient.addColorStop(1, 'rgba(59, 130, 246, 0.25)');
+        gradient.addColorStop(0, 'rgba(37, 99, 235, 0.85)');
+        gradient.addColorStop(1, 'rgba(37, 99, 235, 0.18)');
         new Chart(mCtx, {
             type: 'bar',
             data: {
@@ -219,22 +350,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     data: @json($monthlyData),
                     backgroundColor: gradient,
-                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
                     borderWidth: 1.5,
-                    borderRadius: 6,
+                    borderRadius: 8,
                     borderSkipped: false,
+                    maxBarThickness: 28,
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: { duration: 800, easing: 'easeOutQuart' },
                 plugins: { legend: { display: false } },
                 scales: {
-                    y: { beginAtZero: true, ticks: { stepSize: 1, color: '#9ca3af' }, grid: { color: 'rgba(0,0,0,0.04)' } },
-                    x: { ticks: { color: '#9ca3af' }, grid: { display: false } }
+                    y: { beginAtZero: true, ticks: { stepSize: 1, color: '#94a3b8', font: { family: 'Geist Mono' } }, grid: { color: 'rgba(15,23,42,0.05)' } },
+                    x: { ticks: { color: '#94a3b8', maxRotation: 0, autoSkip: true }, grid: { display: false } }
                 }
             }
         });
+        hideSkeleton('skeleton-monthly');
     }
 
     // ── Category Donut Chart ──
@@ -254,10 +388,9 @@ document.addEventListener('DOMContentLoaded', function() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '70%',
-                plugins: {
-                    legend: { display: false }
-                }
+                cutout: '72%',
+                animation: { duration: 800, easing: 'easeOutQuart' },
+                plugins: { legend: { display: false } }
             }
         });
 
@@ -268,9 +401,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const pct = ((catCounts[i] / total) * 100).toFixed(0);
                 legendEl.innerHTML += '<div class="flex justify-between items-center py-0.5">' +
                     '<span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:' + colors[i % colors.length] + '"></span>' + label + '</span>' +
-                    '<span class="font-bold text-gray-700 text-xs">' + catCounts[i] + ' (' + pct + '%)</span></div>';
+                    '<span class="font-semibold text-slate-600 text-xs font-mono tabular-nums">' + catCounts[i] + ' · ' + pct + '%</span></div>';
             });
         }
+        hideSkeleton('skeleton-category');
     }
 
     // ── Unit Polar Area Chart ──
@@ -294,21 +428,23 @@ document.addEventListener('DOMContentLoaded', function() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: { duration: 800, easing: 'easeOutQuart' },
                 plugins: {
                     legend: {
                         position: 'right',
-                        labels: { font: { size: 10 }, color: '#6b7280', boxWidth: 12, padding: 8 }
+                        labels: { font: { size: 10, family: 'Geist' }, color: '#64748b', boxWidth: 10, padding: 8 }
                     }
                 },
                 scales: {
                     r: {
                         beginAtZero: true,
                         ticks: { display: false },
-                        grid: { color: 'rgba(0,0,0,0.04)' }
+                        grid: { color: 'rgba(15,23,42,0.05)' }
                     }
                 }
             }
         });
+        hideSkeleton('skeleton-unit');
     }
 });
 </script>

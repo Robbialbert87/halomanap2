@@ -11,15 +11,18 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="/pwa-icons/icon-192.png">
     
-    <!-- Fonts (PayApp style: Source Sans Pro for headings, Roboto for body) -->
+    <!-- Fonts (Geist + Geist Mono for premium dashboards) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600;700&display=swap" rel="stylesheet"></noscript>
 
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+
+    <!-- Alpine.js for interactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
@@ -31,8 +34,9 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Roboto', 'sans-serif'],
-                        heading: ['Source Sans Pro', 'sans-serif'],
+                        sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        heading: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        mono: ['Geist Mono', 'ui-monospace', 'monospace'],
                     },
                     colors: {
                         primary: '#1E3A8A', // Blue dark
@@ -40,7 +44,7 @@
                         success: '#10B981', // Green
                         warning: '#F59E0B', // Yellow
                         danger: '#EF4444', // Red
-                        'gray-bg': '#F3F4F6'
+                        'gray-bg': '#F9FAFB'
                     }
                 }
             }
@@ -49,11 +53,11 @@
     
     <style>
         body {
-            background-color: #F3F4F6;
-            font-family: 'Roboto', sans-serif;
+            background-color: #F9FAFB;
+            font-family: 'Geist', sans-serif;
         }
         h1, h2, h3, h4, h5, h6, .font-heading {
-            font-family: 'Source Sans Pro', sans-serif;
+            font-family: 'Geist', sans-serif;
         }
         /* Hide scrollbar for clean PWA look */
         .no-scrollbar::-webkit-scrollbar {

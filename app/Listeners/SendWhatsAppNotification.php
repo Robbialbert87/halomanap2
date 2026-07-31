@@ -217,11 +217,10 @@ class SendWhatsAppNotification implements ShouldQueue
 
         $roleGroup = $user->getRoleGroup();
 
+        // Route role-agnostic: semua jabatan pelayanan memakai dispositions.index
+        // (route role-spesifik lama sudah dihapus pada refactor).
         return match ($roleGroup) {
-            'kepala_unit' => route('kepala-unit.dispositions.index'),
-            'kasi' => route('kasi.dispositions.index'),
-            'kabid' => route('kabid.dispositions.index'),
-            'head_unit' => route('head-unit.dispositions.index'),
+            'kepala_unit', 'kasi', 'kabid', 'head_unit' => route('dispositions.index'),
             'direktur' => route('direktur.dashboard'),
             default => route('admin.tickets.index'),
         };

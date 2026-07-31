@@ -1,8 +1,8 @@
 services:
   app:
     build:
- context: ..
- dockerfile: docker/php/Dockerfile
+      context: ..
+      dockerfile: docker/php/Dockerfile
     container_name: halomanap-app
     restart: unless-stopped
     working_dir: /var/www/html
@@ -38,8 +38,8 @@ services:
 
   queue:
     build:
- context: ..
- dockerfile: docker/php/Dockerfile
+      context: ..
+      dockerfile: docker/php/Dockerfile
     container_name: halomanap-queue
     restart: unless-stopped
     working_dir: /var/www/html

@@ -10,7 +10,14 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
-            // ── Menu / Navigasi ───────────────────────────────────────────
+            // ── Menu / Navigasi (role-agnostic, dipakai route umum) ─────────
+            'menu.dashboard',
+            'menu.dispositions',
+            'menu.dalam-penanganan',
+            'menu.riwayat',
+            'menu.laporan',
+            'menu.profil',
+
             'menu.admin.tickets',
             'menu.admin.units',
             'menu.admin.rooms',
@@ -21,28 +28,12 @@ class PermissionSeeder extends Seeder
             'menu.admin.workflow',
             'menu.admin.monitoring',
 
-            'menu.kepala-unit.dashboard',
-            'menu.kepala-unit.dispositions',
-            'menu.kepala-unit.dalam-penanganan',
-            'menu.kepala-unit.riwayat',
-            'menu.kepala-unit.laporan',
-
-            'menu.kasi.dashboard',
-            'menu.kasi.dispositions',
-            'menu.kasi.dalam-penanganan',
-            'menu.kasi.riwayat',
-            'menu.kasi.laporan',
-
-            'menu.kabid.dashboard',
-            'menu.kabid.dispositions',
-            'menu.kabid.monitoring',
-            'menu.kabid.laporan',
-
             'menu.direktur.dashboard',
             'menu.direktur.monitoring-workflow',
             'menu.direktur.statistik',
             'menu.direktur.laporan',
             'menu.direktur.audit-trail',
+            'menu.direktur.profil',
 
             // ── Aksi / CRUD ───────────────────────────────────────────────
             'manage-dashboard',
