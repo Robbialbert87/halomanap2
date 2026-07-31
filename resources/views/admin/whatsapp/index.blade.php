@@ -10,16 +10,7 @@
     </div>
 </div>
 
-@if(session('success'))
-    <div class="mb-4 p-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200 flex items-center gap-2">
-        <i class="fa-solid fa-check-circle"></i> {{ session('success') }}
-    </div>
-@endif
-@if(session('error'))
-    <div class="mb-4 p-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200 flex items-center gap-2">
-        <i class="fa-solid fa-circle-exclamation"></i> {{ session('error') }}
-    </div>
-@endif
+<x-admin.flash />
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2 space-y-6">

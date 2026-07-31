@@ -1,0 +1,66 @@
+/* =========================================================================
+   forms.css — admin-input + label/helper/error
+   Dipindah dari <style> inline layouts/app.blade.php (Phase 0.1)
+   Normalisasi sesuai brief: min-height 48px untuk target sentuh senior
+   ========================================================================= */
+
+/* Input & select seragam */
+.admin-input {
+    width: 100%;
+    min-height: 3rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: .75rem;
+    padding: .625rem .875rem;
+    font-size: .875rem;
+    color: #0f172a;
+    transition: border-color .22s var(--admin-ease), box-shadow .22s var(--admin-ease);
+}
+
+.admin-input::placeholder { color: #94a3b8; }
+
+.admin-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+}
+
+/* Label di atas field — wajib, jelas, senior-friendly */
+.admin-label {
+    display: block;
+    margin-bottom: .375rem;
+    font-size: .875rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.admin-label .admin-required {
+    color: #dc2626;
+}
+
+/* Helper text di bawah field */
+.admin-helper {
+    margin-top: .375rem;
+    font-size: .75rem;
+    color: #64748b;
+}
+
+/* Error inline: border + ring merah */
+.admin-input-error {
+    border-color: #dc2626 !important;
+}
+
+.admin-input-error:focus {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, .12) !important;
+}
+
+.admin-error {
+    display: flex;
+    align-items: flex-start;
+    gap: .375rem;
+    margin-top: .375rem;
+    font-size: .8125rem;
+    font-weight: 500;
+    color: #dc2626;
+}

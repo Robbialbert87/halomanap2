@@ -4,43 +4,17 @@
 
 @section('admin_content')
 
-{{-- Mobile Page Header (PayApp style) --}}
-<div class="md:hidden mb-3">
-    <div class="flex items-center gap-2.5 p-1">
-        <span class="w-9 h-9 rounded-2xl bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center shadow-sm shadow-pink-200/50 flex-shrink-0">
-            <i class="fa-solid fa-tags text-white text-sm"></i>
-        </span>
-        <div>
-            <p class="text-[9px] text-pink-500 font-semibold tracking-wider uppercase font-heading">Master Data</p>
-            <h1 class="text-base font-bold text-gray-800 font-heading">Manajemen Kategori</h1>
-        </div>
-    </div>
-</div>
+<x-admin.page-header
+    title="Manajemen Kategori"
+    section="Master Data"
+    crumb="Kategori"
+    icon="fa-tags"
+    gradient="pink"
+>
+    <x-admin.btn href="{{ route('admin.categories.create') }}" icon="fa-plus">Tambah Kategori</x-admin.btn>
+</x-admin.page-header>
 
-{{-- Page Header (Desktop) --}}
-<div class="hidden md:flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800 font-heading">Manajemen Kategori</h1>
-        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <span class="text-blue-600">Master Data</span>
-            <span class="text-gray-400">/</span>
-            <span>Kategori</span>
-        </div>
-    </div>
-    <a href="{{ route('admin.categories.create') }}" class="admin-btn admin-btn-primary">
-        <i class="fa-solid fa-plus"></i> Tambah Kategori
-    </a>
-</div>
-
-{{-- Flash Messages --}}
-@if(session('success'))
-<div class="md:hidden bg-green-50 text-green-700 p-3 rounded-lg mb-4 border border-green-200 flex items-center gap-2 text-[13px]">
-    <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
-</div>
-<div class="hidden md:flex bg-green-50 text-green-700 p-4 rounded-lg mb-6 border border-green-200 items-center gap-2">
-    <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
-</div>
-@endif
+<x-admin.flash />
 
 {{-- Mobile: Category List --}}
 <div class="block md:hidden mb-4">
@@ -57,16 +31,11 @@
                     <span class="text-[13px] font-semibold text-gray-900 truncate">{{ $category->name }}</span>
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
-                    <a href="{{ route('admin.categories.edit', $category->id) }}"
-                       class="admin-action admin-action-sm admin-action-blue" title="Edit">
-                        <i class="fa-regular fa-pen-to-square text-[10px]"></i>
-                    </a>
+                    <x-admin.action href="{{ route('admin.categories.edit', $category->id) }}" variant="blue" icon="fa-regular fa-pen-to-square" class="admin-action-sm" title="Edit" />
                     <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST"
                           onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')" class="inline">
                         @csrf @method('DELETE')
-                        <button type="submit" class="admin-action admin-action-sm admin-action-red" title="Hapus">
-                            <i class="fa-regular fa-trash-can text-[10px]"></i>
-                        </button>
+                        <x-admin.action type="submit" variant="red" icon="fa-regular fa-trash-can" class="admin-action-sm" title="Hapus" />
                     </form>
                 </div>
             </div>
@@ -104,14 +73,10 @@
                 <td class="px-6 py-4 font-medium text-gray-900">{{ $category->name }}</td>
                 <td class="px-6 py-4">
                     <div class="flex items-center justify-center gap-1.5">
-                        <a href="{{ route('admin.categories.edit', $category->id) }}" class="admin-action-pill admin-action-pill-blue" title="Edit">
-                            <i class="fa-regular fa-pen-to-square text-[11px]"></i> Edit
-                        </a>
+                        <x-admin.pill href="{{ route('admin.categories.edit', $category->id) }}" variant="blue" icon="fa-regular fa-pen-to-square" title="Edit">Edit</x-admin.pill>
                         <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?');" class="inline">
                             @csrf @method('DELETE')
-                            <button type="submit" class="admin-action-pill admin-action-pill-red" title="Hapus">
-                                <i class="fa-regular fa-trash-can text-[11px]"></i> Hapus
-                            </button>
+                            <x-admin.pill type="submit" variant="red" icon="fa-regular fa-trash-can" title="Hapus">Hapus</x-admin.pill>
                         </form>
                     </div>
                 </td>

@@ -46,11 +46,7 @@
     </div>
 </div>
 
-@if(session('success'))
-<div class="bg-green-50 text-green-700 p-4 rounded-lg mb-6 border border-green-200">
-    <i class="fa-solid fa-circle-check mr-2"></i> {{ session('success') }}
-</div>
-@endif
+<x-admin.flash />
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fadeInUp" style="animation-delay:.05s">
 

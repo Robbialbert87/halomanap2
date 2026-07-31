@@ -4,26 +4,15 @@
 
 @section('admin_content')
 
-{{-- Mobile Page Header --}}
-<div class="md:hidden mb-3">
-    <div class="flex items-center gap-2.5 p-1">
-        <span class="w-9 h-9 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
-            <i class="fa-solid fa-file-lines text-white text-sm"></i>
-        </span>
-        <div>
-            <p class="text-[9px] text-blue-500 font-semibold tracking-wider uppercase font-heading">Monitoring & Laporan</p>
-            <h1 class="text-base font-bold text-gray-800 font-heading">Laporan Pengaduan</h1>
-        </div>
-    </div>
-</div>
-
-{{-- Page Title (Desktop) --}}
-<div class="hidden md:flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800 font-heading">Laporan Pengaduan</h1>
-        <p class="text-sm text-gray-500">Filter dan export data pengaduan</p>
-    </div>
-</div>
+<x-admin.page-header
+    title="Laporan Pengaduan"
+    section="Monitoring & Laporan"
+    crumb="Laporan Pengaduan"
+    icon="fa-file-lines"
+    gradient="blue"
+>
+    <x-slot name="summary">Filter dan export data pengaduan</x-slot>
+</x-admin.page-header>
 
 {{-- FILTER FORM (live tanpa reload; statistik & tabel di-refresh bersama) --}}
 <div class="admin-card p-4 md:p-6 mb-4 md:mb-6 admin-rise" style="--index: 0">

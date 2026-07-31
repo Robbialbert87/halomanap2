@@ -656,8 +656,10 @@ function initLiveFilters() {
 
         var timer = null;
         var basePath = form.action.split('?')[0];
+        var lastUrl = null;
 
         function load(url, updateHistory) {
+            lastUrl = url;
             wrap.classList.add('is-loading');
             fetch(url, {
                 headers: {
@@ -684,7 +686,17 @@ function initLiveFilters() {
                     });
                 })
                 .catch(function () {
-                    window.location.href = url; // fallback: reload normal
+                    // Error inline + tombol retry (tanpa reload halaman penuh)
+                    wrap.innerHTML =
+                        '<div class="admin-empty" role="alert">' +
+                        '<i class="fa-solid fa-triangle-exclamation"></i>' +
+                        '<p>Gagal memuat data</p>' +
+                        '<span>Periksa koneksi lalu coba lagi.</span>' +
+                        '<button type="button" class="admin-btn admin-btn-ghost admin-retry-btn" style="margin-top:.5rem">' +
+                        '<i class="fa-solid fa-rotate-right"></i> Coba Lagi</button>' +
+                        '</div>';
+                    var retry = wrap.querySelector('.admin-retry-btn');
+                    if (retry) retry.addEventListener('click', function () { load(lastUrl, true); });
                 })
                 .finally(function () {
                     wrap.classList.remove('is-loading');

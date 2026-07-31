@@ -1,0 +1,106 @@
+/* =========================================================================
+   buttons.css — admin-btn*, admin-action*, admin-action-pill*
+   Dipindah dari <style> inline layouts/app.blade.php (Phase 0.1)
+   Normalisasi sesuai brief: solid primary (tanpa gradient berat), min 44px
+   ========================================================================= */
+
+/* === Action buttons (kolom Aksi tabel) === */
+.admin-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: .6rem;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #64748b;
+    font-size: .8125rem;
+    box-shadow: 0 1px 2px rgba(15,23,42,.04);
+    transition: color .22s var(--admin-ease), background-color .22s var(--admin-ease), border-color .22s var(--admin-ease), box-shadow .22s var(--admin-ease), transform .22s var(--admin-ease);
+}
+
+.admin-action:hover { transform: translateY(-1px); }
+.admin-action:active { transform: scale(.92); }
+
+.admin-action-blue:hover { background: #eff6ff; border-color: #bfdbfe; color: #2563eb; box-shadow: 0 6px 14px -8px rgba(37,99,235,.4); }
+.admin-action-red:hover { background: #fef2f2; border-color: #fecaca; color: #dc2626; box-shadow: 0 6px 14px -8px rgba(220,38,38,.4); }
+.admin-action-emerald:hover { background: #ecfdf5; border-color: #a7f3d0; color: #059669; box-shadow: 0 6px 14px -8px rgba(5,150,105,.4); }
+.admin-action-amber:hover { background: #fffbeb; border-color: #fde68a; color: #d97706; box-shadow: 0 6px 14px -8px rgba(217,119,6,.4); }
+.admin-action-slate:hover { background: #f8fafc; border-color: #cbd5e1; color: #334155; }
+
+/* Pill berlabel (aksi utama, mis. Detail / Kirim Ulang) */
+.admin-action-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .42rem .8rem;
+    border-radius: .6rem;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #475569;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1;
+    box-shadow: 0 1px 2px rgba(15,23,42,.04);
+    transition: color .22s var(--admin-ease), background-color .22s var(--admin-ease), border-color .22s var(--admin-ease), box-shadow .22s var(--admin-ease), transform .22s var(--admin-ease);
+}
+
+.admin-action-pill:hover { transform: translateY(-1px); }
+.admin-action-pill:active { transform: scale(.96); }
+
+.admin-action-pill-blue:hover { background: #eff6ff; border-color: #bfdbfe; color: #2563eb; }
+.admin-action-pill-red:hover { background: #fef2f2; border-color: #fecaca; color: #dc2626; }
+.admin-action-pill-emerald:hover { background: #ecfdf5; border-color: #a7f3d0; color: #059669; }
+.admin-action-pill-slate:hover { background: #f8fafc; border-color: #cbd5e1; color: #334155; }
+
+/* Kompak untuk daftar mobile */
+.admin-action-sm {
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: .55rem;
+    font-size: .6875rem;
+}
+
+/* === Tombol seragam (min-height 44px untuk target sentuh senior) === */
+.admin-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    min-height: 2.75rem;
+    border-radius: .75rem;
+    padding: .625rem 1.125rem;
+    font-size: .8125rem;
+    font-weight: 600;
+    line-height: 1;
+    transition: all .22s var(--admin-ease);
+}
+
+.admin-btn:active { transform: scale(.97); }
+
+/* Primary: solid, restrained (tanpa gradient/glow berlebih) */
+.admin-btn-primary {
+    background: #2563eb;
+    color: #fff;
+    box-shadow: 0 6px 16px -10px rgba(37, 99, 235, .5);
+}
+
+.admin-btn-primary:hover { background: #1d4ed8; }
+
+/* Danger: solid, restrained */
+.admin-btn-danger {
+    background: #dc2626;
+    color: #fff;
+    box-shadow: 0 6px 16px -10px rgba(220, 38, 38, .5);
+}
+
+.admin-btn-danger:hover { background: #b91c1c; }
+
+.admin-btn-ghost {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+}
+
+.admin-btn-ghost:hover { background: #f8fafc; border-color: #cbd5e1; color: #0f172a; }

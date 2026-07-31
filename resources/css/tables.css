@@ -1,0 +1,57 @@
+/* =========================================================================
+   tables.css — admin-table
+   Dipindah dari <style> inline layouts/app.blade.php (Phase 0.1)
+   Normalisasi sesuai brief: sticky header, zebra, text 14px, wrap konten
+   ========================================================================= */
+
+.admin-table { border-collapse: separate; border-spacing: 0; }
+
+.admin-table thead tr {
+    background: #f8fafc;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+/* Sticky header: menempel saat container tabel di-scroll vertikal.
+   Wrapper yang memicu sticky memakai kelas .admin-table-scroll (max-height + overflow). */
+.admin-table thead th {
+    padding: .875rem 1rem;
+    text-align: left;
+    white-space: nowrap;
+    background: #f8fafc;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.admin-table tbody td {
+    padding: .875rem 1rem;
+    font-size: .875rem;
+    vertical-align: top;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+/* Zebra halus untuk keterbacaan baris panjang */
+.admin-table tbody tr:nth-child(even) {
+    background: #fcfcfd;
+}
+
+.admin-table tbody tr {
+    transition: background-color .18s var(--admin-ease);
+}
+
+.admin-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* Wrapper: memicu sticky header saat tabel lebih tinggi dari viewport */
+.admin-table-scroll {
+    max-height: 65vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
