@@ -3,39 +3,24 @@
 @section('title', 'Tambah Pengguna - Halo MANAP')
 
 @section('admin_content')
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800">Tambah Pengguna</h1>
-        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <span class="text-blue-600">Master Data</span>
-            <span class="text-gray-400">/</span>
-            <a href="{{ route('admin.users.index') }}" class="text-blue-600 hover:underline">Pengguna</a>
-            <span class="text-gray-400">/</span>
-            <span>Tambah</span>
-        </div>
-    </div>
-    <a href="{{ route('admin.users.index') }}" class="admin-btn admin-btn-ghost">
-        <i class="fa-solid fa-arrow-left"></i> Kembali
-    </a>
-</div>
+<x-admin.page-header
+    title="Tambah Pengguna"
+    section="Master Data"
+    icon="fa-user-plus"
+    gradient="blue"
+>
+    <x-slot name="breadcrumb">
+        <span class="text-gray-400">/</span>
+        <a href="{{ route('admin.users.index') }}" class="text-blue-600 hover:underline">Pengguna</a>
+        <span class="text-gray-400">/</span>
+        <span>Tambah</span>
+    </x-slot>
+    <x-admin.btn href="{{ route('admin.users.index') }}" variant="ghost" icon="fa-arrow-left">Kembali</x-admin.btn>
+</x-admin.page-header>
 
-<div class="admin-card overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-user-plus text-blue-600 text-sm"></i>
-        </div>
-        <h2 class="font-semibold text-gray-800">Informasi Pegawai Baru</h2>
-    </div>
-    <div class="p-6">
-        @if($errors->any())
-        <div class="bg-red-50 text-red-700 p-4 rounded-lg mb-6 border border-red-200 text-sm space-y-1">
-            @foreach($errors->all() as $err)
-                <div class="flex items-start gap-2"><i class="fa-solid fa-circle-exclamation mt-0.5"></i> {{ $err }}</div>
-            @endforeach
-        </div>
-        @endif
-
-        <form action="{{ route('admin.users.store') }}" method="POST">
+<x-admin.form-card title="Informasi Pegawai Baru" icon="fa-user-plus" icon-class="bg-blue-100 text-blue-600">
+    <x-admin.errors />
+<form action="{{ route('admin.users.store') }}" method="POST">
             @csrf
             
             <div class="mb-8 pb-8 border-b border-gray-100">
@@ -125,6 +110,5 @@
                 </a>
             </div>
         </form>
-    </div>
-</div>
+</x-admin.form-card>
 @endsection

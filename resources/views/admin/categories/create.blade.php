@@ -3,24 +3,23 @@
 @section('title', 'Tambah Kategori - Halo MANAP')
 
 @section('admin_content')
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800">Tambah Kategori</h1>
-        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <span class="text-blue-600">Master Data</span> 
-            <span class="text-gray-400">/</span> 
-            <a href="{{ route('admin.categories.index') }}" class="hover:text-blue-600">Kategori</a>
-            <span class="text-gray-400">/</span> 
-            <span>Tambah</span>
-        </div>
-    </div>
-    <a href="{{ route('admin.categories.index') }}" class="admin-btn admin-btn-ghost">
-        Kembali
-    </a>
-</div>
+<x-admin.page-header
+    title="Tambah Kategori"
+    section="Master Data"
+    icon="fa-tag"
+    gradient="blue"
+>
+    <x-slot name="breadcrumb">
+        <span class="text-gray-400">/</span>
+        <a href="{{ route('admin.categories.index') }}" class="text-blue-600 hover:underline">Kategori</a>
+        <span class="text-gray-400">/</span>
+        <span>Tambah</span>
+    </x-slot>
+    <x-admin.btn href="{{ route('admin.categories.index') }}" variant="ghost" icon="fa-arrow-left">Kembali</x-admin.btn>
+</x-admin.page-header>
 
-<div class="admin-card overflow-hidden max-w-2xl">
-    <form action="{{ route('admin.categories.store') }}" method="POST" class="p-6">
+<x-admin.form-card max-width="max-w-2xl">
+    <form action="{{ route('admin.categories.store') }}" method="POST">
         @csrf
         <div class="mb-5">
             <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Nama Kategori <span class="text-red-500">*</span></label>
@@ -69,5 +68,5 @@
             </button>
         </div>
     </form>
-</div>
+</x-admin.form-card>
 @endsection

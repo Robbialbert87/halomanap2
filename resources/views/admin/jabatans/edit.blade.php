@@ -3,39 +3,24 @@
 @section('title', 'Edit Jabatan - Halo MANAP')
 
 @section('admin_content')
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800">Edit Jabatan</h1>
-        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <span class="text-blue-600">Master Data</span>
-            <span class="text-gray-400">/</span>
-            <a href="{{ route('admin.jabatans.index') }}" class="text-blue-600 hover:underline">Jabatan</a>
-            <span class="text-gray-400">/</span>
-            <span>Edit</span>
-        </div>
-    </div>
-    <a href="{{ route('admin.jabatans.index') }}" class="admin-btn admin-btn-ghost">
-        <i class="fa-solid fa-arrow-left"></i> Kembali
-    </a>
-</div>
+<x-admin.page-header
+    title="Edit Jabatan"
+    section="Master Data"
+    icon="fa-sitemap"
+    gradient="amber"
+>
+    <x-slot name="breadcrumb">
+        <span class="text-gray-400">/</span>
+        <a href="{{ route('admin.jabatans.index') }}" class="text-blue-600 hover:underline">Jabatan</a>
+        <span class="text-gray-400">/</span>
+        <span>Edit</span>
+    </x-slot>
+    <x-admin.btn href="{{ route('admin.jabatans.index') }}" variant="ghost" icon="fa-arrow-left">Kembali</x-admin.btn>
+</x-admin.page-header>
 
-<div class="admin-card overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-        <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-sitemap text-amber-600 text-sm"></i>
-        </div>
-        <h2 class="font-semibold text-gray-800">Edit Jabatan: <span class="text-blue-600">{{ $jabatan->nama }}</span></h2>
-    </div>
-    <div class="p-6">
-        @if($errors->any())
-        <div class="bg-red-50 text-red-700 p-4 rounded-lg mb-6 border border-red-200 text-sm space-y-1">
-            @foreach($errors->all() as $err)
-                <div class="flex items-start gap-2"><i class="fa-solid fa-circle-exclamation mt-0.5"></i> {{ $err }}</div>
-            @endforeach
-        </div>
-        @endif
-
-        <form action="{{ route('admin.jabatans.update', $jabatan->id) }}" method="POST">
+<x-admin.form-card title='Edit Jabatan: <span class="text-blue-600">{{ $jabatan->nama }}</span>' icon="fa-sitemap" icon-class="bg-amber-100 text-amber-600">
+    <x-admin.errors />
+<form action="{{ route('admin.jabatans.update', $jabatan->id) }}" method="POST">
             @csrf @method('PUT')
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
@@ -73,6 +58,5 @@
                 </a>
             </div>
         </form>
-    </div>
-</div>
+</x-admin.form-card>
 @endsection

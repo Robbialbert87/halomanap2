@@ -11,11 +11,6 @@
     icon="fa-user-shield"
     gradient="purple"
 >
-    <x-slot:summary>
-        <span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-purple-500 text-xs"></i> Total Role: <b class="text-gray-800">{{ $totalRoles }}</b></span>
-        <span class="text-gray-300">•</span>
-        <span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-users text-blue-500 text-xs"></i> Total User Terdaftar: <b class="text-gray-800">{{ $totalUsers }}</b></span>
-    </x-slot:summary>
     <x-admin.btn href="{{ route('admin.roles.create') }}" icon="fa-plus">Tambah Role</x-admin.btn>
 </x-admin.page-header>
 

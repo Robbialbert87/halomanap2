@@ -3,19 +3,18 @@
 @section('title', 'Detail Pengaduan - Monitoring Direktur')
 
 @section('admin_content')
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800">Detail Pengaduan</h1>
-        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <a href="{{ route('admin.monitoring.index') }}" class="text-blue-600 hover:underline">Monitoring</a>
-            <span class="text-gray-400">/</span>
-            <span class="font-mono text-blue-600">{{ $ticket->ticket_number }}</span>
-        </div>
-    </div>
-    <a href="{{ route('admin.monitoring.index') }}" class="admin-btn admin-btn-ghost">
-        <i class="fa-solid fa-arrow-left"></i> Kembali
-    </a>
-</div>
+<x-admin.page-header
+    title="Detail Pengaduan"
+    section="Monitoring"
+    icon="fa-clipboard-list"
+    gradient="blue"
+>
+    <x-slot name="breadcrumb">
+        <span class="text-gray-400">/</span>
+        <span class="font-mono text-blue-600">{{ $ticket->ticket_number }}</span>
+    </x-slot>
+    <x-admin.btn href="{{ route('admin.monitoring.index') }}" variant="ghost" icon="fa-arrow-left">Kembali</x-admin.btn>
+</x-admin.page-header>
 
 <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
     {{-- ── Info Pengaduan ──────────────────────────────────────────── --}}
