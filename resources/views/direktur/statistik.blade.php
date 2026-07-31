@@ -3,12 +3,15 @@
 @section('title', 'Statistik Pengaduan - Halo MANAP')
 
 @section('admin_content')
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800">Statistik Pengaduan</h1>
-        <div class="text-sm text-gray-500 mt-1">Rekap data pengaduan</div>
-    </div>
-</div>
+<x-admin.page-header
+    title="Statistik Pengaduan"
+    section="Direktur"
+    crumb="Statistik Pengaduan"
+    icon="fa-chart-column"
+    gradient="indigo"
+>
+    <x-slot name="summary">Rekap data pengaduan</x-slot>
+</x-admin.page-header>
 
 <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
     <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 border-l-4 border-l-blue-500">

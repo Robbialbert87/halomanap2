@@ -3,16 +3,13 @@
 @section('title', 'Profil - Halo MANAP')
 
 @section('admin_content')
-<div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800">Profil</h1>
-        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <span class="text-blue-600">Direktur</span>
-            <span class="text-gray-400">/</span>
-            <span>Profil</span>
-        </div>
-    </div>
-</div>
+<x-admin.page-header
+    title="Profil"
+    section="Direktur"
+    crumb="Profil"
+    icon="fa-user"
+    gradient="indigo"
+></x-admin.page-header>
 
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
     <div class="flex items-center gap-6 mb-6">

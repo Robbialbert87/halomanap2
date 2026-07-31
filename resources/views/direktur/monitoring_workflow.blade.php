@@ -3,12 +3,15 @@
 @section('title', 'Monitoring Pengaduan - Halo MANAP')
 
 @section('admin_content')
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800">Monitoring Pengaduan</h1>
-        <div class="text-sm text-gray-500 mt-1">Daftar seluruh pengaduan — klik nomor tiket untuk lihat detail & workflow</div>
-    </div>
-</div>
+<x-admin.page-header
+    title="Monitoring Pengaduan"
+    section="Direktur"
+    crumb="Monitoring Pengaduan"
+    icon="fa-diagram-project"
+    gradient="indigo"
+>
+    <x-slot name="summary">Daftar seluruh pengaduan — klik nomor tiket untuk lihat detail &amp; workflow</x-slot>
+</x-admin.page-header>
 
 {{-- Statistik cepat --}}
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">

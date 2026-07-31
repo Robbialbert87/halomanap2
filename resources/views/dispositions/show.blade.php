@@ -9,21 +9,12 @@
         <p class="text-sm text-gray-500 mt-1">Detail pengaduan dan form aksi.</p>
     </div>
     @php $fromRiwayat = str_contains(url()->previous(), 'riwayat'); @endphp
-    <a href="{{ $fromRiwayat ? route($user->getRoutePrefix() . '.'riwayat') : route($user->getRoutePrefix() . '.'dispositions.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+    <a href="{{ $fromRiwayat ? route('riwayat') : route('dispositions.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
         <i class="fa-solid fa-arrow-left"></i> Kembali
     </a>
 </div>
 
-@if(session('success'))
-<div class="bg-green-50 text-green-700 p-4 rounded-lg mb-6 border border-green-200 flex items-center gap-2">
-    <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
-</div>
-@endif
-@if(session('error'))
-<div class="bg-red-50 text-red-700 p-4 rounded-lg mb-6 border border-red-200 flex items-center gap-2">
-    <i class="fa-solid fa-circle-exclamation"></i> {{ session('error') }}
-</div>
-@endif
+<x-admin.flash />
 
 <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
     <div class="xl:col-span-2">
@@ -211,7 +202,7 @@
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
-        <form id="form-selesai" action="{{ route($user->getRoutePrefix() . '.'dispositions.selesai', $workflow->id) }}" method="POST">
+        <form id="form-selesai" action="{{ route('dispositions.selesai', $workflow->id) }}" method="POST">
             @csrf
             <div class="px-6 py-5 space-y-4">
                 <div>
@@ -240,7 +231,7 @@
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
-        <form id="form-eskalasi" action="{{ route($user->getRoutePrefix() . '.'dispositions.eskalasi', $workflow->id) }}" method="POST">
+        <form id="form-eskalasi" action="{{ route('dispositions.eskalasi', $workflow->id) }}" method="POST">
             @csrf
             <div class="px-6 py-5 space-y-4">
                 <div>

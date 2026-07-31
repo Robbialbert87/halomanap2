@@ -3,16 +3,13 @@
 @section('title', 'Kotak Masuk Disposisi - Halo MANAP')
 
 @section('admin_content')
-<div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800">Kotak Masuk Disposisi</h1>
-        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <span class="text-blue-600">" . $user->getRoleLabel() . "</span>
-            <span class="text-gray-400">/</span>
-            <span>Disposisi</span>
-        </div>
-    </div>
-</div>
+<x-admin.page-header
+    title="Kotak Masuk Disposisi"
+    :section="$user->getRoleLabel()"
+    crumb="Disposisi"
+    icon="fa-inbox"
+    gradient="blue"
+></x-admin.page-header>
 
 {{-- Table (desktop) --}}
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hidden md:block">
@@ -37,7 +34,7 @@
                     <td class="px-4 py-3"><span class="inline-block px-2 py-1 text-xs font-semibold rounded {{ $workflow->status_badge['class'] }}">{{ $workflow->status_badge['label'] }}</span></td>
                     <td class="px-4 py-3 whitespace-nowrap">{{ $workflow->created_at->format('d/m/Y H:i') }}</td>
                     <td class="px-4 py-3">
-                        <a href="{{ route($user->getRoutePrefix() . '.'dispositions.show', $workflow->uuid) }}" class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
+                        <a href="{{ route('dispositions.show', $workflow->uuid) }}" class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
                             <i class="fa-solid fa-eye"></i> Detail
                         </a>
                     </td>
@@ -61,7 +58,7 @@
 {{-- Cards (mobile) --}}
 <div class="space-y-3 md:hidden">
     @forelse($activeWorkflows as $workflow)
-    <a href="{{ route($user->getRoutePrefix() . '.'dispositions.show', $workflow->uuid) }}" class="block bg-white rounded-xl shadow-sm border border-gray-100 p-4 active:scale-[0.98] transition-transform">
+    <a href="{{ route('dispositions.show', $workflow->uuid) }}" class="block bg-white rounded-xl shadow-sm border border-gray-100 p-4 active:scale-[0.98] transition-transform">
         <div class="flex items-start justify-between mb-2">
             <div class="font-mono text-sm font-bold text-blue-600">{{ $workflow->ticket->ticket_number }}</div>
             <span class="shrink-0 inline-block px-2 py-0.5 text-[10px] font-semibold rounded {{ $workflow->status_badge['class'] }}">{{ $workflow->status_badge['label'] }}</span>

@@ -3,31 +3,15 @@
 @section('title', 'Audit Trail - Halo MANAP')
 
 @section('admin_content')
-{{-- Mobile Page Header --}}
-<div class="md:hidden mb-3">
-    <div class="flex items-center gap-2.5 p-1">
-        <span class="w-9 h-9 rounded-2xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-sm shadow-indigo-200/50 flex-shrink-0">
-            <i class="fa-solid fa-list-check text-white text-sm"></i>
-        </span>
-        <div>
-            <p class="text-[9px] text-indigo-500 font-semibold tracking-wider uppercase font-heading">Direktur</p>
-            <h1 class="text-base font-bold text-gray-800 font-heading">Audit Trail</h1>
-        </div>
-    </div>
-</div>
-
-{{-- Page Header (Desktop) --}}
-<div class="hidden md:flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800 font-heading">Audit Trail</h1>
-        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <span class="text-blue-600">Direktur</span>
-            <span class="text-gray-400">/</span>
-            <span>Audit Trail</span>
-        </div>
-        <p class="text-xs text-gray-400 mt-1"><i class="fa-solid fa-eye"></i> Mode baca saja</p>
-    </div>
-</div>
+<x-admin.page-header
+    title="Audit Trail"
+    section="Direktur"
+    crumb="Audit Trail"
+    icon="fa-list-check"
+    gradient="indigo"
+>
+    <x-slot name="summary"><i class="fa-solid fa-eye"></i> Mode baca saja</x-slot>
+</x-admin.page-header>
 
 {{-- Toolbar Filter & Pencarian (full-width: pencarian di atas, Reset kiri | Filter kanan di bawah, live tanpa reload) --}}
 <div class="admin-card overflow-hidden mb-4 md:mb-6">

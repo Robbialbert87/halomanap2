@@ -3,16 +3,13 @@
 @section('title', 'Dalam Penanganan - Halo MANAP')
 
 @section('admin_content')
-<div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800">Dalam Penanganan</h1>
-        <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <span class="text-blue-600">" . $user->getRoleLabel() . "</span>
-            <span class="text-gray-400">/</span>
-            <span>Dalam Penanganan</span>
-        </div>
-    </div>
-</div>
+<x-admin.page-header
+    title="Dalam Penanganan"
+    :section="$user->getRoleLabel()"
+    crumb="Dalam Penanganan"
+    icon="fa-spinner"
+    gradient="amber"
+></x-admin.page-header>
 
 {{-- Table (desktop) --}}
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hidden md:block">
@@ -35,7 +32,7 @@
                     <td class="px-4 py-3">{{ $wf->fromUser?->nama ?? '-' }}</td>
                     <td class="px-4 py-3 whitespace-nowrap">{{ $wf->created_at->format('d/m/Y H:i') }}</td>
                     <td class="px-4 py-3">
-                        <a href="{{ route($user->getRoutePrefix() . '.'dispositions.show', $wf->uuid) }}" class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
+                        <a href="{{ route('dispositions.show', $wf->uuid) }}" class="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
                             <i class="fa-solid fa-eye"></i> Detail
                         </a>
                     </td>
@@ -52,7 +49,7 @@
 {{-- Cards (mobile) --}}
 <div class="space-y-3 md:hidden">
     @forelse($workflows as $wf)
-    <a href="{{ route($user->getRoutePrefix() . '.'dispositions.show', $wf->uuid) }}" class="block bg-white rounded-xl shadow-sm border border-gray-100 p-4 active:scale-[0.98] transition-transform">
+    <a href="{{ route('dispositions.show', $wf->uuid) }}" class="block bg-white rounded-xl shadow-sm border border-gray-100 p-4 active:scale-[0.98] transition-transform">
         <div class="font-mono text-sm font-bold text-blue-600 mb-1">{{ $wf->ticket->ticket_number }}</div>
         <p class="text-sm font-medium text-gray-900 mb-2 line-clamp-2">{{ $wf->ticket->title }}</p>
         <div class="flex items-center justify-between text-xs text-gray-500">
