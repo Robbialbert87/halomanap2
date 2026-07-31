@@ -374,19 +374,18 @@
             pointer-events: none;
         }
 
-        /* Toolbar filter menyatu dengan kartu tabel */
+        /* Toolbar filter menyatu dengan kartu tabel (full-width, kolom: field di atas, aksi di bawah) */
         .admin-toolbar {
             display: flex;
             flex-direction: column;
-            gap: .625rem;
+            gap: .75rem;
             padding: .75rem;
+            width: 100%;
         }
 
         @media (min-width: 768px) {
             .admin-toolbar {
-                flex-direction: row;
-                align-items: center;
-                padding: .875rem 1.25rem;
+                padding: 1rem 1.25rem;
             }
         }
 

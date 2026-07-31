@@ -15,7 +15,7 @@
         <div class="flex-1 min-w-0 pl-2.5 pr-3 py-2.5">
             <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-1.5 min-w-0 flex-1">
-                    <span class="text-[13px] font-semibold text-gray-900 truncate">{{ $user->nama }}</span>
+                    <span class="text-[13px] font-semibold text-gray-900">{{ $user->nama }}</span>
                     @if($user->status === 'active')
                         <span class="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0"></span>
                     @elseif($user->status === 'suspended')

@@ -51,9 +51,9 @@ $typeMap = [
                 </div>
                 <span class="text-[10px] text-gray-400 whitespace-nowrap shrink-0">{{ $ticket->created_at->format('d M Y') }}</span>
             </div>
-            <h3 class="text-[13px] font-semibold text-gray-900 leading-snug mt-0.5 line-clamp-1">{{ $ticket->title }}</h3>
+            <h3 class="text-[13px] font-semibold text-gray-900 leading-snug mt-0.5">{{ $ticket->title }}</h3>
             <div class="flex items-center gap-2 mt-0.5">
-                <span class="text-[11px] text-gray-500 truncate">
+                <span class="text-[11px] text-gray-500">
                     @if($ticket->is_anonymous)
                         Anonim
                     @else
@@ -103,9 +103,9 @@ $typeMap = [
                     <td class="px-4 py-3">
                         <span class="font-mono font-semibold text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded">{{ $ticket->ticket_number }}</span>
                     </td>
-                    <td class="px-4 py-3 max-w-[220px]">
-                        <p class="font-medium text-gray-800 text-xs truncate" title="{{ $ticket->title }}">{{ $ticket->title }}</p>
-                        <p class="text-[11px] text-gray-400 truncate mt-0.5">
+                    <td class="px-4 py-3 max-w-[260px]">
+                        <p class="font-medium text-gray-800 text-xs leading-snug">{{ $ticket->title }}</p>
+                        <p class="text-[11px] text-gray-400 leading-snug mt-0.5">
                             @if($ticket->is_anonymous)
                                 <span class="italic"><i class="fa-solid fa-user-secret mr-0.5"></i>Anonim</span>
                             @else

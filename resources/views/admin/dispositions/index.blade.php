@@ -30,26 +30,26 @@
     <form action="{{ route('admin.dispositions.index') }}" method="GET"
         data-live-filter="#dispositions-results"
         class="admin-toolbar">
-        <div class="grid grid-cols-2 md:flex md:items-center gap-2.5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
             <select name="status" class="admin-input text-[13px]">
                 <option value="">Semua Status</option>
                 @foreach($statuses as $s)
                     <option value="{{ $s }}" {{ request('status') == $s ? 'selected' : '' }}>{{ ucwords(str_replace('_', ' ', $s)) }}</option>
                 @endforeach
             </select>
-            <select name="unit_id" class="admin-input text-[13px] md:min-w-[190px]">
+            <select name="unit_id" class="admin-input text-[13px]">
                 <option value="">Semua Unit</option>
                 @foreach($units as $unit)
                     <option value="{{ $unit->id }}" {{ request('unit_id') == $unit->id ? 'selected' : '' }}>{{ $unit->nama }}</option>
                 @endforeach
             </select>
         </div>
-        <div class="flex items-center gap-2 md:flex-col md:gap-1.5">
-            <button type="submit" class="admin-btn admin-btn-primary flex-1 md:flex-none md:w-full" title="Terapkan filter">
-                <i class="fa-solid fa-filter mr-1 text-xs"></i> Filter
-            </button>
-            <button type="button" data-live-reset class="admin-btn admin-btn-ghost flex-1 md:flex-none md:w-full text-center" title="Reset semua filter">
+        <div class="flex items-center justify-between gap-3 w-full pt-1">
+            <button type="button" data-live-reset class="admin-btn admin-btn-ghost" title="Reset semua filter">
                 <i class="fa-solid fa-rotate-left mr-1 text-xs"></i> Reset
+            </button>
+            <button type="submit" class="admin-btn admin-btn-primary" title="Terapkan filter">
+                <i class="fa-solid fa-filter mr-1 text-xs"></i> Filter
             </button>
         </div>
     </form>

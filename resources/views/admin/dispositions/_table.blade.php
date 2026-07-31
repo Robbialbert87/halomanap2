@@ -37,7 +37,7 @@
                 </div>
                 <span class="text-[10px] text-gray-400 whitespace-nowrap shrink-0">{{ $wf->created_at->format('d/m/Y') }}</span>
             </div>
-            <h3 class="text-[13px] font-semibold text-gray-900 leading-snug mt-0.5 line-clamp-1">{{ $wf->ticket?->title ?? '-' }}</h3>
+            <h3 class="text-[13px] font-semibold text-gray-900 leading-snug mt-0.5">{{ $wf->ticket?->title ?? '-' }}</h3>
             <div class="flex items-center gap-2 mt-0.5">
                 <span class="text-[11px] text-gray-500 truncate">
                     {{ $wf->toUnit?->nama ?? '-' }} · {{ $wf->toUser?->nama ?? '-' }}
@@ -78,7 +78,7 @@
                 @endphp
                 <tr class="{{ $isOverdue ? 'bg-red-50' : 'hover:bg-gray-50' }}">
                     <td class="px-4 py-3 font-mono text-xs font-bold text-blue-600">{{ $wf->ticket?->ticket_number ?? '-' }}</td>
-                    <td class="px-4 py-3 max-w-[220px] truncate font-medium text-gray-800">{{ $wf->ticket?->title ?? '-' }}</td>
+                    <td class="px-4 py-3 max-w-[260px] font-medium text-gray-800">{{ $wf->ticket?->title ?? '-' }}</td>
                     <td class="px-4 py-3 whitespace-nowrap hidden lg:table-cell">{{ $wf->toUnit?->nama ?? '-' }}</td>
                     <td class="px-4 py-3 whitespace-nowrap hidden lg:table-cell">
                         {{ $wf->toUser?->nama ?? '-' }}

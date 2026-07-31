@@ -28,7 +28,7 @@
 {{-- FILTER FORM (live tanpa reload; statistik & tabel di-refresh bersama) --}}
 <div class="admin-card p-4 md:p-6 mb-4 md:mb-6 admin-rise" style="--index: 0">
     <form method="GET" action="{{ route('admin.laporan') }}" data-live-filter="#laporan-results"
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
         <div>
             <label class="block text-xs font-semibold text-gray-600 mb-1">Dari Tanggal</label>
             <input type="date" name="start_date" value="{{ request('start_date') }}"
@@ -59,7 +59,7 @@
                 @endforeach
             </select>
         </div>
-        <div>
+        <div class="lg:col-span-2">
             <label class="block text-xs font-semibold text-gray-600 mb-1">Status</label>
             <select name="status"
                 class="admin-input">
@@ -69,23 +69,21 @@
                 @endforeach
             </select>
         </div>
-        <div class="sm:col-span-2 lg:col-span-5 mt-1">
-            <div class="flex flex-col md:flex-row gap-2">
-                <div class="flex gap-2 w-full md:w-auto">
-                    <button type="submit"
-                        class="admin-btn admin-btn-primary flex-1 md:flex-none">
-                        <i class="fa-solid fa-filter"></i> Filter
-                    </button>
-                    <button type="button" data-live-reset
-                        class="admin-btn admin-btn-ghost flex-1 md:flex-none">
-                        <i class="fa-solid fa-rotate-right"></i> Reset
-                    </button>
-                </div>
+        <div class="flex flex-wrap items-center justify-between gap-3 w-full pt-1">
+            <button type="button" data-live-reset
+                class="admin-btn admin-btn-ghost">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+            </button>
+            <div class="flex items-center gap-2">
                 <a href="{{ route('admin.laporan.export-pdf', request()->query()) }}"
                     data-live-export="{{ route('admin.laporan.export-pdf') }}"
-                    class="admin-btn admin-btn-danger w-full md:w-auto md:ml-auto">
+                    class="admin-btn admin-btn-danger">
                     <i class="fa-solid fa-file-pdf"></i> Export PDF
                 </a>
+                <button type="submit"
+                    class="admin-btn admin-btn-primary">
+                    <i class="fa-solid fa-filter"></i> Filter
+                </button>
             </div>
         </div>
     </form>

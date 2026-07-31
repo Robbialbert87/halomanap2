@@ -15,7 +15,7 @@
         <div class="flex-1 min-w-0 pl-2.5 pr-3 py-2.5">
             <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-1.5 min-w-0 flex-1">
-                    <span class="text-[13px] font-semibold text-gray-900 truncate">{{ $room->name }}</span>
+                    <span class="text-[13px] font-semibold text-gray-900">{{ $room->name }}</span>
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
                     <a href="{{ route('admin.rooms.edit', $room->id) }}"
