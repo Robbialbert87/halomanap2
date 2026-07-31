@@ -79,8 +79,8 @@
                 <tr class="{{ $isOverdue ? 'bg-red-50' : 'hover:bg-gray-50' }}">
                     <td class="px-4 py-3 font-mono text-xs font-bold text-blue-600">{{ $wf->ticket?->ticket_number ?? '-' }}</td>
                     <td class="px-4 py-3 max-w-[260px] font-medium text-gray-800">{{ $wf->ticket?->title ?? '-' }}</td>
-                    <td class="px-4 py-3 whitespace-nowrap hidden lg:table-cell">{{ $wf->toUnit?->nama ?? '-' }}</td>
-                    <td class="px-4 py-3 whitespace-nowrap hidden lg:table-cell">
+                    <td class="px-4 py-3 hidden lg:table-cell">{{ $wf->toUnit?->nama ?? '-' }}</td>
+                    <td class="px-4 py-3 hidden lg:table-cell">
                         {{ $wf->toUser?->nama ?? '-' }}
                         <span class="text-xs text-gray-400 block">{{ $wf->toJabatan?->nama ?? '' }}</span>
                     </td>

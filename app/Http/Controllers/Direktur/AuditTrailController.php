@@ -10,12 +10,23 @@ class AuditTrailController extends Controller
 {
     public function index(Request $request)
     {
-        $user = auth()->user();
-
         $auditTrails = AuditTrail::with('user')
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $search = trim($request->search);
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('action', 'like', "%{$search}%")
+                        ->orWhere('model', 'like', "%{$search}%")
+                        ->orWhereHas('user', fn ($u) => $u->where('nama', 'like', "%{$search}%"));
+                });
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return view('direktur.audit_trail', ['auditTrails' => $auditTrails, 'user' => $user]);
+        // Live filter: balas fragment (tabel) untuk fetch tanpa reload
+        if ($request->header('X-Live-Filter') === '1') {
+            return view('direktur._audit_trail_table', ['auditTrails' => $auditTrails]);
+        }
+
+        return view('direktur.audit_trail', ['auditTrails' => $auditTrails, 'user' => auth()->user()]);
     }
 }

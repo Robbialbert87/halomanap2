@@ -3,14 +3,28 @@
 @section('title', 'Kirim Ulang Notifikasi - Halo MANAP')
 
 @section('admin_content')
-<div class="flex items-center justify-between mb-6">
+{{-- Mobile Page Header --}}
+<div class="md:hidden mb-3">
+    <div class="flex items-center gap-2.5 p-1">
+        <span class="w-9 h-9 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-sm shadow-orange-200/50 flex-shrink-0">
+            <i class="fa-solid fa-clock-rotate-left text-white text-sm"></i>
+        </span>
+        <div>
+            <p class="text-[9px] text-orange-500 font-semibold tracking-wider uppercase font-heading">Pengaturan Sistem</p>
+            <h1 class="text-base font-bold text-gray-800 font-heading">Kirim Ulang Notifikasi</h1>
+        </div>
+    </div>
+</div>
+
+{{-- Page Header (Desktop) --}}
+<div class="hidden md:flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
     <div>
-        <h1 class="text-2xl font-bold text-gray-800">Kirim Ulang Notifikasi</h1>
+        <h1 class="text-2xl font-bold text-gray-800 font-heading">Kirim Ulang Notifikasi</h1>
         <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <span class="text-blue-600">Pengaturan Sistem</span> 
-            <span class="text-gray-400">/</span> 
+            <span class="text-blue-600">Pengaturan Sistem</span>
+            <span class="text-gray-400">/</span>
             <a href="{{ route('admin.whatsapp.index') }}" class="text-blue-600 hover:underline">WhatsApp Gateway</a>
-            <span class="text-gray-400">/</span> 
+            <span class="text-gray-400">/</span>
             <span>Kirim Ulang</span>
         </div>
     </div>
@@ -29,89 +43,45 @@
             <i class="fa-solid fa-clock-rotate-left text-orange-500"></i>
             Notifikasi Gagal
         </h2>
-        <span class="text-sm text-gray-500">Total: {{ $failedLogs->total() }}</span>
     </div>
 
-    @if($failedLogs->isEmpty())
-        <div class="p-12 text-center">
-            <div class="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-                <i class="fa-solid fa-check"></i>
+    {{-- Toolbar Filter & Pencarian (full-width, live tanpa reload) --}}
+    <form action="{{ route('admin.whatsapp.resend') }}" method="GET"
+        data-live-filter="#resend-results"
+        class="admin-toolbar border-b border-gray-100">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+            <div class="relative w-full">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                <input type="text" name="search" value="{{ request('search') }}"
+                    placeholder="Cari nomor WA, pesan, atau error..." autocomplete="off"
+                    class="admin-input text-[13px] pl-9 w-full">
+                @if(request('search'))
+                <a href="{{ route('admin.whatsapp.resend', request()->except(['search', 'page'])) }}" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark"></i>
+                </a>
+                @endif
             </div>
-            <h3 class="text-lg font-bold text-gray-800 mb-2">Tidak Ada Notifikasi Gagal</h3>
-            <p class="text-gray-500 text-sm">Semua notifikasi WhatsApp berhasil terkirim.</p>
+            <select name="jenis" class="admin-input text-[13px]">
+                <option value="">Semua Jenis</option>
+                @foreach($jenisList as $jenis)
+                    <option value="{{ $jenis }}" {{ request('jenis') == $jenis ? 'selected' : '' }}>{{ str_replace('_', ' ', $jenis) }}</option>
+                @endforeach
+            </select>
         </div>
-    @else
-        <form action="{{ route('admin.whatsapp.resend-submit') }}" method="POST" id="resend-form">
-            @csrf
-            <div class="p-4 border-b border-gray-100 flex items-center gap-3">
-                <button type="button" onclick="toggleAll()" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
-                    <i class="fa-solid fa-check-double mr-1"></i> Pilih Semua
-                </button>
-                <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg text-sm px-4 py-2 transition-colors flex items-center gap-2">
-                    <i class="fa-solid fa-paper-plane"></i>
-                    Kirim Ulang Terpilih
-                </button>
-            </div>
+        <div class="flex items-center justify-between gap-3 w-full pt-1">
+            <button type="button" data-live-reset class="admin-btn admin-btn-ghost" title="Reset semua filter">
+                <i class="fa-solid fa-rotate-left mr-1 text-xs"></i> Reset
+            </button>
+            <button type="submit" class="admin-btn admin-btn-primary" title="Terapkan filter">
+                <i class="fa-solid fa-filter mr-1 text-xs"></i> Filter
+            </button>
+        </div>
+    </form>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
-                            <th class="text-left px-4 py-3 w-10">
-                                <input type="checkbox" onchange="toggleAll()" id="select-all" class="rounded border-gray-300">
-                            </th>
-                            <th class="text-left px-4 py-3">Nomor WA</th>
-                            <th class="text-left px-4 py-3">Jenis</th>
-                            <th class="text-left px-4 py-3">Pesan</th>
-                            <th class="text-left px-4 py-3">Error</th>
-                            <th class="text-left px-4 py-3">Tanggal</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach($failedLogs as $log)
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-4 py-3">
-                                <input type="checkbox" name="ids[]" value="{{ $log->id }}" class="rounded border-gray-300 log-checkbox">
-                            </td>
-                            <td class="px-4 py-3 font-mono text-xs">{{ $log->nomor_wa }}</td>
-                            <td class="px-4 py-3">
-                                <span class="px-2 py-0.5 rounded-full text-xs font-medium 
-                                    @switch($log->jenis)
-                                        @case('disposisi_baru') bg-blue-100 text-blue-700 @break
-                                        @case('eskalasi') bg-red-100 text-red-700 @break
-                                        @case('monitoring_direktur') bg-purple-100 text-purple-700 @break
-                                        @case('admin_verifikasi') bg-yellow-100 text-yellow-700 @break
-                                        @default bg-gray-100 text-gray-700
-                                    @endswitch">
-                                    {{ str_replace('_', ' ', $log->jenis) }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3 max-w-xs">
-                                <p class="truncate text-gray-600">{{ $log->isi_pesan }}</p>
-                            </td>
-                            <td class="px-4 py-3 max-w-[200px]">
-                                @if($log->error_message)
-                                    <p class="text-xs text-red-500 truncate" title="{{ $log->error_message }}">{{ $log->error_message }}</p>
-                                @else
-                                    <span class="text-xs text-gray-400">-</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">
-                                {{ $log->created_at->timezone('Asia/Jakarta')->format('d/m/Y H:i') }}
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            @if($failedLogs->hasPages())
-                <div class="px-4 py-3 border-t border-gray-100">
-                    {{ $failedLogs->links() }}
-                </div>
-            @endif
-        </form>
-    @endif
+    {{-- Hasil: daftar notifikasi gagal + aksi kirim ulang (di-refresh real-time oleh live filter) --}}
+    <div id="resend-results" class="admin-live-wrap">
+        @include('admin.whatsapp._resend_table', ['failedLogs' => $failedLogs])
+    </div>
 </div>
 
 @push('scripts')
@@ -119,17 +89,19 @@
     function toggleAll() {
         const selectAll = document.getElementById('select-all');
         const checkboxes = document.querySelectorAll('.log-checkbox');
+        if (!selectAll) return;
         const isChecked = selectAll.checked;
         checkboxes.forEach(cb => cb.checked = isChecked);
     }
 
-    document.getElementById('resend-form')?.addEventListener('submit', function(e) {
+    function validateResendForm() {
         const checked = document.querySelectorAll('.log-checkbox:checked');
         if (checked.length === 0) {
-            e.preventDefault();
             alert('Pilih minimal satu notifikasi untuk dikirim ulang.');
+            return false;
         }
-    });
+        return true;
+    }
 </script>
 @endpush
 @endsection

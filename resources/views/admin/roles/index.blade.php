@@ -17,8 +17,8 @@
     </div>
 </div>
 
-{{-- Page Header (Desktop) --}}
-<div class="hidden md:flex items-center justify-between mb-6">
+{{-- Page Header (Desktop) + Summary --}}
+<div class="hidden md:flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
     <div>
         <h1 class="text-2xl font-bold text-gray-800 font-heading">Manajemen Role</h1>
         <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
@@ -26,8 +26,13 @@
             <span class="text-gray-400">/</span>
             <span>Role</span>
         </div>
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2.5 text-sm text-gray-500">
+            <span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-purple-500 text-xs"></i> Total Role: <b class="text-gray-800">{{ $totalRoles }}</b></span>
+            <span class="text-gray-300">•</span>
+            <span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-users text-blue-500 text-xs"></i> Total User Terdaftar: <b class="text-gray-800">{{ $totalUsers }}</b></span>
+        </div>
     </div>
-    <a href="{{ route('admin.roles.create') }}" class="admin-btn admin-btn-primary">
+    <a href="{{ route('admin.roles.create') }}" class="admin-btn admin-btn-primary whitespace-nowrap">
         <i class="fa-solid fa-plus"></i> Tambah Role
     </a>
 </div>
@@ -50,124 +55,35 @@
 </div>
 @endif
 
-{{-- Role cards --}}
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6">
-    @foreach($roles as $role)
-    @php
-        $colors = [
-            'Super Admin' => ['bg' => 'bg-purple-50', 'border' => 'border-purple-200', 'icon' => 'bg-purple-600', 'badge' => 'bg-purple-100 text-purple-700'],
-            'Admin'       => ['bg' => 'bg-blue-50',   'border' => 'border-blue-200',   'icon' => 'bg-blue-600',   'badge' => 'bg-blue-100 text-blue-700'],
-            'Kepala Unit' => ['bg' => 'bg-amber-50',  'border' => 'border-amber-200',  'icon' => 'bg-amber-500',  'badge' => 'bg-amber-100 text-amber-700'],
-            'Staff Unit'  => ['bg' => 'bg-green-50',  'border' => 'border-green-200',  'icon' => 'bg-green-600',  'badge' => 'bg-green-100 text-green-700'],
-        ];
-        $c = $colors[$role->name] ?? ['bg' => 'bg-gray-50', 'border' => 'border-gray-200', 'icon' => 'bg-gray-500', 'badge' => 'bg-gray-100 text-gray-700'];
-    @endphp
-    <div class="{{ $c['bg'] }} {{ $c['border'] }} border rounded-xl p-4 md:p-5 relative overflow-hidden" style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.5) 100%);">
-        <div class="flex items-start justify-between mb-3 md:mb-4">
-            <div class="w-9 h-9 md:w-10 md:h-10 {{ $c['icon'] }} rounded-xl flex items-center justify-center text-white shadow-sm">
-                @if($role->name === 'Super Admin')
-                    <i class="fa-solid fa-user-shield text-sm"></i>
-                @elseif($role->name === 'Admin')
-                    <i class="fa-solid fa-user-gear text-sm"></i>
-                @elseif($role->name === 'Kepala Unit')
-                    <i class="fa-solid fa-user-tie text-sm"></i>
-                @else
-                    <i class="fa-solid fa-user text-sm"></i>
-                @endif
-            </div>
-            <div class="flex items-center gap-1">
-                <a href="{{ route('admin.roles.edit', $role->id) }}"
-                   class="admin-action admin-action-sm admin-action-blue" title="Edit">
-                    <i class="fa-regular fa-pen-to-square text-[10px]"></i>
-                </a>
-                @if($role->name !== 'Super Admin')
-                <form action="{{ route('admin.roles.destroy', $role->id) }}" method="POST"
-                      onsubmit="return confirm('Yakin ingin menghapus role {{ $role->name }}?')" class="inline">
-                    @csrf @method('DELETE')
-                    <button type="submit" class="admin-action admin-action-sm admin-action-red" title="Hapus">
-                        <i class="fa-regular fa-trash-can text-[10px]"></i>
-                    </button>
-                </form>
-                @endif
-            </div>
-        </div>
-        <h3 class="font-bold text-gray-800 text-sm md:text-base mb-1 font-heading">{{ $role->name }}</h3>
-        <div class="flex items-center gap-2">
-            <span class="inline-flex items-center gap-1 px-2 py-0.5 md:px-2.5 md:py-0.5 rounded-full text-[11px] md:text-xs font-semibold {{ $c['badge'] }}">
-                <i class="fa-solid fa-users text-[10px]"></i>
-                {{ $role->users_count }} user
-            </span>
-            @if($role->name === 'Super Admin')
-            <span class="inline-flex items-center gap-1 px-2 py-0.5 md:px-2.5 md:py-0.5 rounded-full text-[11px] md:text-xs font-semibold bg-purple-200 text-purple-800">
-                <i class="fa-solid fa-lock text-[10px]"></i> Dilindungi
-            </span>
+{{-- Toolbar Pencarian (full-width: pencarian di atas, Reset kiri | Filter kanan di bawah, live tanpa reload) --}}
+<div class="admin-card overflow-hidden mb-4 md:mb-6">
+    <form action="{{ route('admin.roles.index') }}" method="GET"
+        data-live-filter="#roles-results"
+        class="admin-toolbar">
+        <div class="relative w-full">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+            <input type="text" name="search" value="{{ request('search') }}"
+                placeholder="Cari nama, kode, atau deskripsi role..." autocomplete="off"
+                class="admin-input text-[13px] pl-9 w-full">
+            @if(request('search'))
+            <a href="{{ route('admin.roles.index', request()->except(['search', 'page'])) }}" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
             @endif
         </div>
-    </div>
-    @endforeach
+        <div class="flex items-center justify-between gap-3 w-full pt-1">
+            <button type="button" data-live-reset class="admin-btn admin-btn-ghost" title="Reset semua filter">
+                <i class="fa-solid fa-rotate-left mr-1 text-xs"></i> Reset
+            </button>
+            <button type="submit" class="admin-btn admin-btn-primary" title="Terapkan filter">
+                <i class="fa-solid fa-filter mr-1 text-xs"></i> Filter
+            </button>
+        </div>
+    </form>
 </div>
 
-{{-- Roles Table (Desktop only) --}}
-<div class="hidden md:block admin-card overflow-hidden">
-    <div class="admin-card-head">
-        <h2 class="font-semibold text-gray-800 text-sm">Daftar Semua Role</h2>
-    </div>
-    <table class="admin-table w-full text-left text-sm text-gray-600">
-        <thead>
-            <tr>
-                <th class="px-6 py-4 w-12 text-center">No</th>
-                <th class="px-6 py-4">Kode Role</th>
-                <th class="px-6 py-4">Nama Role</th>
-                <th class="px-6 py-4">Deskripsi</th>
-                <th class="px-6 py-4 text-center">Status</th>
-                <th class="px-6 py-4 text-center">Dibuat</th>
-                <th class="px-6 py-4 w-28 text-center">Aksi</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100">
-            @foreach($roles as $index => $role)
-            <tr class="hover:bg-gray-50/50 transition-colors">
-                <td class="px-6 py-4 text-center text-gray-400">{{ $index + 1 }}</td>
-                <td class="px-6 py-4 font-mono text-sm text-blue-600">{{ $role->kode ?? '-' }}</td>
-                <td class="px-6 py-4 font-medium text-gray-900">
-                    {{ $role->name }}
-                    <div class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
-                        <i class="fa-solid fa-users text-[10px]"></i> {{ $role->users_count }} user
-                    </div>
-                </td>
-                <td class="px-6 py-4 text-sm text-gray-500">{{ $role->deskripsi ?? '-' }}</td>
-                <td class="px-6 py-4 text-center">
-                    @if($role->status === 'active')
-                        <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>
-                    @else
-                        <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Nonaktif</span>
-                    @endif
-                </td>
-                <td class="px-6 py-4 text-center text-gray-400 text-xs">
-                    {{ $role->created_at->format('d M Y') }}
-                </td>
-                <td class="px-6 py-4">
-                    <div class="flex items-center justify-center gap-1.5">
-                        <a href="{{ route('admin.roles.edit', $role->id) }}"
-                           class="admin-action-pill admin-action-pill-blue" title="Edit">
-                            <i class="fa-regular fa-pen-to-square text-[11px]"></i> Edit
-                        </a>
-                        @if($role->name !== 'Super Admin')
-                        <form action="{{ route('admin.roles.destroy', $role->id) }}" method="POST"
-                              onsubmit="return confirm('Yakin ingin menghapus role ini?')" class="inline">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="admin-action-pill admin-action-pill-red" title="Hapus">
-                                <i class="fa-regular fa-trash-can text-[11px]"></i> Hapus
-                            </button>
-                        </form>
-                        @else
-                        <span class="admin-action admin-action-slate cursor-default" title="Dilindungi"><i class="fa-solid fa-lock text-xs"></i></span>
-                        @endif
-                    </div>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+{{-- Hasil: card ringkasan + tabel detail (di-refresh real-time oleh live filter) --}}
+<div id="roles-results" class="admin-live-wrap">
+    @include('admin.roles._results', ['roles' => $roles])
 </div>
 @endsection

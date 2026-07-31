@@ -210,6 +210,7 @@
         .admin-action-pill-blue:hover { background: #eff6ff; border-color: #bfdbfe; color: #2563eb; }
         .admin-action-pill-red:hover { background: #fef2f2; border-color: #fecaca; color: #dc2626; }
         .admin-action-pill-emerald:hover { background: #ecfdf5; border-color: #a7f3d0; color: #059669; }
+        .admin-action-pill-slate:hover { background: #f8fafc; border-color: #cbd5e1; color: #334155; }
 
         /* Kompak untuk daftar mobile */
         .admin-action-sm {
@@ -257,7 +258,10 @@
         .admin-table tbody td {
             padding: .875rem 1rem;
             font-size: .8125rem;
-            vertical-align: middle;
+            vertical-align: top;
+            white-space: normal;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
         }
 
         .admin-table tbody tr {

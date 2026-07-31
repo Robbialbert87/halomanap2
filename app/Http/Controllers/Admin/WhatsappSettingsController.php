@@ -402,13 +402,35 @@ class WhatsappSettingsController extends Controller
             ->with('success', 'Session WhatsApp berhasil dihapus.');
     }
 
-    public function showFailed(): View
+    public function showFailed(Request $request): View
     {
         $failedLogs = NotificationLog::where('status', 'failed')
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $search = trim($request->search);
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('nomor_wa', 'like', "%{$search}%")
+                        ->orWhere('isi_pesan', 'like', "%{$search}%")
+                        ->orWhere('error_message', 'like', "%{$search}%");
+                });
+            })
+            ->when($request->filled('jenis'), function ($q) use ($request) {
+                $q->where('jenis', $request->jenis);
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return view('admin.whatsapp.resend', ['failedLogs' => $failedLogs]);
+        $jenisList = NotificationLog::where('status', 'failed')
+            ->select('jenis')
+            ->distinct()
+            ->orderBy('jenis')
+            ->pluck('jenis');
+
+        // Live filter: balas fragment (tabel) untuk fetch tanpa reload
+        if ($request->header('X-Live-Filter') === '1') {
+            return view('admin.whatsapp._resend_table', ['failedLogs' => $failedLogs]);
+        }
+
+        return view('admin.whatsapp.resend', ['failedLogs' => $failedLogs, 'jenisList' => $jenisList]);
     }
 
     public function resendSubmit(Request $request): RedirectResponse

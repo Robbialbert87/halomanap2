@@ -78,7 +78,7 @@
                 </div>
             </div>
 
-            <div class="mb-6 pt-6 border-t border-gray-100">
+            <div id="permissions" class="mb-6 pt-6 border-t border-gray-100 scroll-mt-24">
                 <h3 class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wider">Assign Permissions</h3>
                 @php
                     $groups = $permissions->groupBy(function($p) {

@@ -69,21 +69,34 @@
                 @endforeach
             </select>
         </div>
-        <div class="flex flex-wrap items-center justify-between gap-3 w-full pt-1">
-            <button type="button" data-live-reset
-                class="admin-btn admin-btn-ghost">
-                <i class="fa-solid fa-rotate-left"></i> Reset
-            </button>
-            <div class="flex items-center gap-2">
-                <a href="{{ route('admin.laporan.export-pdf', request()->query()) }}"
-                    data-live-export="{{ route('admin.laporan.export-pdf') }}"
-                    class="admin-btn admin-btn-danger">
-                    <i class="fa-solid fa-file-pdf"></i> Export PDF
-                </a>
-                <button type="submit"
-                    class="admin-btn admin-btn-primary">
-                    <i class="fa-solid fa-filter"></i> Filter
+        <div class="col-span-full pt-2">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                {{-- Kiri --}}
+                <button
+                    type="button"
+                    data-live-reset
+                    class="admin-btn admin-btn-ghost">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    Reset
                 </button>
+
+                {{-- Kanan --}}
+                <div class="flex items-center gap-2">
+                    <a
+                        href="{{ route('admin.laporan.export-pdf', request()->query()) }}"
+                        data-live-export="{{ route('admin.laporan.export-pdf') }}"
+                        class="admin-btn admin-btn-danger">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        Export PDF
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="admin-btn admin-btn-primary">
+                        <i class="fa-solid fa-filter"></i>
+                        Filter
+                    </button>
+                </div>
             </div>
         </div>
     </form>
