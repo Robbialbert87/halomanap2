@@ -42,14 +42,14 @@
                     <i class="fa-regular fa-building text-gray-400"></i>
                     {{ $user->unit ? $user->unit->nama : '-' }}
                 </span>
-                <span class="text-[11px] text-gray-500 truncate">
+                <span class="text-[11px] text-gray-500 whitespace-nowrap">
                     · {{ $user->jabatan ? $user->jabatan->nama : '-' }}
                 </span>
             </div>
             @if($user->roles->count())
             <div class="flex items-center gap-1 mt-1">
                 @foreach($user->roles as $r)
-                    <span class="px-1.5 py-0.5 text-[9px] font-semibold bg-indigo-50 text-indigo-700 rounded border border-indigo-100">{{ $r->name }}</span>
+                    <span class="px-1.5 py-0.5 text-[9px] font-semibold whitespace-nowrap bg-indigo-50 text-indigo-700 rounded border border-indigo-100">{{ $r->name }}</span>
                 @endforeach
                 @if($user->status === 'active')
                     <span class="px-1.5 py-0.5 text-[9px] font-semibold bg-green-50 text-green-700 rounded">Aktif</span>
@@ -99,12 +99,12 @@
                         @endif
                     </td>
                     <td class="px-6 py-4">
-                        <div class="text-gray-800 font-medium">{{ $user->jabatan ? $user->jabatan->nama : '-' }}</div>
+                        <div class="text-gray-800 font-medium whitespace-nowrap">{{ $user->jabatan ? $user->jabatan->nama : '-' }}</div>
                         <div class="text-xs text-gray-500 mt-0.5"><i class="fa-regular fa-building text-gray-400 mr-1"></i> {{ $user->unit ? $user->unit->nama : '-' }}</div>
                     </td>
                     <td class="px-6 py-4 text-center hidden lg:table-cell">
                         @foreach($user->roles as $r)
-                            <span class="px-2 py-1 text-[10px] font-semibold bg-indigo-50 text-indigo-700 rounded border border-indigo-100">{{ $r->name }}</span>
+                            <span class="px-2 py-1 text-[10px] font-semibold whitespace-nowrap bg-indigo-50 text-indigo-700 rounded border border-indigo-100">{{ $r->name }}</span>
                         @endforeach
                     </td>
                     <td class="px-6 py-4 text-center">

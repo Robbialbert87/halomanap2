@@ -24,7 +24,7 @@
             @endphp
             <tr class="hover:bg-gray-50/50 transition-colors">
                 <td class="px-4 md:px-6 py-4 align-top">
-                    <p class="font-medium text-gray-900">{{ $role->name }}</p>
+                    <p class="font-medium text-gray-900 whitespace-nowrap">{{ $role->name }}</p>
                     <p class="font-mono text-[11px] text-blue-600 mt-0.5">{{ $role->kode ?? '-' }}</p>
                 </td>
                 <td class="px-4 md:px-6 py-4 align-top max-w-[320px] hidden sm:table-cell">

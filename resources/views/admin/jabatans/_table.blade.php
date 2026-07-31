@@ -54,7 +54,7 @@ $kategoriColors = [
             <div class="flex items-center gap-2 mt-1">
                 <span class="text-[11px] font-mono text-blue-600">{{ $jabatan->kode }}</span>
                 <span class="text-[10px]">·</span>
-                <span class="inline-block px-1.5 py-0.5 text-[10px] font-semibold rounded-full {{ $kc['bg'] }}">{{ $jabatan->kategori_jabatan }}</span>
+                <span class="inline-block px-1.5 py-0.5 text-[10px] font-semibold whitespace-nowrap rounded-full {{ $kc['bg'] }}">{{ $jabatan->kategori_jabatan }}</span>
                 @if($jabatan->status === 'active')
                     <span class="inline-block px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-green-50 text-green-700">Aktif</span>
                 @else
@@ -95,7 +95,7 @@ $kategoriColors = [
                         <div class="font-medium text-gray-900">{{ $jabatan->nama }}</div>
                     </td>
                     <td class="px-6 py-4 text-center hidden lg:table-cell">
-                        <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $kategoriColors[$jabatan->kategori_jabatan]['bg'] ?? 'bg-gray-100 text-gray-700' }}">
+                        <span class="px-2.5 py-1 inline-flex whitespace-nowrap text-xs leading-5 font-semibold rounded-full {{ $kategoriColors[$jabatan->kategori_jabatan]['bg'] ?? 'bg-gray-100 text-gray-700' }}">
                             {{ $jabatan->kategori_jabatan }}
                         </span>
                     </td>
