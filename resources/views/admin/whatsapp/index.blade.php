@@ -60,6 +60,32 @@ async function checkStatus() {
 }
 
 document.addEventListener('DOMContentLoaded', checkStatus);
+
+// ── Realtime: SSE status session ──────────────────────────────────────────────
+const sse = new EventSource('{{ route('admin.whatsapp.sse') }}');
+
+function updateSessionBadge(s) {
+  const tr = Array.from(document.querySelectorAll('tr[data-session-id]'))
+    .find(el => el.dataset.sessionId === s.session_id);
+  if (!tr) return;
+  const badge = tr.querySelector('.session-badge');
+  if (!badge) return;
+
+  const ok = s.connected;
+  const wait = ['scanning', 'SCAN_QR_CODE', 'STARTING', 'creating'].includes(s.status);
+  const badgeCls = ok ? 'bg-green-100 text-green-700' : (wait ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700');
+  const dotCls = ok ? 'bg-green-500' : (wait ? 'bg-yellow-500' : 'bg-red-500');
+
+  badge.className = 'session-badge inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ' + badgeCls;
+  badge.innerHTML = '<span class="session-dot w-1.5 h-1.5 rounded-full ' + dotCls + '"></span> ' + s.status;
+}
+
+sse.addEventListener('status', (e) => {
+  try {
+    JSON.parse(e.data).forEach(updateSessionBadge);
+  } catch (_) {}
+});
+sse.onerror = () => { /* EventSource auto-reconnect */ };
 </script>
 @endpush
 @endsection

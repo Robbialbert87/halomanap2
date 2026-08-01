@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class WhatsappSettingsController extends Controller
 {
@@ -70,13 +71,23 @@ class WhatsappSettingsController extends Controller
             'session' => Setting::getValue('waha_session', config('whatsapp.session')),
         ];
 
+        $webhookConfig = [
+            'url' => Setting::getValue('waha_webhook_url', route('waha.webhook')),
+            'secret' => Setting::getValue('waha_webhook_secret', ''),
+        ];
+
         $sessions = WhatsAppSession::with('user')->latest()->get();
 
         $failedLogs = NotificationLog::where('status', 'failed')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return view('admin.whatsapp.index', ['wahaConfig' => $wahaConfig, 'sessions' => $sessions, 'failedLogs' => $failedLogs]);
+        return view('admin.whatsapp.index', [
+            'wahaConfig' => $wahaConfig,
+            'webhookConfig' => $webhookConfig,
+            'sessions' => $sessions,
+            'failedLogs' => $failedLogs,
+        ]);
     }
 
     public function updateConfig(Request $request): RedirectResponse
@@ -208,11 +219,29 @@ class WhatsappSettingsController extends Controller
             'webhook_url' => 'nullable|url|max:255',
         ]);
 
+        // Webhook otomatis dibuat saat session baru: URL default dari Setting DB
+        // (fallback ke route receiver sendiri), secret HMAC dari Setting DB
+        // (auto-generate bila belum ada), events status + message.
+        $webhookUrl = $request->filled('webhook_url')
+            ? $request->webhook_url
+            : Setting::getValue('waha_webhook_url', route('waha.webhook'));
+
+        $webhookSecret = Setting::getValue('waha_webhook_secret');
+
+        if (! is_string($webhookSecret) || $webhookSecret === '') {
+            $webhookSecret = Str::random(32);
+            Setting::setValue('waha_webhook_secret', $webhookSecret, 'WAHA Webhook HMAC Secret');
+        }
+
+        $webhookEntry = [
+            'url' => $webhookUrl,
+            'events' => ['session.status', 'message'],
+            'hmac' => ['key' => $webhookSecret],
+        ];
+
+        // Struktur WAHA: config.webhooks adalah ARRAY webhook entries.
         $sessionConfig = [
-            'webhook' => $request->filled('webhook_url') ? [
-                'url' => $request->webhook_url,
-                'events' => ['message'],
-            ] : null,
+            'webhooks' => [$webhookEntry],
         ];
 
         try {
@@ -226,11 +255,109 @@ class WhatsappSettingsController extends Controller
             'session_id' => $validated['session_id'],
             'phone_number' => $validated['phone_number'],
             'status' => 'scanning',
-            'webhook_config' => $sessionConfig['webhook'],
+            'webhook_config' => $webhookEntry,
         ]);
 
         return redirect()->route('admin.whatsapp.index')
             ->with('success', 'Session WhatsApp berhasil dibuat. Scan QR code untuk menghubungkan.');
+    }
+
+    public function updateWebhookConfig(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'webhook_url' => 'nullable|url|max:255',
+            'webhook_secret' => 'nullable|string|max:255',
+        ]);
+
+        $webhookUrl = $validated['webhook_url'] ?? '';
+        $webhookSecret = $validated['webhook_secret'] ?? '';
+
+        if ($webhookUrl === '') {
+            $webhookUrl = route('waha.webhook');
+        }
+
+        if ($webhookSecret === '') {
+            $webhookSecret = Str::random(32);
+        }
+
+        Setting::setValue('waha_webhook_url', $webhookUrl, 'WAHA Webhook URL');
+        Setting::setValue('waha_webhook_secret', $webhookSecret, 'WAHA Webhook HMAC Secret');
+
+        return redirect()->route('admin.whatsapp.index')
+            ->with('success', 'Konfigurasi webhook tersimpan. Berlaku untuk session baru.');
+    }
+
+    /**
+     * Server-Sent Events: aliran status session via polling database ringan.
+     * Dipakai EventSource di index (semua session) & show (?session=xxx, + QR).
+     */
+    public function streamStatus(Request $request): StreamedResponse
+    {
+        $requestedSession = (string) $request->query('session', '');
+        $withQr = $requestedSession !== '';
+
+        $snapshot = function () use ($requestedSession, $withQr): array {
+            $query = WhatsAppSession::query()
+                ->select(['session_id', 'phone_number', 'status', 'connected_at', 'disconnected_at', 'updated_at']);
+
+            if ($withQr) {
+                $query->addSelect('qr_code');
+            }
+
+            if ($withQr && $requestedSession !== '') {
+                $query->where('session_id', $requestedSession);
+            }
+
+            return $query->get()->map(fn (WhatsAppSession $s): array => [
+                'session_id' => $s->session_id,
+                'phone_number' => $s->phone_number,
+                'status' => $s->status,
+                'qr_code' => $withQr ? $s->qr_code : null,
+                'connected' => in_array($s->status, ['WORKING', 'CONNECTED'], true),
+                'updated_at' => $s->updated_at?->timestamp,
+            ])->values()->all();
+        };
+
+        return response()->stream(function () use ($snapshot): void {
+            set_time_limit(0);
+
+            $lastSignature = null;
+            $first = true;
+
+            while (true) {
+                if (connection_aborted()) {
+                    break;
+                }
+
+                $data = $snapshot();
+                $signature = md5((string) json_encode($data));
+
+                if ($first || $signature !== $lastSignature) {
+                    echo "event: status\n";
+                    echo 'data: '.json_encode($data, JSON_UNESCAPED_UNICODE)."\n\n";
+                    $lastSignature = $signature;
+                    $first = false;
+
+                    if (ob_get_level() > 0) {
+                        ob_flush();
+                    }
+                    flush();
+                }
+
+                echo ": ping\n\n";
+                if (ob_get_level() > 0) {
+                    ob_flush();
+                }
+                flush();
+
+                sleep(1);
+            }
+        }, 200, [
+            'Content-Type' => 'text/event-stream',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'X-Accel-Buffering' => 'no',
+            'Connection' => 'keep-alive',
+        ]);
     }
 
     public function showSession(string $sessionId): View

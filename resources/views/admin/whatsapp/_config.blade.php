@@ -23,20 +23,40 @@
                 <option value="">-- Pilih Session --</option>
                 @foreach($sessions as $s)
                 <option value="{{ $s->session_id }}" {{ old('session', $wahaConfig['session'] ?? '') == $s->session_id ? 'selected' : '' }}>
-                    {{ $s->session_id }} @if($s->phone_number)({{ $s->phone_number }})@endif {{ $s->status === 'CONNECTED' ? '✓' : '' }}
+                    {{ $s->session_id }} @if($s->phone_number)({{ $s->phone_number }})@endif {{ in_array($s->status, ['CONNECTED', 'WORKING'], true) ? '✓' : '' }}
                 </option>
                 @endforeach
             </select>
             <p class="text-xs text-gray-400 mt-1">Session ini akan digunakan untuk mengirim semua notifikasi otomatis.</p>
         </div>
-        <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Webhook URL (opsional)</label>
-            <input type="url" name="webhook_url" value="{{ old('webhook_url', $wahaConfig['webhook_url'] ?? '') }}"
-                   class="admin-input">
-            <p class="text-xs text-gray-400 mt-1">Terima notifikasi status pesan.</p>
-        </div>
         <button type="submit" class="admin-btn admin-btn-primary w-full">
             <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Konfigurasi
+        </button>
+    </form>
+</div>
+
+<div class="admin-card overflow-hidden">
+    <div class="admin-card-head">
+        <h2 class="font-semibold text-gray-800 flex items-center gap-2">
+            <i class="fa-solid fa-webhook text-gray-500"></i> Konfigurasi Webhook
+        </h2>
+    </div>
+    <form method="POST" action="{{ route('admin.whatsapp.update-webhook') }}" class="p-6 space-y-3">
+        @csrf
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Webhook URL</label>
+            <input type="url" name="webhook_url" value="{{ old('webhook_url', $webhookConfig['url'] ?? '') }}"
+                   class="admin-input">
+            <p class="text-xs text-gray-400 mt-1">Endpoint penerima event dari WAHA (session.status, message). Kosongkan = otomatis pakai URL aplikasi ini.</p>
+        </div>
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">HMAC Secret</label>
+            <input type="text" name="webhook_secret" value="{{ old('webhook_secret', $webhookConfig['secret'] ?? '') }}"
+                   class="admin-input" autocomplete="off">
+            <p class="text-xs text-gray-400 mt-1">Kunci validasi tanda tangan webhook. Kosongkan = generate otomatis. Berlaku untuk session baru.</p>
+        </div>
+        <button type="submit" class="admin-btn admin-btn-primary w-full">
+            <i class="fa-solid fa-plug mr-1"></i> Simpan Webhook
         </button>
     </form>
 </div>

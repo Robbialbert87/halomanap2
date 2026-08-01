@@ -46,8 +46,8 @@
         <div class="p-3 rounded-xl bg-slate-50/60 border border-slate-100">
           <span class="text-xs text-slate-500">Status</span>
           <p class="text-sm font-medium text-slate-700 mt-1 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full {{ ($wahaInfo['status'] ?? '') === 'WORKING' ? 'bg-emerald-500 status-dot' : 'bg-slate-300' }}"></span>
-            {{ $wahaInfo['status'] ?? 'unknown' }}
+            <span id="rt-status-dot" class="w-2 h-2 rounded-full {{ ($wahaInfo['status'] ?? '') === 'WORKING' ? 'bg-emerald-500 status-dot' : 'bg-slate-300' }}"></span>
+            <span id="rt-status-text">{{ $wahaInfo['status'] ?? 'unknown' }}</span>
             @if(($wahaInfo['engine']['state'] ?? ''))
             <span class="text-xs text-slate-400">({{ $wahaInfo['engine']['state'] }})</span>
             @endif
@@ -146,4 +146,52 @@
     </div>
   </div>
 </div>
+
+@push('scripts')
+<script>
+(function () {
+  const SESSION_ID = @json($session->session_id);
+  const QR_URL = '{{ route('admin.whatsapp.sessions.qr', $session->session_id) }}';
+  const es = new EventSource('{{ route('admin.whatsapp.sse') }}?session=' + encodeURIComponent(SESSION_ID));
+
+  function renderStatus(status, qr) {
+    const dot = document.getElementById('rt-status-dot');
+    const text = document.getElementById('rt-status-text');
+    const connected = status === 'WORKING' || status === 'CONNECTED';
+    const scanning = status === 'SCAN_QR_CODE' || status === 'scanning' || status === 'STARTING' || status === 'creating';
+
+    if (dot) dot.className = 'w-2 h-2 rounded-full ' + (connected ? 'bg-emerald-500 status-dot' : 'bg-slate-300');
+    if (text) text.textContent = status || 'unknown';
+
+    const qrSection = document.getElementById('qr-section');
+    if (!qrSection) return;
+
+    if (connected) {
+      qrSection.innerHTML = '<div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4">'
+        + '<svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">'
+        + '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>'
+        + '<p class="text-sm font-medium text-emerald-700">WhatsApp Terhubung</p>'
+        + '<p class="text-xs text-slate-500 mt-1">Session aktif dan siap digunakan.</p>';
+    } else if (scanning) {
+      qrSection.innerHTML = '<div class="inline-flex items-center justify-center p-4 bg-white rounded-2xl border border-slate-200 shadow-sm mb-4">'
+        + '<img src="' + (qr || QR_URL) + '" class="w-56 h-56 rounded-xl" alt="QR Code"></div>'
+        + '<p class="text-sm font-medium text-slate-700">Scan QR Code</p>'
+        + '<p class="text-xs text-slate-500 mt-1">Buka WhatsApp > Linked Devices > Link a Device</p>';
+    } else {
+      qrSection.innerHTML = '<div class="w-20 h-20 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center mx-auto mb-4">'
+        + '<svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">'
+        + '<path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg></div>'
+        + '<p class="text-sm text-slate-500">Session tidak aktif</p>';
+    }
+  }
+
+  es.addEventListener('status', (e) => {
+    try {
+      const data = JSON.parse(e.data);
+      if (Array.isArray(data) && data.length) renderStatus(data[0].status, data[0].qr_code);
+    } catch (_) {}
+  });
+})();
+</script>
+@endpush
 @endsection

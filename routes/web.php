@@ -28,6 +28,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\RiwayatController;
+use App\Http\Controllers\WahaWebhookController;
 use App\Http\Middleware\CheckDirektur;
 use App\Models\AppNotification;
 use App\Models\Ticket;
@@ -43,6 +44,10 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/', function () {
     return view('home');
 });
+
+// Webhook WAHA (dipanggil server WAHA, tanpa auth — validasi HMAC di controller)
+Route::post('/api/waha/webhook', [WahaWebhookController::class, 'handle'])
+    ->name('waha.webhook');
 
 Route::get('/pengaduan/buat', [PengaduanController::class, 'create'])->name('pengaduan.create');
 Route::post('/pengaduan/buat', [PengaduanController::class, 'store'])->name('pengaduan.store');
@@ -134,6 +139,8 @@ Route::middleware('auth')->group(function () {
         Route::get('whatsapp/sessions/{session}', [WhatsappSettingsController::class, 'showSession'])->name('whatsapp.sessions.show');
         Route::get('whatsapp/sessions/{session}/qr', [WhatsappSettingsController::class, 'refreshQr'])->name('whatsapp.sessions.qr');
         Route::get('whatsapp/sessions/{session}/status', [WhatsappSettingsController::class, 'sessionStatus'])->name('whatsapp.sessions.status');
+        Route::get('whatsapp/sse', [WhatsappSettingsController::class, 'streamStatus'])->name('whatsapp.sse');
+        Route::post('whatsapp/webhook-config', [WhatsappSettingsController::class, 'updateWebhookConfig'])->name('whatsapp.update-webhook');
         Route::post('whatsapp/sessions/{session}/sync', [WhatsappSettingsController::class, 'syncSession'])->name('whatsapp.sessions.sync');
         Route::post('whatsapp/sessions/sync-all', [WhatsappSettingsController::class, 'syncAllSessions'])->name('whatsapp.sessions.sync-all');
         Route::get('whatsapp/sessions/{session}/set-default', [WhatsappSettingsController::class, 'setDefaultSession'])->name('whatsapp.sessions.set-default');

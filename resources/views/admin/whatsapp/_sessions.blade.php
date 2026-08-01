@@ -30,7 +30,9 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Webhook URL (opsional)</label>
-                <input type="url" name="webhook_url" placeholder="https://example.com/webhook" class="admin-input">
+                <input type="url" name="webhook_url" value="{{ old('webhook_url', $webhookConfig['url'] ?? '') }}"
+                       placeholder="{{ route('waha.webhook') }}" class="admin-input">
+                <p class="text-xs text-gray-400 mt-1">Otomatis terisi URL webhook aplikasi. Ganti bila server WAHA butuh URL publik.</p>
             </div>
             <button type="submit" class="admin-btn admin-btn-primary">
                 <i class="fa-solid fa-play mr-1"></i> Buat & Mulai Session
@@ -58,13 +60,16 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @foreach($sessions as $session)
-                    @php $isConnected = $session->status === 'CONNECTED'; $isOk = $isConnected || $session->status === 'WORKING'; $isWait = $session->status === 'scanning'; @endphp
-                    <tr class="hover:bg-gray-50 transition-colors">
+                    @php
+                        $isOk = in_array($session->status, ['CONNECTED', 'WORKING'], true);
+                        $isWait = in_array($session->status, ['scanning', 'SCAN_QR_CODE', 'STARTING', 'creating'], true);
+                    @endphp
+                    <tr class="hover:bg-gray-50 transition-colors" data-session-id="{{ $session->session_id }}">
                         <td class="px-4 py-3 font-medium">{{ $session->session_id }}</td>
                         <td class="px-4 py-3 font-mono text-xs">{{ $session->phone_number ?? '-' }}</td>
                         <td class="px-4 py-3">
-                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium {{ $isOk ? 'bg-green-100 text-green-700' : ($isWait ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
-                                <span class="w-1.5 h-1.5 rounded-full {{ $isOk ? 'bg-green-500' : ($isWait ? 'bg-yellow-500' : 'bg-red-500') }}"></span>
+                            <span class="session-badge inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium {{ $isOk ? 'bg-green-100 text-green-700' : ($isWait ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}" data-status="{{ $session->status }}">
+                                <span class="session-dot w-1.5 h-1.5 rounded-full {{ $isOk ? 'bg-green-500' : ($isWait ? 'bg-yellow-500' : 'bg-red-500') }}"></span>
                                 {{ $session->status }}
                             </span>
                         </td>
