@@ -25,15 +25,11 @@ class RoleController extends Controller
             ->get();
 
         // Live filter: balas fragment (card + tabel) untuk fetch tanpa reload
-        if ($request->header('X-Live-Filter') === '1') {
-            return view('admin.roles._results', ['roles' => $roles]);
-        }
-
         return view('admin.roles.index', [
             'roles' => $roles,
             'totalRoles' => Role::count(),
             'totalUsers' => User::count(),
-        ]);
+        ])->fragmentIf($request->header('X-Live-Filter') === '1', 'results');
     }
 
     public function create()
@@ -68,13 +64,6 @@ class RoleController extends Controller
 
         return redirect()->route('admin.roles.index')
             ->with('success', 'Role berhasil ditambahkan.');
-    }
-
-    public function show(Role $role)
-    {
-        $role->load('users', 'permissions');
-
-        return view('admin.roles.show', ['role' => $role]);
     }
 
     public function edit(Role $role)

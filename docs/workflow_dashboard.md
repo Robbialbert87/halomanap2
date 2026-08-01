@@ -421,7 +421,8 @@ stateDiagram-v2
 ### Seeder (Data Testing)
 | File | Fungsi |
 |------|--------|
-| [TestingWorkflowSeeder.php](file:///c:/Users/robbi/Herd/halomanap2/database/seeders/TestingWorkflowSeeder.php) | Data lengkap end-to-end testing |
+| [DatabaseSeeder.php](file:///c:/Users/robbi/Herd/halomanap2/database/seeders/DatabaseSeeder.php) | Entry point: ACL, master data, akun, setting WAHA, data dummy |
+| [DummyTicketSeeder.php](file:///c:/Users/robbi/Herd/halomanap2/database/seeders/DummyTicketSeeder.php) | Data tiket dummy untuk demo & testing |
 
 ---
 
@@ -432,18 +433,17 @@ Jalankan seeder untuk mendapatkan data siap pakai:
 ```bash
 # Di terminal project (c:\Users\robbi\Herd\halomanap2)
 php artisan migrate:fresh --seed
-# atau hanya jalankan seeder testing:
-php artisan db:seed --class=TestingWorkflowSeeder
 ```
 
 **Akun yang tersedia setelah seeder:**
 
 | Peran | NIP (Login) | Password | Dashboard |
 |-------|-------------|----------|-----------|
-| Admin Pengaduan | `100000000000000001` | `password123` | `/dashboard` |
-| Kepala Instalasi | `100000000000000002` | `password123` | `/kepala-unit/dashboard` |
-| Kasi Penunjang | `100000000000000003` | `password123` | `/kasi/dashboard` |
-| Direktur | `100000000000000004` | `password123` | `/direktur/dashboard` |
+| Super Admin | `198706072020121003` | `198706072020121003` | `/dashboard` |
+| Admin Pengaduan | `100000000000000001` | `password` | `/dashboard` |
+| Kepala Instalasi | `100000000000000002` | `password` | `/kepala-unit/dashboard` |
+| Kasi Penunjang | `100000000000000003` | `password` | `/kasi/dashboard` |
+| Direktur | `100000000000000004` | `password` | `/direktur/dashboard` |
 
 ---
 

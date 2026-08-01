@@ -27,12 +27,9 @@ class RoomController extends Controller
 
         $rooms = $query->orderBy('name')->paginate(7)->withQueryString()->onEachSide(2);
 
-        // Live filter: balas fragment tabel saja (tanpa layout) untuk fetch tanpa reload
-        if ($request->header('X-Live-Filter') === '1') {
-            return view('admin.rooms._table', compact('rooms'));
-        }
-
-        return view('admin.rooms.index', ['rooms' => $rooms]);
+        // Live filter: balas fragment hasil saja (tanpa layout) untuk fetch tanpa reload
+        return view('admin.rooms.index', ['rooms' => $rooms])
+            ->fragmentIf($request->header('X-Live-Filter') === '1', 'results');
     }
 
     public function create()

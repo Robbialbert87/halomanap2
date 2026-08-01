@@ -529,7 +529,7 @@ class WhatsappSettingsController extends Controller
             ->with('success', 'Session WhatsApp berhasil dihapus.');
     }
 
-    public function showFailed(Request $request): View
+    public function showFailed(Request $request): View|string
     {
         $failedLogs = NotificationLog::where('status', 'failed')
             ->when($request->filled('search'), function ($q) use ($request) {
@@ -553,11 +553,8 @@ class WhatsappSettingsController extends Controller
             ->pluck('jenis');
 
         // Live filter: balas fragment (tabel) untuk fetch tanpa reload
-        if ($request->header('X-Live-Filter') === '1') {
-            return view('admin.whatsapp._resend_table', ['failedLogs' => $failedLogs]);
-        }
-
-        return view('admin.whatsapp.resend', ['failedLogs' => $failedLogs, 'jenisList' => $jenisList]);
+        return view('admin.whatsapp.resend', ['failedLogs' => $failedLogs, 'jenisList' => $jenisList])
+            ->fragmentIf($request->header('X-Live-Filter') === '1', 'results');
     }
 
     public function resendSubmit(Request $request): RedirectResponse

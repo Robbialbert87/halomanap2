@@ -23,12 +23,9 @@ class JabatanController extends Controller
 
         $jabatans = $query->paginate(7)->withQueryString()->onEachSide(2);
 
-        // Live filter: balas fragment tabel saja (tanpa layout) untuk fetch tanpa reload
-        if ($request->header('X-Live-Filter') === '1') {
-            return view('admin.jabatans._table', compact('jabatans'));
-        }
-
-        return view('admin.jabatans.index', ['jabatans' => $jabatans]);
+        // Live filter: balas fragment hasil saja (tanpa layout) untuk fetch tanpa reload
+        return view('admin.jabatans.index', ['jabatans' => $jabatans])
+            ->fragmentIf($request->header('X-Live-Filter') === '1', 'results');
     }
 
     public function create()

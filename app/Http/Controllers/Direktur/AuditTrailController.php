@@ -23,10 +23,7 @@ class AuditTrailController extends Controller
             ->paginate(20);
 
         // Live filter: balas fragment (tabel) untuk fetch tanpa reload
-        if ($request->header('X-Live-Filter') === '1') {
-            return view('direktur._audit_trail_table', ['auditTrails' => $auditTrails]);
-        }
-
-        return view('direktur.audit_trail', ['auditTrails' => $auditTrails, 'user' => auth()->user()]);
+        return view('direktur.audit_trail', ['auditTrails' => $auditTrails, 'user' => auth()->user()])
+            ->fragmentIf($request->header('X-Live-Filter') === '1', 'results');
     }
 }

@@ -124,7 +124,7 @@ Route::middleware('auth')->group(function () {
 
         // User & Role Management
         Route::resource('users', UserController::class);
-        Route::resource('roles', RoleController::class);
+        Route::resource('roles', RoleController::class)->except(['show']);
         Route::resource('jabatans', JabatanController::class);
 
         // WhatsApp Gateway

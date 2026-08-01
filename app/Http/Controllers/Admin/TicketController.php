@@ -53,11 +53,8 @@ class TicketController extends Controller
         $categories = ReportCategory::orderBy('name')->get();
 
         // Live filter: balas fragment tabel saja (tanpa layout) untuk fetch tanpa reload
-        if ($request->header('X-Live-Filter') === '1') {
-            return view('admin.tickets._table', compact('tickets'));
-        }
-
-        return view('admin.tickets.index', ['tickets' => $tickets, 'units' => $units, 'categories' => $categories]);
+        return view('admin.tickets.index', ['tickets' => $tickets, 'units' => $units, 'categories' => $categories])
+            ->fragmentIf($request->header('X-Live-Filter') === '1', 'results');
     }
 
     public function mobileSearch(Request $request)

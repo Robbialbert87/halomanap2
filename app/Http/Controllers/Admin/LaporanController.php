@@ -47,11 +47,8 @@ class LaporanController extends Controller
         $statuses = ['Baru', 'Diproses', 'Menunggu Verifikasi', 'Selesai', 'Ditolak'];
 
         // Live filter: balas fragment (statistik + tabel) untuk fetch tanpa reload
-        if ($request->header('X-Live-Filter') === '1') {
-            return view('admin.laporan._table', compact('tickets', 'total', 'baru', 'diproses', 'menungguVerifikasi', 'selesai', 'ditolak'));
-        }
-
-        return view('admin.laporan.index', ['tickets' => $tickets, 'total' => $total, 'baru' => $baru, 'diproses' => $diproses, 'menungguVerifikasi' => $menungguVerifikasi, 'selesai' => $selesai, 'ditolak' => $ditolak, 'units' => $units, 'categories' => $categories, 'statuses' => $statuses]);
+        return view('admin.laporan.index', ['tickets' => $tickets, 'total' => $total, 'baru' => $baru, 'diproses' => $diproses, 'menungguVerifikasi' => $menungguVerifikasi, 'selesai' => $selesai, 'ditolak' => $ditolak, 'units' => $units, 'categories' => $categories, 'statuses' => $statuses])
+            ->fragmentIf($request->header('X-Live-Filter') === '1', 'results');
     }
 
     public function exportPdf(Request $request)

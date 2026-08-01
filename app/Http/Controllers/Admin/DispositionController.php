@@ -39,11 +39,8 @@ class DispositionController extends Controller
         $statuses = ['menunggu_respon', 'dalam_penanganan', 'selesai', 'ditutup', 'menunggu_verifikasi'];
 
         // Live filter: balas fragment (statistik + tabel) untuk fetch tanpa reload
-        if ($request->header('X-Live-Filter') === '1') {
-            return view('admin.dispositions._table', compact('workflows', 'statTotal', 'statMenunggu', 'statProses', 'statTerlambat'));
-        }
-
-        return view('admin.dispositions.index', ['workflows' => $workflows, 'units' => $units, 'statuses' => $statuses, 'statTotal' => $statTotal, 'statMenunggu' => $statMenunggu, 'statProses' => $statProses, 'statTerlambat' => $statTerlambat]);
+        return view('admin.dispositions.index', ['workflows' => $workflows, 'units' => $units, 'statuses' => $statuses, 'statTotal' => $statTotal, 'statMenunggu' => $statMenunggu, 'statProses' => $statProses, 'statTerlambat' => $statTerlambat])
+            ->fragmentIf($request->header('X-Live-Filter') === '1', 'results');
     }
 
     public function store(Request $request)

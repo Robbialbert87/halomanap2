@@ -25,10 +25,7 @@ class ApresiasiController extends Controller
             ->paginate(20);
 
         // Live filter: balas fragment (list + tabel) untuk fetch tanpa reload
-        if ($request->header('X-Live-Filter') === '1') {
-            return view('admin.apresiasi._table', ['appreciations' => $appreciations]);
-        }
-
-        return view('admin.apresiasi.index', ['appreciations' => $appreciations]);
+        return view('admin.apresiasi.index', ['appreciations' => $appreciations])
+            ->fragmentIf($request->header('X-Live-Filter') === '1', 'results');
     }
 }

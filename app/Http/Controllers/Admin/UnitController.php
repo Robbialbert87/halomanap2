@@ -27,12 +27,9 @@ class UnitController extends Controller
 
         $jenisList = $this->getJenisList();
 
-        // Live filter: balas fragment tabel saja (tanpa layout) untuk fetch tanpa reload
-        if ($request->header('X-Live-Filter') === '1') {
-            return view('admin.units._table', compact('units'));
-        }
-
-        return view('admin.units.index', ['units' => $units, 'jenisList' => $jenisList]);
+        // Live filter: balas fragment hasil saja (tanpa layout) untuk fetch tanpa reload
+        return view('admin.units.index', ['units' => $units, 'jenisList' => $jenisList])
+            ->fragmentIf($request->header('X-Live-Filter') === '1', 'results');
     }
 
     public function create()
