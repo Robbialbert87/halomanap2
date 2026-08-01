@@ -18,7 +18,7 @@
     <x-admin.btn href="{{ route('admin.rooms.index') }}" variant="ghost" icon="fa-arrow-left">Kembali</x-admin.btn>
 </x-admin.page-header>
 
-<x-admin.form-card max-width="max-w-2xl">
+<x-admin.form-card>
     <form action="{{ route('admin.rooms.update', $room->id) }}" method="POST">
         @csrf
         @method('PUT')

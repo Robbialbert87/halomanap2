@@ -18,7 +18,7 @@
     <x-admin.btn href="{{ route('admin.unit-types.index') }}" variant="ghost" icon="fa-arrow-left">Kembali</x-admin.btn>
 </x-admin.page-header>
 
-<x-admin.form-card max-width="max-w-2xl">
+<x-admin.form-card>
     <form action="{{ route('admin.unit-types.update', $unitType->id) }}" method="POST">
         @csrf
         @method('PUT')

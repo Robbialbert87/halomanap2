@@ -1,4 +1,4 @@
-const CACHE_NAME = 'halo-manap-v2';
+const CACHE_NAME = 'halo-manap-v3';
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
@@ -10,6 +10,7 @@ self.addEventListener('install', (event) => {
             ]);
         })
     );
+    self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
@@ -18,7 +19,7 @@ self.addEventListener('activate', (event) => {
             return Promise.all(
                 keys.filter((key) => key !== CACHE_NAME)
                     .map((key) => caches.delete(key))
-            );
+            ).then(() => self.clients.claim());
         })
     );
 });
@@ -30,7 +31,9 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    if (url.pathname === '/login' || url.pathname === '/lacak' || url.pathname.startsWith('/pengaduan')) {
+    if (url.pathname === '/login' || url.pathname === '/lacak' || url.pathname.startsWith('/pengaduan')
+        || url.pathname.startsWith('/admin') || url.pathname.startsWith('/dashboard')
+        || url.pathname.startsWith('/build/')) {
         event.respondWith(fetch(event.request));
         return;
     }
