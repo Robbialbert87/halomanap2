@@ -178,6 +178,10 @@ class WorkflowService
         }
 
         DB::transaction(function () use ($history, $ticket, $komentar) {
+            // Kunci baris + cek status terminal: cegah double-submit membuat history ganda
+            $fresh = WorkflowHistory::lockForUpdate()->find($history->id);
+            throw_if(! $fresh || ! in_array($fresh->status, ['menunggu_respon', 'dalam_penanganan']), new \RuntimeException('Workflow ini sudah selesai atau telah diubah.'));
+
             $history->update([
                 'status' => 'selesai',
                 'completed_at' => now(),
@@ -237,6 +241,10 @@ class WorkflowService
         }
 
         DB::transaction(function () use ($history, $ticket, $komentar) {
+            // Kunci baris + cek status terminal: cegah double-submit menutup 2x
+            $fresh = WorkflowHistory::lockForUpdate()->find($history->id);
+            throw_if(! $fresh || $fresh->status !== 'menunggu_verifikasi', new \RuntimeException('Workflow ini sudah ditutup atau tidak menunggu verifikasi.'));
+
             $history->update([
                 'status' => 'ditutup',
                 'completed_at' => now(),

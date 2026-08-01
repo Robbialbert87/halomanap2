@@ -565,15 +565,33 @@ class WhatsappSettingsController extends Controller
         ]);
 
         $resent = 0;
+        $skipped = 0;
         $logs = NotificationLog::whereIn('id', $validated['ids'])->get();
 
         foreach ($logs as $log) {
-            SendWhatsAppNotification::dispatch($log->nomor_wa, $log->isi_pesan);
+            // Atomic claim: hanya log berstatus failed yang dikirim ulang.
+            // Update ke 'pending' sebagai in-flight → cegah double-submit / resend ganda.
+            $claimed = NotificationLog::where('id', $log->id)
+                ->where('status', 'failed')
+                ->update(['status' => 'pending', 'error_message' => null, 'sent_at' => null]);
+
+            if ($claimed === 0) {
+                $skipped++;
+
+                continue;
+            }
+
+            SendWhatsAppNotification::dispatch($log->nomor_wa, $log->isi_pesan, $log->id);
             $resent++;
         }
 
+        $message = "{$resent} notifikasi sedang dikirim ulang.";
+        if ($skipped > 0) {
+            $message .= " {$skipped} dilewati (sudah pernah dikirim/diproses).";
+        }
+
         return redirect()->route('admin.whatsapp.resend')
-            ->with('success', "{$resent} notifikasi sedang dikirim ulang.");
+            ->with('success', $message);
     }
 
     public function saveBarcodeUrl(Request $request): RedirectResponse

@@ -63,7 +63,9 @@ services:
       - WHATSAPP_API_URL=${WHATSAPP_API_URL:-https://waha.systemwebsite.my.id}
       - LOG_CHANNEL=stack
       - LOG_LEVEL=${LOG_LEVEL:-notice}
-    command: php artisan queue:work --queue=notifications,default --tries=3
+    # tries=1: WAHA bisa menerima & mengirim pesan lalu response balik lambat;
+    # retry akan mengirim ulang pesan yang sama → duplikat WhatsApp.
+    command: php artisan queue:work --queue=notifications,default --tries=1
     depends_on:
       db:
         condition: service_healthy
