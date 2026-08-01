@@ -25,5 +25,11 @@ class WahaSettingSeeder extends Seeder
         if (! Setting::getValue('waha_session')) {
             Setting::setValue('waha_session', $session, 'WAHA Session name');
         }
+
+        // Webhook receiver (dipakai SSE realtime status). Default: endpoint
+        // aplikasi sendiri; opsional di-override lewat UI admin.
+        if (! Setting::getValue('waha_webhook_url')) {
+            Setting::setValue('waha_webhook_url', rtrim(config('app.url'), '/').'/api/waha/webhook', 'WAHA Webhook URL');
+        }
     }
 }

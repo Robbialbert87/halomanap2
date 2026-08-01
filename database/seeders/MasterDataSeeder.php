@@ -4,41 +4,68 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Models\Jabatan;
+use App\Models\ReportCategory;
+use App\Models\Room;
+use App\Models\Sla;
+use App\Models\Unit;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class MasterDataSeeder extends Seeder
 {
     public function run(): void
     {
-        // ============================================================
-        // 1. SLA (Service Level Agreement)
-        // ============================================================
-        DB::table('slas')->insert([
-            ['name' => 'Rendah',  'response_time_hours' => 48, 'resolution_time_hours' => 120, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Sedang',  'response_time_hours' => 24, 'resolution_time_hours' => 72,  'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Tinggi',  'response_time_hours' => 6,  'resolution_time_hours' => 24,  'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Kritis',  'response_time_hours' => 2,  'resolution_time_hours' => 8,   'created_at' => now(), 'updated_at' => now()],
-        ]);
+        $this->seedSlas();
+        $this->seedCategories();
+        $this->seedUnits();
+        $this->seedRooms();
+        $this->seedJabatans();
+    }
 
-        // ============================================================
-        // 2. KATEGORI PENGADUAN
-        // ============================================================
-        DB::table('report_categories')->insert([
-            ['name' => 'Pelayanan Dokter',          'icon' => 'fa-user-doctor',    'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Pelayanan Perawat',         'icon' => 'fa-user-nurse',    'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Pelayanan Administrasi',    'icon' => 'fa-file-invoice',  'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Fasilitas',                 'icon' => 'fa-building',       'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Kebersihan',                'icon' => 'fa-broom',          'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Keamanan',                  'icon' => 'fa-shield-halved',  'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Informasi & Komunikasi',    'icon' => 'fa-circle-info',    'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Lainnya',                   'icon' => 'fa-tag',            'created_at' => now(), 'updated_at' => now()],
-        ]);
+    /**
+     * 1. SLA (Service Level Agreement) — key: nama unik.
+     */
+    private function seedSlas(): void
+    {
+        $slas = [
+            ['name' => 'Rendah',  'response_time_hours' => 48, 'resolution_time_hours' => 120],
+            ['name' => 'Sedang',  'response_time_hours' => 24, 'resolution_time_hours' => 72],
+            ['name' => 'Tinggi',  'response_time_hours' => 6,  'resolution_time_hours' => 24],
+            ['name' => 'Kritis',  'response_time_hours' => 2,  'resolution_time_hours' => 8],
+        ];
 
-        // ============================================================
-        // 3. UNIT (Instalasi / Departemen)
-        // ============================================================
+        foreach ($slas as $sla) {
+            Sla::updateOrCreate(['name' => $sla['name']], $sla);
+        }
+    }
+
+    /**
+     * 2. Kategori pengaduan — key: nama unik.
+     */
+    private function seedCategories(): void
+    {
+        $categories = [
+            ['name' => 'Pelayanan Dokter',          'icon' => 'fa-user-doctor'],
+            ['name' => 'Pelayanan Perawat',         'icon' => 'fa-user-nurse'],
+            ['name' => 'Pelayanan Administrasi',    'icon' => 'fa-file-invoice'],
+            ['name' => 'Fasilitas',                 'icon' => 'fa-building'],
+            ['name' => 'Kebersihan',                'icon' => 'fa-broom'],
+            ['name' => 'Keamanan',                  'icon' => 'fa-shield-halved'],
+            ['name' => 'Informasi & Komunikasi',    'icon' => 'fa-circle-info'],
+            ['name' => 'Lainnya',                   'icon' => 'fa-tag'],
+        ];
+
+        foreach ($categories as $category) {
+            ReportCategory::updateOrCreate(['name' => $category['name']], $category);
+        }
+    }
+
+    /**
+     * 3. Unit (Instalasi / Departemen) — key: kode unik.
+     * Urutan tetap (id 1-13) agar relasi unit_id stabil.
+     */
+    private function seedUnits(): void
+    {
         $units = [
             ['id' => 1,  'kode' => 'UNIT_001', 'nama' => 'IGD (Instalasi Gawat Darurat)', 'jenis' => 'Instalasi'],
             ['id' => 2,  'kode' => 'UNIT_002', 'nama' => 'Rawat Jalan', 'jenis' => 'Pelayanan'],
@@ -56,21 +83,22 @@ class MasterDataSeeder extends Seeder
         ];
 
         foreach ($units as $unit) {
-            DB::table('units')->insert([
-                'id' => $unit['id'],
-                'uuid' => Str::uuid(),
-                'kode' => $unit['kode'],
-                'nama' => $unit['nama'],
-                'jenis' => $unit['jenis'],
-                'status' => 'active',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            Unit::updateOrCreate(
+                ['kode' => $unit['kode']],
+                [
+                    'nama' => $unit['nama'],
+                    'jenis' => $unit['jenis'],
+                    'status' => 'active',
+                ]
+            );
         }
+    }
 
-        // ============================================================
-        // 4. RUANGAN (per Unit)
-        // ============================================================
+    /**
+     * 4. Ruangan per Unit — key: kombinasi unit_id + nama unik.
+     */
+    private function seedRooms(): void
+    {
         $rooms = [
             // IGD (unit_id=1)
             ['unit_id' => 1,  'name' => 'Ruang Triage'],
@@ -141,13 +169,38 @@ class MasterDataSeeder extends Seeder
         ];
 
         foreach ($rooms as $room) {
-            DB::table('rooms')->insert([
-                'unit_id' => $room['unit_id'],
-                'name' => $room['name'],
-                'qr_code_path' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            Room::updateOrCreate(
+                ['unit_id' => $room['unit_id'], 'name' => $room['name']],
+                ['qr_code_path' => null]
+            );
+        }
+    }
+
+    /**
+     * 5. Jabatan — kategori_jabatan = enum, dipakai getRoleGroup & routing.
+     * Key: kode unik.
+     */
+    private function seedJabatans(): void
+    {
+        $jabatans = [
+            ['kode' => 'JAB_DIREKTUR',       'nama' => 'Direktur',                     'kategori' => 'Direktur'],
+            ['kode' => 'JAB_KEPALA_UNIT',    'nama' => 'Kepala Instalasi',             'kategori' => 'Kepala Unit'],
+            ['kode' => 'JAB_KEPALA_BAGIAN',  'nama' => 'Kepala Bagian Tata Usaha',     'kategori' => 'Kabag'],
+            ['kode' => 'JAB_KABID',          'nama' => 'Kabid Pelayanan Medik',        'kategori' => 'Kabid'],
+            ['kode' => 'JAB_KASI_PENUNJANG', 'nama' => 'Kepala Seksi Penunjang Medik', 'kategori' => 'Kasi'],
+            ['kode' => 'JAB_KASUBBAG_KEU',   'nama' => 'Kasubbag Keuangan',            'kategori' => 'Kasubbag'],
+            ['kode' => 'JAB_PETUGAS',        'nama' => 'Petugas Pelayanan',            'kategori' => 'Petugas'],
+        ];
+
+        foreach ($jabatans as $jabatan) {
+            Jabatan::updateOrCreate(
+                ['kode' => $jabatan['kode']],
+                [
+                    'nama' => $jabatan['nama'],
+                    'kategori_jabatan' => $jabatan['kategori'],
+                    'status' => 'active',
+                ]
+            );
         }
     }
 }
