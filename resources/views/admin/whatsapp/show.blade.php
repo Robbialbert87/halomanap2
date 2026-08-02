@@ -12,7 +12,7 @@
 .btn-tactile:active{transform:scale(0.97)}
 .card-premium{background:#fff;border:1px solid rgba(148,163,184,0.2);box-shadow:0 20px 40px -15px rgba(0,0,0,0.05)}
 </style>
-<div class="max-w-4xl mx-auto space-y-6 anim-fade">
+<div class="w-full space-y-6 anim-fade">
   <a href="{{ route('admin.whatsapp.index') }}" class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 transition-colors">
     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
     Kembali
