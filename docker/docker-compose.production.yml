@@ -102,9 +102,11 @@ services:
       - "${HTTP_PORT:-8080}:80"
       - "${HTTPS_PORT:-8443}:443"
     volumes:
-      # Mount direktori conf.d (bukan satu file) + asset server-spesifik
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      # Reverse-proxy CONFIG dipindah ke repositori infrastructure/ (Phase 2).
+      # Sumber konfigurasi proxy TIDAK lagi di dalam repo aplikasi.
+      # Path relatif dari halomanap/docker/ -> ../../infrastructure/reverse-proxy/halo-manap
+      - ../../infrastructure/reverse-proxy/halo-manap/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../../infrastructure/reverse-proxy/halo-manap/conf.d:/etc/nginx/conf.d:ro
       - ../ssl-cert:/etc/nginx/ssl:ro
       - ../ssl-cert/www:/var/www/acme:ro
       - ../devpanel:/var/www/devpanel:ro
