@@ -1,0 +1,133 @@
+# docker-compose.production.yml — halo-manap PRODUCTION SERVER
+#
+# REGENERASI dari fakta container live (2026-08-02) — BUKAN copy template.
+# Sumber: docker inspect halomanap-{app,nginx,queue,db} + docker network inspect
+#          + docker volume ls + .env  (backup: ~/halo-backup-20260802-133956)
+#
+# Catatan penting:
+#   * Image app/queue DIBANGUN dari source (vendor/composer/build di-bake).
+#     Ubah source = wajib `docker compose build app queue` lalu `up -d`.
+#   * File config yang TIDAK boleh di-commit ke git (server-spesifik):
+#       .env, docker/nginx/conf.d/*.conf, ssl-cert/, devpanel/
+#     Kesemuanya dimount dari host (RO), jadi edit langsung di server OK — TAPI
+#     git TIDAK melacaknya (di .gitignore). Gunakan *.example sebagai acuan.
+#
+# Deploy aman (server dianggap production):
+#   docker compose -f docker/docker-compose.production.yml build app queue
+#   docker compose -f docker/docker-compose.production.yml up -d
+
+services:
+
+  app:
+    build:
+      context: ..
+      dockerfile: docker/php/Dockerfile
+    image: halo-manap-app
+    container_name: halomanap-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ../.env:/var/www/html/.env:ro
+      - ../storage:/var/www/html/storage
+      - ../public/uploads:/var/www/html/public/uploads
+      - ./php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=${APP_URL:-http://localhost}
+      - DB_CONNECTION=${DB_CONNECTION:-mysql}
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=${DB_DATABASE:-halomanap}
+      - DB_USERNAME=${DB_USERNAME:-halomanap}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - QUEUE_CONNECTION=database
+      - CACHE_STORE=database
+      - SESSION_DRIVER=${SESSION_DRIVER:-database}
+      - WHATSAPP_API_URL=${WHATSAPP_API_URL:-http://waha:3000}
+      - LOG_CHANNEL=stack
+      - LOG_LEVEL=${LOG_LEVEL:-notice}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "php -v && test -f /var/www/html/.env"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  queue:
+    build:
+      context: ..
+      dockerfile: docker/php/Dockerfile
+    image: halo-manap-queue
+    container_name: halomanap-queue
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ../.env:/var/www/html/.env:ro
+      - ../storage:/var/www/html/storage
+      - ./php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=${APP_URL:-http://localhost}
+      - DB_CONNECTION=${DB_CONNECTION:-mysql}
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=${DB_DATABASE:-halomanap}
+      - DB_USERNAME=${DB_USERNAME:-halomanap}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - QUEUE_CONNECTION=database
+      - CACHE_STORE=database
+      - SESSION_DRIVER=${SESSION_DRIVER:-database}
+      - WHATSAPP_API_URL=${WHATSAPP_API_URL:-http://waha:3000}
+      - LOG_CHANNEL=stack
+      - LOG_LEVEL=${LOG_LEVEL:-notice}
+    # tries=3: nilai live saat regenerasi (bukan default template tries=1)
+    command: php artisan queue:work --queue=notifications,default --tries=3
+    depends_on:
+      db:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: halomanap-nginx
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+      - "${HTTPS_PORT:-8443}:443"
+    volumes:
+      # Mount direktori conf.d (bukan satu file) + asset server-spesifik
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ../ssl-cert:/etc/nginx/ssl:ro
+      - ../ssl-cert/www:/var/www/acme:ro
+      - ../devpanel:/var/www/devpanel:ro
+      - ../public:/var/www/html/public:ro
+      - ../storage:/var/www/html/storage:ro
+    depends_on:
+      app:
+        condition: service_healthy
+
+  db:
+    image: mariadb:11.8
+    container_name: halomanap-db
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE:-halomanap}
+      - MYSQL_USER=${DB_USERNAME:-halomanap}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - TZ=Asia/Jakarta
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  db_data:
