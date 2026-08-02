@@ -16,6 +16,20 @@ server {
         proxy_read_timeout 30;
     }
 
+    # Panel admin Signature Management (Basic Auth)
+    location /ttd-admin/ {
+        proxy_pass http://ttd-admin:8000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 60;
+        client_max_body_size 20m;
+
+        auth_basic "Signature Management — RSUD";
+        auth_basic_user_file /etc/nginx/conf.d/.htpasswd;
+    }
+
     # placeholder proyek (halaman statis di /var/www/devpanel)
     location /halo-manap/ { }
     location /projek-3/ { }
