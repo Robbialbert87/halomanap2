@@ -39,5 +39,15 @@ Thumbs.db
 *.cache
 *.bak
 
+# Konfig docker server-spesifik (dikelola langsung di server) — tidak dilacak git
+# Template referensinya tetap di-track lewat berkas *.example
+/docker/docker-compose.yml
+/docker/docker-compose.prod.yml
+/docker/Makefile
+/docker/nginx/nginx.conf
+/docker/nginx/default.conf
+/docker/nginx/default-ssl.conf
+/docker/nginx/conf.d/*.conf
+
 # WhatsApp dumps
 whatsapp_*.txt
