@@ -111,6 +111,12 @@
                                         <a href="{{ route('admin.whatsapp.sessions.show', $session->session_id) }}" class="admin-action-pill admin-action-pill-blue" title="Lihat QR code">
                                             <i class="fa-solid fa-qrcode text-[11px]"></i> QR
                                         </a>
+                                        <form action="{{ route('admin.whatsapp.sessions.restart', $session->session_id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="admin-action-pill admin-action-pill-blue" title="Restart session (FAILED/stuck)">
+                                                <i class="fa-solid fa-rotate text-[11px]"></i> Start
+                                            </button>
+                                        </form>
                                         @endif
                                         <form action="{{ route('admin.whatsapp.sessions.sync', $session->session_id) }}" method="POST" class="inline">
                                             @csrf

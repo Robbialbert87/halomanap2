@@ -142,6 +142,8 @@ Route::middleware('auth')->group(function () {
         Route::get('whatsapp/sse', [WhatsappSettingsController::class, 'streamStatus'])->name('whatsapp.sse');
         Route::post('whatsapp/webhook-config', [WhatsappSettingsController::class, 'updateWebhookConfig'])->name('whatsapp.update-webhook');
         Route::post('whatsapp/sessions/{session}/sync', [WhatsappSettingsController::class, 'syncSession'])->name('whatsapp.sessions.sync');
+        Route::post('whatsapp/sessions/{session}/start', [WhatsappSettingsController::class, 'startSession'])->name('whatsapp.sessions.start');
+        Route::post('whatsapp/sessions/{session}/restart', [WhatsappSettingsController::class, 'restartSession'])->name('whatsapp.sessions.restart');
         Route::post('whatsapp/sessions/sync-all', [WhatsappSettingsController::class, 'syncAllSessions'])->name('whatsapp.sessions.sync-all');
         Route::get('whatsapp/sessions/{session}/set-default', [WhatsappSettingsController::class, 'setDefaultSession'])->name('whatsapp.sessions.set-default');
         Route::post('whatsapp/sessions/{session}/disconnect', [WhatsappSettingsController::class, 'disconnectSession'])->name('whatsapp.sessions.disconnect');

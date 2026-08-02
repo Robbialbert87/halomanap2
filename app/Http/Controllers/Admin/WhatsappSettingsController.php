@@ -9,7 +9,9 @@ use App\Jobs\SendWhatsAppNotification;
 use App\Models\NotificationLog;
 use App\Models\Setting;
 use App\Models\WhatsAppSession;
-use App\Services\WahaApiService;
+use App\Services\Waha\SessionService;
+use App\Services\Waha\WahaRequestException;
+use App\Services\Waha\WebhookService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,7 +24,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class WhatsappSettingsController extends Controller
 {
     public function __construct(
-        private readonly WahaApiService $waha,
+        private readonly SessionService $sessions,
+        private readonly WebhookService $webhooks,
     ) {}
 
     private function apiUrl(): string
@@ -222,22 +225,9 @@ class WhatsappSettingsController extends Controller
         // Webhook otomatis dibuat saat session baru: URL default dari Setting DB
         // (fallback ke route receiver sendiri), secret HMAC dari Setting DB
         // (auto-generate bila belum ada), events status + message.
-        $webhookUrl = $request->filled('webhook_url')
-            ? $request->webhook_url
-            : Setting::getValue('waha_webhook_url', route('waha.webhook'));
-
-        $webhookSecret = Setting::getValue('waha_webhook_secret');
-
-        if (! is_string($webhookSecret) || $webhookSecret === '') {
-            $webhookSecret = Str::random(32);
-            Setting::setValue('waha_webhook_secret', $webhookSecret, 'WAHA Webhook HMAC Secret');
-        }
-
-        $webhookEntry = [
-            'url' => $webhookUrl,
-            'events' => ['session.status', 'message'],
-            'hmac' => ['key' => $webhookSecret],
-        ];
+        $webhookUrl = $this->webhooks->resolveUrl($request->webhook_url);
+        $webhookSecret = $this->webhooks->resolveSecret();
+        $webhookEntry = $this->webhooks->buildEntry($webhookUrl, $webhookSecret);
 
         // Struktur WAHA: config.webhooks adalah ARRAY webhook entries.
         $sessionConfig = [
@@ -245,8 +235,11 @@ class WhatsappSettingsController extends Controller
         ];
 
         try {
-            $this->waha->upsertAndStartSession($validated['session_id'], $sessionConfig);
-        } catch (\RuntimeException $e) {
+            $sessionStatus = $this->sessions->upsertAndStart($validated['session_id'], $sessionConfig);
+
+            // Set session baru sebagai default kirim otomatis.
+            Setting::setValue('waha_session', $validated['session_id'], 'WAHA Default Session');
+        } catch (WahaRequestException $e) {
             return back()->withInput()->with('error', 'Gagal membuat session: '.$e->getMessage());
         }
 
@@ -254,7 +247,7 @@ class WhatsappSettingsController extends Controller
             'user_id' => auth()->id(),
             'session_id' => $validated['session_id'],
             'phone_number' => $validated['phone_number'],
-            'status' => 'scanning',
+            'status' => $sessionStatus->status,
             'webhook_config' => $webhookEntry,
         ]);
 
@@ -370,15 +363,22 @@ class WhatsappSettingsController extends Controller
         $wahaInfo = [];
 
         try {
-            $wahaInfo = $this->waha->getSession($sessionId);
-        } catch (\RuntimeException) {
-            //
-        }
+            $status = $this->sessions->get($sessionId);
 
-        try {
-            $qr = $this->waha->getQr($sessionId);
-        } catch (\RuntimeException) {
-            //
+            // Simpan state LIVES dari WAHA ke DB agar SSE & daftar ikut akurat.
+            $session->update(array_filter([
+                'status' => $status->status,
+                'connected_at' => $status->isConnected() ? ($session->connected_at ?? now()) : null,
+            ]));
+
+            $wahaInfo = $status->raw;
+
+            // QR HANYA valid/tersedia saat session benar2 dalam state SCAN_QR_CODE.
+            if ($status->isScanning()) {
+                $qr = $this->sessions->qr($sessionId)?->dataUri();
+            }
+        } catch (WahaRequestException) {
+            // Session mungkin belum ada / WAHA tak terjangkau → tampilkan state DB.
         }
 
         $wahaConfig = [
@@ -397,7 +397,13 @@ class WhatsappSettingsController extends Controller
     public function refreshQr(string $sessionId): JsonResponse
     {
         try {
-            $qr = $this->waha->getQr($sessionId);
+            $status = $this->sessions->get($sessionId);
+
+            if (! $status->isScanning()) {
+                return response()->json(['error' => 'Session belum dalam state SCAN_QR_CODE ('.$status->status.')'], 409);
+            }
+
+            $qr = $this->sessions->qr($sessionId)?->dataUri();
 
             WhatsAppSession::where('session_id', $sessionId)->update([
                 'qr_code' => $qr,
@@ -405,7 +411,7 @@ class WhatsappSettingsController extends Controller
             ]);
 
             return response()->json(['qr' => $qr]);
-        } catch (\RuntimeException $e) {
+        } catch (WahaRequestException $e) {
             return response()->json(['error' => $e->getMessage()], 502);
         }
     }
@@ -415,20 +421,19 @@ class WhatsappSettingsController extends Controller
         $session = WhatsAppSession::where('session_id', $sessionId)->firstOrFail();
 
         try {
-            $info = $this->waha->getSession($sessionId);
-            $status = $info['status'] ?? 'unknown';
-        } catch (\RuntimeException $e) {
+            $status = $this->sessions->get($sessionId);
+        } catch (WahaRequestException $e) {
             $session->update(['status' => 'NOT_CONNECTED']);
 
             return response()->json(['status' => 'NOT_CONNECTED', 'error' => $e->getMessage()]);
         }
 
         $session->update([
-            'status' => $status,
-            'connected_at' => $status === 'CONNECTED' ? now() : $session->connected_at,
+            'status' => $status->status,
+            'connected_at' => $status->isConnected() ? now() : $session->connected_at,
         ]);
 
-        return response()->json(['status' => $status, 'info' => $info]);
+        return response()->json(['status' => $status->status, 'info' => $status->raw]);
     }
 
     public function syncSession(string $sessionId): JsonResponse
@@ -436,24 +441,22 @@ class WhatsappSettingsController extends Controller
         $session = WhatsAppSession::where('session_id', $sessionId)->firstOrFail();
 
         try {
-            $info = $this->waha->getSession($sessionId);
-            $status = $info['status'] ?? 'NOT_CONNECTED';
-            $me = $status === 'CONNECTED' ? $this->waha->getSession($sessionId) : [];
-        } catch (\RuntimeException $e) {
+            $status = $this->sessions->get($sessionId);
+        } catch (WahaRequestException $e) {
             $session->update(['status' => 'NOT_CONNECTED']);
 
-            return response()->json(['status' => 'NOT_CONNECTED', 'synced' => true]);
+            return response()->json(['status' => 'NOT_CONNECTED', 'synced' => true, 'error' => $e->getMessage()]);
         }
 
         $session->update([
-            'status' => $status,
-            'connected_at' => $status === 'CONNECTED' ? now() : null,
+            'status' => $status->status,
+            'connected_at' => $status->isConnected() ? now() : null,
         ]);
 
         return response()->json([
-            'status' => $status,
+            'status' => $status->status,
             'synced' => true,
-            'connected' => $status === 'CONNECTED',
+            'connected' => $status->isConnected(),
         ]);
     }
 
@@ -502,13 +505,14 @@ class WhatsappSettingsController extends Controller
     public function disconnectSession(string $sessionId): RedirectResponse
     {
         try {
-            $this->waha->logout($sessionId);
-        } catch (\RuntimeException $e) {
+            $this->sessions->logout($sessionId);
+        } catch (WahaRequestException $e) {
             return back()->with('error', 'Gagal disconnect: '.$e->getMessage());
         }
 
         WhatsAppSession::where('session_id', $sessionId)->update([
             'status' => 'disconnected',
+            'disconnected_at' => now(),
         ]);
 
         return redirect()->route('admin.whatsapp.index')
@@ -518,8 +522,8 @@ class WhatsappSettingsController extends Controller
     public function deleteSession(string $sessionId): RedirectResponse
     {
         try {
-            $this->waha->deleteSession($sessionId);
-        } catch (\RuntimeException $e) {
+            $this->sessions->delete($sessionId);
+        } catch (WahaRequestException $e) {
             return back()->with('error', 'Gagal menghapus session: '.$e->getMessage());
         }
 
@@ -527,6 +531,40 @@ class WhatsappSettingsController extends Controller
 
         return redirect()->route('admin.whatsapp.index')
             ->with('success', 'Session WhatsApp berhasil dihapus.');
+    }
+
+    public function startSession(string $sessionId): RedirectResponse
+    {
+        try {
+            $status = $this->sessions->start($sessionId);
+        } catch (WahaRequestException $e) {
+            return back()->with('error', 'Gagal menjalankan session: '.$e->getMessage());
+        }
+
+        WhatsAppSession::where('session_id', $sessionId)->update([
+            'status' => $status->status,
+            'disconnected_at' => null,
+        ]);
+
+        return redirect()->route('admin.whatsapp.sessions.show', $sessionId)
+            ->with('success', 'Session sedang dijalankan. Scan QR untuk menghubungkan.');
+    }
+
+    public function restartSession(string $sessionId): RedirectResponse
+    {
+        try {
+            $status = $this->sessions->restart($sessionId);
+        } catch (WahaRequestException $e) {
+            return back()->with('error', 'Gagal me-restart session: '.$e->getMessage());
+        }
+
+        WhatsAppSession::where('session_id', $sessionId)->update([
+            'status' => $status->status,
+            'disconnected_at' => null,
+        ]);
+
+        return redirect()->route('admin.whatsapp.sessions.show', $sessionId)
+            ->with('success', 'Session di-restart. Scan QR untuk menghubungkan.');
     }
 
     public function showFailed(Request $request): View|string

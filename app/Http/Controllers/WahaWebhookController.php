@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Setting;
 use App\Models\WhatsAppSession;
-use App\Services\WahaApiService;
+use App\Services\Waha\SessionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +17,7 @@ final class WahaWebhookController extends Controller
     private const DISCONNECTED_STATUSES = ['DISCONNECTED', 'TIMEOUT', 'FAILED', 'STOPPED', 'DESTROYED'];
 
     public function __construct(
-        private readonly WahaApiService $waha,
+        private readonly SessionService $sessions,
     ) {}
 
     /**
@@ -94,7 +94,7 @@ final class WahaWebhookController extends Controller
 
         if ($status === 'SCAN_QR_CODE') {
             try {
-                $qr = $this->waha->getQr($session->session_id);
+                $qr = $this->sessions->qr($session->session_id)?->dataUri();
 
                 if (is_string($qr) && $qr !== '') {
                     $data['qr_code'] = $qr;

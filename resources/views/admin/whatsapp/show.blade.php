@@ -30,6 +30,16 @@
         <h2 class="text-base font-semibold text-slate-800">{{ $session->name }}</h2>
       </div>
       <div class="flex items-center gap-2">
+        @if(!in_array($wahaInfo['status'] ?? ($session->status), ['WORKING', 'CONNECTED'], true))
+        <form method="POST" action="{{ route('admin.whatsapp.sessions.start', $session->session_id) }}" class="inline">
+          @csrf
+          <button class="admin-action-pill admin-action-pill-emerald" title="Mulai session & tampilkan QR"><i class="fa-solid fa-play mr-1"></i>Mulai</button>
+        </form>
+        <form method="POST" action="{{ route('admin.whatsapp.sessions.restart', $session->session_id) }}" class="inline">
+          @csrf
+          <button class="admin-action-pill admin-action-pill-blue" title="Restart session (untuk FAILED/stuck)"><i class="fa-solid fa-rotate mr-1"></i>Restart</button>
+        </form>
+        @endif
         <form method="POST" action="{{ route('admin.whatsapp.sessions.sync', $session->session_id) }}" class="inline">
           @csrf
           <button class="admin-action-pill admin-action-pill-emerald" title="Sync session">Sync</button>
@@ -152,13 +162,14 @@
 (function () {
   const SESSION_ID = @json($session->session_id);
   const QR_URL = '{{ route('admin.whatsapp.sessions.qr', $session->session_id) }}';
-  const es = new EventSource('{{ route('admin.whatsapp.sse') }}?session=' + encodeURIComponent(SESSION_ID));
+  const STAT_URL = '{{ route('admin.whatsapp.sessions.status', $session->session_id) }}';
+  const qrImg = () => document.querySelector('#qr-section img');
 
-  function renderStatus(status, qr) {
+  function renderStatus(status, qrCode) {
     const dot = document.getElementById('rt-status-dot');
     const text = document.getElementById('rt-status-text');
     const connected = status === 'WORKING' || status === 'CONNECTED';
-    const scanning = status === 'SCAN_QR_CODE' || status === 'scanning' || status === 'STARTING' || status === 'creating';
+    const scanning = status === 'SCAN_QR_CODE' || status === 'SCANNING' || status === 'STARTING' || status === 'creating';
 
     if (dot) dot.className = 'w-2 h-2 rounded-full ' + (connected ? 'bg-emerald-500 status-dot' : 'bg-slate-300');
     if (text) text.textContent = status || 'unknown';
@@ -173,8 +184,10 @@
         + '<p class="text-sm font-medium text-emerald-700">WhatsApp Terhubung</p>'
         + '<p class="text-xs text-slate-500 mt-1">Session aktif dan siap digunakan.</p>';
     } else if (scanning) {
+      // Saat scanning: tampilkan QR dari state DB bila ada, fallback ke endpoint get QR.
+      const src = (qr && qr !== '-') ? qr : QR_URL;
       qrSection.innerHTML = '<div class="inline-flex items-center justify-center p-4 bg-white rounded-2xl border border-slate-200 shadow-sm mb-4">'
-        + '<img src="' + (qr || QR_URL) + '" class="w-56 h-56 rounded-xl" alt="QR Code"></div>'
+        + '<img src="' + src + '" class="w-56 h-56 rounded-xl" alt="QR Code" loading="lazy"></div>'
         + '<p class="text-sm font-medium text-slate-700">Scan QR Code</p>'
         + '<p class="text-xs text-slate-500 mt-1">Buka WhatsApp > Linked Devices > Link a Device</p>';
     } else {
@@ -185,12 +198,41 @@
     }
   }
 
+  let lastStatus = null;
+
+  // Sumber 1: SSE (real-time biia webhook aktif & DB ter-update).
+  const es = new EventSource('{{ route('admin.whatsapp.sse') }}?session=' + encodeURIComponent(SESSION_ID));
   es.addEventListener('status', (e) => {
     try {
       const data = JSON.parse(e.data);
-      if (Array.isArray(data) && data.length) renderStatus(data[0].status, data[0].qr_code);
+      if (Array.isArray(data) && data.length) {
+        const s = data[0];
+        lastStatus = s.status;
+        renderStatus(s.status, s.qr_code);
+      }
     } catch (_) {}
   });
+
+  // Sumber 2: polling fallback (jalankan ketika SSE buntu / session scanning) —
+  // langsung ke endpoint status WAHA agar realtime TANPA bergantung webhook.
+  async function poll() {
+    try {
+      const r = await fetch(STAT_URL, { headers: { 'Accept': 'application/json' } });
+      if (!r.ok) return;
+      const d = await r.json();
+      if (typeof d.status === 'string' && d.status !== lastStatus) {
+        lastStatus = d.status;
+        renderStatus(d.status);
+      }
+      // Jika scanning dan belum ada QR di <img> yang valid, refresh QR tiap tick.
+      const img = qrImg();
+      if (d.status === 'SCAN_QR_CODE' && img && (img.src === QR_URL || img.src.includes('/qr'))) {
+        img.src = QR_URL + '?_=' + Date.now();
+      }
+    } catch (_) {}
+  }
+  const startPoll = () => { if (typeof lastStatus === 'string') setInterval(poll, 2000); };
+  window.setTimeout(startPoll, 3000);
 })();
 </script>
 @endpush
