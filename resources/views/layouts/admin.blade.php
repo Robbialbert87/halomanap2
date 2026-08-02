@@ -709,11 +709,16 @@ function initLiveFilters() {
             load(basePath + '?' + params.toString(), true);
         }
 
-        // Pagination links dalam hasil ikut di-intercept agar tetap tanpa reload
+        // Pagination links dalam hasil ikut di-intercept agar tetap tanpa reload.
+        // HANYA link ke path yang sama dengan filter (mis. /admin/tickets?page=2).
+        // Link ke path lain (detail /admin/tickets/5, create /admin/tickets/create,
+        // aksi lain) dibiarkan agar navigasi reload penuh — mencegah "double layout"
+        // di mana halaman penuh (sidebar + header) ter-inject ke dalam konten.
         function wireLinks() {
             wrap.querySelectorAll('a[href]').forEach(function (a) {
                 var href = a.getAttribute('href') || '';
-                if (href.indexOf(basePath) !== 0) return;
+                var path = href.split('?')[0];
+                if (path !== basePath) return;
                 if (a.dataset.liveWired) return;
                 a.dataset.liveWired = '1';
                 a.addEventListener('click', function (e) {
