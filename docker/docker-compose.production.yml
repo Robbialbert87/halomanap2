@@ -14,7 +14,11 @@
 #
 # Deploy aman (server dianggap production):
 #   docker compose -f docker/docker-compose.production.yml build app queue
-#   docker compose -f docker/docker-compose.production.yml up -d
+#         docker compose -f docker/docker-compose.production.yml up -d
+
+# PROJECT NAME harus `halo-manap` supaya menggunakan network & volume lama
+# (halo-manap_default, halo-manap_db_data) yang berisi data produksi hidup.
+name: halo-manap
 
 services:
 
