@@ -10,6 +10,7 @@ use App\Models\Room;
 use App\Models\Sla;
 use App\Models\Unit;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class MasterDataSeeder extends Seeder
 {
@@ -86,6 +87,9 @@ class MasterDataSeeder extends Seeder
             Unit::updateOrCreate(
                 ['kode' => $unit['kode']],
                 [
+                    // uuid diisi eksplisit — tidak bergantung pada boot model,
+                    // kolom NOT NULL tanpa default (lihat migrasi refactor units).
+                    'uuid' => $unit['uuid'] ?? (string) Str::uuid(),
                     'nama' => $unit['nama'],
                     'jenis' => $unit['jenis'],
                     'status' => 'active',
