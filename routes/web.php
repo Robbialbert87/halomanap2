@@ -63,7 +63,7 @@ Route::get('/apresiasi/sukses', [ApresiasiController::class, 'success'])->name('
 // ── PROTECTED (auth required) ─────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('can:menu.dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // ── NOTIFICATIONS (AJAX mark-as-read) ──────────────────────────────────────
     Route::post('/notifications/mark-read', function (Request $request) {
@@ -167,7 +167,10 @@ Route::middleware('auth')->group(function () {
     });
 
     // ── ROLE-AGNOSTIC ROUTES (gated by permissions) ──────────────────────────
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('can:menu.dashboard');
+    // Dashboard terbuka untuk SEMUA user yang login (auth) — setiap user
+    // melihat statistik unit-nya sendiri. Tidak di-gate can:menu.dashboard
+    // agar role tanpa permission itu (mis. Kepala Ruangan) tetap bisa masuk.
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('dispositions')->name('dispositions.')->middleware('can:menu.dispositions')->group(function () {
         Route::get('/', [DispositionController::class, 'index'])->name('index');
