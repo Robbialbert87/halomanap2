@@ -27,7 +27,7 @@
     <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 no-scrollbar">
         @php
             $user = auth()->user();
-            $roleGroup = $user->getRoleGroup();
+            $roleGroup = $user?->getRoleGroup() ?? 'guest';
             $currentRoute = request()->route()?->getName();
         @endphp
 

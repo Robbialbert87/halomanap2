@@ -47,10 +47,17 @@
                         <a href="{{ route('pengaduan.create', ['type' => 'Informasi']) }}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Informasi</a>
                     </nav>
                     <div class="flex items-center gap-1">
-                        <a href="{{ route('dashboard') }}" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all" title="Login">
-                            <i class="fa-solid fa-shield-halved text-base"></i>
-                            <span>Login</span>
-                        </a>
+                        @auth
+                            <a href="{{ route('dashboard') }}" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-blue-600 hover:bg-blue-50 transition-all" title="Dashboard">
+                                <i class="fa-solid fa-gauge-high text-base"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all" title="Login">
+                                <i class="fa-solid fa-shield-halved text-base"></i>
+                                <span>Login</span>
+                            </a>
+                        @endauth
                     </div>
                 </div>
             </header>
@@ -209,11 +216,19 @@
                             <p class="text-[8px] text-gray-400 leading-none -mt-0.5">RSUD H. Abdul Manap</p>
                         </div>
                     </a>
-                    <a href="{{ route('dashboard') }}"
-                       class="w-9 h-9 flex items-center justify-center bg-white/80 rounded-xl text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all shadow-sm"
-                       title="Login">
-                        <i class="fa-solid fa-door-open text-base"></i>
-                    </a>
+                    @auth
+                        <a href="{{ route('dashboard') }}"
+                           class="w-9 h-9 flex items-center justify-center bg-blue-50 text-blue-600 rounded-xl shadow-sm"
+                           title="Dashboard">
+                            <i class="fa-solid fa-gauge-high text-base"></i>
+                        </a>
+                    @else
+                        <a href="{{ route('login') }}"
+                           class="w-9 h-9 flex items-center justify-center bg-white/80 rounded-xl text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all shadow-sm"
+                           title="Login">
+                            <i class="fa-solid fa-door-open text-base"></i>
+                        </a>
+                    @endauth
                 </div>
             </header>
 

@@ -26,7 +26,7 @@
 
         @php
             $mobileUser = auth()->user();
-            $mobileRoleGroup = $mobileUser->getRoleGroup();
+            $mobileRoleGroup = $mobileUser?->getRoleGroup() ?? 'guest';
         @endphp
 
         {{-- Navigation --}}
