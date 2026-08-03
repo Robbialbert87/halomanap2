@@ -34,6 +34,9 @@ services:
       - ../.env:/var/www/html/.env:ro
       - ../storage:/var/www/html/storage
       - ../public/uploads:/var/www/html/public/uploads
+      # Hasil `npm run build` (host) — blade @vite baca manifest dari sini,
+      # sinkron dengan nginx yang serve static dari host public/ (bukan dari image)
+      - ../public/build:/var/www/html/public/build:ro
       - ./php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
     environment:
       - APP_ENV=production
