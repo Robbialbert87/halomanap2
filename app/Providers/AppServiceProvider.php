@@ -9,6 +9,7 @@ use App\Models\Ticket;
 use App\Services\WorkflowService;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -29,6 +30,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Deploy subdirektori (path-based, mis. /halo-manap/): semua URL yang
+        // dibangkitkan helper (route/url/asset) ikut prefix APP_URL bila ada path.
+        // Di dev (APP_URL tanpa path) perilaku default tetap dipertahankan.
+        $appUrl = config('app.url');
+
+        if (is_string($appUrl) && $appUrl !== '') {
+            $path = parse_url($appUrl, PHP_URL_PATH);
+
+            if (is_string($path) && $path !== '' && $path !== '/') {
+                URL::forceRootUrl(rtrim($appUrl, '/'));
+            }
+        }
+
         // Super Admin bypass semua permission
         Gate::before(fn ($user) => $user->hasRole('Super Admin') ? true : null);
 

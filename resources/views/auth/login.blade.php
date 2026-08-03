@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Halo MANAP</title>
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="theme-color" content="#1E3A8A">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="/pwa-icons/icon-192.png">
+    <link rel="apple-touch-icon" href="{{ asset('pwa-icons/icon-192.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -299,7 +299,7 @@
     <div class="login-wrapper">
         <div class="login-card">
             <!-- Logo -->
-            <a href="/" class="logo-wrap" style="text-decoration:none;display:block">
+            <a href="{{ route('home') }}" class="logo-wrap" style="text-decoration:none;display:block">
                 <picture>
                     <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
                     <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Logo HaloMANAP" class="logo-img">
@@ -368,7 +368,7 @@
 
             <div class="card-footer">
                 <p>Halo MANAP &mdash; <span>Manajemen Pengaduan Pasien</span></p>
-                <a href="/" style="display:inline-flex;align-items:center;justify-content:center;margin-top:0.75rem;width:36px;height:36px;border-radius:10px;color:#475569;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);text-decoration:none;transition:all 0.2s;font-size:1rem" onmouseover="this.style.borderColor='rgba(96,165,250,0.3)';this.style.color='#60a5fa';this.style.background='rgba(96,165,250,0.08)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)';this.style.color='#475569';this.style.background='rgba(255,255,255,0.03)'">
+                <a href="{{ route('home') }}" style="display:inline-flex;align-items:center;justify-content:center;margin-top:0.75rem;width:36px;height:36px;border-radius:10px;color:#475569;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);text-decoration:none;transition:all 0.2s;font-size:1rem" onmouseover="this.style.borderColor='rgba(96,165,250,0.3)';this.style.color='#60a5fa';this.style.background='rgba(96,165,250,0.08)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)';this.style.color='#475569';this.style.background='rgba(255,255,255,0.03)'">
                     <i class="fa-solid fa-house"></i>
                 </a>
             </div>
@@ -389,7 +389,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js');
+                navigator.serviceWorker.register('{{ asset('sw.js') }}');
             });
         }
     </script>

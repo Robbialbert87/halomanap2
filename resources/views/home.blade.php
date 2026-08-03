@@ -27,7 +27,7 @@
             <!-- TOP NAVBAR (PayApp glossy) -->
             <header class="bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30 shadow-sm" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
                 <div class="max-w-7xl mx-auto px-6 h-16 grid grid-cols-[auto_1fr_auto] items-center">
-                    <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+                    <a href="{{ route('home') }}" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
                         <div class="w-9 h-9 flex items-center justify-center">
                             <picture>
                                 <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
@@ -40,14 +40,14 @@
                         </div>
                     </a>
                     <nav class="flex items-center justify-center gap-1">
-                        <a href="/" class="px-4 py-2 text-sm font-semibold text-blue-600 bg-blue-50 rounded-lg">Beranda</a>
-                        <a href="/pengaduan/buat?type=Pengaduan" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Pengaduan</a>
+                        <a href="{{ route('home') }}" class="px-4 py-2 text-sm font-semibold text-blue-600 bg-blue-50 rounded-lg">Beranda</a>
+                        <a href="{{ route('pengaduan.create', ['type' => 'Pengaduan']) }}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Pengaduan</a>
                         <a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank" rel="noopener noreferrer" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Survei</a>
                         <a href="{{ route('apresiasi.create') }}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Apresiasi</a>
-                        <a href="/pengaduan/buat?type=Informasi" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Informasi</a>
+                        <a href="{{ route('pengaduan.create', ['type' => 'Informasi']) }}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors">Informasi</a>
                     </nav>
                     <div class="flex items-center gap-1">
-                        <a href="/dashboard" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all" title="Login">
+                        <a href="{{ route('dashboard') }}" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all" title="Login">
                             <i class="fa-solid fa-shield-halved text-base"></i>
                             <span>Login</span>
                         </a>
@@ -68,7 +68,7 @@
                         </p>
                         <p class="text-blue-600 font-semibold italic mb-8">"Melayani Dengan Setulus Hati"</p>
                         <div class="flex items-center gap-4">
-                            <a href="/pengaduan/buat" class="bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold px-8 py-4 rounded-2xl transition-all shadow-lg shadow-blue-200/50 hover:shadow-xl active:scale-[0.98]">
+                            <a href="{{ route('pengaduan.create') }}" class="bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold px-8 py-4 rounded-2xl transition-all shadow-lg shadow-blue-200/50 hover:shadow-xl active:scale-[0.98]">
                                 <i class="fa-solid fa-circle-exclamation mr-2"></i> Buat Laporan Sekarang
                             </a>
                             <a href="{{ route('pengaduan.track') }}" class="bg-white/80 backdrop-blur-sm border border-gray-200 hover:border-blue-300 text-gray-700 font-bold px-8 py-4 rounded-2xl transition-all active:scale-[0.98] shadow-sm" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%);">
@@ -91,7 +91,7 @@
             <section class="pb-16">
                 <div class="max-w-7xl mx-auto px-6">
                     <div class="grid grid-cols-4 gap-6">
-                        <a href="/pengaduan/buat?type=Pengaduan"
+                        <a href="{{ route('pengaduan.create', ['type' => 'Pengaduan']) }}"
                             class="group bg-white/80 backdrop-blur-xl p-8 rounded-2xl shadow-sm border border-white/30 flex flex-col items-center text-center gap-3 hover:shadow-lg hover:-translate-y-1 transition-all active:scale-[0.98]" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
                             <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-400 to-red-600 text-white flex items-center justify-center text-3xl shadow-md shadow-red-200/50">
                                 <i class="fa-solid fa-circle-exclamation"></i>
@@ -141,7 +141,7 @@
                     <div class="grid grid-cols-3 gap-8 mb-8">
                         {{-- Brand --}}
                         <div>
-                            <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity mb-3">
+                            <a href="{{ route('home') }}" class="flex items-center gap-3 hover:opacity-80 transition-opacity mb-3">
                                 <picture>
                                     <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
                                     <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
@@ -157,10 +157,10 @@
                         <div>
                             <h4 class="text-white text-xs font-bold uppercase tracking-wider mb-3">Layanan</h4>
                             <ul class="space-y-2 text-xs">
-                                <li><a href="/pengaduan/buat?type=Pengaduan" class="hover:text-white transition-colors">Pengaduan</a></li>
+                                <li><a href="{{ route('pengaduan.create', ['type' => 'Pengaduan']) }}" class="hover:text-white transition-colors">Pengaduan</a></li>
                                 <li><a href="https://skm.go.id/share/instansi/cf0fe4fb-d51e-40e0-a3e7-4b6fbb5918b8/2" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">Survei Kepuasan</a></li>
                                 <li><a href="{{ route('apresiasi.create') }}" class="hover:text-white transition-colors">Apresiasi</a></li>
-                                <li><a href="/pengaduan/buat?type=Informasi" class="hover:text-white transition-colors">Informasi</a></li>
+                                <li><a href="{{ route('pengaduan.create', ['type' => 'Informasi']) }}" class="hover:text-white transition-colors">Informasi</a></li>
                                 <li><a href="{{ route('pengaduan.track') }}" class="hover:text-white transition-colors">Lacak Pengaduan</a></li>
                             </ul>
                         </div>
@@ -199,7 +199,7 @@
             <!-- TOP NAVBAR MOBILE -->
             <header class="bg-white/70 backdrop-blur-xl sticky top-0 z-50 border-b border-white/30" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
                 <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-                    <a href="/" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+                    <a href="{{ route('home') }}" class="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
                         <picture>
                             <source srcset="{{ asset('assets/images/halomanaplogo.webp') }}" type="image/webp">
                             <img src="{{ asset('assets/images/halomanaplogo.png') }}" alt="Halo MANAP" class="w-8 h-8 object-contain">
@@ -209,7 +209,7 @@
                             <p class="text-[8px] text-gray-400 leading-none -mt-0.5">RSUD H. Abdul Manap</p>
                         </div>
                     </a>
-                    <a href="/dashboard"
+                    <a href="{{ route('dashboard') }}"
                        class="w-9 h-9 flex items-center justify-center bg-white/80 rounded-xl text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all shadow-sm"
                        title="Login">
                         <i class="fa-solid fa-door-open text-base"></i>
@@ -235,7 +235,7 @@
                 <!-- Menu Grid 2x2 ala PayApp -->
                 <div class="anim-fade grid grid-cols-2 gap-3 mb-5" style="animation-delay:0.1s">
 
-                    <a href="/pengaduan/buat?type=Pengaduan"
+                    <a href="{{ route('pengaduan.create', ['type' => 'Pengaduan']) }}"
                         class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-white/30 flex flex-col items-center p-4 active:scale-[0.97] transition-transform"
                         style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%); height:175px">
                         <div class="flex flex-col items-center justify-center flex-1">
@@ -330,7 +330,7 @@
 
             <!-- BOTTOM NAV ala PayApp (detached rounded) -->
             <nav class="anim-slide fixed bottom-3 left-3 right-3 bg-white/70 backdrop-blur-xl border border-white/30 rounded-2xl flex justify-around items-center px-2 pt-1.5 pb-5 z-50 shadow-[0_-4px_30px_rgba(0,0,0,0.08)]" style="animation-delay:0.35s;background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
-                <a href="/" class="flex flex-col items-center gap-0.5 w-14 py-1 {{ request()->is('/') ? 'text-blue-600' : 'text-gray-400' }}">
+                <a href="{{ route('home') }}" class="flex flex-col items-center gap-0.5 w-14 py-1 {{ request()->is('/') ? 'text-blue-600' : 'text-gray-400' }}">
                     <i class="fa-solid fa-house text-xl"></i>
                     <span class="text-[9px] {{ request()->is('/') ? 'font-semibold' : 'font-medium' }}">Beranda</span>
                 </a>
@@ -340,7 +340,7 @@
                 </a>
                 <!-- FAB Center -->
                 <div class="relative w-14 flex flex-col items-center">
-                    <a href="/pengaduan/buat" class="absolute -top-7 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/40 border-[3px] border-white active:scale-90 transition-transform">
+                    <a href="{{ route('pengaduan.create') }}" class="absolute -top-7 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/40 border-[3px] border-white active:scale-90 transition-transform">
                         <i class="fa-solid fa-plus text-xl"></i>
                     </a>
                     <span class="text-[9px] font-medium {{ request()->is('pengaduan/buat*') ? 'text-blue-600 font-semibold' : 'text-gray-400' }} mt-6 text-center leading-tight">Buat<br>Laporan</span>

@@ -130,7 +130,7 @@
                         class="bg-white/80 backdrop-blur-sm border border-gray-200 hover:border-blue-300 text-gray-700 font-semibold rounded-xl text-sm px-5 py-3.5 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
                         <i class="fa-solid fa-magnifying-glass text-blue-500"></i> Lacak Status
                     </a>
-                    <a href="/"
+                    <a href="{{ route('home') }}"
                         class="bg-white/80 backdrop-blur-sm border border-gray-200 hover:border-blue-300 text-gray-700 font-semibold rounded-xl text-sm px-5 py-3.5 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
                         <i class="fa-solid fa-house text-gray-500"></i> Beranda
                     </a>

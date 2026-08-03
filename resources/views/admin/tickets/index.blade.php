@@ -260,7 +260,7 @@ function confirmDelete(id, ticketNumber) {
     const modal = document.getElementById('delete-modal');
     const form = document.getElementById('delete-form');
     const label = document.getElementById('modal-ticket-number');
-    form.action = '/admin/tickets/' + id;
+    form.action = '{{ route('admin.tickets.destroy', ':id') }}'.replace(':id', id);
     label.textContent = ticketNumber;
     modal.classList.remove('hidden');
     modal.classList.add('flex');

@@ -43,7 +43,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // ── PUBLIC ────────────────────────────────────────────────────────────────────
 Route::get('/', function () {
     return view('home');
-});
+})->name('home');
 
 // Webhook WAHA (dipanggil server WAHA, tanpa auth — validasi HMAC di controller)
 Route::post('/api/waha/webhook', [WahaWebhookController::class, 'handle'])

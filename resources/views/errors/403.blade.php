@@ -11,7 +11,7 @@
         <h1 class="text-5xl font-bold text-gray-800 font-heading mb-2">403</h1>
         <p class="text-lg font-semibold text-gray-700 mb-1">Akses Dilarang</p>
         <p class="text-sm text-gray-500 mb-6">Anda tidak memiliki izin untuk mengakses halaman ini.</p>
-        <a href="/" class="inline-flex items-center gap-2 bg-gradient-to-br from-blue-500 to-blue-700 text-white font-semibold rounded-xl px-6 py-3 text-sm shadow-md shadow-blue-200/50 hover:shadow-lg active:scale-[0.98] transition-all">
+        <a href="{{ route('home') }}" class="inline-flex items-center gap-2 bg-gradient-to-br from-blue-500 to-blue-700 text-white font-semibold rounded-xl px-6 py-3 text-sm shadow-md shadow-blue-200/50 hover:shadow-lg active:scale-[0.98] transition-all">
             <i class="fa-solid fa-house"></i> Kembali ke Beranda
         </a>
     </div>

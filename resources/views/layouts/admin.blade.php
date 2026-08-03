@@ -33,7 +33,7 @@
         <nav class="px-2.5 py-3 space-y-0.5">
             @if($mobileRoleGroup === 'admin')
 
-            <a href="/dashboard" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->is('dashboard') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors text-[13px] {{ request()->is('dashboard') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50' }}">
                 <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-sm shadow-blue-200/50 flex-shrink-0">
                     <i class="fa-solid fa-house text-white text-xs"></i>
                 </span>
@@ -485,7 +485,7 @@
         {{-- ========================================================================= --}}
         <nav class="md:hidden fixed bottom-3 left-3 right-3 admin-glass rounded-[1.4rem] flex justify-around items-center px-2 pt-1.5 pb-2 z-40">
             {{-- Dashboard (all roles) --}}
-            <a href="/dashboard" class="flex flex-col items-center gap-0.5 w-12 {{ request()->is('dashboard') ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-500 transition-colors">
+            <a href="{{ route('dashboard') }}" class="flex flex-col items-center gap-0.5 w-12 {{ request()->is('dashboard') ? 'text-blue-600' : 'text-gray-400' }} hover:text-blue-500 transition-colors">
                 <i class="fa-solid fa-house text-lg"></i>
                 <span class="text-[8px] font-medium">Dashboard</span>
             </a>

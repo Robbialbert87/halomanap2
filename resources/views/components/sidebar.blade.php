@@ -35,7 +35,7 @@
         {{--  ADMIN / SUPER ADMIN                                          --}}
         {{-- ============================================================ --}}
         @if ($roleGroup === 'admin')
-            <a href="/dashboard"
+            <a href="{{ route('dashboard') }}"
                 class="flex items-center gap-3 px-3 py-2.5 {{ request()->is('dashboard') ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }} rounded-lg transition-colors">
                 <i class="fa-solid fa-house w-5 text-center"></i>
                 <span class="text-sm font-medium">Dashboard</span>

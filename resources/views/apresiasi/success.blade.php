@@ -19,7 +19,7 @@
                 class="w-full bg-gradient-to-br from-blue-500 to-blue-700 text-white font-semibold rounded-xl px-5 py-3.5 text-sm shadow-md shadow-blue-200/50 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2">
                 <i class="fa-solid fa-thumbs-up"></i> Kirim Apresiasi Lagi
             </a>
-            <a href="/"
+            <a href="{{ route('home') }}"
                 class="w-full text-sm font-medium text-gray-400 hover:text-blue-600 transition-colors flex items-center justify-center gap-1.5 py-2">
                 <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
             </a>
