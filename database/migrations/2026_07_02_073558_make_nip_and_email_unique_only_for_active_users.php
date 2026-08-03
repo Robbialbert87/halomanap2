@@ -27,11 +27,12 @@ return new class extends Migration
 
         // Add virtual generated columns that are NULL for soft-deleted rows.
         // CASE WHEN dipakai (bukan IF()) karena MariaDB 11.8 menolak IF()
-        // pada ekspresi generated column ketika sumber kolom bertipe CHAR
-        // (mis. uuid CHAR(36)) — error 1901.
+        // pada ekspresi generated column ketika sumber kolom bertipe CHAR.
+        // uuid CHAR(36) juga ditolak CASE WHEN biasa — RTRIM() sebagai
+        // workaround menghasilkan VARCHAR dan diterima (error 1901).
         DB::statement('ALTER TABLE users ADD COLUMN nip_unique VARCHAR(255) GENERATED ALWAYS AS (CASE WHEN deleted_at IS NULL THEN nip ELSE NULL END) STORED');
         DB::statement('ALTER TABLE users ADD COLUMN email_unique VARCHAR(255) GENERATED ALWAYS AS (CASE WHEN deleted_at IS NULL THEN email ELSE NULL END) STORED');
-        DB::statement('ALTER TABLE users ADD COLUMN uuid_unique VARCHAR(255) GENERATED ALWAYS AS (CASE WHEN deleted_at IS NULL THEN uuid ELSE NULL END) STORED');
+        DB::statement('ALTER TABLE users ADD COLUMN uuid_unique VARCHAR(255) GENERATED ALWAYS AS (CASE WHEN deleted_at IS NULL THEN RTRIM(uuid) ELSE NULL END) STORED');
 
         // Unique indexes on the generated columns — MySQL allows multiple NULLs
         DB::statement('CREATE UNIQUE INDEX users_nip_unique ON users (nip_unique)');
