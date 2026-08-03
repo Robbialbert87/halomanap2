@@ -101,10 +101,12 @@ class WhatsappSettingsController extends Controller
             'session' => 'required|string|max:100',
         ]);
 
+        // Simpan config dasar
         Setting::setValue('waha_api_url', rtrim($validated['api_url'], '/'), 'WAHA API URL');
         Setting::setValue('waha_api_key', Crypt::encryptString($validated['api_key']), 'WAHA API Key (encrypted)');
         Setting::setValue('waha_session', $validated['session'], 'WAHA Session name');
 
+        // Validasi session ada di WAHA (panggil API sessions/{name})
         try {
             $resp = Http::withHeaders([
                 'X-Api-Key' => $validated['api_key'],
@@ -119,11 +121,12 @@ class WhatsappSettingsController extends Controller
                     ->with('success', "Konfigurasi tersimpan. Status session: {$status}");
             }
 
+            // Session tidak ditemukan di WAHA
             return redirect()->route('admin.whatsapp.index')
-                ->with('success', 'Konfigurasi tersimpan, tetapi session tidak ditemukan. Buat session di WAHA dashboard.');
+                ->with('error', "Session '{$validated['session']}' tidak ditemukan di WAHA. Pastikan session sudah dibuat dan aktif.");
         } catch (\Throwable $e) {
             return redirect()->route('admin.whatsapp.index')
-                ->with('success', 'Konfigurasi tersimpan. WAHA API tidak dapat dijangkau, periksa URL dan koneksi.');
+                ->with('error', 'WAHA API tidak dapat dijangkau: '.$e->getMessage());
         }
     }
 
@@ -139,11 +142,14 @@ class WhatsappSettingsController extends Controller
 
         $chatId = Str::phone($phone);
 
+        // Ambil session aktif dari service (bukan config default yang mungkin salah)
+        $session = $this->sessions->getActiveSessionName();
+
         try {
             $resp = Http::withHeaders($this->wahaHeaders())
                 ->timeout(15)
                 ->post($this->apiUrl().'/api/sendText', [
-                    'session' => $this->getConfig('session'),
+                    'session' => $session,
                     'chatId' => $chatId,
                     'text' => $message,
                 ]);

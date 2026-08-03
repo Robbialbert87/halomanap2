@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Waha;
 
+use App\Models\Setting;
 use App\Services\Waha\DTO\QrCode;
 use App\Services\Waha\DTO\SessionStatus;
 
@@ -101,5 +102,28 @@ final class SessionService
             status: strtoupper((string) ($data['status'] ?? 'UNKNOWN')),
             raw: $data,
         );
+    }
+
+    /**
+     * Ambil nama session yang statusnya WORKING atau SCAN_QR_CODE.
+     * Jika tidak ada, fallback ke setting waha_session atau env WAHA_SESSION atau 'def'.
+     */
+    public function getActiveSessionName(): string
+    {
+        try {
+            $response = $this->client->request('GET', '/api/sessions');
+            $sessions = $response->json() ?? [];
+
+            foreach ($sessions as $s) {
+                $status = $s['status'] ?? '';
+                if (in_array($status, ['WORKING', 'SCAN_QR_CODE'], true)) {
+                    return $s['name'] ?? $s['session'] ?? $s['session_id'] ?? 'def';
+                }
+            }
+        } catch (\Throwable $e) {
+            // log error jika perlu
+        }
+
+        return Setting::getValue('waha_session') ?? env('WAHA_SESSION', 'def');
     }
 }

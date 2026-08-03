@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Setting;
+use App\Services\Waha\SessionService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Crypt;
 
@@ -22,8 +23,11 @@ class WahaSettingSeeder extends Seeder
             Setting::setValue('waha_api_key', Crypt::encryptString($apiKey), 'WAHA API Key (encrypted)');
         }
 
+        // Session default: prioritas session aktif dari server WAHA (WORKING),
+        // fallback ke env WAHA_SESSION.
         if (! Setting::getValue('waha_session')) {
-            Setting::setValue('waha_session', $session, 'WAHA Session name');
+            $activeSession = app(SessionService::class)->getActiveSessionName();
+            Setting::setValue('waha_session', $activeSession ?: $session, 'WAHA Session name');
         }
 
         // Webhook receiver (dipakai SSE realtime status). Default: endpoint

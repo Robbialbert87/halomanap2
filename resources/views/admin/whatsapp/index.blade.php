@@ -95,19 +95,20 @@
                             @php
                                 $isOk = in_array($session->status, ['CONNECTED', 'WORKING'], true);
                                 $isWait = in_array($session->status, ['scanning', 'SCAN_QR_CODE', 'STARTING', 'creating'], true);
+                                $rowClass = $isOk ? 'bg-green-50' : '';
                             @endphp
-                            <tr class="hover:bg-gray-50 transition-colors" data-session-id="{{ $session->session_id }}">
+                            <tr class="hover:bg-gray-50 transition-colors {{ $rowClass }}" data-session-id="{{ $session->session_id }}">
                                 <td class="px-4 py-3 font-medium">{{ $session->session_id }}</td>
                                 <td class="px-4 py-3 font-mono text-xs">{{ $session->phone_number ?? '-' }}</td>
                                 <td class="px-4 py-3">
                                     <span class="session-badge inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium {{ $isOk ? 'bg-green-100 text-green-700' : ($isWait ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}" data-status="{{ $session->status }}">
                                         <span class="session-dot w-1.5 h-1.5 rounded-full {{ $isOk ? 'bg-green-500' : ($isWait ? 'bg-yellow-500' : 'bg-red-500') }}"></span>
-                                        {{ $session->status }}
+                                        {{ $session->status }} @if($isOk) <i class="fa-solid fa-check-circle text-green-500 ml-1" title="Active"></i> @endif
                                     </span>
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex items-center gap-1.5">
-                                        @if(!$isOk)
+                                        @unless($isOk)
                                         <a href="{{ route('admin.whatsapp.sessions.show', $session->session_id) }}" class="admin-action-pill admin-action-pill-blue" title="Lihat QR code">
                                             <i class="fa-solid fa-qrcode text-[11px]"></i> QR
                                         </a>
@@ -117,7 +118,7 @@
                                                 <i class="fa-solid fa-rotate text-[11px]"></i> Start
                                             </button>
                                         </form>
-                                        @endif
+                                        @endunless
                                         <form action="{{ route('admin.whatsapp.sessions.sync', $session->session_id) }}" method="POST" class="inline">
                                             @csrf
                                             <button type="submit" class="admin-action-pill admin-action-pill-emerald" title="Sync">
@@ -230,15 +231,22 @@
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Session Default Kirim</label>
                     <select name="session"
-                            class="admin-input">
+                            class="admin-input"
+                            @if($sessions->isEmpty())
+                                disabled
+                            @endif>
                         <option value="">-- Pilih Session --</option>
                         @foreach($sessions as $s)
-                        <option value="{{ $s->session_id }}" {{ old('session', $wahaConfig['session'] ?? '') == $s->session_id ? 'selected' : '' }}>
-                            {{ $s->session_id }} @if($s->phone_number)({{ $s->phone_number }})@endif {{ in_array($s->status, ['CONNECTED', 'WORKING'], true) ? '✓' : '' }}
-                        </option>
+                            @php
+                                $isWorking = in_array($s->status, ['CONNECTED', 'WORKING'], true);
+                            @endphp
+                            <option value="{{ $s->session_id }}" {{ old('session', $wahaConfig['session'] ?? '') == $s->session_id ? 'selected' : '' }}>
+                                {{ $s->session_id }} @if($s->phone_number)({{ $s->phone_number }})@endif
+                                @if($isWorking) <strong class="text-green-600 ml-1">✓ WORKING</strong> @endif
+                            </option>
                         @endforeach
                     </select>
-                    <p class="text-xs text-gray-400 mt-1">Session ini akan digunakan untuk mengirim semua notifikasi otomatis.</p>
+                    <p class="text-xs text-gray-400 mt-1">Session ini akan digunakan untuk mengirim semua notifikasi otomatis. Pilih session yang status <strong>WORKING</strong>.</p>
                 </div>
                 <button type="submit" class="admin-btn admin-btn-primary w-full">
                     <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Konfigurasi
