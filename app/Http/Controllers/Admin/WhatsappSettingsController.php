@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use App\Services\WhatsAppGatewayService;
 
 class WhatsappSettingsController extends Controller
 {
@@ -15,124 +14,69 @@ class WhatsappSettingsController extends Controller
 
     public function startServer()
     {
-        $nodePath = $this->findNodePath();
-        $phpPath  = $this->findPhpPath();
-        $basePath = base_path();
-        $logPath  = storage_path('logs');
-
-        if (!$nodePath) {
-            return redirect()->back()->with('error', 'Node.js tidak ditemukan.');
+        // Start session WAHA (kirim notif WA kini sinkron, tanpa queue worker)
+        $service = new WhatsAppGatewayService();
+        if ($service->state() === 'STOPPED' || $service->state() === 'FAILED') {
+            $service->start();
         }
 
-        $errors = [];
-
-        // 1. Kill existing node process biar gak bentrok port
-        exec('taskkill /F /IM node.exe 2>NUL', $killOut, $killCode);
-
-        // 1.5 Kill existing queue worker(s) biar gak dobel worker
-        exec('wmic process where "name=\'php.exe\' and commandline like \'%artisan queue:work%\'" delete 2>NUL', $killQwOut, $killQwCode);
-
-        sleep(1);
-
-        // 2. Start Node.js - pakai start /B (background, no window)
-        $nodeCmd = sprintf(
-            'start /B "" cmd /c "cd /d "%s\\whatsapp-api" && "%s" index.js > "%s\\wa-node.log" 2>&1"',
-            $basePath, $nodePath, $logPath
-        );
-        exec($nodeCmd, $nodeOut, $nodeExit);
-        if ($nodeExit != 0) {
-            $errors[] = "Node.js exec gagal (exit: $nodeExit)";
-        }
-
-        sleep(1);
-
-        // 3. Start Queue Worker
-        $queueCmd = sprintf(
-            'start /B "" cmd /c "cd /d "%s" && "%s" artisan queue:work --queue=notifications --tries=1 > "%s\\wa-queue.log" 2>&1"',
-            $basePath, $phpPath, $logPath
-        );
-        exec($queueCmd, $queueOut, $queueExit);
-        if ($queueExit != 0) {
-            $errors[] = "Queue exec gagal (exit: $queueExit)";
-        }
-
-        if (!empty($errors)) {
-            return redirect()->back()->with('error', 'Gagal: ' . implode('; ', $errors) . '. Double-click file <strong>start-services.bat</strong> di folder project.');
-        }
-
-        // Verify port 3000
-        sleep(3);
-        try {
-            $check = @Http::timeout(2)->get('http://localhost:3000/status');
-            if ($check->successful()) {
-                return redirect()->back()->with('success', 'Layanan berjalan! Tunggu QR Code muncul...');
-            }
-        } catch (\Throwable $e) {
-            // not running yet
-        }
-
-        return redirect()->back()->with('warning',
-            'Perintah sudah dijalankan tapi port 3000 belum merespon. Tunggu beberapa saat, atau double-click <strong>start-services.bat</strong> di folder project untuk manual.'
-        );
+        return redirect()->back()->with('success', 'Layanan berjalan! Status session: ' . $service->state());
     }
 
     public function checkStatus()
     {
-        try {
-            $resp = Http::timeout(5)->get('http://localhost:3000/status');
-            if ($resp->successful()) {
-                return response($resp->body())->header('Content-Type', 'application/json');
-            }
-        } catch (\Throwable $e) {
-            //
+        $service = new WhatsAppGatewayService();
+        $state   = $service->state();
+
+        if ($state === 'WORKING') {
+            return response()->json([
+                'success'         => true,
+                'isAuthenticated' => true,
+                'qr'              => null,
+                'state'           => $state,
+            ]);
         }
-        return response()->json(['success' => false, 'error' => 'Node.js offline'], 503);
+
+        if ($state === 'SCAN_QR_CODE') {
+            $qr = $service->qr();
+            return response()->json([
+                'success'         => true,
+                'isAuthenticated' => false,
+                'qr'              => $qr,
+                'message'         => $qr ? null : 'Menunggu QR Code...',
+                'state'           => $state,
+            ]);
+        }
+
+        if ($state === 'STARTING') {
+            return response()->json([
+                'success'         => true,
+                'isAuthenticated' => false,
+                'qr'              => null,
+                'message'         => 'Sedang memuat Client... Mohon tunggu beberapa detik.',
+                'state'           => $state,
+            ]);
+        }
+
+        // STOPPED / FAILED / server WAHA offline
+        return response()->json([
+            'success' => false,
+            'error'   => $state === null
+                ? 'Server WAHA tidak dapat dihubungi.'
+                : "Session WAHA tidak aktif (state: $state).",
+            'state'   => $state,
+        ], 503);
     }
 
     public function proxyReset()
     {
-        try {
-            $resp = Http::timeout(5)->post('http://localhost:3000/reset');
-            return response($resp->body())->header('Content-Type', 'application/json');
-        } catch (\Throwable $e) {
-            return response()->json(['success' => false, 'error' => $e->getMessage()], 503);
-        }
-    }
+        $service = new WhatsAppGatewayService();
+        $service->logout();
+        $service->start();
 
-    private function findNodePath(): ?string
-    {
-        if (function_exists('shell_exec')) {
-            $output = shell_exec('where node 2>NUL');
-            if ($output) {
-                $paths = explode("\n", trim($output));
-                if (!empty($paths[0])) return trim($paths[0]);
-            }
-        }
-
-        $common = [
-            'C:\\Program Files\\nodejs\\node.exe',
-            'C:\\Program Files (x86)\\nodejs\\node.exe',
-            getenv('LOCALAPPDATA') . '\\Programs\\Nodejs\\node.exe',
-            getenv('PROGRAMFILES') . '\\nodejs\\node.exe',
-            getenv('PROGRAMFILES(X86)') . '\\nodejs\\node.exe',
-        ];
-        foreach ($common as $p) {
-            if ($p && file_exists($p)) return $p;
-        }
-
-        return null;
-    }
-
-    private function findPhpPath(): string
-    {
-        if (defined('PHP_BINARY') && PHP_BINARY) return PHP_BINARY;
-        if (function_exists('shell_exec')) {
-            $output = shell_exec('where php 2>NUL');
-            if ($output) {
-                $paths = explode("\n", trim($output));
-                if (!empty($paths[0])) return trim($paths[0]);
-            }
-        }
-        return 'php';
+        return response()->json([
+            'success' => true,
+            'message' => 'Session WAHA di-reset. Silakan scan QR baru.',
+        ]);
     }
 }

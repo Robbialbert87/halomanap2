@@ -123,7 +123,7 @@ class PengaduanController extends Controller
                 "─────────────────────",
                 "_RSUD H. Abdul Manap Kota Jambi_",
             ]);
-            SendWhatsAppNotification::dispatch($ticket->reporter_phone, $pesanPelapor);
+            SendWhatsAppNotification::dispatchSync($ticket->reporter_phone, $pesanPelapor);
         }
 
         return redirect()->route('pengaduan.success', ['ticket_number' => $ticket->ticket_number]);
@@ -274,7 +274,7 @@ class PengaduanController extends Controller
         ]);
 
         foreach ($admins as $admin) {
-            SendWhatsAppNotification::dispatch($admin->phone_number, $pesan);
+            SendWhatsAppNotification::dispatchSync($admin->phone_number, $pesan);
         }
     }
 }

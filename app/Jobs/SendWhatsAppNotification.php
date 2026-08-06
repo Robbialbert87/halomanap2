@@ -32,10 +32,7 @@ class SendWhatsAppNotification implements ShouldQueue
         }
 
         try {
-            \Illuminate\Support\Facades\Http::timeout(10)->post('http://localhost:3000/send', [
-                'number' => $this->phoneNumber,
-                'message' => $this->message,
-            ]);
+            (new \App\Services\WhatsAppGatewayService())->sendText($this->phoneNumber, $this->message);
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Gagal mengirim WhatsApp: ' . $e->getMessage());
         }

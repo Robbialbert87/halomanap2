@@ -7,22 +7,11 @@ use App\Models\NotificationLog;
 use App\Models\Jabatan;
 use App\Models\User;
 use App\Services\RoleMenuService;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\QueryException;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class SendWhatsAppNotification implements ShouldQueue
+class SendWhatsAppNotification
 {
-    use InteractsWithQueue;
-
-    /**
-     * Nama queue yang akan digunakan.
-     */
-    public string $queue = 'notifications';
-    public $tries = 1;
-
     public function handle(WorkflowChanged $event): void
     {
         $history = $event->history;
@@ -243,26 +232,15 @@ class SendWhatsAppNotification implements ShouldQueue
         $status = 'failed';
         $error  = null;
 
-        try {
-            $response = Http::timeout(15)->post('http://localhost:3000/send', [
-                'number'  => $recipient->phone_number,
-                'message' => $message,
-            ]);
+        $result = (new \App\Services\WhatsAppGatewayService())->sendText($recipient->phone_number, $message);
 
-            if ($response->successful()) {
-                $status = 'sent';
-            } else {
-                $error = $response->body();
-                Log::channel('daily')->warning('[WhatsApp API] Gagal', [
-                    'to'    => $recipient->phone_number,
-                    'error' => $error,
-                ]);
-            }
-
-        } catch (\Throwable $e) {
-            $error = $e->getMessage();
-            Log::channel('daily')->error('[WhatsApp API] ' . $e->getMessage(), [
-                'to' => $recipient->phone_number,
+        if ($result['success']) {
+            $status = 'sent';
+        } else {
+            $error = $result['error'] ?? 'unknown';
+            Log::channel('daily')->warning('[WhatsApp API] Gagal', [
+                'to'    => $recipient->phone_number,
+                'error' => $error,
             ]);
         }
 

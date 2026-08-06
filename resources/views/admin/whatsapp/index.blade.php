@@ -33,13 +33,13 @@
         
         <div class="p-6 flex flex-col items-center justify-center min-h-[300px]">
             
-            <!-- Box Error (Jika Server Node Mati) -->
+            <!-- Box Error (Jika Server WAHA Mati) -->
             <div id="error-box" class="hidden text-center">
                 <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
                     <i class="fa-solid fa-server"></i>
                 </div>
                 <h3 class="text-lg font-bold text-gray-800 mb-2">Server Tidak Merespons</h3>
-                <p class="text-gray-500 text-sm mb-6 max-w-sm">Node.js Gateway (port 3000) belum berjalan atau terhenti. Klik tombol di bawah untuk menjalankan layanan.</p>
+                <p class="text-gray-500 text-sm mb-6 max-w-sm">Server WAHA belum aktif atau session belum berjalan. Klik tombol di bawah untuk menjalankan layanan.</p>
                 
                 <form action="{{ route('admin.whatsapp.start') }}" method="POST">
                     @csrf
@@ -84,28 +84,25 @@
                 <i class="fa-solid fa-circle-info text-blue-500"></i> Informasi Gateway
             </h2>
             <div class="text-sm text-gray-600 space-y-3">
-                <p>Halaman ini terhubung langsung ke <strong>Microservice Node.js</strong> lokal Anda (Port 3000).</p>
-                <p>Untuk menghemat resource server, ikuti langkah berikut:</p>
+                <p>Halaman ini terhubung langsung ke <strong>Server WAHA</strong> Anda.</p>
+                <p>Untuk menjaga koneksi tetap stabil, ikuti langkah berikut:</p>
                 <ul class="list-disc pl-5 space-y-1 text-gray-500">
                     <li>Gunakan nomor WhatsApp yang khusus didedikasikan untuk instansi/sistem.</li>
                     <li>Pastikan handphone untuk nomor WhatsApp tersebut tetap terkoneksi dengan internet.</li>
-                    <li>Layanan berjalan di background (tanpa jendela CMD). Log tersimpan di <code class="text-xs bg-gray-100 px-1 rounded">storage/logs/wa-*.log</code>.</li>
+                    <li>Notifikasi WA dikirim langsung (sinkron) saat aksi terjadi — tidak perlu service/worker tambahan.</li>
                 </ul>
             </div>
         </div>
 
         <div class="bg-blue-50 rounded-xl shadow-sm border border-blue-200 p-6">
             <h2 class="font-semibold text-blue-800 flex items-center gap-2 mb-2">
-                <i class="fa-solid fa-gear"></i> Cara Manual (Paling Stabil)
+                <i class="fa-solid fa-gear"></i> Cara Mengaktifkan
             </h2>
             <p class="text-sm text-blue-700">
-                Jika tombol "Jalankan Layanan Server" tidak berhasil, jalankan secara manual:
-                <br><br><strong>1. Buka folder project, double-click file:</strong>
-                <br><code class="text-sm bg-blue-100 px-2 py-1 rounded block mt-1">start-services.bat</code>
-                <br><br><strong>2. Akan terbuka 2 jendela CMD</strong> (Node.js API + Queue Worker)
-                <br><strong>Jangan ditutup!</strong> Biarkan saja berjalan.
-                <br><br><strong>3. Refresh halaman ini</strong> — QR Code akan muncul otomatis.
-                <br><br>Log: <code class="text-xs bg-blue-100 px-1 rounded">storage/logs/wa-node.log</code> & <code class="text-xs bg-blue-100 px-1 rounded">wa-queue.log</code>
+                Jika status menampilkan "Server Tidak Merespons", klik tombol <strong>"Jalankan Layanan Server"</strong>
+                untuk menyalakan session WAHA, lalu refresh halaman ini.
+                <br><br>Jika session dalam keadaan <code class="text-sm bg-blue-100 px-2 py-1 rounded">SCAN_QR_CODE</code>,
+                scan QR Code yang muncul menggunakan WhatsApp pada handphone Anda.
             </p>
         </div>
 
@@ -215,25 +212,26 @@
 
     function checkStatus() {
         fetch('{{ route('admin.whatsapp.status') }}')
-            .then(res => {
-                if (!res.ok) throw new Error('Node.js offline');
-                return res.json();
-            })
-            .then(data => {
+            .then(res => res.json().then(data => ({ ok: res.ok, data })))
+            .then(({ ok, data }) => {
                 if (data.isAuthenticated) {
                     setUI('connected');
                 } else if (data.qr) {
                     setUI('qr', data);
+                } else if (ok) {
+                    setUI('error');
+                    document.getElementById('error-box').querySelector('p').innerText = data.message || 'Sedang memuat Client... Mohon tunggu beberapa detik.';
+                    document.getElementById('error-box').querySelector('form').classList.add('hidden');
                 } else {
                     setUI('error');
-                    document.getElementById('error-box').querySelector('p').innerText = 'Sedang memuat Client... Mohon tunggu beberapa detik.';
-                    document.getElementById('error-box').querySelector('form').classList.add('hidden');
+                    document.getElementById('error-box').querySelector('p').innerText = data.error || 'Server WAHA tidak aktif.';
+                    document.getElementById('error-box').querySelector('form').classList.remove('hidden');
                 }
             })
             .catch(err => {
                 console.error(err);
                 setUI('error');
-                document.getElementById('error-box').querySelector('p').innerText = 'Node.js Gateway (port 3000) belum berjalan. Klik tombol atau double-click start-services.bat';
+                document.getElementById('error-box').querySelector('p').innerText = 'Server WAHA tidak dapat dihubungi. Klik tombol "Jalankan Layanan Server" untuk mencoba kembali.';
                 document.getElementById('error-box').querySelector('form').classList.remove('hidden');
             });
     }
