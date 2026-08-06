@@ -24,6 +24,11 @@ class WhatsAppGatewayService
         return $this->session;
     }
 
+    public function baseUrl(): string
+    {
+        return $this->baseUrl;
+    }
+
     /**
      * Normalisasi nomor HP menjadi format internasional (62...).
      */
@@ -79,7 +84,7 @@ class WhatsAppGatewayService
     public function state(): ?string
     {
         try {
-            $response = $this->client()->get($this->url('/api/sessions/' . $this->session));
+            $response = $this->client(5)->get($this->url('/api/sessions/' . $this->session));
             if ($response->successful()) {
                 $data = $response->json();
                 return (string) ($data['status'] ?? 'STOPPED');
@@ -144,9 +149,9 @@ class WhatsAppGatewayService
         }
     }
 
-    private function client()
+    private function client(int $timeout = 15)
     {
-        return Http::timeout(15)->withoutVerifying()->withHeaders(['X-Api-Key' => $this->apiKey]);
+        return Http::timeout($timeout)->withoutVerifying()->withHeaders(['X-Api-Key' => $this->apiKey]);
     }
 
     private function url(string $path): string

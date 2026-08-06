@@ -33,15 +33,16 @@
         
         <div class="p-6 flex flex-col items-center justify-center min-h-[300px]">
             
-            <!-- Box Error (Jika Server WAHA Mati) -->
+            <!-- Box Error (Jika Server WAHA Mati / Session Tidak Aktif) -->
             <div id="error-box" class="hidden text-center">
-                <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                <div id="error-icon" class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
                     <i class="fa-solid fa-server"></i>
                 </div>
-                <h3 class="text-lg font-bold text-gray-800 mb-2">Server Tidak Merespons</h3>
-                <p class="text-gray-500 text-sm mb-6 max-w-sm">Server WAHA belum aktif atau session belum berjalan. Klik tombol di bawah untuk menjalankan layanan.</p>
-                
-                <form action="{{ route('admin.whatsapp.start') }}" method="POST">
+                <h3 id="error-title" class="text-lg font-bold text-gray-800 mb-2">Server Tidak Merespons</h3>
+                <p id="error-text" class="text-gray-500 text-sm mb-2 max-w-sm">Server WAHA belum aktif atau session belum berjalan. Klik tombol di bawah untuk menjalankan layanan.</p>
+                <p id="error-server-info" class="text-xs text-gray-400 mb-6 font-mono"></p>
+
+                <form id="error-form" action="{{ route('admin.whatsapp.start') }}" method="POST">
                     @csrf
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-6 py-2.5 transition-colors shadow-sm">
                         <i class="fa-solid fa-play mr-2"></i> Jalankan Layanan Server
@@ -193,10 +194,47 @@
         connectedBox.classList.add('hidden');
 
         if (state === 'error') {
+            const serverDown = data && data.serverDown;
+
             errorBox.classList.remove('hidden');
-            statusBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200';
-            statusBadge.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> Terputus';
-        } 
+            document.getElementById('error-icon').className = serverDown
+                ? 'w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl'
+                : 'w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl';
+            document.getElementById('error-icon').innerHTML = serverDown
+                ? '<i class="fa-solid fa-server"></i>'
+                : '<i class="fa-solid fa-power-off"></i>';
+            document.getElementById('error-title').textContent = serverDown
+                ? 'Server WAHA Mati'
+                : 'Session WhatsApp Tidak Aktif';
+            document.getElementById('error-text').textContent = (data && data.error) || (serverDown
+                ? 'Server WAHA tidak dapat dihubungi.'
+                : 'Session WhatsApp tidak aktif.');
+            document.getElementById('error-server-info').textContent = data && data.server
+                ? 'Server: ' + data.server
+                : '';
+            document.getElementById('error-form').querySelector('button').innerHTML = serverDown
+                ? '<i class="fa-solid fa-rotate-right mr-2"></i> Coba Hubungi Server'
+                : '<i class="fa-solid fa-play mr-2"></i> Jalankan Layanan Server';
+
+            statusBadge.className = serverDown
+                ? 'px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200'
+                : 'px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 border border-amber-200';
+            statusBadge.innerHTML = serverDown
+                ? '<i class="fa-solid fa-circle-xmark mr-1"></i> Server Mati'
+                : '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Session Tidak Aktif';
+        }
+        else if (state === 'loading') {
+            errorBox.classList.remove('hidden');
+            document.getElementById('error-icon').className = 'w-16 h-16 bg-blue-100 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl';
+            document.getElementById('error-icon').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            document.getElementById('error-title').textContent = 'Sedang Memuat Session...';
+            document.getElementById('error-text').textContent = (data && data.message) || 'Sedang memuat Client... Mohon tunggu beberapa detik.';
+            document.getElementById('error-server-info').textContent = data && data.server ? 'Server: ' + data.server : '';
+            document.getElementById('error-form').classList.add('hidden');
+
+            statusBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200';
+            statusBadge.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Memuat...';
+        }
         else if (state === 'qr') {
             qrBox.classList.remove('hidden');
             document.getElementById('qr-image').src = data.qr;
@@ -219,20 +257,16 @@
                 } else if (data.qr) {
                     setUI('qr', data);
                 } else if (ok) {
-                    setUI('error');
-                    document.getElementById('error-box').querySelector('p').innerText = data.message || 'Sedang memuat Client... Mohon tunggu beberapa detik.';
-                    document.getElementById('error-box').querySelector('form').classList.add('hidden');
+                    setUI('loading', data);
                 } else {
-                    setUI('error');
-                    document.getElementById('error-box').querySelector('p').innerText = data.error || 'Server WAHA tidak aktif.';
-                    document.getElementById('error-box').querySelector('form').classList.remove('hidden');
+                    setUI('error', data);
+                    document.getElementById('error-form').classList.remove('hidden');
                 }
             })
             .catch(err => {
                 console.error(err);
-                setUI('error');
-                document.getElementById('error-box').querySelector('p').innerText = 'Server WAHA tidak dapat dihubungi. Klik tombol "Jalankan Layanan Server" untuk mencoba kembali.';
-                document.getElementById('error-box').querySelector('form').classList.remove('hidden');
+                setUI('error', { serverDown: true, error: 'Server WAHA tidak dapat dihubungi.' });
+                document.getElementById('error-form').classList.remove('hidden');
             });
     }
 
