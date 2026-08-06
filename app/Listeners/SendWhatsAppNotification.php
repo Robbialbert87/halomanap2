@@ -108,8 +108,8 @@ class SendWhatsAppNotification
         $nomor     = $ticket->ticket_number ?? '-';
         $judul     = $ticket->title         ?? '-';
         $pelapor   = $ticket->is_anonymous ? 'Anonim' : ($ticket->reporter_name ?? '-');
-        $unit      = $history->toUnit?->nama ?? '-';
-        $pj        = $history->toUser?->nama ?? '-';
+        $unit      = $history->fromUnit?->nama ?? $history->toUnit?->nama ?? '-';
+        $pj        = $history->fromUser?->nama ?? $history->toUser?->nama ?? '-';
         $url       = route('admin.tickets.show', $ticket->id);
 
         return implode("\n", [
