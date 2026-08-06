@@ -146,7 +146,7 @@ class WhatsAppGatewayService
 
     private function client()
     {
-        return Http::timeout(15)->withHeaders(['X-Api-Key' => $this->apiKey]);
+        return Http::timeout(15)->withoutVerifying()->withHeaders(['X-Api-Key' => $this->apiKey]);
     }
 
     private function url(string $path): string
