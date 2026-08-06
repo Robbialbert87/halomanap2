@@ -4,7 +4,6 @@ namespace App\Listeners;
 
 use App\Events\WorkflowChanged;
 use App\Models\NotificationLog;
-use App\Models\Jabatan;
 use App\Models\User;
 use App\Services\RoleMenuService;
 use Illuminate\Database\QueryException;
@@ -29,19 +28,7 @@ class SendWhatsAppNotification
             $this->send($history->toUser, $message, $jenis, $history);
         }
 
-        // ─── 2. Kirim Monitoring ke Direktur ────────────────────────────────
-        // Direktur adalah observer: menerima WA untuk setiap perubahan workflow penting
-        if (in_array($jenis, ['disposisi_baru', 'eskalasi', 'pengaduan_selesai', 'pengaduan_ditutup'])) {
-            $direkturs = $this->getDirekturs($history->to_unit_id);
-            foreach ($direkturs as $direktur) {
-                if (!$direktur->phone_number) continue;
-                if ($history->toUser && $history->toUser->id === $direktur->id) continue;
-                $dirMessage = $this->buildMonitoringMessage($history, $ticket);
-                $this->send($direktur, $dirMessage, 'monitoring_direktur', $history);
-            }
-        }
-
-        // ─── 3. Notifikasi Admin Pengaduan saat pengaduan menunggu verifikasi ─
+        // ─── 2. Notifikasi Admin Pengaduan saat pengaduan menunggu verifikasi ─
         // Ketika Kepala Unit/Kasi/Kabid klik Selesai, admin perlu diingatkan
         // untuk memverifikasi dan menutup pengaduan.
         if ($jenis === 'pengaduan_selesai') {
@@ -51,17 +38,6 @@ class SendWhatsAppNotification
                 $this->send($admin, $adminMessage, 'pengaduan_selesai', $history);
             }
         }
-    }
-
-    private function getDirekturs(?int $unitId): \Illuminate\Support\Collection
-    {
-        $jabatanDirektur = Jabatan::where('kategori_jabatan', 'Direktur')
-            ->where('status', 'active')
-            ->pluck('id');
-
-        return User::whereIn('jabatan_id', $jabatanDirektur)
-            ->where('status', 'active')
-            ->get();
     }
 
     /**
@@ -122,36 +98,6 @@ class SendWhatsAppNotification
             ]),
             default => "*HALO MANAP*\nPengaduan {$nomor} mengalami perubahan status.",
         };
-    }
-
-    /**
-     * Bangun pesan khusus monitoring untuk Direktur.
-     */
-    private function buildMonitoringMessage($history, $ticket): string
-    {
-        $toJabatan = $history->toJabatan?->nama ?? '-';
-        $toUnit    = $history->toUnit?->nama    ?? '-';
-        $toUser    = $history->toUser?->nama    ?? 'Belum ditugaskan';
-        $nomor     = $ticket->ticket_number     ?? '-';
-        $judul     = $ticket->title             ?? '-';
-        $status    = $history->status;
-        $url       = route('direktur.dashboard');
-
-        return implode("\n", [
-            "*MONITORING HALO MANAP*",
-            "─────────────────────",
-            "📋 *No Pengaduan:* {$nomor}",
-            "📝 *Judul:* {$judul}",
-            "🏥 *Unit:* {$toUnit}",
-            "📊 *Status:* " . strtoupper(str_replace('_', ' ', $status)),
-            "👤 *Penanggung Jawab:* {$toUser}",
-            "🏷️ *Jabatan:* {$toJabatan}",
-            "",
-            "Silakan buka Dashboard Monitoring untuk detail.",
-            "🔗 {$url}",
-            "─────────────────────",
-            "_RSUD H. Abdul Manap Kota Jambi_",
-        ]);
     }
 
     /**
@@ -243,6 +189,8 @@ class SendWhatsAppNotification
                 'error' => $error,
             ]);
         }
+
+        $error = $error === null ? null : \Illuminate\Support\Str::limit($error, 250);
 
         $log->update([
             'status'        => $status,
