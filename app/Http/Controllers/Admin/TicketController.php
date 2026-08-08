@@ -66,7 +66,23 @@ class TicketController extends Controller
             });
         }
 
-        $tickets = $query->paginate(7)->withQueryString()->onEachSide(2);
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->filled('unit_id')) {
+            $query->whereHas('room', function ($q) use ($request) {
+                $q->where('unit_id', $request->unit_id);
+            });
+        }
+
+        $perPage = 7;
+        $page    = max((int) $request->input('page', 1), 1);
+        $tickets = $query->paginate($perPage, ['*'], 'page', $page)->withQueryString();
 
         $statusMap = [
             'NEW'                 => ['label' => 'Baru',     'class' => 'bg-yellow-100 text-yellow-700'],
@@ -81,7 +97,112 @@ class TicketController extends Controller
 
         $html = view('admin.tickets._mobile_list', compact('tickets', 'statusMap'))->render();
 
-        return response()->json(['html' => $html]);
+        return response()->json([
+            'html'      => $html,
+            'has_more'  => $tickets->hasMorePages(),
+            'next_page' => $tickets->currentPage() + 1,
+            'total'     => $tickets->total(),
+            'shown'     => $tickets->lastItem() ?? 0,
+        ]);
+    }
+
+    public function dataTable(Request $request)
+    {
+        $query = Ticket::query()
+            ->with(['room.unit', 'category'])
+            ->leftJoin('rooms', 'rooms.id', '=', 'tickets.room_id')
+            ->leftJoin('units', 'units.id', '=', 'rooms.unit_id')
+            ->leftJoin('report_categories', 'report_categories.id', '=', 'tickets.category_id')
+            ->select('tickets.*');
+
+        $recordsTotal = (clone $query)->count();
+
+        if ($search = $request->input('search.value')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('tickets.ticket_number', 'like', "%{$search}%")
+                  ->orWhere('tickets.title', 'like', "%{$search}%")
+                  ->orWhere('tickets.reporter_name', 'like', "%{$search}%");
+            });
+        }
+
+        $likeColumns = [
+            0 => 'tickets.ticket_number',
+            1 => 'tickets.reporter_name',
+            2 => 'tickets.title',
+        ];
+        $exactColumns = [
+            3 => 'units.id',
+            4 => 'report_categories.id',
+            5 => 'tickets.type',
+            6 => 'tickets.status',
+        ];
+
+        foreach ($likeColumns as $idx => $column) {
+            $value = $request->input("columns.{$idx}.search.value");
+            if ($value !== null && $value !== '') {
+                $query->where($column, 'like', "%{$value}%");
+            }
+        }
+
+        foreach ($exactColumns as $idx => $column) {
+            $value = $request->input("columns.{$idx}.search.value");
+            if ($value !== null && $value !== '') {
+                $query->where($column, $value);
+            }
+        }
+
+        $recordsFiltered = (clone $query)->count();
+
+        $orderColumns = [
+            0 => 'tickets.ticket_number',
+            1 => 'tickets.reporter_name',
+            2 => 'tickets.title',
+            3 => 'units.nama',
+            4 => 'report_categories.name',
+            5 => 'tickets.type',
+            6 => 'tickets.status',
+            7 => 'tickets.created_at',
+        ];
+        $orderIdx = (int) $request->input('order.0.column');
+        $orderDir = $request->input('order.0.dir', 'desc') === 'asc' ? 'asc' : 'desc';
+        if (isset($orderColumns[$orderIdx])) {
+            $query->orderBy($orderColumns[$orderIdx], $orderDir);
+        } else {
+            $query->orderBy('tickets.created_at', 'desc');
+        }
+
+        $start  = (int) $request->input('start', 0);
+        $length = (int) $request->input('length', 10);
+        if ($length < 0) {
+            $length = max($recordsFiltered, 1);
+        }
+
+        $tickets = $query->offset($start)->limit($length)->get();
+
+        $data = $tickets->map(function ($ticket) {
+            return [
+                'id'             => $ticket->id,
+                'ticket_number'  => $ticket->ticket_number,
+                'is_anonymous'   => (bool) $ticket->is_anonymous,
+                'reporter_name'  => $ticket->reporter_name,
+                'reporter_phone' => $ticket->reporter_phone,
+                'title'          => $ticket->title,
+                'unit_nama'      => $ticket->room->unit->nama ?? '-',
+                'room_name'      => $ticket->room->name ?? '-',
+                'category_name'  => $ticket->category->name ?? '-',
+                'type'           => $ticket->type,
+                'status'         => $ticket->status,
+                'created_date'   => $ticket->created_at->format('d M Y'),
+                'created_time'   => $ticket->created_at->format('H:i'),
+            ];
+        })->values();
+
+        return response()->json([
+            'draw'            => (int) $request->input('draw', 1),
+            'recordsTotal'    => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data'            => $data,
+        ]);
     }
 
     public function show(string $id)

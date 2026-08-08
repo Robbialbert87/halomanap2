@@ -24,6 +24,67 @@ $typeMap = [
 ];
 @endphp
 
+@push('styles')
+<link rel="preconnect" href="https://cdn.datatables.net">
+<link rel="stylesheet" href="https://cdn.datatables.net/3.0.1/css/dataTables.tailwindcss.min.css">
+<style>
+    .dt-container { color: #374151; }
+    .dt-container input.dt-input,
+    .dt-container select {
+        background-color: #ffffff !important;
+        color: #374151 !important;
+    }
+    .dt-container .dt-search .dt-input {
+        font-size: 13px;
+        line-height: 1.5;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        width: 260px;
+        max-width: 100%;
+        outline: none;
+    }
+    .dt-container .dt-search .dt-input::placeholder {
+        color: #9ca3af;
+        font-size: 13px;
+    }
+    .dt-container .dt-search .dt-input:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .dt-container .dt-length select {
+        font-size: 13px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+    }
+    .dt-container .dt-info {
+        font-size: 12px;
+        color: #6b7280;
+    }
+    #tickets-table thead th {
+        background-color: #f9fafb !important;
+        color: #374151 !important;
+    }
+    #tickets-table tbody tr {
+        transition: background-color 0.15s ease-in-out;
+    }
+    #tickets-table tbody tr:hover,
+    #tickets-table tbody tr:hover > td {
+        background-color: #f3f4f6 !important;
+    }
+    .dt-container .dt-paging button {
+        color: #374151 !important;
+        background-color: #ffffff !important;
+    }
+    .dt-container .dt-paging button[aria-current="page"] {
+        background-color: #eff6ff !important;
+        color: #2563eb !important;
+        font-weight: 600;
+    }
+</style>
+@endpush
+
 {{-- Flash Message --}}
 @if(session('success'))
 <div class="bg-green-50 text-green-700 p-3 rounded-lg mb-4 border border-green-200 flex items-center gap-2">
@@ -128,59 +189,14 @@ $typeMap = [
 {{-- Mobile: Ticket Cards (Gmail Inbox style) --}}
 <div class="block md:hidden mb-4" id="mobile-ticket-list">
     <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-white/30 divide-y divide-gray-100" style="background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.5) 100%);">
-    @forelse($tickets as $ticket)
-    @php
-        $statusStyle = $statusMap[$ticket->status] ?? ['label' => $ticket->status, 'class' => 'bg-gray-100 text-gray-700'];
-
-        $typeBar = match($ticket->type) {
-            'Pengaduan' => 'bg-red-500',
-            'Survei', 'Saran' => 'bg-emerald-500',
-            'Apresiasi' => 'bg-blue-500',
-            'Informasi' => 'bg-orange-500',
-            default => 'bg-gray-400',
-        };
-    @endphp
-    <div class="flex items-stretch cursor-pointer active:bg-gray-50 transition-colors" onclick="window.location='{{ route('admin.tickets.show', $ticket->id) }}'">
-        <div class="w-1 shrink-0 {{ $typeBar }}"></div>
-        <div class="flex-1 min-w-0 pl-2.5 pr-3 py-2.5">
-            <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center gap-1.5 min-w-0 flex-1">
-                    <span class="text-[10px] font-mono font-bold text-gray-500 truncate">{{ $ticket->ticket_number }}</span>
-                    <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full leading-tight {{ $statusStyle['class'] }}">{{ $statusStyle['label'] }}</span>
-                </div>
-                <span class="text-[10px] text-gray-400 whitespace-nowrap shrink-0">{{ $ticket->created_at->format('d M Y') }}</span>
-            </div>
-            <h3 class="text-[13px] font-semibold text-gray-900 leading-snug mt-0.5 line-clamp-1">{{ $ticket->title }}</h3>
-            <div class="flex items-center gap-2 mt-0.5">
-                <span class="text-[11px] text-gray-500 truncate">
-                    @if($ticket->is_anonymous)
-                        Anonim
-                    @else
-                        {{ $ticket->reporter_name }}
-                    @endif
-                    · {{ $ticket->category->name ?? '-' }}
-                </span>
-            </div>
-        </div>
-        <div class="flex flex-col items-center justify-center pr-2.5 gap-1 shrink-0">
-            <button onclick="event.stopPropagation(); confirmDelete('{{ $ticket->id }}', '{{ $ticket->ticket_number }}')" class="text-gray-300 hover:text-red-500 transition-colors p-1">
-                <i class="fa-solid fa-trash-can text-[10px]"></i>
-            </button>
-        </div>
-    </div>
-    @empty
-    <div class="text-center py-10 text-gray-400">
-        <i class="fa-regular fa-folder-open text-3xl mb-2 block"></i>
-        <span class="text-sm">Belum ada data pengaduan.</span>
-    </div>
-    @endforelse
+        @include('admin.tickets._mobile_list')
     </div>
 </div>
 
 {{-- Table (Desktop) --}}
 <div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm text-gray-600">
+    <div class="overflow-x-auto p-4">
+        <table id="tickets-table" class="w-full text-left text-sm text-gray-600">
             <thead class="bg-gray-50 text-gray-700 font-semibold border-b border-gray-100 uppercase text-xs">
                 <tr>
                     <th class="px-4 py-4">No. Tiket</th>
@@ -194,82 +210,67 @@ $typeMap = [
                     <th class="px-4 py-4 text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
-                @forelse($tickets as $ticket)
-                @php
-                    $typeLabel = $ticket->type === 'Saran' ? 'Survei' : $ticket->type;
-                    $statusStyle = $statusMap[$ticket->status] ?? ['label' => $ticket->status, 'class' => 'bg-gray-100 text-gray-700'];
-                    $typeClass   = $typeMap[$ticket->type] ?? 'bg-gray-100 text-gray-700';
-                @endphp
-                <tr class="hover:bg-gray-50/50 transition-colors">
-                    <td class="px-4 py-3">
-                        <span class="font-mono font-semibold text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded">{{ $ticket->ticket_number }}</span>
-                    </td>
-                    <td class="px-4 py-3">
-                        @if($ticket->is_anonymous)
-                            <span class="flex items-center gap-1 text-gray-400 text-xs italic"><i class="fa-solid fa-user-secret"></i> Anonim</span>
-                        @else
-                            <div class="font-medium text-gray-800 text-xs">{{ $ticket->reporter_name }}</div>
-                            <div class="text-gray-400 text-xs">{{ $ticket->reporter_phone }}</div>
-                        @endif
-                    </td>
-                    <td class="px-4 py-3 max-w-[180px]">
-                        <p class="font-medium text-gray-800 text-xs truncate" title="{{ $ticket->title }}">{{ $ticket->title }}</p>
-                    </td>
-                    <td class="px-4 py-3">
-                        <div class="text-xs font-semibold text-gray-800">{{ $ticket->room->unit->nama ?? '-' }}</div>
-                        <div class="text-xs text-gray-500">{{ $ticket->room->name ?? '-' }}</div>
-                    </td>
-                    <td class="px-4 py-3">
-                        <span class="text-xs text-gray-700">{{ $ticket->category->name ?? '-' }}</span>
-                    </td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex text-xs font-semibold px-2 py-0.5 rounded-full {{ $typeClass }}">{{ $typeLabel }}</span>
-                    </td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex text-xs font-semibold px-2.5 py-1 rounded-full {{ $statusStyle['class'] }}">{{ $statusStyle['label'] }}</span>
-                    </td>
-                    <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{{ $ticket->created_at->format('d M Y') }}<br>{{ $ticket->created_at->format('H:i') }}</td>
-                    <td class="px-4 py-3 text-center">
-                        <div class="flex items-center justify-center gap-1.5">
-                            <a href="{{ route('admin.tickets.show', $ticket->id) }}" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">
-                                <i class="fa-solid fa-eye mr-1"></i> Detail
-                            </a>
-                            <button onclick="confirmDelete('{{ $ticket->id }}', '{{ $ticket->ticket_number }}')"
-                                class="bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                @empty
+            <tbody></tbody>
+            <tfoot class="bg-gray-50 border-t border-gray-100">
                 <tr>
-                    <td colspan="9" class="px-6 py-12 text-center text-gray-400">
-                        <i class="fa-regular fa-folder-open text-4xl mb-3 block"></i>
-                        Belum ada data pengaduan.
-                    </td>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th class="px-3 py-2 align-top">
+                        <select data-column="3" class="w-full border border-gray-300 rounded-lg text-xs px-2 py-1.5 text-gray-700 bg-white focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Semua Unit</option>
+                            @foreach($units as $unit)
+                            <option value="{{ $unit->id }}">{{ $unit->nama }}</option>
+                            @endforeach
+                        </select>
+                    </th>
+                    <th class="px-3 py-2 align-top">
+                        <select data-column="4" class="w-full border border-gray-300 rounded-lg text-xs px-2 py-1.5 text-gray-700 bg-white focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Semua Kategori</option>
+                            @foreach($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </th>
+                    <th class="px-3 py-2 align-top">
+                        <select data-column="5" class="w-full border border-gray-300 rounded-lg text-xs px-2 py-1.5 text-gray-700 bg-white focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Semua Jenis</option>
+                            <option value="Pengaduan">Pengaduan</option>
+                            <option value="Survei">Survei</option>
+                            <option value="Apresiasi">Apresiasi</option>
+                            <option value="Informasi">Informasi</option>
+                        </select>
+                    </th>
+                    <th class="px-3 py-2 align-top">
+                        <select data-column="6" class="w-full border border-gray-300 rounded-lg text-xs px-2 py-1.5 text-gray-700 bg-white focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Semua Status</option>
+                            <option value="NEW">Baru</option>
+                            <option value="TERVERIFIKASI">Terverifikasi</option>
+                            <option value="IN_PROGRESS">Diproses</option>
+                            <option value="DONE">Selesai</option>
+                            <option value="REJECTED">Ditolak</option>
+                        </select>
+                    </th>
+                    <th></th>
+                    <th></th>
                 </tr>
-                @endforelse
-            </tbody>
+            </tfoot>
         </table>
     </div>
+</div>
 
-    {{-- Pagination --}}
-    @if($tickets->hasPages())
-    <div class="px-6 py-4 border-t border-gray-100">
-        {{ $tickets->links() }}
+{{-- Mobile Load More --}}
+<div class="block md:hidden mt-4" id="mobile-load-more">
+    <div class="flex items-center justify-center text-xs text-gray-400 mb-2">
+        <span id="mobile-ticket-count">Menampilkan <b>{{ $tickets->total() > 0 ? $tickets->lastItem() : 0 }}</b> dari <b>{{ $tickets->total() }}</b> pengaduan</span>
     </div>
+    @if($tickets->hasMorePages())
+    <button id="mobile-load-more-btn" type="button"
+        class="w-full bg-white rounded-2xl border border-gray-200 text-blue-600 font-semibold py-3 text-[13px] transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2">
+        <i class="fa-solid fa-arrow-down text-xs"></i> Muat Lebih Banyak
+    </button>
     @endif
 </div>
-
-
-
-{{-- Mobile Pagination --}}
-@if($tickets->hasPages())
-<div class="block md:hidden mt-4">
-    {{ $tickets->links() }}
-</div>
-@endif
 
 {{-- Modal Konfirmasi Hapus (bottom sheet mobile, centered desktop) --}}
 <div id="delete-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden items-end md:items-center justify-center">
@@ -363,5 +364,178 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 </script>
+
+@push('scripts')
+<script src="https://cdn.datatables.net/3.0.1/js/dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/3.0.1/js/dataTables.tailwindcss.min.js"></script>
+<script>
+(function () {
+    const statusMap = @json($statusMap);
+    const typeMap = @json($typeMap);
+
+    function esc(str) {
+        return String(str ?? '').replace(/[&<>"']/g, function (m) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+        });
+    }
+
+    const table = new DataTable('#tickets-table', {
+        serverSide: true,
+        processing: true,
+        ajax: {
+            url: '{{ route('admin.tickets.data-table') }}'
+        },
+        order: [[7, 'desc']],
+        pageLength: 10,
+        lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, 'Semua']],
+        columns: [
+            {
+                data: 'ticket_number',
+                render: function (data, type, row) {
+                    return '<span class="font-mono font-semibold text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded">' + esc(data) + '</span>';
+                }
+            },
+            {
+                data: 'reporter_name',
+                render: function (data, type, row) {
+                    if (row.is_anonymous) {
+                        return '<span class="flex items-center gap-1 text-gray-400 text-xs italic"><i class="fa-solid fa-user-secret"></i> Anonim</span>';
+                    }
+                    return '<div class="font-medium text-gray-800 text-xs">' + esc(row.reporter_name) + '</div>' +
+                           '<div class="text-gray-400 text-xs">' + esc(row.reporter_phone) + '</div>';
+                }
+            },
+            {
+                data: 'title',
+                render: function (data, type, row) {
+                    return '<p class="font-medium text-gray-800 text-xs truncate" style="max-width:180px" title="' + esc(row.title) + '">' + esc(row.title) + '</p>';
+                }
+            },
+            {
+                data: 'unit_nama',
+                render: function (data, type, row) {
+                    return '<div class="text-xs font-semibold text-gray-800">' + esc(row.unit_nama) + '</div>' +
+                           '<div class="text-xs text-gray-500">' + esc(row.room_name) + '</div>';
+                }
+            },
+            {
+                data: 'category_name',
+                render: function (data, type, row) {
+                    return '<span class="text-xs text-gray-700">' + esc(row.category_name) + '</span>';
+                }
+            },
+            {
+                data: 'type',
+                render: function (data, type, row) {
+                    const label = row.type === 'Saran' ? 'Survei' : row.type;
+                    const cls = typeMap[row.type] || 'bg-gray-100 text-gray-700';
+                    return '<span class="inline-flex text-xs font-semibold px-2 py-0.5 rounded-full ' + cls + '">' + label + '</span>';
+                }
+            },
+            {
+                data: 'status',
+                render: function (data, type, row) {
+                    const s = statusMap[row.status] || { label: row.status, class: 'bg-gray-100 text-gray-700' };
+                    return '<span class="inline-flex text-xs font-semibold px-2.5 py-1 rounded-full ' + s.class + '">' + s.label + '</span>';
+                }
+            },
+            {
+                data: 'created_date',
+                render: function (data, type, row) {
+                    return '<span class="whitespace-nowrap text-xs text-gray-500">' + esc(row.created_date) + '<br>' + esc(row.created_time) + '</span>';
+                }
+            },
+            {
+                data: 'id',
+                orderable: false,
+                searchable: false,
+                render: function (data, type, row) {
+                    return '<div class="flex items-center justify-center gap-1.5">' +
+                        '<a href="/admin/tickets/' + row.id + '" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"><i class="fa-solid fa-eye mr-1"></i> Detail</a>' +
+                        '<button onclick="confirmDelete(' + row.id + ', \'' + esc(row.ticket_number) + '\')" class="bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"><i class="fa-solid fa-trash"></i></button>' +
+                        '</div>';
+                }
+            }
+        ],
+        layout: {
+            topStart: 'pageLength',
+            topEnd: 'search',
+            bottomStart: 'info',
+            bottomEnd: 'paging'
+        },
+        language: {
+            search: '',
+            searchPlaceholder: 'Cari no. tiket / judul / pelapor...',
+            lengthMenu: 'Tampilkan _MENU_',
+            info: 'Menampilkan _START_–_END_ dari _TOTAL_ pengaduan',
+            infoEmpty: 'Tidak ada data',
+            infoFiltered: '(difilter dari _MAX_ total)',
+            zeroRecords: 'Tidak ada pengaduan yang cocok.',
+            emptyTable: 'Belum ada data pengaduan.',
+            loadingRecords: 'Memuat...',
+            processing: 'Memuat...',
+            paginate: { first: '«', last: '»', next: '›', previous: '‹' }
+        }
+    });
+
+    document.querySelectorAll('#tickets-table tfoot select').forEach(function (sel) {
+        sel.addEventListener('change', function () {
+            table.column(parseInt(sel.dataset.column, 10)).search(sel.value).draw();
+        });
+    });
+
+    window.addEventListener('resize', function () {
+        if (window.innerWidth >= 768) table.columns.adjust();
+    });
+
+    const loadMoreBtn = document.getElementById('mobile-load-more-btn');
+    if (loadMoreBtn) {
+        let page = 1;
+        const form = document.querySelector('form[action="{{ route('admin.tickets.index') }}"]');
+
+        loadMoreBtn.addEventListener('click', function () {
+            const btn = loadMoreBtn;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xs"></i> Memuat...';
+
+            const params = new URLSearchParams({ page: page + 1 });
+            if (form) {
+                ['search', 'status', 'type', 'unit_id'].forEach(function (name) {
+                    const el = form.querySelector('[name="' + name + '"]');
+                    if (el && el.value) params.set(name, el.value);
+                });
+            }
+
+            fetch('{{ route('admin.tickets.mobile-search') }}?' + params.toString())
+                .then(function (r) { return r.json(); })
+                .then(function (res) {
+                    const list = document.getElementById('mobile-ticket-list');
+                    if (list) {
+                        const wrap = list.querySelector('div') || list;
+                        wrap.insertAdjacentHTML('beforeend', res.html);
+                    }
+                    page = res.next_page - 1;
+
+                    const countEl = document.getElementById('mobile-ticket-count');
+                    if (countEl) {
+                        countEl.innerHTML = 'Menampilkan <b>' + res.shown + '</b> dari <b>' + res.total + '</b> pengaduan';
+                    }
+
+                    if (!res.has_more) {
+                        btn.remove();
+                    } else {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-arrow-down text-xs"></i> Muat Lebih Banyak';
+                    }
+                })
+                .catch(function () {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-arrow-down text-xs"></i> Muat Lebih Banyak';
+                });
+        });
+    }
+})();
+</script>
+@endpush
 
 @endsection

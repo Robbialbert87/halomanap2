@@ -120,6 +120,9 @@ Route::middleware('auth')->group(function () {
 
     // ── ADMIN ─────────────────────────────────────────────────────────────────
     Route::prefix('admin')->name('admin.')->group(function () {
+        // DataTables server-side (harus sebelum resource agar tidak ketimpa tickets/{ticket})
+        Route::get('tickets/data-table', [App\Http\Controllers\Admin\TicketController::class, 'dataTable'])->name('tickets.data-table');
+
         Route::resource('tickets', App\Http\Controllers\Admin\TicketController::class);
 
         // Live search mobile
