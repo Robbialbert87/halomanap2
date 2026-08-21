@@ -102,6 +102,10 @@ services:
     container_name: halomanap-nginx
     restart: unless-stopped
     ports:
+      # Port 80 host LANGSUNG ke portal — dipakai extension (fallback
+      # http://103.147.236.138/rs) & DNS internal dev.rsudkotajambi.id -> IP ini.
+      # Sebelumnya kosong -> fallback extension tak pernah bisa jalan di LAN.
+      - "80:80"
       - "${HTTP_PORT:-8080}:80"
       - "${HTTPS_PORT:-8443}:443"
       # HTTPS standar (port 443 host) untuk domain dev — Basic Auth /ttd-admin/ dll.
