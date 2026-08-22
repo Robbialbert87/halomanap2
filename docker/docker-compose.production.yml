@@ -62,6 +62,10 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
+    networks:
+      # default = internal (db/queue di sini); platform_gateway = ingress saja.
+      - default
+      - gateway
 
   queue:
     build:
@@ -97,33 +101,6 @@ services:
       db:
         condition: service_healthy
 
-  nginx:
-    image: nginx:1.27-alpine
-    container_name: halomanap-nginx
-    restart: unless-stopped
-    ports:
-      # Port 80 host LANGSUNG ke portal — dipakai extension (fallback
-      # http://103.147.236.138/rs) & DNS internal dev.rsudkotajambi.id -> IP ini.
-      # Sebelumnya kosong -> fallback extension tak pernah bisa jalan di LAN.
-      - "80:80"
-      - "${HTTP_PORT:-8080}:80"
-      - "${HTTPS_PORT:-8443}:443"
-      # HTTPS standar (port 443 host) untuk domain dev — Basic Auth /ttd-admin/ dll.
-      - "443:443"
-    volumes:
-      # Reverse-proxy CONFIG dipindah ke repositori infrastructure/ (Phase 2).
-      # Sumber konfigurasi proxy TIDAK lagi di dalam repo aplikasi.
-      # Path relatif dari halomanap/docker/ -> ../../infrastructure/reverse-proxy/halo-manap
-      - ../../infrastructure/reverse-proxy/halo-manap/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ../../infrastructure/reverse-proxy/halo-manap/conf.d:/etc/nginx/conf.d:ro
-      - ../ssl-cert:/etc/nginx/ssl:ro
-      - ../ssl-cert/www:/var/www/acme:ro
-      - ../devpanel:/var/www/devpanel:ro
-      - ../public:/var/www/html/public:ro
-      - ../storage:/var/www/html/storage:ro
-    depends_on:
-      app:
-        condition: service_healthy
 
   db:
     image: mariadb:11.8
@@ -146,3 +123,10 @@ services:
 
 volumes:
   db_data:
+
+networks:
+  # Gateway portal kini stack terpisah (infrastructure/gateway).
+  # default (implisit) tetap jadi network internal app/db/queue.
+  gateway:
+    name: platform_gateway
+    external: true
