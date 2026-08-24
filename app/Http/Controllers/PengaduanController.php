@@ -9,6 +9,7 @@ use App\Models\ReportCategory;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Jobs\SendWhatsAppNotification;
+use App\Support\ImageCompressor;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -72,8 +73,14 @@ class PengaduanController extends Controller
                 if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif', 'pdf'])) {
                     $ext = 'jpg';
                 }
-                $filename = Str::random(40) . '.' . $ext;
-                $attachmentPath = $file->storeAs('attachments', $filename, 'public');
+
+                $mime = strtolower($file->getMimeType() ?? '');
+                if (in_array($mime, ['image/jpeg', 'image/jpg', 'image/webp'], true)) {
+                    $attachmentPath = ImageCompressor::compress($file, 'attachments');
+                } else {
+                    $filename = Str::random(40) . '.' . $ext;
+                    $attachmentPath = $file->storeAs('attachments', $filename, 'public');
+                }
             } catch (\Throwable $e) {
                 return back()->withErrors(['attachment' => 'Gagal mengupload file: ' . $e->getMessage()])->withInput();
             }

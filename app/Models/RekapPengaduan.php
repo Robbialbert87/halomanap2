@@ -14,6 +14,7 @@ class RekapPengaduan extends Model
         'via_pengaduan',
         'kategori',
         'keluhan',
+        'bukti',
         'tindak_lanjut',
         'status',
         'tanggal_selesai',

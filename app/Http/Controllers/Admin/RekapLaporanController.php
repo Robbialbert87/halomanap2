@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\RekapPengaduan;
+use App\Support\ImageCompressor;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class RekapLaporanController extends Controller
 {
@@ -49,12 +51,22 @@ class RekapLaporanController extends Controller
             'via_pengaduan'   => 'required|string|max:255',
             'kategori'        => 'required|in:Tenaga Kesehatan,Sarana & Prasarana,Keluhan Lainnya,Ketersediaan Obat',
             'keluhan'         => 'required|string',
+            'bukti'           => 'nullable|file|mimes:jpg,jpeg,webp',
             'tindak_lanjut'   => 'nullable|string',
             'status'          => 'required|in:Baru,Diproses,Selesai',
             'tanggal_selesai' => 'nullable|date',
         ]);
 
         $validated['user_id'] = auth()->id();
+        unset($validated['bukti']);
+
+        if ($request->hasFile('bukti')) {
+            try {
+                $validated['bukti'] = ImageCompressor::compress($request->file('bukti'), 'bukti-rekap');
+            } catch (\Throwable $e) {
+                return back()->withErrors(['bukti' => $e->getMessage()])->withInput();
+            }
+        }
 
         RekapPengaduan::create($validated);
 
@@ -75,10 +87,31 @@ class RekapLaporanController extends Controller
             'via_pengaduan'   => 'required|string|max:255',
             'kategori'        => 'required|in:Tenaga Kesehatan,Sarana & Prasarana,Keluhan Lainnya,Ketersediaan Obat',
             'keluhan'         => 'required|string',
+            'bukti'           => 'nullable|file|mimes:jpg,jpeg,webp',
             'tindak_lanjut'   => 'nullable|string',
             'status'          => 'required|in:Baru,Diproses,Selesai',
             'tanggal_selesai' => 'nullable|date',
         ]);
+
+        unset($validated['bukti']);
+
+        if ($request->boolean('hapus_bukti') && $rekapLaporan->bukti) {
+            Storage::disk('public')->delete($rekapLaporan->bukti);
+            $validated['bukti'] = null;
+        }
+
+        if ($request->hasFile('bukti')) {
+            try {
+                $newPath = ImageCompressor::compress($request->file('bukti'), 'bukti-rekap');
+            } catch (\Throwable $e) {
+                return back()->withErrors(['bukti' => $e->getMessage()])->withInput();
+            }
+
+            if ($rekapLaporan->bukti) {
+                Storage::disk('public')->delete($rekapLaporan->bukti);
+            }
+            $validated['bukti'] = $newPath;
+        }
 
         $rekapLaporan->update($validated);
 
@@ -94,6 +127,10 @@ class RekapLaporanController extends Controller
     {
         $bulan = intval($request->query('bulan', now()->month));
         $tahun = intval($request->query('tahun', now()->year));
+
+        if ($rekapLaporan->bukti) {
+            Storage::disk('public')->delete($rekapLaporan->bukti);
+        }
 
         $rekapLaporan->delete();
 
@@ -126,7 +163,11 @@ class RekapLaporanController extends Controller
             $k => $data->where('kategori', $k)->count(),
         ])->toArray();
 
-        $namaBulan = Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F');
+        $namaBulan = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
+        ][$bulan] ?? Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F');
 
         $values = [
             $chartData['Tenaga Kesehatan'] ?? 0,
@@ -211,9 +252,53 @@ class RekapLaporanController extends Controller
         }
 
         $pdf = Pdf::loadView('admin.rekap-laporan.pdf', compact('chartData', 'bulan', 'tahun', 'namaBulan', 'chartImage'))
-            ->setPaper('a4', 'portrait');
+            ->setPaper('folio', 'portrait')
+            ->setOptions(['isPhpEnabled' => true]);
+
+        $this->registerArialFont($pdf);
 
         $filename = 'rekap-laporan-inm-' . $tahun . '-' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '.pdf';
         return $pdf->download($filename)->header('Cache-Control', 'no-store, no-cache, must-revalidate');
+    }
+
+    private function registerArialFont($pdf): void
+    {
+        try {
+            $dompdf = $pdf->getDomPDF();
+            $fontMetrics = $dompdf->getFontMetrics();
+
+            $fontDirs = array_values(array_filter([
+                'C:/Windows/Fonts',
+                '/usr/share/fonts/truetype/msttcorefonts',
+            ], fn($dir) => is_dir($dir)));
+
+            if ($fontDirs === []) {
+                return;
+            }
+
+            $options = $dompdf->getOptions();
+            $chroot = (array) $options->getChroot();
+            $options->setChroot(array_unique(array_merge($chroot, $fontDirs)));
+
+            $variants = [
+                [['family' => 'arial', 'style' => 'normal',      'weight' => 'normal'], 'arial.ttf'],
+                [['family' => 'arial', 'style' => 'bold',        'weight' => 'bold'],   'arialbd.ttf'],
+                [['family' => 'arial', 'style' => 'italic',      'weight' => 'normal'], 'ariali.ttf'],
+                [['family' => 'arial', 'style' => 'bold_italic', 'weight' => 'bold'],   'arialbi.ttf'],
+            ];
+
+            foreach ($variants as [$definition, $filename]) {
+                foreach ($fontDirs as $dir) {
+                    $path = str_replace('\\', '/', $dir . '/' . $filename);
+                    if (is_file($path)) {
+                        // Windows: file://C:/... | Linux: file:///usr/...
+                        $fontMetrics->registerFont($definition, 'file://' . $path);
+                        break;
+                    }
+                }
+            }
+        } catch (\Throwable) {
+            // fallback ke font bawaan jika Arial tidak ditemukan
+        }
     }
 }

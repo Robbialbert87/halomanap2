@@ -222,6 +222,12 @@ $iconBg = [
                                 class="text-blue-400 hover:text-blue-600 transition-colors" title="Preview">
                                 <i class="fa-solid fa-eye text-xs"></i>
                             </button>
+                            @if($item->bukti)
+                            <a href="{{ asset('storage/' . $item->bukti) }}" target="_blank"
+                                class="text-emerald-400 hover:text-emerald-600 transition-colors" title="Lihat Bukti">
+                                <i class="fa-solid fa-paperclip text-xs"></i>
+                            </a>
+                            @endif
                             <button type="button" onclick='openEdit(@json($item))'
                                 class="text-amber-400 hover:text-amber-600 transition-colors" title="Edit">
                                 <i class="fa-solid fa-pen-to-square text-xs"></i>
@@ -260,7 +266,7 @@ $iconBg = [
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
-        <form action="{{ route('admin.rekap-laporan.store') }}" method="POST" class="p-6 space-y-4">
+        <form action="{{ route('admin.rekap-laporan.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
             @csrf
             <input type="hidden" name="bulan" value="{{ $bulan }}">
             <input type="hidden" name="tahun" value="{{ $tahun }}">
@@ -316,6 +322,18 @@ $iconBg = [
                 <label class="block text-xs font-semibold text-gray-600 mb-1">Keluhan/Pengaduan <span class="text-red-500">*</span></label>
                 <textarea name="keluhan" rows="3" placeholder="Deskripsi keluhan atau pengaduan..." required
                     class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-violet-500 focus:border-violet-500 block p-2.5 resize-none"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Upload Bukti <span class="text-[10px] font-normal text-gray-400">(opsional — JPG/WebP, otomatis dikompres)</span></label>
+                <label class="flex items-center gap-3 cursor-pointer bg-white/70 border border-dashed border-gray-300 rounded-xl p-3 hover:border-violet-400 hover:bg-violet-50/40 transition-colors">
+                    <input type="file" name="bukti" accept=".jpg,.jpeg,.webp,image/jpeg,image/webp" class="hidden"
+                        onchange="document.getElementById('buktiFileName').textContent = this.files.length ? this.files[0].name : 'Pilih file gambar (JPG/WebP)'">
+                    <span class="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-cloud-arrow-up text-violet-500 text-sm"></i>
+                    </span>
+                    <span id="buktiFileName" class="text-xs text-gray-500 truncate">Klik untuk pilih file gambar (JPG/WebP)</span>
+                </label>
             </div>
 
             <div>
@@ -407,6 +425,16 @@ $iconBg = [
                 <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tindak Lanjut</p>
                 <p id="prevTindakLanjut" class="text-sm text-gray-700 bg-gray-50 rounded-xl p-3">-</p>
             </div>
+            <div id="prevBuktiWrap" class="hidden">
+                <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Bukti</p>
+                <a id="prevBuktiLink" href="#" target="_blank" class="block group relative">
+                    <img id="prevBuktiImg" src="" alt="Bukti pengaduan"
+                        class="w-full max-h-56 object-contain rounded-xl border border-gray-100 bg-gray-50">
+                    <span class="absolute inset-0 flex items-center justify-center rounded-xl bg-black/0 group-hover:bg-black/20 transition-colors">
+                        <i class="fa-solid fa-up-right-and-down-left-from-center text-white opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                    </span>
+                </a>
+            </div>
             <div>
                 <button onclick="document.getElementById('previewModal').classList.add('hidden')"
                     class="w-full bg-white/70 border border-gray-200 text-gray-600 font-medium rounded-xl px-5 py-2.5 text-sm hover:bg-gray-50 active:scale-[0.98] transition-all">
@@ -431,7 +459,7 @@ $iconBg = [
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
-        <form id="editForm" method="POST" class="p-6 space-y-4">
+        <form id="editForm" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
             @csrf
             @method('PUT')
             <input type="hidden" name="bulan" value="{{ $bulan }}">
@@ -488,6 +516,32 @@ $iconBg = [
                 <label class="block text-xs font-semibold text-gray-600 mb-1">Keluhan/Pengaduan <span class="text-red-500">*</span></label>
                 <textarea name="keluhan" id="editKeluhan" rows="3" placeholder="Deskripsi keluhan atau pengaduan..." required
                     class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-amber-500 focus:border-amber-500 block p-2.5 resize-none"></textarea>
+            </div>
+
+            <div id="editBuktiCurrentWrap" class="hidden bg-gray-50 rounded-xl p-3">
+                <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Bukti Saat Ini</p>
+                <div class="flex items-center justify-between gap-3">
+                    <a id="editBuktiLink" href="#" target="_blank"
+                        class="text-blue-500 hover:text-blue-700 text-xs font-medium flex items-center gap-1.5">
+                        <i class="fa-solid fa-paperclip"></i> Lihat Bukti
+                    </a>
+                    <label class="inline-flex items-center gap-1.5 text-xs text-red-500 cursor-pointer">
+                        <input type="checkbox" name="hapus_bukti" value="1" class="rounded border-gray-300 text-red-500 focus:ring-red-400">
+                        Hapus bukti
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Upload Bukti <span class="text-[10px] font-normal text-gray-400">(opsional — JPG/WebP, otomatis dikompres)</span></label>
+                <label class="flex items-center gap-3 cursor-pointer bg-white/70 border border-dashed border-gray-300 rounded-xl p-3 hover:border-amber-400 hover:bg-amber-50/40 transition-colors">
+                    <input type="file" name="bukti" id="editBuktiInput" accept=".jpg,.jpeg,.webp,image/jpeg,image/webp" class="hidden"
+                        onchange="document.getElementById('editBuktiFileName').textContent = this.files.length ? this.files[0].name : 'Ganti dengan file baru (opsional)'">
+                    <span class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-cloud-arrow-up text-amber-500 text-sm"></i>
+                    </span>
+                    <span id="editBuktiFileName" class="text-xs text-gray-500 truncate">Klik untuk ganti file gambar (JPG/WebP)</span>
+                </label>
             </div>
 
             <div>
@@ -575,6 +629,19 @@ function openPreview(item) {
     document.getElementById('prevStatus').textContent = statusText;
     document.getElementById('prevKeluhan').textContent = item.keluhan || '-';
     document.getElementById('prevTindakLanjut').textContent = item.tindak_lanjut || '-';
+
+    const buktiWrap = document.getElementById('prevBuktiWrap');
+    if (item.bukti) {
+        const url = '/storage/' + item.bukti;
+        document.getElementById('prevBuktiImg').src = url;
+        document.getElementById('prevBuktiLink').href = url;
+        buktiWrap.classList.remove('hidden');
+    } else {
+        document.getElementById('prevBuktiImg').src = '';
+        document.getElementById('prevBuktiLink').href = '#';
+        buktiWrap.classList.add('hidden');
+    }
+
     document.getElementById('previewModal').classList.remove('hidden');
 }
 
@@ -587,6 +654,19 @@ function openEdit(item) {
     document.getElementById('editKategori').value = item.kategori || '';
     document.getElementById('editKeluhan').value = item.keluhan || '';
     document.getElementById('editTindakLanjut').value = item.tindak_lanjut || '';
+
+    const editBuktiWrap = document.getElementById('editBuktiCurrentWrap');
+    if (item.bukti) {
+        document.getElementById('editBuktiLink').href = '/storage/' + item.bukti;
+        editBuktiWrap.querySelector('input[name="hapus_bukti"]').checked = false;
+        editBuktiWrap.classList.remove('hidden');
+    } else {
+        editBuktiWrap.classList.add('hidden');
+    }
+
+    const editBuktiInput = document.getElementById('editBuktiInput');
+    editBuktiInput.value = '';
+    document.getElementById('editBuktiFileName').textContent = 'Klik untuk ganti file gambar (JPG/WebP)';
     document.getElementById('editStatus').value = item.status || 'Baru';
     document.getElementById('editTanggalSelesai').value = item.tanggal_selesai ? item.tanggal_selesai.substring(0, 10) : '{{ date('Y-m-d') }}';
     toggleTanggalSelesaiEdit(document.getElementById('editStatus'));
