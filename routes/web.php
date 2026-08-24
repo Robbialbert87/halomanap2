@@ -158,6 +158,7 @@ Route::middleware('auth')->group(function () {
         // Rekap Laporan Bulanan
         Route::get('rekap-laporan', [App\Http\Controllers\Admin\RekapLaporanController::class, 'index'])->name('rekap-laporan');
         Route::get('rekap-laporan/export-pdf', [App\Http\Controllers\Admin\RekapLaporanController::class, 'exportPdf'])->name('rekap-laporan.export-pdf');
+        Route::get('rekap-laporan/export-pdf-bulanan', [App\Http\Controllers\Admin\RekapLaporanController::class, 'exportPdfBulanan'])->name('rekap-laporan.export-pdf-bulanan');
         Route::post('rekap-laporan', [App\Http\Controllers\Admin\RekapLaporanController::class, 'store'])->name('rekap-laporan.store');
         Route::put('rekap-laporan/{rekapLaporan}', [App\Http\Controllers\Admin\RekapLaporanController::class, 'update'])->name('rekap-laporan.update');
         Route::delete('rekap-laporan/{rekapLaporan}', [App\Http\Controllers\Admin\RekapLaporanController::class, 'destroy'])->name('rekap-laporan.destroy');

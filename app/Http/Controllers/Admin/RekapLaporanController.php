@@ -163,11 +163,7 @@ class RekapLaporanController extends Controller
             $k => $data->where('kategori', $k)->count(),
         ])->toArray();
 
-        $namaBulan = [
-            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
-            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
-            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
-        ][$bulan] ?? Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F');
+        $namaBulan = $this->namaBulanIndo($bulan);
 
         $values = [
             $chartData['Tenaga Kesehatan'] ?? 0,
@@ -259,6 +255,53 @@ class RekapLaporanController extends Controller
 
         $filename = 'rekap-laporan-inm-' . $tahun . '-' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '.pdf';
         return $pdf->download($filename)->header('Cache-Control', 'no-store, no-cache, must-revalidate');
+    }
+
+    public function exportPdfBulanan(Request $request)
+    {
+        $bulan = intval($request->input('bulan', now()->month));
+        $tahun = intval($request->input('tahun', now()->year));
+
+        $awal = Carbon::createFromDate($tahun, $bulan, 1)->startOfMonth()->toDateString();
+        $akhir = Carbon::createFromDate($tahun, $bulan, 1)->endOfMonth()->toDateString();
+
+        $data = RekapPengaduan::where('tanggal', '>=', $awal)
+            ->where('tanggal', '<=', $akhir)
+            ->orderBy('tanggal')
+            ->orderBy('id')
+            ->get();
+
+        $namaBulan = $this->namaBulanIndo($bulan);
+
+        $buktiImages = [];
+        foreach ($data as $item) {
+            if ($item->bukti && Storage::disk('public')->exists($item->bukti)) {
+                $mime = strtolower(pathinfo($item->bukti, PATHINFO_EXTENSION)) === 'webp'
+                    ? 'image/webp'
+                    : 'image/jpeg';
+                $buktiImages[$item->id] = 'data:' . $mime . ';base64,' . base64_encode(Storage::disk('public')->get($item->bukti));
+            }
+        }
+
+        $total = $data->count();
+
+        $pdf = Pdf::loadView('admin.rekap-laporan.pdf-bulanan', compact('data', 'buktiImages', 'total', 'bulan', 'tahun', 'namaBulan'))
+            ->setPaper('folio', 'portrait')
+            ->setOptions(['isPhpEnabled' => true]);
+
+        $this->registerArialFont($pdf);
+
+        $filename = 'rekap-pengaduan-' . $tahun . '-' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '.pdf';
+        return $pdf->download($filename)->header('Cache-Control', 'no-store, no-cache, must-revalidate');
+    }
+
+    private function namaBulanIndo(int $bulan): string
+    {
+        return [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
+        ][$bulan] ?? '';
     }
 
     private function registerArialFont($pdf): void

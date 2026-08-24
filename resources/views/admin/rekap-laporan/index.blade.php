@@ -71,6 +71,10 @@
             class="bg-gradient-to-br from-red-500 to-red-700 text-white font-semibold rounded-xl px-5 py-2.5 text-sm shadow-md shadow-red-200/50 hover:shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-file-pdf"></i> Export PDF INM
         </a>
+        <a href="{{ route('admin.rekap-laporan.export-pdf-bulanan', ['bulan' => $bulan, 'tahun' => $tahun]) }}"
+            class="bg-gradient-to-br from-blue-500 to-blue-700 text-white font-semibold rounded-xl px-5 py-2.5 text-sm shadow-md shadow-blue-200/50 hover:shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-file-lines"></i> Report PDF Bulanan
+        </a>
     </div>
     @endif
 </div>
