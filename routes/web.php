@@ -155,6 +155,13 @@ Route::middleware('auth')->group(function () {
         Route::get('laporan', [App\Http\Controllers\Admin\LaporanController::class, 'index'])->name('laporan');
         Route::get('laporan/export-pdf', [App\Http\Controllers\Admin\LaporanController::class, 'exportPdf'])->name('laporan.export-pdf');
 
+        // Rekap Laporan Bulanan
+        Route::get('rekap-laporan', [App\Http\Controllers\Admin\RekapLaporanController::class, 'index'])->name('rekap-laporan');
+        Route::get('rekap-laporan/export-pdf', [App\Http\Controllers\Admin\RekapLaporanController::class, 'exportPdf'])->name('rekap-laporan.export-pdf');
+        Route::post('rekap-laporan', [App\Http\Controllers\Admin\RekapLaporanController::class, 'store'])->name('rekap-laporan.store');
+        Route::put('rekap-laporan/{rekapLaporan}', [App\Http\Controllers\Admin\RekapLaporanController::class, 'update'])->name('rekap-laporan.update');
+        Route::delete('rekap-laporan/{rekapLaporan}', [App\Http\Controllers\Admin\RekapLaporanController::class, 'destroy'])->name('rekap-laporan.destroy');
+
         // Profil
         Route::get('profil', [App\Http\Controllers\Admin\ProfilController::class, 'index'])->name('profil');
         Route::post('profil/password', [App\Http\Controllers\Admin\ProfilController::class, 'updatePassword'])->name('profil.password');
