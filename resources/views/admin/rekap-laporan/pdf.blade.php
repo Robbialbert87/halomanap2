@@ -274,13 +274,13 @@
         <div class="caption">Grafik 1. Rekapitulasi jumlah komplain per kategori periode {{ strtoupper($namaBulan) }} {{ $tahun }}</div>
     </div>
     @endif
-
-    <div class="sub-bab">D. Analisis Capaian</div>
 </div>
 
-{{-- ══════════ BAB V ══════════ --}}
+{{-- ══════════ HALAMAN D + E ══════════ --}}
 <div class="bab">
-    <div class="judul-bab">Bab V: Rencana Tindak Lanjut (RTL)</div>
+    <div class="sub-bab">D. Analisis Capaian</div>
+    <div style="height: 40px;"></div>
+    <div class="sub-bab">E. Rencana Tindak Lanjut</div>
 </div>
 
 {{-- ── Nomor halaman (dievaluasi DomPDF per halaman) ── --}}
