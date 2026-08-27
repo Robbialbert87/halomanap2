@@ -152,6 +152,10 @@ class RekapLaporanController extends Controller
             ->where('tanggal', '<=', $akhir)
             ->get();
 
+        $selesai = $data->where('status', 'Selesai')->count();
+        $totalData = $data->count();
+        $persentase = $totalData > 0 ? round(($selesai / $totalData) * 100, 1) : 0;
+
         $kategoriLabels = [
             'Tenaga Kesehatan',
             'Sarana & Prasarana',
@@ -247,7 +251,7 @@ class RekapLaporanController extends Controller
             $chartImage = 'data:image/png;base64,' . base64_encode($imageData);
         }
 
-        $pdf = Pdf::loadView('admin.rekap-laporan.pdf', compact('chartData', 'bulan', 'tahun', 'namaBulan', 'chartImage'))
+        $pdf = Pdf::loadView('admin.rekap-laporan.pdf', compact('chartData', 'bulan', 'tahun', 'namaBulan', 'chartImage', 'selesai', 'totalData', 'persentase'))
             ->setPaper('folio', 'portrait')
             ->setOptions(['isPhpEnabled' => true]);
 

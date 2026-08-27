@@ -72,6 +72,13 @@
         .legend span.item { display: inline-block; margin: 0 7px; font-size: 9pt; color: #4b5563; }
         .legend span.dot { display: inline-block; width: 9px; height: 9px; border-radius: 2px; }
         .caption { text-align: center; font-style: italic; font-size: 9.5pt; color: #6b7280; margin-top: 5px; }
+
+        /* ── Rumus Pecahan ── */
+        .rumus { text-align: center; margin: 8px 0; font-size: 11pt; }
+        .fraction { display: inline-block; text-align: center; vertical-align: middle; margin: 0 4px; }
+        .fraction .numerator { display: block; border-bottom: 1px solid #111827; padding: 0 8px 3px; }
+        .fraction .denominator { display: block; padding: 3px 8px 0; }
+        .rumus-result { font-weight: bold; color: #1e3a5f; }
     </style>
 </head>
 <body>
@@ -162,7 +169,15 @@
             </tr>
             <tr>
                 <td><b>F. Formula / Rumus</b></td>
-                <td>(Jumlah komplain ditanggapi sesuai waktu / Jumlah komplain yang disurvei) &times; 100%</td>
+                <td>
+                    <div class="rumus">
+                        <span class="fraction">
+                            <span class="numerator">Jumlah komplain ditanggapi dan ditindaklanjuti ({{ $selesai }})</span>
+                            <span class="denominator">Jumlah komplain yang disurvei ({{ $totalData }})</span>
+                        </span>
+                        &times; 100% = <span class="rumus-result">{{ $persentase }}%</span>
+                    </div>
+                </td>
             </tr>
         </tbody>
     </table>
