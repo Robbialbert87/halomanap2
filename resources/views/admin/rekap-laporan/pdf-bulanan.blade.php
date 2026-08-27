@@ -76,7 +76,8 @@
 
         .bukti-wrap { margin-top: 8px; }
         .bukti-label { font-weight: bold; color: #374151; margin-bottom: 4px; }
-        .bukti-img { width: 240px; border: 1px solid #d1d5db; }
+        .bukti-img-portrait { width: 190px; border: 1px solid #d1d5db; }
+        .bukti-img-landscape { width: 260px; border: 1px solid #d1d5db; }
 
         .status-baru     { color: #1d4ed8; font-weight: bold; }
         .status-diproses { color: #b45309; font-weight: bold; }
@@ -118,6 +119,7 @@
     </div>
 
     <table class="meta">
+        <tr><td class="label">Laporan Masuk</td><td>: {{ $item->tanggal->format('d/m/Y') }}</td></tr>
         <tr><td class="label">Nama Pelapor</td><td>: {{ $item->nama ?? '-' }}</td></tr>
         <tr><td class="label">No. Telepon/WA</td><td>: {{ $item->nomor_pelapor ?? '-' }}</td></tr>
         <tr><td class="label">Via Pengaduan</td><td>: {{ $item->via_pengaduan }}</td></tr>
@@ -137,7 +139,7 @@
     @if(isset($buktiImages[$item->id]))
     <div class="bukti-wrap">
         <div class="bukti-label">Bukti Pengaduan:</div>
-        <img class="bukti-img" src="{{ $buktiImages[$item->id] }}" alt="Bukti pengaduan">
+        <img class="bukti-img-{{ $buktiOrientation[$item->id] ?? 'landscape' }}" src="{{ $buktiImages[$item->id] }}" alt="Bukti pengaduan">
     </div>
     @endif
 </div>

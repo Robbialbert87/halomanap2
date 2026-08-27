@@ -274,18 +274,23 @@ class RekapLaporanController extends Controller
         $namaBulan = $this->namaBulanIndo($bulan);
 
         $buktiImages = [];
+        $buktiOrientation = [];
         foreach ($data as $item) {
             if ($item->bukti && Storage::disk('public')->exists($item->bukti)) {
                 $mime = strtolower(pathinfo($item->bukti, PATHINFO_EXTENSION)) === 'webp'
                     ? 'image/webp'
                     : 'image/jpeg';
                 $buktiImages[$item->id] = 'data:' . $mime . ';base64,' . base64_encode(Storage::disk('public')->get($item->bukti));
+
+                $path = Storage::disk('public')->path($item->bukti);
+                $dims = @getimagesize($path);
+                $buktiOrientation[$item->id] = ($dims && $dims[1] > $dims[0]) ? 'portrait' : 'landscape';
             }
         }
 
         $total = $data->count();
 
-        $pdf = Pdf::loadView('admin.rekap-laporan.pdf-bulanan', compact('data', 'buktiImages', 'total', 'bulan', 'tahun', 'namaBulan'))
+        $pdf = Pdf::loadView('admin.rekap-laporan.pdf-bulanan', compact('data', 'buktiImages', 'buktiOrientation', 'total', 'bulan', 'tahun', 'namaBulan'))
             ->setPaper('folio', 'portrait')
             ->setOptions(['isPhpEnabled' => true]);
 
