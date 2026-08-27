@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\InmSectionContent;
 use App\Models\RekapPengaduan;
 use App\Support\ImageCompressor;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -39,7 +40,14 @@ class RekapLaporanController extends Controller
             $k => $data->where('kategori', $k)->count(),
         ])->toArray();
 
-        return view('admin.rekap-laporan.index', compact('data', 'bulan', 'tahun', 'chartData', 'semua'));
+        $sectionContent = null;
+        if (!$semua && $bulan && $tahun) {
+            $sectionContent = InmSectionContent::where('bulan', $bulan)->where('tahun', $tahun)->first();
+        }
+
+        $namaBulan = $bulan ? $this->namaBulanIndo($bulan) : null;
+
+        return view('admin.rekap-laporan.index', compact('data', 'bulan', 'tahun', 'chartData', 'semua', 'sectionContent', 'namaBulan'));
     }
 
     public function store(Request $request)
@@ -140,6 +148,29 @@ class RekapLaporanController extends Controller
         ])->with('success', 'Data rekap pengaduan berhasil dihapus.');
     }
 
+    public function storeSection(Request $request)
+    {
+        $validated = $request->validate([
+            'bulan'                  => 'required|integer|min:1|max:12',
+            'tahun'                  => 'required|integer|min:2020|max:2100',
+            'analisis_capaian'       => 'nullable|string',
+            'rencana_tindak_lanjut'  => 'nullable|string',
+        ]);
+
+        InmSectionContent::updateOrCreate(
+            ['bulan' => $validated['bulan'], 'tahun' => $validated['tahun']],
+            [
+                'analisis_capaian'      => $validated['analisis_capaian'] ?? null,
+                'rencana_tindak_lanjut' => $validated['rencana_tindak_lanjut'] ?? null,
+            ]
+        );
+
+        return redirect()->route('admin.rekap-laporan', [
+            'bulan' => $validated['bulan'],
+            'tahun' => $validated['tahun'],
+        ])->with('success', 'Analisis Capaian & RTL berhasil disimpan.');
+    }
+
     public function exportPdf(Request $request)
     {
         $bulan = intval($request->input('bulan', now()->month));
@@ -168,6 +199,8 @@ class RekapLaporanController extends Controller
         ])->toArray();
 
         $namaBulan = $this->namaBulanIndo($bulan);
+
+        $sectionContent = InmSectionContent::where('bulan', $bulan)->where('tahun', $tahun)->first();
 
         $values = [
             $chartData['Tenaga Kesehatan'] ?? 0,
@@ -251,7 +284,7 @@ class RekapLaporanController extends Controller
             $chartImage = 'data:image/png;base64,' . base64_encode($imageData);
         }
 
-        $pdf = Pdf::loadView('admin.rekap-laporan.pdf', compact('chartData', 'bulan', 'tahun', 'namaBulan', 'chartImage', 'selesai', 'totalData', 'persentase'))
+        $pdf = Pdf::loadView('admin.rekap-laporan.pdf', compact('chartData', 'bulan', 'tahun', 'namaBulan', 'chartImage', 'selesai', 'totalData', 'persentase', 'sectionContent'))
             ->setPaper('folio', 'portrait')
             ->setOptions(['isPhpEnabled' => true]);
 

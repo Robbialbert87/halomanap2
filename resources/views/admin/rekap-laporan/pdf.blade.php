@@ -294,8 +294,20 @@
 {{-- ══════════ HALAMAN D + E ══════════ --}}
 <div class="bab">
     <div class="sub-bab">D. Analisis Capaian</div>
+    @if($sectionContent && $sectionContent->analisis_capaian)
+        {!! nl2br(e($sectionContent->analisis_capaian)) !!}
+    @else
+        <p style="color: #9ca3af; font-style: italic;">Belum ada data analisis capaian untuk periode ini.</p>
+    @endif
+
     <div style="height: 40px;"></div>
+
     <div class="sub-bab">E. Rencana Tindak Lanjut</div>
+    @if($sectionContent && $sectionContent->rencana_tindak_lanjut)
+        {!! nl2br(e($sectionContent->rencana_tindak_lanjut)) !!}
+    @else
+        <p style="color: #9ca3af; font-style: italic;">Belum ada data rencana tindak lanjut untuk periode ini.</p>
+    @endif
 </div>
 
 {{-- ── Nomor halaman (dievaluasi DomPDF per halaman) ── --}}

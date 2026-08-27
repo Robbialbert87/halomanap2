@@ -162,6 +162,7 @@ Route::middleware('auth')->group(function () {
         Route::post('rekap-laporan', [App\Http\Controllers\Admin\RekapLaporanController::class, 'store'])->name('rekap-laporan.store');
         Route::put('rekap-laporan/{rekapLaporan}', [App\Http\Controllers\Admin\RekapLaporanController::class, 'update'])->name('rekap-laporan.update');
         Route::delete('rekap-laporan/{rekapLaporan}', [App\Http\Controllers\Admin\RekapLaporanController::class, 'destroy'])->name('rekap-laporan.destroy');
+        Route::post('rekap-laporan/section', [App\Http\Controllers\Admin\RekapLaporanController::class, 'storeSection'])->name('rekap-laporan.store-section');
 
         // Profil
         Route::get('profil', [App\Http\Controllers\Admin\ProfilController::class, 'index'])->name('profil');

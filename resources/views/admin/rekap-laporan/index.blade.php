@@ -75,6 +75,10 @@
             class="bg-gradient-to-br from-blue-500 to-blue-700 text-white font-semibold rounded-xl px-5 py-2.5 text-sm shadow-md shadow-blue-200/50 hover:shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-file-lines"></i> Report PDF Bulanan
         </a>
+        <button type="button" onclick="document.getElementById('sectionModal').classList.remove('hidden')"
+            class="bg-gradient-to-br from-emerald-500 to-emerald-700 text-white font-semibold rounded-xl px-5 py-2.5 text-sm shadow-md shadow-emerald-200/50 hover:shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-pen-to-square"></i> Input Analisis & RTL
+        </button>
     </div>
     @endif
 </div>
@@ -578,6 +582,51 @@ $iconBg = [
                 <button type="button" onclick="document.getElementById('editModal').classList.add('hidden')"
                     class="flex-1 bg-white/70 border border-gray-200 text-gray-600 font-medium rounded-xl px-5 py-2.5 text-sm hover:bg-gray-50 active:scale-[0.98] transition-all">
                     Batal
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- MODAL INPUT ANALISIS & RTL --}}
+<div id="sectionModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white rounded-t-2xl">
+            <h3 class="text-base font-bold text-gray-800 font-heading flex items-center gap-2">
+                <span class="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm">
+                    <i class="fa-solid fa-pen-to-square text-white text-xs"></i>
+                </span>
+                Analisis & Rencana Tindak Lanjut — Periode {{ strtoupper($namaBulan ?? '') }} {{ $tahun ?? '' }}
+            </h3>
+            <button onclick="document.getElementById('sectionModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        <form action="{{ route('admin.rekap-laporan.store-section') }}" method="POST" class="p-6 space-y-5">
+            @csrf
+            <input type="hidden" name="bulan" value="{{ $bulan }}">
+            <input type="hidden" name="tahun" value="{{ $tahun }}">
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1.5">D. Analisis Capaian</label>
+                <textarea name="analisis_capaian" rows="6" placeholder="Tuliskan analisis capaian indikator kecepatan waktu tanggap komplain..."
+                    class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-emerald-500 focus:border-emerald-500 p-3">{{ old('analisis_capaian', $sectionContent->analisis_capaian ?? '') }}</textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1.5">E. Rencana Tindak Lanjut</label>
+                <textarea name="rencana_tindak_lanjut" rows="6" placeholder="Tuliskan rencana tindak lanjut hasil analisis capaian..."
+                    class="w-full bg-white/70 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-emerald-500 focus:border-emerald-500 p-3">{{ old('rencana_tindak_lanjut', $sectionContent->rencana_tindak_lanjut ?? '') }}</textarea>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
+                <button type="button" onclick="document.getElementById('sectionModal').classList.add('hidden')"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl px-5 py-2.5 text-sm transition-all">
+                    Batal
+                </button>
+                <button type="submit"
+                    class="bg-gradient-to-br from-emerald-500 to-emerald-700 text-white font-semibold rounded-xl px-5 py-2.5 text-sm shadow-md shadow-emerald-200/50 hover:shadow-lg active:scale-[0.98] transition-all">
+                    <i class="fa-solid fa-check"></i> Simpan
                 </button>
             </div>
         </form>
